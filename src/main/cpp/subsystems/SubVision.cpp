@@ -11,16 +11,10 @@
 SubVision::SubVision() {
     //cameraToRobotTransform
     SetDefaultCommand(CmdUpdatePoseEstimator());
-    for (int i = 0; i <= 18; i++) {
-    auto pose = tagLayout.GetTagPose(i);
-    if (pose.has_value()) {
-      photon::SimVisionTarget simTag{pose.value(), 8_in, 8_in, i};
-      visionSim.AddSimVisionTarget(simTag);
-      SubDrivebase::GetInstance().DisplayPose(fmt::format("tag{}", i), pose.value().ToPose2d());
-      tagPose.insert({i,pose.value()});
+    visionSim.AddAprilTags(tagLayout);
+    for (auto target : visionSim.GetVisionTargets()) {
+        SubDrivebase::GetInstance().DisplayPose(fmt::format("tag{}", target.fiducialId), target.GetPose().ToPose2d());
     }
-  }
-  frc::SmartDashboard::PutNumber("Vision/targetID",-10);
 }
 
 // This method will be called once per scheduler run
@@ -30,14 +24,15 @@ void SubVision::Periodic() {
 }
 
 void SubVision::SimulationPeriodic() {
-    visionSim.ProcessFrame(SubDrivebase::GetInstance().GetPose());
+    visionSim.Update(SubDrivebase::GetInstance().GetPose());
 }
 
 void SubVision::UpdatePoseEstimator() {
-  frc::SmartDashboard::PutNumber("Vision/Reference pose X", visionPoseEstimater.GetReferencePose().X().value());
-  frc::SmartDashboard::PutNumber("Vision/Reference pose Y", visionPoseEstimater.GetReferencePose().Y().value());
-  frc::SmartDashboard::PutNumber("Vision/Reference pose Z", visionPoseEstimater.GetReferencePose().Z().value());
-  auto pose = visionPoseEstimater.Update();
+  auto result = camera.GetLatestResult();
+  auto pose = robotPoseEstimater.Update(result);
+  frc::SmartDashboard::PutNumber("Vision/Reference pose X", robotPoseEstimater.GetReferencePose().X().value());
+  frc::SmartDashboard::PutNumber("Vision/Reference pose Y", robotPoseEstimater.GetReferencePose().Y().value());
+  frc::SmartDashboard::PutNumber("Vision/Reference pose Z", robotPoseEstimater.GetReferencePose().Z().value());
   if (pose.has_value())
   {
     if (CheckVaild(pose)) {

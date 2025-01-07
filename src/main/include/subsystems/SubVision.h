@@ -5,11 +5,11 @@
 #pragma once
 
 #include <frc2/command/SubsystemBase.h>
-#include <photon/PhotonCamera.h>
-#include <photon/simulation/SimVisionSystem.h>
 #include <frc/geometry/Pose3d.h>
 #include <frc/apriltag/AprilTagFieldLayout.h>
 #include <frc/apriltag/AprilTagFields.h>
+#include <photon/PhotonCamera.h>
+#include <photon/simulation/VisionSystemSim.h>
 #include <photon/PhotonPoseEstimator.h>
 
 class SubVision : public frc2::SubsystemBase {
@@ -48,13 +48,11 @@ class SubVision : public frc2::SubsystemBase {
   std::map<FieldElement, int> redFieldElement = {
       {SPEAKER, 4}, {SPEAKER_SIDE, 3}, {AMP, 5}, {SOURCE_LEFT, 10}, {SOURCE_RIGHT, 9}};
 
-  photon::SimVisionSystem visionSim{camName, 120_deg, camToBot, 15_m,
-                                        360,         240,    0.0001};
+  photon::VisionSystemSim visionSim{camName};
 
-  photon::PhotonPoseEstimator visionPoseEstimater{
+  photon::PhotonPoseEstimator robotPoseEstimater{
       tagLayout,
       photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
-      photon::PhotonCamera{camName},
       camToBot.Inverse()
   };
 };
