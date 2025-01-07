@@ -16,6 +16,11 @@
   },
   "C_Cpp.default.configurationProvider": "vscode-wpilib",
   "files.associations": {
-    "memory": "cpp"
+    "memory": "cpp",
+    "*.tcc": "cpp",
+    "expected": "cpp",
+    "optional": "cpp",
+    "system_error": "cpp",
+    "regex": "cpp"
   }
 }

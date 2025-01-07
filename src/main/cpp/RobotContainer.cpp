@@ -3,10 +3,13 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "RobotContainer.h"
-
+#include "subsystems/SubDrivebase.h"
+#include "subsystems/SubVision.h"
 #include <frc2/command/Commands.h>
 
 RobotContainer::RobotContainer() {
+  SubDrivebase::GetInstance();
+  SubVision::GetInstance();
   ConfigureBindings();
 }
 
