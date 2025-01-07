@@ -6,6 +6,7 @@
 #include <units/voltage.h>
 #include <cstdlib>
 #include <iostream>
+#include <rev/ClosedLoopSlot.h>
 
 ICSpark::ICSpark(rev::spark::SparkBase* spark, rev::spark::SparkRelativeEncoder& inbuiltEncoder,
                  rev::spark::SparkBaseConfigAccessor& configAccessor, units::ampere_t currentLimit)
@@ -100,7 +101,7 @@ void ICSpark::SetPositionTarget(units::turn_t target, units::volt_t arbFeedForwa
   _latestModelFeedForward = CalculateFeedforward(target, 0_tps);
   _controlType = ControlType::kPosition;
 
-  _sparkPidController.SetReference(target.value(), rev::spark::SparkLowLevel::ControlType::kPosition, 0,
+  _sparkPidController.SetReference(target.value(), rev::spark::SparkLowLevel::ControlType::kPosition, rev::spark::ClosedLoopSlot::kSlot0,
                                    _arbFeedForward.value() + _latestModelFeedForward.value());
 }
 
@@ -134,7 +135,7 @@ void ICSpark::SetVelocityTarget(units::turns_per_second_t target, units::volt_t 
   _latestModelFeedForward = CalculateFeedforward(0_tr, _velocityTarget);
   _controlType = ControlType::kVelocity;
 
-  _sparkPidController.SetReference(target.value(), rev::spark::SparkLowLevel::ControlType::kVelocity, 0,
+  _sparkPidController.SetReference(target.value(), rev::spark::SparkLowLevel::ControlType::kVelocity, rev::spark::ClosedLoopSlot::kSlot0,
                                    _arbFeedForward.value() + _latestModelFeedForward.value());
 }
 
@@ -194,7 +195,7 @@ void ICSpark::UpdateControls(units::second_t loopTime) {
   _latestModelFeedForward =
       CalculateFeedforward(_latestMotionTarget.position, _latestMotionTarget.velocity, accelTarget);
   units::volt_t feedforward = _arbFeedForward + _latestModelFeedForward;
-  _sparkPidController.SetReference(sparkTarget, GetREVControlType(), 0, feedforward.value());
+  _sparkPidController.SetReference(sparkTarget, GetREVControlType(), rev::spark::ClosedLoopSlot::kSlot0, feedforward.value());
 }
 
 units::volt_t ICSpark::CalculateFeedforward(units::turn_t pos, units::turns_per_second_t vel,

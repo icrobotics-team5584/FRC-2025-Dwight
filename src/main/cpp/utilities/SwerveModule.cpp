@@ -14,7 +14,7 @@
 #include "utilities/BotVars.h"
 
 SwerveModule::SwerveModule(int canDriveMotorID, int canTurnMotorID, int canTurnEncoderID,
-                           double cancoderMagOffset)
+                           units::turn_t cancoderMagOffset)
     : _cancoder(canTurnEncoderID){
   using namespace ctre::phoenix6::signals;
   using namespace ctre::phoenix6::configs;
@@ -29,11 +29,11 @@ SwerveModule::SwerveModule(int canDriveMotorID, int canTurnMotorID, int canTurnE
   }
 
   // Config CANCoder 
-  _cancoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue::Unsigned_0To1;
+  _cancoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1_tr;
   _cancoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue::CounterClockwise_Positive;
   _cancoderConfig.MagnetSensor.MagnetOffset = cancoderMagOffset;
   _cancoder.GetConfigurator().Apply(_cancoderConfig);
-  frc::SmartDashboard::PutNumber("swerve/cancoder "+std::to_string(canTurnEncoderID) + " mag offset", cancoderMagOffset);
+  frc::SmartDashboard::PutNumber("swerve/cancoder "+std::to_string(canTurnEncoderID) + " mag offset", cancoderMagOffset.value());
 
   // Config Motors, dont change order of function calls. Or configs will not be applied before sensors are synced
   ConfigTurnMotor();
@@ -49,13 +49,14 @@ void SwerveModule::ConfigDriveMotor(){
   _io->ConfigDriveMotor();
 }
 
-void SwerveModule::SetDesiredState(const frc::SwerveModuleState& referenceState) {
+void SwerveModule::SetDesiredState(frc::SwerveModuleState& referenceState) {
+  auto curAngle = GetAngle();
   // Optimize the reference state to avoid spinning further than 90 degrees
-  auto targetState = frc::SwerveModuleState::Optimize(referenceState, GetAngle());
+  referenceState.Optimize(curAngle);
 
   // Drive! These functions do some conversions and send targets to falcons
-  SetDesiredAngle(targetState.angle.Degrees());
-  SetDesiredVelocity(targetState.speed);
+  SetDesiredAngle(referenceState.angle.Degrees());
+  SetDesiredVelocity(referenceState.speed);
 }
 
 frc::SwerveModulePosition SwerveModule::GetPosition() {
@@ -86,6 +87,10 @@ units::meters_per_second_t SwerveModule::GetSpeed() {
 
 frc::SwerveModuleState SwerveModule::GetState() {
   return {GetSpeed(), GetAngle()};
+}
+
+frc::SwerveModuleState SwerveModule::GetCANCoderState() {
+  return {GetSpeed(), GetCanCoderAngle()};
 }
 
 units::volt_t SwerveModule::GetDriveVoltage() {
@@ -122,8 +127,4 @@ void SwerveModule::SyncSensors() {
 
 void SwerveModule::UpdateSim(units::second_t deltaTime) {
   _io->UpdateSim(deltaTime);
-  // CANcoders are attached directly to the mechanism, so don't account for the steer gearing
-  auto& cancoderState = _cancoder.GetSimState();
-  cancoderState.SetRawPosition(_turnMotorSim.GetAngularPosition());
-  cancoderState.SetVelocity(_turnMotorSim.GetAngularVelocity());
 }

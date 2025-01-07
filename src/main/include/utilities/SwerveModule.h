@@ -19,11 +19,13 @@
 #include <memory>
 #include <numbers>
 #include <utilities/IOSwerve.h>
+#include <frc/system/plant/LinearSystemId.h>
+
 
 class SwerveModule {
  public:
-  SwerveModule(int canDriveMotorID, int canTurnMotorID, int canTurnEncoderID, double cancoderMagOffset); 
-  void SetDesiredState(const frc::SwerveModuleState& state);
+  SwerveModule(int canDriveMotorID, int canTurnMotorID, int canTurnEncoderID, units::turn_t cancoderMagOffset); 
+  void SetDesiredState(frc::SwerveModuleState& state);
   void SyncSensors();
   void SendSensorsToDash();
   void SetDesiredAngle(units::degree_t angle);
@@ -40,6 +42,7 @@ class SwerveModule {
   units::meters_per_second_t GetSpeed();
   units::volt_t GetDriveVoltage();
   frc::SwerveModuleState GetState();
+  frc::SwerveModuleState GetCANCoderState();
   units::radian_t GetDrivenRotations();
 
  private:
@@ -56,6 +59,5 @@ class SwerveModule {
   ctre::phoenix6::hardware::CANcoder _cancoder;
   ctre::phoenix6::configs::CANcoderConfiguration _cancoderConfig;
 
-  frc::sim::DCMotorSim _driveMotorSim{frc::DCMotor::KrakenX60FOC(), DRIVE_GEAR_RATIO, 0.05_kg_sq_m};
-  frc::sim::DCMotorSim _turnMotorSim{frc::DCMotor::Falcon500FOC(), TURNING_GEAR_RATIO, 0.000000001_kg_sq_m};
+
 };
