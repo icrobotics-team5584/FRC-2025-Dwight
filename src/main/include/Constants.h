@@ -20,6 +20,9 @@ namespace canid {
     constexpr int IntakeRightMotor = 15; 
     constexpr int IntakeLeftMotor = 16; 
     constexpr int EndEffectorMotor = 17; 
+    constexpr int IntakePivotMotor = 18;
+
+
 }
 
 namespace dio {
