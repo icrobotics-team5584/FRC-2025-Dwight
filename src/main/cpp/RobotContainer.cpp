@@ -6,6 +6,7 @@
 
 #include <frc2/command/Commands.h>
 #include "subsystems/SubIntake.h"
+#include "subsystems/SubEndEffector.h"
 
 RobotContainer::RobotContainer() {
   ConfigureBindings();
@@ -14,6 +15,8 @@ RobotContainer::RobotContainer() {
 void RobotContainer::ConfigureBindings() {
   _controller.A().WhileTrue(SubIntake::GetInstance().Intake());
   _controller.B().WhileTrue(SubIntake::GetInstance().Outtake());
+  _controller.X().WhileTrue(SubEndEffector::GetInstance().IntakeFromGround());
+  _controller.Y().WhileTrue(SubEndEffector::GetInstance().IntakeFromSource());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
