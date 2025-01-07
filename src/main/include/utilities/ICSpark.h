@@ -18,6 +18,7 @@
 #include <wpi/sendable/SendableBuilder.h>
 #include "utilities/ICSparkEncoder.h"
 
+
 /**
  * Wrapper around the Rev CANSparkBase class with some convenience features.
  * - Required Current Limit Setting

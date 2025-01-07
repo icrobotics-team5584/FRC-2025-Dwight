@@ -12,10 +12,11 @@
 #include <units/angle.h>
 #include <memory>
 #include <numbers>
+#include <frc/system/plant/LinearSystemId.h>
 
 class KrakenIO : public SwerveIO {
     public:
-        KrakenIO(int turnCanID, int driveCanID, int encoderCanID, double cancoderMagOffset);
+        KrakenIO(int turnCanID, int driveCanID, int encoderCanID, units::turn_t cancoderMagOffset);
         void ConfigTurnMotor() override;
         void SetDesiredAngle(units::degree_t angle) override;
         void SetAngle(units::turn_t angle) override;
@@ -59,8 +60,13 @@ class KrakenIO : public SwerveIO {
         ctre::phoenix6::hardware::TalonFX _canDriveMotor;
         ctre::phoenix6::configs::TalonFXConfiguration _configDriveMotor{};
 
-        frc::sim::DCMotorSim _turnMotorSim{frc::DCMotor::Falcon500(), TURNING_GEAR_RATIO, 0.000000001_kg_sq_m};
-        frc::sim::DCMotorSim _driveMotorSim{frc::DCMotor::Falcon500(), DRIVE_GEAR_RATIO, 0.05_kg_sq_m};
 
     
+    frc::sim::DCMotorSim _turnMotorSim{
+        frc::LinearSystemId::DCMotorSystem(frc::DCMotor::Falcon500(), 0.000000001_kg_sq_m, TURNING_GEAR_RATIO),
+        frc::DCMotor::Falcon500().WithReduction(TURNING_GEAR_RATIO)};
+        
+    frc::sim::DCMotorSim _driveMotorSim{
+        frc::LinearSystemId::DCMotorSystem(frc::DCMotor::KrakenX60FOC(), 0.01_kg_sq_m, DRIVE_GEAR_RATIO),
+        frc::DCMotor::KrakenX60FOC().WithReduction(DRIVE_GEAR_RATIO)};
 };

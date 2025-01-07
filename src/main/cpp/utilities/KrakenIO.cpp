@@ -9,7 +9,7 @@
 const bool FOCstate = true;
 
 KrakenIO::KrakenIO(int turnCanID, int driveCanID, int encoderCanID,
-                   double cancoderMagOffset) : _canTurnMotor(turnCanID),
+                   units::turn_t cancoderMagOffset) : _canTurnMotor(turnCanID),
                                                _canDriveMotor(driveCanID)
 {
 }
@@ -64,22 +64,6 @@ void KrakenIO::StopMotors(){
   _canTurnMotor.Set(0);
 }
 
-void KrakenIO::UpdateSim(units::second_t deltaTime){
-  // Drive motor
-  auto& driveState = _canDriveMotor.GetSimState();
-  _driveMotorSim.SetInputVoltage(driveState.GetMotorVoltage());
-  _driveMotorSim.Update(deltaTime);
-  driveState.SetRawRotorPosition(_driveMotorSim.GetAngularPosition() * DRIVE_GEAR_RATIO);
-  driveState.SetRotorVelocity(_driveMotorSim.GetAngularVelocity() * DRIVE_GEAR_RATIO);
-
-  // Turn Motor
-  auto& turnState = _canTurnMotor.GetSimState();
-  _turnMotorSim.SetInputVoltage(turnState.GetMotorVoltage());
-  _turnMotorSim.Update(deltaTime);
-  turnState.SetRawRotorPosition(_turnMotorSim.GetAngularPosition() * TURNING_GEAR_RATIO);
-  turnState.SetRotorVelocity(_turnMotorSim.GetAngularVelocity() * TURNING_GEAR_RATIO);
-}
-
 void KrakenIO::SetNeutralMode(bool brakeModeToggle){
   if (brakeModeToggle == true){
     _configTurnMotor.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
@@ -101,10 +85,10 @@ void KrakenIO::ConfigDriveMotor(){
   _configDriveMotor.Slot0.kD = DRIVE_D;
   _configDriveMotor.CurrentLimits.SupplyCurrentLimitEnable = true;
   _configDriveMotor.CurrentLimits.StatorCurrentLimitEnable = true;
-  _configDriveMotor.CurrentLimits.SupplyCurrentLimit = 40.0;
-  _configDriveMotor.CurrentLimits.SupplyCurrentThreshold = 60.0;
-  _configDriveMotor.CurrentLimits.SupplyTimeThreshold = 0.1;
-  _configDriveMotor.CurrentLimits.StatorCurrentLimit = 70.0; //Untested
+  _configDriveMotor.CurrentLimits.SupplyCurrentLowerLimit = 40.0_A;
+  _configDriveMotor.CurrentLimits.SupplyCurrentLimit = 60.0_A;
+  _configDriveMotor.CurrentLimits.SupplyCurrentLowerTime = 0.1_s;
+  _configDriveMotor.CurrentLimits.StatorCurrentLimit = 80.0_A; //Untested
   _configDriveMotor.Slot0.kS = DRIVE_S;
   _configDriveMotor.Slot0.kV = DRIVE_V;
   _configDriveMotor.Slot0.kA = DRIVE_A;
@@ -138,4 +122,20 @@ frc::SwerveModuleState KrakenIO::GetState(){
 
 units::radian_t KrakenIO::GetDrivenRotations(){
     return _canDriveMotor.GetPosition().GetValue();
+}
+
+void KrakenIO::UpdateSim(units::second_t deltaTime){
+  // Drive motor
+  auto& driveState = _canDriveMotor.GetSimState();
+  _driveMotorSim.SetInputVoltage(driveState.GetMotorVoltage());
+  _driveMotorSim.Update(deltaTime);
+  driveState.SetRawRotorPosition(_driveMotorSim.GetAngularPosition() * DRIVE_GEAR_RATIO);
+  driveState.SetRotorVelocity(_driveMotorSim.GetAngularVelocity() * DRIVE_GEAR_RATIO);
+
+  // Turn Motor
+  auto& turnState = _canTurnMotor.GetSimState();
+  _turnMotorSim.SetInputVoltage(turnState.GetMotorVoltage());
+  _turnMotorSim.Update(deltaTime);
+  turnState.SetRawRotorPosition(_turnMotorSim.GetAngularPosition() * TURNING_GEAR_RATIO);
+  turnState.SetRotorVelocity(_turnMotorSim.GetAngularVelocity() * TURNING_GEAR_RATIO);
 }

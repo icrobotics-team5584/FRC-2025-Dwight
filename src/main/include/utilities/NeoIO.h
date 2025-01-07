@@ -5,7 +5,7 @@
 
 class NeoIO : public SwerveIO{
     public:
-        NeoIO(int turnCanID, int driveCanID, int encoderCanID, double cancoderMagOffset);
+        NeoIO(int turnCanID, int driveCanID, int encoderCanID, units::turn_t cancoderMagOffset);
         void ConfigTurnMotor() override;
         void SetDesiredAngle(units::degree_t angle) override;
         void SetAngle(units::turn_t angle) override;
