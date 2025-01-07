@@ -4,12 +4,18 @@
 
 #include "RobotContainer.h"
 #include "subsystems/SubDrivebase.h"
-
+#include "subsystems/SubVision.h"
 #include <frc2/command/Commands.h>
 
 RobotContainer::RobotContainer() {
+  // Init subsystems
   SubDrivebase::GetInstance();
+  SubVision::GetInstance();
+
+  // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(SubDrivebase::GetInstance().JoystickDrive(_driverController));
+  
+  // Trigger Bindings
   ConfigureBindings();
 }
 
