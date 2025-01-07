@@ -32,8 +32,8 @@ class SubIntake : public frc2::SubsystemBase {
   void Periodic() override;
 
  private:
- ICSparkMax IntakeLeftMotor{canid::IntakeLeftMotor, 30_A};
- ICSparkMax IntakeRight{canid::IntakeRightMotor, 30_A};
+ ICSparkMax _intakeLeftMotor{canid::IntakeLeftMotor, 30_A};
+ ICSparkMax _intakeRightMotor{canid::IntakeRightMotor, 30_A};
 
  
   // Components (e.g. motor controllers and sensors) should generally be

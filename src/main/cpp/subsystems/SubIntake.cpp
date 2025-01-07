@@ -6,9 +6,9 @@
 #include <rev/SparkMax.h>
 
 SubIntake::SubIntake() {
-    rev::spark::SparkBaseConfig _intakeLeftConfig;
-    _intakeLeftConfig.Follow(IntakeRight.GetDeviceId(), true);
-    IntakeLeftMotor.AdjustConfig(_intakeLeftConfig);
+    rev::spark::SparkBaseConfig intakeLeftConfig;
+    intakeLeftConfig.Follow(_intakeRightMotor.GetDeviceId(), true);
+    _intakeLeftMotor.AdjustConfig(intakeLeftConfig);
   
 }
 
@@ -16,10 +16,10 @@ SubIntake::SubIntake() {
 void SubIntake::Periodic() {}
 
 frc2::CommandPtr SubIntake::Intake() {
-    return StartEnd([this] {IntakeRight.Set(0.5);}, [this] {IntakeRight.Set(0);});
+    return StartEnd([this] {_intakeRightMotor.Set(0.5);}, [this] {_intakeRightMotor.Set(0);});
 }
 
 frc2::CommandPtr SubIntake::Outtake() {
-    return StartEnd([this] {IntakeRight.Set(-0.5);}, [this] {IntakeRight.Set(0);});
+    return StartEnd([this] {_intakeRightMotor.Set(-0.5);}, [this] {_intakeRightMotor.Set(0);});
 }
 
