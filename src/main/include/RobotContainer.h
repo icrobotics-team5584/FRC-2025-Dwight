@@ -5,11 +5,12 @@
 #pragma once
 
 #include <frc2/command/CommandPtr.h>
+#include <frc2/command/button/CommandXboxController.h>
 
 class RobotContainer {
  public:
   RobotContainer();
-
+  frc2::CommandXboxController _driverController{0};
   frc2::CommandPtr GetAutonomousCommand();
 
  private:
