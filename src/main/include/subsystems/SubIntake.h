@@ -32,7 +32,7 @@ class SubIntake : public frc2::SubsystemBase {
 
   const double P = 10;
   const double I = 0;
-  const double D = 0;
+  const double D = 1;
   const double GearRatio = 15;
   const units::length::meter_t ArmLength = 0.3_m;
   const units::mass::kilogram_t ArmMass = 6_kg;
