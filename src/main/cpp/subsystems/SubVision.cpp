@@ -9,69 +9,47 @@
 #include <frc/RobotBase.h>
 
 SubVision::SubVision() {
-    //cameraToRobotTransform
-    SetDefaultCommand(CmdUpdatePoseEstimator());
-    visionSim.AddAprilTags(tagLayout);
-    for (auto target : visionSim.GetVisionTargets()) {
-        SubDrivebase::GetInstance().DisplayPose(fmt::format("tag{}", target.fiducialId), target.GetPose().ToPose2d());
-    }
+  SetDefaultCommand(Run([this] { UpdatePoseEstimator(); })); // Always keep vision on
+
+  _visionSim.AddAprilTags(_tagLayout); // Configure vision sim
+  _visionSim.AddCamera(&_cameraSim, _camToBot.Inverse());
+
+  for (auto target : _visionSim.GetVisionTargets()) { //Add AprilTags to field visualization
+    SubDrivebase::GetInstance().DisplayPose(fmt::format("tag{}", target.fiducialId),
+                                            target.GetPose().ToPose2d());
+  }
 }
 
-// This method will be called once per scheduler run
-void SubVision::Periodic() {
-  // UpdatePoseEstimator();
-  
-}
+void SubVision::Periodic() {}
 
 void SubVision::SimulationPeriodic() {
-    visionSim.Update(SubDrivebase::GetInstance().GetPose());
+  _visionSim.Update(SubDrivebase::GetInstance().GetPose());
 }
 
 void SubVision::UpdatePoseEstimator() {
-  auto result = camera.GetLatestResult();
-  auto pose = robotPoseEstimater.Update(result);
-  frc::SmartDashboard::PutNumber("Vision/Reference pose X", robotPoseEstimater.GetReferencePose().X().value());
-  frc::SmartDashboard::PutNumber("Vision/Reference pose Y", robotPoseEstimater.GetReferencePose().Y().value());
-  frc::SmartDashboard::PutNumber("Vision/Reference pose Z", robotPoseEstimater.GetReferencePose().Z().value());
-  if (pose.has_value())
-  {
-    if (CheckVaild(pose)) {
-    SubDrivebase::GetInstance().AddVisionMeasurement(
-        pose.value().estimatedPose.ToPose2d(),
-        0,
-        pose.value().timestamp);
-    SubDrivebase::GetInstance().DisplayPose("Estimated pose", pose.value().estimatedPose.ToPose2d());
-    frc::SmartDashboard::PutNumber("Vision/Estimated robot X", pose.value().estimatedPose.ToPose2d().X().value());
-    frc::SmartDashboard::PutNumber("Vision/Estimated robot Y", pose.value().estimatedPose.ToPose2d().Y().value());
-    }
+  auto results = _camera.GetAllUnreadResults();
+  auto resultCount = results.size();
+  frc::SmartDashboard::PutNumber("Vision/Reuslt count", resultCount);
+  if (resultCount == 0) {
+    return; // Return if no result, prevent null error later
+  }
+  std::optional<photon::EstimatedRobotPose> pose;
+  for (auto result : results) {
+    pose = _robotPoseEstimater.Update(result); // Get estimate pose of robot by vision
   }
   frc::SmartDashboard::PutBoolean("Vision/Has value", pose.has_value());
-}
-
-frc2::CommandPtr SubVision::CmdUpdatePoseEstimator() {
-    return Run(
-        [this] {
-          UpdatePoseEstimator();
-        }
-    );
-}
-
-frc::Pose3d SubVision::GetTagPose(int id) {
-    return tagLayout.GetTagPose(id).value();
-}
-
-int SubVision::FindID(FieldElement chosenFieldElement) {
-  if (auto ally = frc::DriverStation::GetAlliance()) {
-    if (ally.value() == frc::DriverStation::Alliance::kBlue) {
-      return blueFieldElement[chosenFieldElement];
-    }
-
-    if (ally.value() == frc::DriverStation::Alliance::kRed) {
-      return redFieldElement[chosenFieldElement];
+  if (pose.has_value()) {// Check if pose is vaild
+    if (CheckVaild(pose) || frc::RobotBase::IsSimulation()) { // Check if the pose is good and should be referenced
+      SubDrivebase::GetInstance().AddVisionMeasurement(pose.value().estimatedPose.ToPose2d(), 0,
+                                                       pose.value().timestamp);
+      SubDrivebase::GetInstance().DisplayPose("Estimated pose",
+                                              pose.value().estimatedPose.ToPose2d()); // Display pose to field visualization
+      frc::SmartDashboard::PutNumber("Vision/Estimated robot X",
+                                     pose.value().estimatedPose.ToPose2d().X().value()); // Display estimate value to dashboard
+      frc::SmartDashboard::PutNumber("Vision/Estimated robot Y",
+                                     pose.value().estimatedPose.ToPose2d().Y().value());
     }
   }
-
-  return redFieldElement[chosenFieldElement];
 }
 
 bool SubVision::CheckVaild(std::optional<photon::EstimatedRobotPose> pose) {
@@ -83,12 +61,14 @@ bool SubVision::CheckVaild(std::optional<photon::EstimatedRobotPose> pose) {
 
   auto data = pose.value();
 
-  frc::SmartDashboard::PutNumber("Vision/Target detected", data.targetsUsed.size());
+  frc::SmartDashboard::PutNumber("Vision/Target detected", data.targetsUsed.size()); // Display number of target detected
 
+  //Check number of target
   if (data.targetsUsed.size() > desiredTargetLimit) {
     return false;
   }
 
+  // Get average area and ambiguity
   double area = 0.00;
   double ambiguity = 0.00;
   for (auto target : data.targetsUsed) {
@@ -100,20 +80,15 @@ bool SubVision::CheckVaild(std::optional<photon::EstimatedRobotPose> pose) {
   frc::SmartDashboard::PutNumber("Vision/Target avg area", area);
   frc::SmartDashboard::PutNumber("Vision/Target avg ambiguity", ambiguity);
 
+  //Check area
   if (area < minArea || area > maxArea) {
     return false;
   }
 
+  //Check ambiguity
   if ((ambiguity < minAmbiguity || ambiguity > maxAmbiguity) && !frc::RobotBase::IsSimulation()) {
     return false;
   }
 
   return true;
 }
-
-// Checklist: 
-
-// Area
-// Length
-// Num of tags
-// Ambigurity
