@@ -28,6 +28,7 @@ class SubIntake : public frc2::SubsystemBase {
   frc2::CommandPtr Outtake();
   frc2::CommandPtr Deploy();
   frc2::CommandPtr Stow();
+  frc2::CommandPtr DeployAndRetract();
   void SetDesiredAngle(units::degree_t angle);
 
   const double P = 10;

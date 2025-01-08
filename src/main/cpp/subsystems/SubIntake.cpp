@@ -58,6 +58,10 @@ frc2::CommandPtr SubIntake::Deploy() {
     return RunOnce([this] {SetDesiredAngle(0_deg);});
 }
 
+frc2::CommandPtr SubIntake::DeployAndRetract() {
+    return StartEnd([this] {SubIntake::Deploy();}, [this] {SubIntake::Stow();});
+}
+
 frc2::CommandPtr SubIntake::Stow() {
     return RunOnce([this] {SetDesiredAngle(90_deg);});
 }

@@ -7,16 +7,20 @@
 #include <frc2/command/Commands.h>
 #include "subsystems/SubIntake.h"
 #include "subsystems/SubEndEffector.h"
+#include "commands/CoralCommands.h"
 
 RobotContainer::RobotContainer() {
   ConfigureBindings();
 }
 
 void RobotContainer::ConfigureBindings() {
-  _controller.A().WhileTrue(SubIntake::GetInstance().Intake());
-  _controller.B().WhileTrue(SubIntake::GetInstance().Outtake());
-  _controller.X().WhileTrue(SubIntake::GetInstance().Deploy());
-  _controller.Y().WhileTrue(SubIntake::GetInstance().Stow());
+  SubIntake& intake = SubIntake::GetInstance();
+
+  _controller.A().WhileTrue(cmd::IntakeFullSequence());
+  _controller.A().OnFalse(SubEndEffector::GetInstance().StopMotor().AlongWith(intake.Stow()));
+  _controller.B().WhileTrue(intake.Outtake());
+  _controller.X().WhileTrue(intake.Deploy());
+  _controller.Y().WhileTrue(intake.Stow());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
