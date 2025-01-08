@@ -15,8 +15,8 @@ RobotContainer::RobotContainer() {
 void RobotContainer::ConfigureBindings() {
   _controller.A().WhileTrue(SubIntake::GetInstance().Intake());
   _controller.B().WhileTrue(SubIntake::GetInstance().Outtake());
-  _controller.X().WhileTrue(SubEndEffector::GetInstance().IntakeFromGround());
-  _controller.Y().WhileTrue(SubEndEffector::GetInstance().IntakeFromSource());
+  _controller.X().WhileTrue(SubIntake::GetInstance().Deploy());
+  _controller.Y().WhileTrue(SubIntake::GetInstance().Stow());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
