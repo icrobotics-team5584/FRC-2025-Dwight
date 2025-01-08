@@ -18,6 +18,10 @@ SubVision::SubVision() {
     SubDrivebase::GetInstance().DisplayPose(fmt::format("tag{}", target.fiducialId),
                                             target.GetPose().ToPose2d());
   }
+
+  // Call this once just to get rid of the warnings that it is unused.
+  // Its a photonlib bug.
+  photon::VisionEstimation::EstimateCamPosePNP({}, {}, {}, {}, photon::TargetModel{1_m});
 }
 
 void SubVision::Periodic() {}
