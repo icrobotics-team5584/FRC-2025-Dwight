@@ -32,27 +32,24 @@ class SubVision : public frc2::SubsystemBase {
  private:
   bool CheckVaild(std::optional<photon::EstimatedRobotPose> pose);
 
-  std::string camName = "photonvision_5584";//"arducam";
-  photon::PhotonCamera camera{camName};
+  std::string _cameraName = "photonvision_5584";//"arducam";
+  photon::PhotonCamera _camera{_cameraName};
+  photon::PhotonCameraSim _cameraSim{&_camera};
 
-  frc::Transform3d camToBot{{0_mm, -200_mm, -150_mm}, {}};//{0_deg,0_deg,180_deg}};
+  frc::Transform3d _camToBot{{0_mm, -200_mm, -150_mm}, {}};//{0_deg,0_deg,180_deg}};
 
-  frc::AprilTagFieldLayout tagLayout = frc::AprilTagFieldLayout::LoadField(frc::AprilTagField::k2024Crescendo);
-
-  std::map<int, frc::Pose3d> tagPose {
-    
-  };
+  frc::AprilTagFieldLayout tagLayout = frc::AprilTagFieldLayout::LoadField(frc::AprilTagField::kDefaultField);
 
   std::map<FieldElement, int> blueFieldElement = {
       {SPEAKER, 7}, {SPEAKER_SIDE, 8}, {AMP, 6}, {SOURCE_LEFT, 2}, {SOURCE_RIGHT, 1}};
   std::map<FieldElement, int> redFieldElement = {
       {SPEAKER, 4}, {SPEAKER_SIDE, 3}, {AMP, 5}, {SOURCE_LEFT, 10}, {SOURCE_RIGHT, 9}};
 
-  photon::VisionSystemSim visionSim{camName};
+  photon::VisionSystemSim _visionSim{_cameraName};
 
   photon::PhotonPoseEstimator robotPoseEstimater{
       tagLayout,
       photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
-      camToBot.Inverse()
+      _camToBot.Inverse()
   };
 };

@@ -11,25 +11,27 @@
 SubVision::SubVision() {
     //cameraToRobotTransform
     SetDefaultCommand(CmdUpdatePoseEstimator());
-    visionSim.AddAprilTags(tagLayout);
-    for (auto target : visionSim.GetVisionTargets()) {
+    _visionSim.AddAprilTags(tagLayout);
+    _visionSim.AddCamera(&_cameraSim, _camToBot.Inverse());
+    for (auto target : _visionSim.GetVisionTargets()) {
         SubDrivebase::GetInstance().DisplayPose(fmt::format("tag{}", target.fiducialId), target.GetPose().ToPose2d());
     }
 }
 
 // This method will be called once per scheduler run
 void SubVision::Periodic() {
-  // UpdatePoseEstimator();
-  
+  UpdatePoseEstimator();
 }
 
 void SubVision::SimulationPeriodic() {
-    visionSim.Update(SubDrivebase::GetInstance().GetPose());
+    _visionSim.Update(SubDrivebase::GetInstance().GetPose());
 }
 
 void SubVision::UpdatePoseEstimator() {
-  auto results = camera.GetAllUnreadResults();
-  if (results.size() == 0) {return;}
+  auto results = _camera.GetAllUnreadResults();
+  auto resultCount = results.size();
+  frc::SmartDashboard::PutNumber("Vision/Reuslt count", resultCount);
+  if (resultCount == 0) {return;}
   std::optional<photon::EstimatedRobotPose> pose;
   for (auto result : results) {
     pose = robotPoseEstimater.Update(result);
@@ -39,7 +41,7 @@ void SubVision::UpdatePoseEstimator() {
   frc::SmartDashboard::PutNumber("Vision/Reference pose Z", robotPoseEstimater.GetReferencePose().Z().value());
   if (pose.has_value())
   {
-    if (CheckVaild(pose)) {
+    if (CheckVaild(pose) || frc::RobotBase::IsSimulation()) {
     SubDrivebase::GetInstance().AddVisionMeasurement(
         pose.value().estimatedPose.ToPose2d(),
         0,
