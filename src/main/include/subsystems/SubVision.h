@@ -6,6 +6,7 @@
 
 #include <frc2/command/SubsystemBase.h>
 #include <frc/geometry/Pose3d.h>
+#include <frc/geometry/Transform3d.h>
 #include <frc/apriltag/AprilTagFieldLayout.h>
 #include <frc/apriltag/AprilTagFields.h>
 #include <photon/PhotonCamera.h>
@@ -29,6 +30,11 @@ class SubVision : public frc2::SubsystemBase {
  */
   void UpdatePoseEstimator();
 
+  /**
+   *  Get transformation from camera to current target
+   */
+  frc::Transform3d GetCameraToTarget();
+
  private:
  /**
  * Check if the pose if good enough to be used as reference
@@ -41,7 +47,7 @@ class SubVision : public frc2::SubsystemBase {
   photon::PhotonCamera _camera{_cameraName};
   photon::PhotonCameraSim _cameraSim{&_camera}; // For simulation
 
-  frc::Transform3d _camToBot{{0_mm, -200_mm, -150_mm}, {}};
+  frc::Transform3d _camToBot{{0_mm, 0_mm, -150_mm}, {}};
 
   frc::AprilTagFieldLayout _tagLayout = frc::AprilTagFieldLayout::LoadField(frc::AprilTagField::kDefaultField);
 
@@ -52,4 +58,5 @@ class SubVision : public frc2::SubsystemBase {
       photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
       _camToBot.Inverse()
   };
+  photon::PhotonPipelineResult _latestResult;
 };

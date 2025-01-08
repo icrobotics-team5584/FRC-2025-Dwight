@@ -5,6 +5,7 @@
 #include "RobotContainer.h"
 #include "subsystems/SubDrivebase.h"
 #include "subsystems/SubVision.h"
+#include "commands/VisionCommand.h"
 #include <frc2/command/Commands.h>
 
 RobotContainer::RobotContainer() {
@@ -19,7 +20,9 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ConfigureBindings() {
-  _driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd());
+  // _driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd());
+  _driverController.X().WhileTrue(cmd::YAlignWithTarget(0.165_m));
+  _driverController.Y().WhileTrue(cmd::YAlignWithTarget(-0.165_m));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

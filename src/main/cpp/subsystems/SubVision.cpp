@@ -7,6 +7,7 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/DriverStation.h>
 #include <frc/RobotBase.h>
+#include <photon/estimation/CameraTargetRelation.h>
 
 SubVision::SubVision() {
   SetDefaultCommand(Run([this] { UpdatePoseEstimator(); })); // Always keep vision on
@@ -18,9 +19,17 @@ SubVision::SubVision() {
     SubDrivebase::GetInstance().DisplayPose(fmt::format("tag{}", target.fiducialId),
                                             target.GetPose().ToPose2d());
   }
+
+  // Call this once just to get rid of the warnings that it is unused.
+  // Its a photonlib bug.
+  photon::VisionEstimation::EstimateCamPosePNP({}, {}, {}, {}, photon::TargetModel{1_m});
 }
 
-void SubVision::Periodic() {}
+void SubVision::Periodic() {
+  frc::SmartDashboard::PutNumber("Vision/CamTotar X", GetCameraToTarget().X().value());
+  frc::SmartDashboard::PutNumber("Vision/CamToTar Y", GetCameraToTarget().Y().value());
+  frc::SmartDashboard::PutNumber("Vision/CamToTar Z", GetCameraToTarget().Z().value());
+}
 
 void SubVision::SimulationPeriodic() {
   _visionSim.Update(SubDrivebase::GetInstance().GetPose());
@@ -33,6 +42,7 @@ void SubVision::UpdatePoseEstimator() {
   if (resultCount == 0) {
     return; // Return if no result, prevent null error later
   }
+  _latestResult = results.back();
   std::optional<photon::EstimatedRobotPose> pose;
   for (auto result : results) {
     pose = _robotPoseEstimater.Update(result); // Get estimate pose of robot by vision
@@ -50,6 +60,10 @@ void SubVision::UpdatePoseEstimator() {
                                      pose.value().estimatedPose.ToPose2d().Y().value());
     }
   }
+}
+
+frc::Transform3d SubVision::GetCameraToTarget() {
+  return _latestResult.GetBestTarget().bestCameraToTarget;
 }
 
 bool SubVision::CheckVaild(std::optional<photon::EstimatedRobotPose> pose) {
