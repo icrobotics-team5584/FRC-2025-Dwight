@@ -28,8 +28,12 @@ void SubVision::SimulationPeriodic() {
 }
 
 void SubVision::UpdatePoseEstimator() {
-  auto result = camera.GetLatestResult();
-  auto pose = robotPoseEstimater.Update(result);
+  auto results = camera.GetAllUnreadResults();
+  if (results.size() == 0) {return;}
+  std::optional<photon::EstimatedRobotPose> pose;
+  for (auto result : results) {
+    pose = robotPoseEstimater.Update(result);
+  }
   frc::SmartDashboard::PutNumber("Vision/Reference pose X", robotPoseEstimater.GetReferencePose().X().value());
   frc::SmartDashboard::PutNumber("Vision/Reference pose Y", robotPoseEstimater.GetReferencePose().Y().value());
   frc::SmartDashboard::PutNumber("Vision/Reference pose Z", robotPoseEstimater.GetReferencePose().Z().value());

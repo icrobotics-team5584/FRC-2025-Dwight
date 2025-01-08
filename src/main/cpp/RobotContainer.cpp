@@ -8,7 +8,7 @@
 #include <frc2/command/Commands.h>
 
 RobotContainer::RobotContainer() {
-  SubDrivebase::GetInstance();
+  SubDrivebase::GetInstance().SetDefaultCommand(SubDrivebase::GetInstance().JoystickDrive(_driverController));
   SubVision::GetInstance();
   ConfigureBindings();
 }
