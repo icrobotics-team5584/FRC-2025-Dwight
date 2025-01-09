@@ -5,6 +5,7 @@
 #include "subsystems/SubEndEffector.h"
 
 
+
 SubEndEffector::SubEndEffector() = default;
 
 // This method will be called once per scheduler run
@@ -50,4 +51,8 @@ bool SubEndEffector::LineBreakDownSignal() {
         PrevState = State;
         return false;
     }
+}
+
+frc2::Trigger SubEndEffector::CheckLineBreakTrigger() {
+    return frc2::Trigger {[this] {return CheckLineBreak();}};
 }

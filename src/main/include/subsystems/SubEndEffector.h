@@ -10,6 +10,7 @@
 #include <frc2/command/Commands.h>
 #include "Constants.h"
 #include <frc/DigitalInput.h>
+#include <frc2/command/button/Trigger.h>
 
 class SubEndEffector : public frc2::SubsystemBase {
  public:
@@ -26,6 +27,7 @@ class SubEndEffector : public frc2::SubsystemBase {
   frc2::CommandPtr StopMotor();
   bool CheckLineBreak();
   bool LineBreakDownSignal();
+  frc2::Trigger CheckLineBreakTrigger();
 
 
   /**
