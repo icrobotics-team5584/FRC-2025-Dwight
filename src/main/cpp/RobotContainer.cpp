@@ -6,6 +6,8 @@
 #include "subsystems/SubDrivebase.h"
 #include "subsystems/SubVision.h"
 #include <frc2/command/Commands.h>
+// auto includes
+#include <pathplanner/lib/commands/PathPlannerAuto.h>
 
 RobotContainer::RobotContainer() {
   SubDrivebase::GetInstance().SetDefaultCommand(SubDrivebase::GetInstance().JoystickDrive(_driverController));
@@ -23,5 +25,5 @@ void RobotContainer::ConfigureBindings() {
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-  return frc2::cmd::Print("No autonomous command configured");
+  return pathplanner::PathPlannerAuto("test auto").ToPtr();
 }
