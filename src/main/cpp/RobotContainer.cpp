@@ -6,13 +6,8 @@
 #include "subsystems/SubDrivebase.h"
 #include "subsystems/SubVision.h"
 #include <frc2/command/Commands.h>
-<<<<<<< HEAD
 #include <frc/smartdashboard/SmartDashboard.h>
-=======
-#include "subsystems/SubIntake.h"
 #include "subsystems/SubEndEffector.h"
-#include "commands/CoralCommands.h"
->>>>>>> Intake
 
 RobotContainer::RobotContainer() {
   SubDrivebase::GetInstance().SetDefaultCommand(SubDrivebase::GetInstance().JoystickDrive(_driverController));
@@ -27,18 +22,10 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ConfigureBindings() {
-<<<<<<< HEAD
   _driverController.A().WhileTrue(ControllerRumbleRight(_driverController));
   _driverController.A().WhileTrue(ControllerRumbleLeft(_driverController));
-=======
-  SubIntake& intake = SubIntake::GetInstance();
-
-  _controller.A().WhileTrue(cmd::IntakeFullSequence());
-  _controller.A().OnFalse(SubEndEffector::GetInstance().StopMotor().AlongWith(intake.Stow()));
-  _controller.B().WhileTrue(intake.Outtake());
-  _controller.X().WhileTrue(intake.Deploy());
-  _controller.Y().WhileTrue(intake.Stow());
->>>>>>> Intake
+  SubEndEffector::GetInstance().CheckLineBreakTrigger().WhileTrue(ControllerRumbleRight(_driverController));
+  SubEndEffector::GetInstance().CheckLineBreakTrigger().WhileTrue(ControllerRumbleLeft(_driverController));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
