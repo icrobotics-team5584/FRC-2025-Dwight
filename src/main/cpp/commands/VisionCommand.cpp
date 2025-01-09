@@ -10,15 +10,15 @@
 namespace cmd {
 using namespace frc2::cmd;
 frc2::CommandPtr YAlignWithTarget(units::meter_t offset) {
-  return SubDrivebase::GetInstance()
-      .Drive(
-          [offset]() {
-            return frc::ChassisSpeeds(
-                0_mps,
-                (SubVision::GetInstance().GetCameraToTarget().Y() - offset > 0_m) ? 0.5_mps : -0.5_mps,
-                0_tps);
-          },
-          false)
-          .Until([offset]() { return abs((SubVision::GetInstance().GetCameraToTarget().X() - offset).value()) < 0.03;});
+  return Run([offset] {
+    frc::Pose2d tagPose = SubVision::GetInstance().GetBestTarget();
+    frc::Translation2d robotPose = SubDrivebase::GetInstance().GetPose().Translation();
+    frc::Translation2d relatedRobotTranslation = robotPose - tagPose.Translation();
+    frc::Translation2d netRobotTrans = relatedRobotTranslation.RotateBy(-tagPose.Rotation());
+    frc::Translation2d adjRelatedBotTrans = frc::Translation2d(netRobotTrans.X(),offset).RotateBy(tagPose.Rotation());
+
+    frc::Pose2d targetPose = frc::Pose2d(adjRelatedBotTrans + tagPose.Translation(), tagPose.Rotation() - 180_deg);
+    SubDrivebase::GetInstance().DriveToPose(targetPose);
+  });
 }
 }  // namespace cmd

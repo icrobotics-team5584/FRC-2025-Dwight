@@ -11,6 +11,7 @@
 
 SubVision::SubVision() {
   SetDefaultCommand(Run([this] { UpdatePoseEstimator(); })); // Always keep vision on
+
   _visionSim.AddAprilTags(_tagLayout); // Configure vision sim
   _visionSim.AddCamera(&_cameraSim, _camToBot.Inverse());
 
@@ -68,6 +69,11 @@ frc::Translation2d SubVision::GetCameraToTarget() {
   frc::Pose2d robotPose = SubDrivebase::GetInstance().GetPose();
   frc::Pose2d relativePose = robotPose.RelativeTo(targetPose);
   return relativePose.Translation();
+}
+
+frc::Pose2d SubVision::GetBestTarget() {
+ if (_latestTarget == photon::PhotonTrackedTarget()) {return frc::Pose2d(0_m,0_m,0_deg);}
+ return _tagLayout.GetTagPose(_latestTarget.fiducialId).value().ToPose2d();
 }
 
 bool SubVision::CheckVaild(std::optional<photon::EstimatedRobotPose> pose) {

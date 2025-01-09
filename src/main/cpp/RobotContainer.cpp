@@ -22,6 +22,7 @@ void RobotContainer::ConfigureBindings() {
   // _driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd());
   _driverController.X().WhileTrue(cmd::YAlignWithTarget(0.165_m));
   _driverController.Y().WhileTrue(cmd::YAlignWithTarget(-0.165_m));
+  _driverController.A().WhileTrue(frc2::cmd::Run([]{SubDrivebase::GetInstance().DriveToPose(frc::Pose2d(frc::Translation2d(0_m,0_m),frc::Rotation2d(0_deg)));}));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

@@ -35,6 +35,8 @@ class SubVision : public frc2::SubsystemBase {
    */
   frc::Translation2d GetCameraToTarget();
 
+  frc::Pose2d GetBestTarget();
+
  private:
  /**
  * Check if the pose if good enough to be used as reference
