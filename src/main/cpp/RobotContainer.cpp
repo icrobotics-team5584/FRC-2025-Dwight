@@ -20,9 +20,9 @@ RobotContainer::RobotContainer() {
   ConfigureBindings();
 
   // AutoChooser options
-  _autoChooser.AddOption("Default-Left", "placeholder-DL");  
+  _autoChooser.AddOption("Default-Left", "Default-Left");  
   _autoChooser.AddOption("Default-Middle", "placeholder-DM");
-  _autoChooser.AddOption("Default-Right", "placeholder-DR");
+  _autoChooser.AddOption("Default-Right", "Default-Right");
   _autoChooser.AddOption("TeammateHelper-Left", "placeholder-THL");
   _autoChooser.AddOption("TeammateHelper-Right", "placeholder-THR");
   frc::SmartDashboard::PutData("Chosen Auton", &_autoChooser);   
