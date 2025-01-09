@@ -6,6 +6,8 @@
 #include "subsystems/SubDrivebase.h"
 #include "subsystems/SubVision.h"
 #include <frc2/command/Commands.h>
+// auto includes
+#include <pathplanner/lib/commands/PathPlannerAuto.h>
 
 RobotContainer::RobotContainer() {
   SubDrivebase::GetInstance().SetDefaultCommand(SubDrivebase::GetInstance().JoystickDrive(_driverController));
@@ -16,12 +18,25 @@ RobotContainer::RobotContainer() {
   
   // Trigger Bindings
   ConfigureBindings();
+
+  // AutoChooser options
+  _autoChooser.AddOption("Default-Left", "placeholder-DL");  
+  _autoChooser.AddOption("Default-Middle", "placeholder-DM");
+  _autoChooser.AddOption("Default-Right", "placeholder-DR");
+  _autoChooser.AddOption("TeammateHelper-Left", "placeholder-THL");
+  _autoChooser.AddOption("TeammateHelper-Right", "placeholder-THR");
+  frc::SmartDashboard::PutData("Chosen Auton", &_autoChooser);   
 }
 
 void RobotContainer::ConfigureBindings() {
-  _driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd());
+  _tuningController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-  return frc2::cmd::Print("No autonomous command configured");
+  //return pathplanner::PathPlannerAuto("test auto").ToPtr();
+  auto _autoSelected = _autoChooser.GetSelected();
+  units::second_t delay = 0.00_s;
+  
+  return frc2::cmd::Wait(delay)
+    .AndThen(pathplanner::PathPlannerAuto(_autoSelected).ToPtr());
 }

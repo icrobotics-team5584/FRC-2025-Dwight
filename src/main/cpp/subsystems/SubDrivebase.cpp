@@ -345,9 +345,10 @@ frc2::CommandPtr SubDrivebase::WheelCharecterisationCmd() {
            BLinitialWheelDistance = _backLeft.GetDrivenRotations(); 
 
          })
-      .AndThen(Drive([] { return frc::ChassisSpeeds{0_mps, 0_mps, 15_deg_per_s}; }, false))
+      .AndThen(Drive([] { return frc::ChassisSpeeds{0_mps, 0_mps, -15_deg_per_s}; }, false))
       .AlongWith(frc2::cmd::Run([this] {
-        units::radian_t curGyroAngle = GetHeading().Radians();
+        //units::radian_t curGyroAngle = GetHeading().Radians(); using GetGyroAngle() instead
+        units::radian_t curGyroAngle = GetGyroAngle().Radians();
         gyroAccumulator = gyroAccumulator + frc::AngleModulus((prevGyroAngle - curGyroAngle));
         prevGyroAngle = curGyroAngle;
         frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/GyroAccum", gyroAccumulator.value());
