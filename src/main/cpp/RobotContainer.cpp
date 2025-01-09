@@ -25,6 +25,10 @@ RobotContainer::RobotContainer() {
   _autoChooser.AddOption("Default-Right", "Default-Right");
   _autoChooser.AddOption("TeammateHelper-Left", "placeholder-THL");
   _autoChooser.AddOption("TeammateHelper-Right", "placeholder-THR");
+  _autoChooser.AddOption("L-Shape", "L-Shape");
+  _autoChooser.AddOption("L-Shape-Slow", "L-Shape-Slow");
+  _autoChooser.AddOption("L-Shape-Spinning", "L-Shape-Spinning");
+  _autoChooser.AddOption("L-Shape-Spinning-Slow", "L-Shape-Spinning-Slow");
   frc::SmartDashboard::PutData("Chosen Auton", &_autoChooser);   
 }
 
