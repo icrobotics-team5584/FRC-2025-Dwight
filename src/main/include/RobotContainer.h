@@ -5,6 +5,7 @@
 #pragma once
 
 #include <frc2/command/CommandPtr.h>
+#include <frc2/command/Commands.h>
 #include <frc2/command/button/CommandXboxController.h>
 
 class RobotContainer {
@@ -12,6 +13,8 @@ class RobotContainer {
   RobotContainer();
   frc2::CommandXboxController _driverController{0};
   frc2::CommandPtr GetAutonomousCommand();
+  frc2::CommandPtr ControllerRumbleLeft(frc2::CommandXboxController& controller);
+  frc2::CommandPtr ControllerRumbleRight(frc2::CommandXboxController& controller);
 
  private:
   void ConfigureBindings();
