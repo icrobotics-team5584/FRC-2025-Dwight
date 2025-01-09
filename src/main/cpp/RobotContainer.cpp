@@ -25,11 +25,11 @@ RobotContainer::RobotContainer() {
   _autoChooser.AddOption("Default-Right", "placeholder-DR");
   _autoChooser.AddOption("TeammateHelper-Left", "placeholder-THL");
   _autoChooser.AddOption("TeammateHelper-Right", "placeholder-THR");
-  frc::SmartDashboard::PutData("Chosen Auton", &_autoChooser);  
+  frc::SmartDashboard::PutData("Chosen Auton", &_autoChooser);   
 }
 
 void RobotContainer::ConfigureBindings() {
-  _driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd());
+  _tuningController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
