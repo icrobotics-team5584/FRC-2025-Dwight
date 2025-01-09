@@ -11,7 +11,6 @@
 
 SubVision::SubVision() {
   SetDefaultCommand(Run([this] { UpdatePoseEstimator(); })); // Always keep vision on
-
   _visionSim.AddAprilTags(_tagLayout); // Configure vision sim
   _visionSim.AddCamera(&_cameraSim, _camToBot.Inverse());
 
@@ -26,9 +25,8 @@ SubVision::SubVision() {
 }
 
 void SubVision::Periodic() {
-  frc::SmartDashboard::PutNumber("Vision/CamTotar X", GetCameraToTarget().X().value());
-  frc::SmartDashboard::PutNumber("Vision/CamToTar Y", GetCameraToTarget().Y().value());
-  frc::SmartDashboard::PutNumber("Vision/CamToTar Z", GetCameraToTarget().Z().value());
+  frc::SmartDashboard::PutNumber("Vision/Cam to target x", GetCameraToTarget().X().value());
+  frc::SmartDashboard::PutNumber("Vision/Cam to target y", GetCameraToTarget().Y().value());
 }
 
 void SubVision::SimulationPeriodic() {
@@ -42,10 +40,12 @@ void SubVision::UpdatePoseEstimator() {
   if (resultCount == 0) {
     return; // Return if no result, prevent null error later
   }
-  _latestResult = results.back();
   std::optional<photon::EstimatedRobotPose> pose;
   for (auto result : results) {
-    pose = _robotPoseEstimater.Update(result); // Get estimate pose of robot by vision
+      pose = _robotPoseEstimater.Update(result); // Get estimate pose of robot by vision
+      if (result.HasTargets()) {
+        _latestTarget = result.GetBestTarget();
+      }
   }
   frc::SmartDashboard::PutBoolean("Vision/Has value", pose.has_value());
   if (pose.has_value()) {// Check if pose is vaild
@@ -62,8 +62,12 @@ void SubVision::UpdatePoseEstimator() {
   }
 }
 
-frc::Transform3d SubVision::GetCameraToTarget() {
-  return _latestResult.GetBestTarget().bestCameraToTarget;
+frc::Translation2d SubVision::GetCameraToTarget() {
+  if (_latestTarget == photon::PhotonTrackedTarget()) {return frc::Translation2d(0_m,0_m);}
+  frc::Pose2d targetPose = _tagLayout.GetTagPose(_latestTarget.fiducialId).value().ToPose2d();
+  frc::Pose2d robotPose = SubDrivebase::GetInstance().GetPose();
+  frc::Pose2d relativePose = robotPose.RelativeTo(targetPose);
+  return relativePose.Translation();
 }
 
 bool SubVision::CheckVaild(std::optional<photon::EstimatedRobotPose> pose) {

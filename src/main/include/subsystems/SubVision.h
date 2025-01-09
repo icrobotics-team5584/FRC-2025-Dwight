@@ -33,7 +33,7 @@ class SubVision : public frc2::SubsystemBase {
   /**
    *  Get transformation from camera to current target
    */
-  frc::Transform3d GetCameraToTarget();
+  frc::Translation2d GetCameraToTarget();
 
  private:
  /**
@@ -58,5 +58,6 @@ class SubVision : public frc2::SubsystemBase {
       photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
       _camToBot.Inverse()
   };
-  photon::PhotonPipelineResult _latestResult;
+
+  photon::PhotonTrackedTarget _latestTarget = photon::PhotonTrackedTarget();
 };

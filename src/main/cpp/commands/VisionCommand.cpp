@@ -15,10 +15,10 @@ frc2::CommandPtr YAlignWithTarget(units::meter_t offset) {
           [offset]() {
             return frc::ChassisSpeeds(
                 0_mps,
-                0.01_mps * pow((SubVision::GetInstance().GetCameraToTarget().Y() - offset).value(),5),
+                (SubVision::GetInstance().GetCameraToTarget().Y() - offset > 0_m) ? 0.5_mps : -0.5_mps,
                 0_tps);
           },
           false)
-      .Until([offset] { return SubVision::GetInstance().GetCameraToTarget().Y() - offset < 0.02_m && SubVision::GetInstance().GetCameraToTarget().Y() - offset > -0.02_m; });
+          .Until([offset]() { return abs((SubVision::GetInstance().GetCameraToTarget().X() - offset).value()) < 0.03;});
 }
 }  // namespace cmd
