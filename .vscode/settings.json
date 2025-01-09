@@ -22,6 +22,9 @@
     "ranges": "cpp",
     "functional": "cpp",
     "type_traits": "cpp",
-    "utility": "cpp"
+    "utility": "cpp",
+    "chrono": "cpp",
+    "system_error": "cpp",
+    "expected": "cpp"
   }
 }

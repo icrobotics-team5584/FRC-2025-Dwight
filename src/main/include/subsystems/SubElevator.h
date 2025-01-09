@@ -9,6 +9,7 @@
 #include "utilities/ICSparkMax.h"
 #include "utilities/ICSparkEncoder.h"
 #include <frc/simulation/ElevatorSim.h>
+#include <units/constants.h>
 
 class SubElevator : public frc2::SubsystemBase {
  public:
@@ -26,7 +27,9 @@ class SubElevator : public frc2::SubsystemBase {
   frc2::CommandPtr CmdSetL4();
   frc2::CommandPtr CmdSetSource();
 
+  frc2::CommandPtr CmdElevatorToPosition(units::meter_t height);
   units::turn_t RotationsFromHeight(units::meter_t height);
+  units::turns_per_second_t RotationsFromMetersPerSecond(units::meters_per_second_t meterspersec);
 
   void Periodic() override;
   void SimulationPeriodic() override;
@@ -36,17 +39,26 @@ class SubElevator : public frc2::SubsystemBase {
   ctre::phoenix6::hardware::TalonFX _ElevatorMotor1 {13};
   ctre::phoenix6::hardware::TalonFX _ElevatorMotor2 {14};
 
-  static constexpr double _P = 0;
+  static constexpr double _P = 134.04;
   static constexpr double _I = 0;
   static constexpr double _D = 0;
   static constexpr double _V = 0;
-  static constexpr double _GEAR_RATIO = 20;
+  static constexpr double _G = 8.6704096794128409086;
+  static constexpr double _GEAR_RATIO = 14;
   static constexpr units::meter_t _DRUM_RADIUS = 4_cm;
+  static constexpr units::meter_t _DRUM_CIRCUMFERENCE = _DRUM_RADIUS * 2 * units::constants::pi;
   static constexpr units::meter_t _MAX_HEIGHT = 2_m;
-  static constexpr units::meter_t _MIN_HEIGHT = 0.5_m;
-  static constexpr units::meter_t _START_HEIGHT = 0.4_m;
+  static constexpr units::meter_t _MIN_HEIGHT = 0_m;
+  static constexpr units::meter_t _START_HEIGHT = 0_m;
   static constexpr units::kilogram_t _CARRIAGE_MASS = 6_kg;
-
+  static constexpr units::meter_t _L1_HEIGHT = 0.51_m;
+  static constexpr units::meter_t _L2_HEIGHT = 0.86_m;
+  static constexpr units::meter_t _L3_HEIGHT = 1.26_m;
+  static constexpr units::meter_t _L4_HEIGHT = 1.88_m;
+  static constexpr units::meter_t _SOURCE_HEIGHT = 0.93_m;
+  static constexpr units::meters_per_second_t _CRUISE_VELOCITY = 0.82_mps; //0.82; //Adjust
+  static constexpr units::meters_per_second_squared_t  _ACCELERATION = 1_mps_sq; //Adjust
+  
 
 
 
