@@ -5,11 +5,8 @@
 #include "Robot.h"
 
 #include <frc2/command/CommandScheduler.h>
-#include <cameraserver/CameraServer.h>
 
-Robot::Robot() {
-  frc::CameraServer::StartAutomaticCapture();
-}
+Robot::Robot() {}
 
 void Robot::RobotPeriodic() {
   frc2::CommandScheduler::GetInstance().Run();

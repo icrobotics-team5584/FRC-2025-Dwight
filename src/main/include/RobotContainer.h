@@ -7,6 +7,8 @@
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/button/CommandXboxController.h>
 
+#include <cameraserver/CameraServer.h>
+
 class RobotContainer {
  public:
   RobotContainer();
@@ -15,4 +17,6 @@ class RobotContainer {
 
  private:
   void ConfigureBindings();
+
+  cs::UsbCamera _cameraStream; //Camera object
 };

@@ -8,7 +8,6 @@
 #include <frc2/command/Commands.h>
 
 RobotContainer::RobotContainer() {
-  SubDrivebase::GetInstance().SetDefaultCommand(SubDrivebase::GetInstance().JoystickDrive(_driverController));
   SubVision::GetInstance();
 
   // Default Commands
@@ -16,10 +15,17 @@ RobotContainer::RobotContainer() {
   
   // Trigger Bindings
   ConfigureBindings();
+
+  _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise camera object
 }
 
 void RobotContainer::ConfigureBindings() {
-  _driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd());
+  _driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
+  
+  _driverController.B().ToggleOnTrue(frc2::cmd::StartEnd(
+    [this] { _cameraStream.SetPath("/dev/video1"); }, //Toggle to second camera (climb cam)
+    [this] { _cameraStream.SetPath("/dev/video0"); } //Toggle to first camera (drive cam)
+  ));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
