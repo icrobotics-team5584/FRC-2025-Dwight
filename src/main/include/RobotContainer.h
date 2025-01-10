@@ -16,6 +16,7 @@ class RobotContainer {
   frc2::CommandPtr GetAutonomousCommand();
 
  private:
+  frc2::CommandXboxController _controller{0};
   void ConfigureBindings();
 
   cs::UsbCamera _cameraStream; //Camera object

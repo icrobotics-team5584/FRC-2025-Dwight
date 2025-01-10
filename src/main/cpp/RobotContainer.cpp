@@ -6,6 +6,9 @@
 #include "subsystems/SubDrivebase.h"
 #include "subsystems/SubVision.h"
 #include <frc2/command/Commands.h>
+#include "subsystems/SubIntake.h"
+#include "subsystems/SubEndEffector.h"
+#include "commands/CoralCommands.h"
 
 RobotContainer::RobotContainer() {
   SubVision::GetInstance();
