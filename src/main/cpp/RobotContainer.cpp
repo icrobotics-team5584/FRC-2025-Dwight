@@ -34,6 +34,7 @@ RobotContainer::RobotContainer() {
 
 void RobotContainer::ConfigureBindings() {
   _tuningController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd());
+  _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
