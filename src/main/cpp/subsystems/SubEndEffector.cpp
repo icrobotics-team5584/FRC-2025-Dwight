@@ -41,6 +41,10 @@ bool SubEndEffector::CheckLineBreak() {
     }
 }
 
+frc2::Trigger SubEndEffector::CheckLineBreakTrigger() {
+    return frc2::Trigger {[this] {return CheckLineBreak();}};
+}
+
 bool SubEndEffector::LineBreakDownSignal() {
     static bool PrevState = false;
     bool State = _endEffectorLineBreak.Get();

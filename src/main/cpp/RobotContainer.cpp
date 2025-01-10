@@ -6,9 +6,8 @@
 #include "subsystems/SubDrivebase.h"
 #include "subsystems/SubVision.h"
 #include <frc2/command/Commands.h>
-#include "subsystems/SubIntake.h"
+#include <frc/smartdashboard/SmartDashboard.h>
 #include "subsystems/SubEndEffector.h"
-#include "commands/CoralCommands.h"
 
 RobotContainer::RobotContainer() {
   SubVision::GetInstance();
@@ -31,6 +30,28 @@ void RobotContainer::ConfigureBindings() {
   ));
 }
 
+void RobotContainer::ConfigureBindings() {
+  _driverController.A().WhileTrue(ControllerRumbleRight(_driverController));
+  _driverController.A().WhileTrue(ControllerRumbleLeft(_driverController));
+  SubEndEffector::GetInstance().CheckLineBreakTrigger().OnTrue(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
+  SubEndEffector::GetInstance().CheckLineBreakTrigger().OnTrue(ControllerRumbleLeft(_driverController).WithTimeout(0.1_s));
+}
+
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   return frc2::cmd::Print("No autonomous command configured");
 }
+
+// controller rumble function
+frc2::CommandPtr RobotContainer::ControllerRumbleLeft(frc2::CommandXboxController& controller) {
+  return frc2::cmd::StartEnd(
+      [this, &controller] { controller.SetRumble(frc::XboxController::RumbleType::kRightRumble, 1.0); },
+      [this, &controller] { controller.SetRumble(frc::XboxController::RumbleType::kRightRumble, 0); });
+}
+
+frc2::CommandPtr RobotContainer::ControllerRumbleRight(frc2::CommandXboxController& controller) {
+  return frc2::cmd::StartEnd(
+      [this, &controller] { controller.SetRumble(frc::XboxController::RumbleType::kLeftRumble, 1.0); },
+      [this, &controller] { controller.SetRumble(frc::XboxController::RumbleType::kLeftRumble, 0); });
+}
+
+

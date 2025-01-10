@@ -8,6 +8,7 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include "utilities/RobotLogs.h"
 
+
 SubIntake::SubIntake() {
     rev::spark::SparkBaseConfig intakeLeftConfig;
     intakeLeftConfig.Follow(_intakeRightMotor.GetDeviceId(), true);
