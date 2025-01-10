@@ -19,6 +19,10 @@ SubIntake::SubIntake() {
     _configIntakePivotMotor.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
     _configIntakePivotMotor.CurrentLimits.StatorCurrentLimitEnable = true;
     _configIntakePivotMotor.CurrentLimits.StatorCurrentLimit = 50_A;
+    _configIntakePivotMotor.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    _configIntakePivotMotor.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    _configIntakePivotMotor.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.25_tr;
+    _configIntakePivotMotor.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0_tr;
     _intakePivotMotor.GetConfigurator().Apply(_configIntakePivotMotor);
     frc::SmartDashboard::PutData("Intake/MechanismDisplay", &_singleJointedArmMech);
 }
@@ -51,7 +55,9 @@ frc2::CommandPtr SubIntake::Outtake() {
 }
 
 void SubIntake::SetDesiredAngle(units::degree_t angle){
-    _intakePivotMotor.SetControl(ctre::phoenix6::controls::PositionVoltage(angle).WithEnableFOC(false));
+    if( (angle >= IntakeMinAngle) && (angle <= IntakeMaxAngle) ) {
+        _intakePivotMotor.SetControl(ctre::phoenix6::controls::PositionVoltage(angle).WithEnableFOC(false));
+    } 
 }
 
 frc2::CommandPtr SubIntake::Deploy() {

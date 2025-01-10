@@ -31,6 +31,8 @@ class SubIntake : public frc2::SubsystemBase {
   frc2::CommandPtr DeployAndRetract();
   void SetDesiredAngle(units::degree_t angle);
 
+  const units::angle::degree_t IntakeMaxAngle = 90_deg;
+  const units::angle::degree_t IntakeMinAngle = 0_deg;
   const double P = 10;
   const double I = 0;
   const double D = 1;
