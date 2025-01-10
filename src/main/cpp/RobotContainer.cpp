@@ -10,7 +10,6 @@
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 
 RobotContainer::RobotContainer() {
-  SubDrivebase::GetInstance().SetDefaultCommand(SubDrivebase::GetInstance().JoystickDrive(_driverController));
   SubVision::GetInstance();
 
   // Default Commands
