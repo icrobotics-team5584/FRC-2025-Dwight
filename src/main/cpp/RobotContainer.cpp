@@ -24,8 +24,8 @@ RobotContainer::RobotContainer() {
 void RobotContainer::ConfigureBindings() {
   _driverController.A().WhileTrue(ControllerRumbleRight(_driverController));
   _driverController.A().WhileTrue(ControllerRumbleLeft(_driverController));
-  SubEndEffector::GetInstance().CheckLineBreakTrigger().WhileTrue(ControllerRumbleRight(_driverController));
-  SubEndEffector::GetInstance().CheckLineBreakTrigger().WhileTrue(ControllerRumbleLeft(_driverController));
+  SubEndEffector::GetInstance().CheckLineBreakTrigger().OnTrue(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
+  SubEndEffector::GetInstance().CheckLineBreakTrigger().OnTrue(ControllerRumbleLeft(_driverController).WithTimeout(0.1_s));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
