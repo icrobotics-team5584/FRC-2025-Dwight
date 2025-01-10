@@ -93,6 +93,16 @@ void SubDrivebase::SimulationPeriodic() {
   units::radian_t changeInRot = rotSpeed * 20_ms;
   units::degree_t newHeading = GetGyroAngle().RotateBy(changeInRot).Degrees();
   _gyro.SetAngleAdjustment(-newHeading.value());  // negative to switch to CW from CCW
+
+  auto fl = _frontLeft.GetPosition();
+  auto fr = _frontRight.GetPosition();
+  auto bl = _backLeft.GetPosition();
+  auto br = _backRight.GetPosition();
+
+  _simPoseEstimator.Update(GetGyroAngle(), {fl, fr, bl, br});
+  DisplayPose("Sim final pose v3 for real", _simPoseEstimator.GetEstimatedPosition());
+
+
 }
 
 void SubDrivebase::SetPathplannerRotationFeedbackSource(
@@ -149,6 +159,7 @@ frc2::CommandPtr SubDrivebase::Drive(std::function<frc::ChassisSpeeds()> speeds,
          })
       .FinallyDo([this] { Drive(0_mps, 0_mps, 0_deg_per_s, false); });
 }
+
 
 void SubDrivebase::DriveToPose(frc::Pose2d targetPose) {
   DisplayPose("targetPose", targetPose);
@@ -312,6 +323,9 @@ frc::Pose2d SubDrivebase::GetPose() {
   return _poseEstimator.GetEstimatedPosition();
 }
 
+frc::Pose2d SubDrivebase::GetSimPose() {
+  return _simPoseEstimator.GetEstimatedPosition();
+}
 void SubDrivebase::SetPose(frc::Pose2d pose) {
   auto fl = _frontLeft.GetPosition();
   auto fr = _frontRight.GetPosition();
@@ -335,7 +349,7 @@ void SubDrivebase::DisplayTrajectory(std::string name, frc::Trajectory trajector
 void SubDrivebase::AddVisionMeasurement(frc::Pose2d pose, double ambiguity,
                                         units::second_t timeStamp) {
   frc::SmartDashboard::PutNumber("Timestamp", timeStamp.value());
-  _poseEstimator.AddVisionMeasurement(pose, timeStamp);
+  _poseEstimator.AddVisionMeasurement(frc::Pose2d{pose.X(), pose.Y(), GetGyroAngle()}, timeStamp);
 }
 
 void SubDrivebase::SetNeutralMode(bool mode) {

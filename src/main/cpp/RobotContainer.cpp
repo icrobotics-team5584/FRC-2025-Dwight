@@ -7,22 +7,26 @@
 #include "subsystems/SubVision.h"
 #include "commands/VisionCommand.h"
 #include <frc2/command/Commands.h>
+#include "commands/DriveCommands.h"
 
 RobotContainer::RobotContainer() {
   SubVision::GetInstance();
 
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(SubDrivebase::GetInstance().JoystickDrive(_driverController));
-  
+  SubVision::GetInstance().SetDefaultCommand(cmd::AddVisionMeasurement());
+
   // Trigger Bindings
   ConfigureBindings();
 }
 
+
 void RobotContainer::ConfigureBindings() {
-  // _driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd());
-  _driverController.X().WhileTrue(cmd::YAlignWithTarget(0.165_m));
-  _driverController.Y().WhileTrue(cmd::YAlignWithTarget(-0.165_m));
-  _driverController.A().WhileTrue(frc2::cmd::Run([]{SubDrivebase::GetInstance().DriveToPose(frc::Pose2d(frc::Translation2d(0_m,0_m),frc::Rotation2d(0_deg)));}));
+  //_driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd());
+  _driverController.X().WhileTrue(cmd::YAlignWithTarget(0.165_m, _driverController));
+  _driverController.B().WhileTrue(cmd::YAlignWithTarget(-0.165_m, _driverController));
+  _driverController.A().WhileTrue(cmd::AlignToTarget(0.165_m));
+  _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

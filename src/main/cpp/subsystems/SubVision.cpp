@@ -10,7 +10,6 @@
 #include <photon/estimation/CameraTargetRelation.h>
 
 SubVision::SubVision() {
-  SetDefaultCommand(Run([this] { UpdatePoseEstimator(); })); // Always keep vision on
 
   _visionSim.AddAprilTags(_tagLayout); // Configure vision sim
   _visionSim.AddCamera(&_cameraSim, _camToBot.Inverse());
@@ -23,15 +22,17 @@ SubVision::SubVision() {
   // Call this once just to get rid of the warnings that it is unused.
   // Its a photonlib bug.
   photon::VisionEstimation::EstimateCamPosePNP({}, {}, {}, {}, photon::TargetModel{1_m});
+
 }
 
 void SubVision::Periodic() {
   frc::SmartDashboard::PutNumber("Vision/Cam to target x", GetCameraToTarget().X().value());
   frc::SmartDashboard::PutNumber("Vision/Cam to target y", GetCameraToTarget().Y().value());
+  UpdatePoseEstimator();
 }
 
 void SubVision::SimulationPeriodic() {
-  _visionSim.Update(SubDrivebase::GetInstance().GetPose());
+  _visionSim.Update(SubDrivebase::GetInstance().GetSimPose());
 }
 
 void SubVision::UpdatePoseEstimator() {
@@ -41,26 +42,21 @@ void SubVision::UpdatePoseEstimator() {
   if (resultCount == 0) {
     return; // Return if no result, prevent null error later
   }
-  std::optional<photon::EstimatedRobotPose> pose;
   for (auto result : results) {
-      pose = _robotPoseEstimater.Update(result); // Get estimate pose of robot by vision
+      _pose = _robotPoseEstimater.Update(result); // Get estimate pose of robot by vision
       if (result.HasTargets()) {
         _latestTarget = result.GetBestTarget();
+        frc::SmartDashboard::PutNumber("Vision/Target", _latestTarget.GetFiducialId());
       }
   }
-  frc::SmartDashboard::PutBoolean("Vision/Has value", pose.has_value());
-  if (pose.has_value()) {// Check if pose is vaild
-    if (CheckVaild(pose) || frc::RobotBase::IsSimulation()) { // Check if the pose is good and should be referenced
-      SubDrivebase::GetInstance().AddVisionMeasurement(pose.value().estimatedPose.ToPose2d(), 0,
-                                                       pose.value().timestamp);
-      SubDrivebase::GetInstance().DisplayPose("Estimated pose",
-                                              pose.value().estimatedPose.ToPose2d()); // Display pose to field visualization
-      frc::SmartDashboard::PutNumber("Vision/Estimated robot X",
-                                     pose.value().estimatedPose.ToPose2d().X().value()); // Display estimate value to dashboard
-      frc::SmartDashboard::PutNumber("Vision/Estimated robot Y",
-                                     pose.value().estimatedPose.ToPose2d().Y().value());
-    }
-  }
+  frc::SmartDashboard::PutBoolean("Vision/Has value", _pose.has_value());
+
+  
+}
+
+
+std::optional<photon::EstimatedRobotPose> SubVision::GetPose() {
+  return _pose;
 }
 
 frc::Translation2d SubVision::GetCameraToTarget() {
@@ -76,7 +72,8 @@ frc::Pose2d SubVision::GetBestTarget() {
  return _tagLayout.GetTagPose(_latestTarget.fiducialId).value().ToPose2d();
 }
 
-bool SubVision::CheckVaild(std::optional<photon::EstimatedRobotPose> pose) {
+
+bool SubVision::CheckValid(std::optional<photon::EstimatedRobotPose> pose) {
   const double minArea = 20;
   const double maxArea = 80;
   const double minAmbiguity = 0.2;

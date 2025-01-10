@@ -30,6 +30,8 @@ class SubVision : public frc2::SubsystemBase {
  */
   void UpdatePoseEstimator();
 
+  std::optional<photon::EstimatedRobotPose> GetPose();
+
   /**
    *  Get transformation from camera to current target
    */
@@ -43,15 +45,18 @@ class SubVision : public frc2::SubsystemBase {
  * 
  * @param pose Pose of the target
  */
-  bool CheckVaild(std::optional<photon::EstimatedRobotPose> pose);
+  bool CheckValid(std::optional<photon::EstimatedRobotPose> pose);
+
+  std::optional<photon::EstimatedRobotPose> _pose;
+
 
   std::string _cameraName = "photonvision_5584";
   photon::PhotonCamera _camera{_cameraName};
   photon::PhotonCameraSim _cameraSim{&_camera}; // For simulation
 
-  frc::Transform3d _camToBot{{0_mm, 0_mm, -150_mm}, {}};
-
-  frc::AprilTagFieldLayout _tagLayout = frc::AprilTagFieldLayout::LoadField(frc::AprilTagField::kDefaultField);
+  frc::Transform3d _camToBot{{0_mm, 0_mm, 0_mm}, {}};
+  std::string _tagLayoutPath = "src/main/deploy/2025-reefscape.json";
+  frc::AprilTagFieldLayout _tagLayout{_tagLayoutPath};
 
   photon::VisionSystemSim _visionSim{_cameraName};
 

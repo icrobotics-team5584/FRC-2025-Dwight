@@ -48,6 +48,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   units::turns_per_second_t CalcRotateSpeed(units::turn_t rotationError);
   units::degree_t GetPitch();
   frc::Pose2d GetPose();
+  frc::Pose2d GetSimPose();
   frc::Rotation2d GetHeading(); // Heading as recorded by the pose estimator (matches field orientation)
   frc::Rotation2d GetGyroAngle(); // Heading as recorded by the gyro (zero is direction when switched on)
   units::meters_per_second_t GetVelocity();
@@ -124,7 +125,18 @@ class SubDrivebase : public frc2::SubsystemBase {
        frc::SwerveModulePosition{0_m, _backLeft.GetAngle()},
        frc::SwerveModulePosition{0_m, _backRight.GetAngle()}},
       frc::Pose2d()};
+
   frc::Field2d _fieldDisplay;
+
+  // Sim pose estimation
+  frc::SwerveDrivePoseEstimator<4> _simPoseEstimator{
+      _kinematics,
+      _gyro.GetRotation2d(),
+      {frc::SwerveModulePosition{0_m, _frontLeft.GetAngle()},
+       frc::SwerveModulePosition{0_m, _frontRight.GetAngle()},
+       frc::SwerveModulePosition{0_m, _backLeft.GetAngle()},
+       frc::SwerveModulePosition{0_m, _backRight.GetAngle()}},
+      frc::Pose2d()};
 
   // Joystick controller rate limiters
   double _tunedMaxJoystickAccel = MAX_JOYSTICK_ACCEL;
