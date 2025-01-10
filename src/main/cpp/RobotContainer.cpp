@@ -8,6 +8,7 @@
 #include <frc2/command/Commands.h>
 // auto includes
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
+#include "subsystems/SubDrivebase.h"
 
 RobotContainer::RobotContainer() {
   SubVision::GetInstance();
@@ -28,12 +29,15 @@ RobotContainer::RobotContainer() {
   _autoChooser.AddOption("L-Shape-Slow", "L-Shape-Slow");
   _autoChooser.AddOption("L-Shape-Spinning", "L-Shape-Spinning");
   _autoChooser.AddOption("L-Shape-Spinning-Slow", "L-Shape-Spinning-Slow");
+  _autoChooser.AddOption("move", "move");
   frc::SmartDashboard::PutData("Chosen Auton", &_autoChooser);   
 }
 
 void RobotContainer::ConfigureBindings() {
-  _tuningController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd());
+  _driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd());
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
+  _driverController.X().WhileTrue(SubDrivebase::GetInstance().Drive([] {return frc::ChassisSpeeds(0.1_mps, 0_mps, 0_tps);} ,false));
+  _driverController.B().WhileTrue(SubDrivebase::GetInstance().Drive([] {return frc::ChassisSpeeds(-0.1_mps, 0_mps, 0_tps);} ,false));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

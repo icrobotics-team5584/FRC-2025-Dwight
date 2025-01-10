@@ -69,6 +69,22 @@ void SubDrivebase::Periodic() {
   Logger::Log("Drivebase/CANCoder Swerve States",
               wpi::array{_frontLeft.GetCANCoderState(), _frontRight.GetCANCoderState(),
                          _backLeft.GetCANCoderState(), _backRight.GetCANCoderState()});
+  units::turn_t flRotations = _frontLeft.GetDrivenRotations();
+  units::turn_t frRotations = _frontRight.GetDrivenRotations();
+  units::turn_t blRotations = _backLeft.GetDrivenRotations();
+  units::turn_t brRotations = _backRight.GetDrivenRotations();
+
+  Logger::Log("Drivebase/DistanceDrivenRotations/fl", flRotations);
+  Logger::Log("Drivebase/DistanceDrivenRotations/fr", frRotations);
+  Logger::Log("Drivebase/DistanceDrivenRotations/bl", blRotations);
+  Logger::Log("Drivebase/DistanceDrivenRotations/br", brRotations);
+
+  Logger::Log("Drivebase/DistanceDriven/fl", (flRotations)*(0.04121451348939883*2*std::numbers::pi));
+  Logger::Log("Drivebase/DistanceDriven/fr", (frRotations)*(0.04121451348939883*2*std::numbers::pi));
+  Logger::Log("Drivebase/DistanceDriven/bl", (blRotations)*(0.04121451348939883*2*std::numbers::pi));
+  Logger::Log("Drivebase/DistanceDriven/br", (brRotations)*(0.04121451348939883*2*std::numbers::pi));
+  // 0.04121451348939883
+  // 4.465m
 
   _frontLeft.SendSensorsToDash();
   _frontRight.SendSensorsToDash();

@@ -57,6 +57,3 @@ bool SubEndEffector::LineBreakDownSignal() {
     }
 }
 
-frc2::Trigger SubEndEffector::CheckLineBreakTrigger() {
-    return frc2::Trigger {[this] {return CheckLineBreak();}};
-}
