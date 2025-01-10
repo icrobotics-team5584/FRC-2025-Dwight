@@ -33,12 +33,7 @@ frc2::CommandPtr SubEndEffector::IntakeFromGround() {
 
 
 bool SubEndEffector::CheckLineBreak() {
-    if(_endEffectorLineBreak.Get()) {
-        return true;
-    }
-    else {
-        return false;
-    }
+    return _endEffectorLineBreak.Get();
 }
 
 frc2::Trigger SubEndEffector::CheckLineBreakTrigger() {
@@ -55,8 +50,4 @@ bool SubEndEffector::LineBreakDownSignal() {
         PrevState = State;
         return false;
     }
-}
-
-frc2::Trigger SubEndEffector::CheckLineBreakTrigger() {
-    return frc2::Trigger {[this] {return CheckLineBreak();}};
 }

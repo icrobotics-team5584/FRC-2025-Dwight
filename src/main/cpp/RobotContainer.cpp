@@ -28,11 +28,8 @@ void RobotContainer::ConfigureBindings() {
     [this] { _cameraStream.SetPath("/dev/video1"); }, //Toggle to second camera (climb cam)
     [this] { _cameraStream.SetPath("/dev/video0"); } //Toggle to first camera (drive cam)
   ));
-}
 
-void RobotContainer::ConfigureBindings() {
-  _driverController.A().WhileTrue(ControllerRumbleRight(_driverController));
-  _driverController.A().WhileTrue(ControllerRumbleLeft(_driverController));
+  //Rumble controller when end effector line break triggers
   SubEndEffector::GetInstance().CheckLineBreakTrigger().OnTrue(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
   SubEndEffector::GetInstance().CheckLineBreakTrigger().OnTrue(ControllerRumbleLeft(_driverController).WithTimeout(0.1_s));
 }
@@ -41,7 +38,7 @@ frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   return frc2::cmd::Print("No autonomous command configured");
 }
 
-// controller rumble function
+// Controller rumble functions
 frc2::CommandPtr RobotContainer::ControllerRumbleLeft(frc2::CommandXboxController& controller) {
   return frc2::cmd::StartEnd(
       [this, &controller] { controller.SetRumble(frc::XboxController::RumbleType::kRightRumble, 1.0); },
