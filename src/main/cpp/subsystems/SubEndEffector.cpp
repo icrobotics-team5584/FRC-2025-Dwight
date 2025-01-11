@@ -24,35 +24,26 @@ frc2::CommandPtr SubEndEffector::StopMotor() {
 }
 
 frc2::CommandPtr SubEndEffector::IntakeFromSource() {
-    return FeedDown().Until([this] {return CheckLineBreak();});
+    return FeedDown().Until([this] {return CheckLineBreakLower;});
 }
 
 frc2::CommandPtr SubEndEffector::IntakeFromGround() {
-    return FeedUp().Until([this] {return LineBreakDownSignal();});
+    return FeedUp().Until([this] {return CheckLineBreakHigher;});
 }
 
 
-bool SubEndEffector::CheckLineBreak() {
-    if(_endEffectorLineBreak.Get()) {
-        return true;
-    }
-    else {
-        return false;
-    }
+bool SubEndEffector::CheckLineBreakHigher() {
+    return _endEffectorLineBreakHigher.Get();
 }
 
-bool SubEndEffector::LineBreakDownSignal() {
-    static bool PrevState = false;
-    bool State = _endEffectorLineBreak.Get();
-    if (PrevState == false && State == true) {
-        return true;
-    }
-    else {
-        PrevState = State;
-        return false;
-    }
+bool SubEndEffector::CheckLineBreakLower() {
+    return _endEffectorLineBreakLower.Get();
 }
 
-frc2::Trigger SubEndEffector::CheckLineBreakTrigger() {
-    return frc2::Trigger {[this] {return CheckLineBreak();}};
+frc2::Trigger SubEndEffector::CheckLineBreakTriggerHigher() {
+    return frc2::Trigger {[this] {return CheckLineBreakHigher();}};
+}
+
+frc2::Trigger SubEndEffector::CheckLineBreakTriggerLower() {
+    return frc2::Trigger {[this] {return CheckLineBreakLower();}};
 }
