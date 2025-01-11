@@ -20,6 +20,7 @@ SubElevator::SubElevator() {
     MotorConfig.Slot0.kI = _I;
     MotorConfig.Slot0.kD = _D;
     MotorConfig.Slot0.kV = _V;
+    MotorConfig.Slot0.kA = _A;
     MotorConfig.Slot0.kG = _G;
 
     // Voltage Configuration
@@ -31,6 +32,9 @@ SubElevator::SubElevator() {
     MotorConfig.CurrentLimits.SupplyCurrentLowerLimit = 40.0_A;
     MotorConfig.CurrentLimits.SupplyCurrentLimit = 80.0_A;
     MotorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.5_s;
+    MotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    MotorConfig.CurrentLimits.StatorCurrentLimit = 30.0_A;
+
 
     // Feedback Sensor Ratio
     MotorConfig.Feedback.SensorToMechanismRatio = 14;
@@ -50,10 +54,10 @@ SubElevator::SubElevator() {
 frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height){
     return RunOnce([this, height]{
     if(height < 0.432_m){
-       _ElevatorMotor1.SetControl(controls::MotionMagicExpoTorqueCurrentFOC(RotationsFromHeight(0.432_m)));
+       _ElevatorMotor1.SetControl(controls::MotionMagicVoltage(RotationsFromHeight(0.432_m)).WithEnableFOC(true));
         }
     else {
-         _ElevatorMotor1.SetControl(controls::MotionMagicTorqueCurrentFOC(RotationsFromHeight(height)));
+         _ElevatorMotor1.SetControl(controls::MotionMagicVoltage(RotationsFromHeight(height)).WithEnableFOC(true));
     }
     });}
 
