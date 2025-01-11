@@ -92,7 +92,7 @@ void KrakenIO::ConfigDriveMotor(){
   _configDriveMotor.Slot0.kS = DRIVE_S;
   _configDriveMotor.Slot0.kV = DRIVE_V;
   _configDriveMotor.Slot0.kA = DRIVE_A;
-  _configDriveMotor.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+  _configDriveMotor.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
   _canDriveMotor.GetConfigurator().Apply(_configDriveMotor);
 }
 

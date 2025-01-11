@@ -53,7 +53,7 @@ class SwerveModule {
 
   const double TURNING_GEAR_RATIO = 150.0/7.0;
   const double DRIVE_GEAR_RATIO = 6.75; // L2 - Fast kit
-  const units::meter_t WHEEL_RADIUS = 0.0481098886_m;
+  const units::meter_t WHEEL_RADIUS = 0.04841_m;
   const units::meter_t WHEEL_CIRCUMFERENCE = 2 * std::numbers::pi * WHEEL_RADIUS;
 
   ctre::phoenix6::hardware::CANcoder _cancoder;

@@ -8,9 +8,9 @@
 #include <frc2/command/Commands.h>
 // auto includes
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
+#include "subsystems/SubDrivebase.h"
 
 RobotContainer::RobotContainer() {
-  SubDrivebase::GetInstance().SetDefaultCommand(SubDrivebase::GetInstance().JoystickDrive(_driverController));
   SubVision::GetInstance();
 
   // Default Commands
@@ -34,13 +34,10 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ConfigureBindings() {
-  _driverController.X().WhileTrue(SubDrivebase::GetInstance().Drive([this] {return frc::ChassisSpeeds(1_mps, 0_mps, 0_tps);}, false));
-  // _tuningController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd());
-  // _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
-//   _driverController.X().WhileTrue(SubDrivebase::GetInstance().SysIdDynamic(frc2::sysid::Direction::kForward));
-//   _driverController.Y().WhileTrue(SubDrivebase::GetInstance().SysIdDynamic(frc2::sysid::Direction::kReverse));
-//   _driverController.B().WhileTrue(SubDrivebase::GetInstance().SysIdQuasistatic(frc2::sysid::Direction::kForward));
-//   _driverController.A().WhileTrue(SubDrivebase::GetInstance().SysIdQuasistatic(frc2::sysid::Direction::kReverse));
+  _driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd());
+  _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
+  _driverController.X().WhileTrue(SubDrivebase::GetInstance().Drive([] {return frc::ChassisSpeeds(0.1_mps, 0_mps, 0_tps);} ,false));
+  _driverController.B().WhileTrue(SubDrivebase::GetInstance().Drive([] {return frc::ChassisSpeeds(-0.1_mps, 0_mps, 0_tps);} ,false));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
