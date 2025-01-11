@@ -29,12 +29,18 @@ RobotContainer::RobotContainer() {
   _autoChooser.AddOption("L-Shape-Slow", "L-Shape-Slow");
   _autoChooser.AddOption("L-Shape-Spinning", "L-Shape-Spinning");
   _autoChooser.AddOption("L-Shape-Spinning-Slow", "L-Shape-Spinning-Slow");
+  _autoChooser.AddOption("move", "move");
   frc::SmartDashboard::PutData("Chosen Auton", &_autoChooser);   
 }
 
 void RobotContainer::ConfigureBindings() {
-  _tuningController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd());
-  _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
+  _driverController.X().WhileTrue(SubDrivebase::GetInstance().Drive([this] {return frc::ChassisSpeeds(1_mps, 0_mps, 0_tps);}, false));
+  // _tuningController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd());
+  // _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
+//   _driverController.X().WhileTrue(SubDrivebase::GetInstance().SysIdDynamic(frc2::sysid::Direction::kForward));
+//   _driverController.Y().WhileTrue(SubDrivebase::GetInstance().SysIdDynamic(frc2::sysid::Direction::kReverse));
+//   _driverController.B().WhileTrue(SubDrivebase::GetInstance().SysIdQuasistatic(frc2::sysid::Direction::kForward));
+//   _driverController.A().WhileTrue(SubDrivebase::GetInstance().SysIdQuasistatic(frc2::sysid::Direction::kReverse));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
