@@ -36,8 +36,8 @@ RobotContainer::RobotContainer() {
 void RobotContainer::ConfigureBindings() {
   _driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd());
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
-  _driverController.X().WhileTrue(SubDrivebase::GetInstance().Drive([] {return frc::ChassisSpeeds(0.1_mps, 0_mps, 0_tps);} ,false));
-  _driverController.B().WhileTrue(SubDrivebase::GetInstance().Drive([] {return frc::ChassisSpeeds(-0.1_mps, 0_mps, 0_tps);} ,false));
+  _driverController.X().WhileTrue(SubDrivebase::GetInstance().Drive([] {return frc::ChassisSpeeds(0.1_mps, 0_mps, 0.5_tps);} ,false));
+  _driverController.B().WhileTrue(SubDrivebase::GetInstance().Drive([] {return frc::ChassisSpeeds(-0.1_mps, 0_mps, 0.5_tps);} ,false));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
