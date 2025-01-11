@@ -47,6 +47,13 @@ void SubVision::UpdatePoseEstimator() {
       if (result.HasTargets()) {
         _latestTarget = result.GetBestTarget();
         frc::SmartDashboard::PutNumber("Vision/Target", _latestTarget.GetFiducialId());
+        if(std::find(std::begin(blueReef), std::end(blueReef), _latestTarget.GetFiducialId()) != std::end(blueReef)){
+          _lastReefTag = _latestTarget;
+        } else if (std::find(std::begin(redReef), std::end(redReef), _latestTarget.GetFiducialId()) != std::end(redReef)){
+          _lastReefTag = _latestTarget;
+        }
+
+
       }
   }
   frc::SmartDashboard::PutBoolean("Vision/Has value", _pose.has_value());
@@ -72,6 +79,33 @@ frc::Pose2d SubVision::GetBestTarget() {
  return _tagLayout.GetTagPose(_latestTarget.fiducialId).value().ToPose2d();
 }
 
+
+/**
+ * @brief Get the pose of the reef from the apriltag.
+ *
+ * @param side The side of the reef you want to get the pose of. 1 for the left side, 2 for the right side.
+ *
+ * @returns The pose of the reef in the field coordinate system.
+ */
+frc::Pose2d SubVision::GetReefPose( int side = 1) {
+    units::meter_t _X;
+    units::meter_t _Y;
+    int reefTagID = _lastReefTag.GetFiducialId();
+    auto reefAngle = reefAngles[reefTagID];
+    auto reefPose = reefPositions[reefTagID];
+    auto targPose = std::make_pair<units::meter_t, units::meter_t>;
+    if (side == 1) {
+      auto targPose = reefPose.first;
+      _X = targPose.first;
+      _Y = targPose.second;
+    }
+    else {
+      auto targPose = reefPose.second;
+      _X = targPose.first;
+      _Y = targPose.second;
+    }
+    return frc::Pose2d(_X, _Y, reefAngle);
+}
 
 bool SubVision::CheckValid(std::optional<photon::EstimatedRobotPose> pose) {
   const double minArea = 20;

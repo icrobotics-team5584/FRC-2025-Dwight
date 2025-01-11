@@ -16,18 +16,9 @@ using namespace frc2::cmd;
  * @return A command that will align to the tag when executed.
  */ 
 
-frc2::CommandPtr YAlignWithTarget(units::meter_t offset, frc2::CommandXboxController &controller) {
-  return SubDrivebase::GetInstance().Drive([offset, &controller] {
-    frc::Pose2d tagPose = SubVision::GetInstance().GetBestTarget();
-    frc::Translation2d robotPose = SubDrivebase::GetInstance().GetPose().Translation();
-    frc::Translation2d relatedRobotTranslation = robotPose - tagPose.Translation();
-    frc::Translation2d netRobotTrans = relatedRobotTranslation.RotateBy(-tagPose.Rotation());
-    frc::Translation2d adjRelatedBotTrans =
-        frc::Translation2d(netRobotTrans.X(), offset).RotateBy(tagPose.Rotation());
-
-    frc::Pose2d targetPose =
-        frc::Pose2d(adjRelatedBotTrans + tagPose.Translation(), tagPose.Rotation() - 180_deg);
-    frc::ChassisSpeeds speeds = SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose);
+frc2::CommandPtr YAlignWithTarget(int side, frc2::CommandXboxController &controller) {
+  return SubDrivebase::GetInstance().Drive([side, &controller] {
+    frc::ChassisSpeeds speeds = SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(SubVision::GetInstance().GetReefPose(side));
 
     auto joystickSpeeds = SubDrivebase::GetInstance().CalcJoystickSpeeds(controller);
     speeds.vx = joystickSpeeds.vx;
@@ -35,7 +26,6 @@ frc2::CommandPtr YAlignWithTarget(units::meter_t offset, frc2::CommandXboxContro
     return speeds;
   }, true);
 }
-
 
 frc2::CommandPtr AddVisionMeasurement(){
   return Run(
@@ -56,5 +46,4 @@ frc2::CommandPtr AddVisionMeasurement(){
       },
       {&SubVision::GetInstance()});
 }  // namespace cmd
-
 }

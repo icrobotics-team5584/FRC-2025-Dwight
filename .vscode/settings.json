@@ -21,6 +21,10 @@
     "expected": "cpp",
     "optional": "cpp",
     "system_error": "cpp",
-    "regex": "cpp"
+    "regex": "cpp",
+    "tuple": "cpp",
+    "future": "cpp",
+    "istream": "cpp",
+    "functional": "cpp"
   }
 }
