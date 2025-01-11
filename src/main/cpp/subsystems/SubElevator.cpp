@@ -9,6 +9,7 @@
 #include <math.h>
 #include "utilities/RobotLogs.h"
 #include <units/angular_velocity.h>
+#include <ctre/phoenix6/configs/Configs.hpp>
 
 using namespace ctre::phoenix6;
 
@@ -35,7 +36,6 @@ SubElevator::SubElevator() {
     MotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     MotorConfig.CurrentLimits.StatorCurrentLimit = 30.0_A;
 
-
     // Feedback Sensor Ratio
     MotorConfig.Feedback.SensorToMechanismRatio = 14;
 
@@ -43,21 +43,21 @@ SubElevator::SubElevator() {
     MotorConfig.MotionMagic.MotionMagicCruiseVelocity = _CRUISE_VELOCITY.value() / _DRUM_CIRCUMFERENCE.value() * 1_tr / 1_s; // Adjust
     MotorConfig.MotionMagic.MotionMagicAcceleration = _ACCELERATION.value() / _DRUM_CIRCUMFERENCE.value() * 1_tr / 1_s / 1_s; // Adjust
 
-    _ElevatorMotor1.GetConfigurator().Apply(MotorConfig);
+    _elevatorMotor1.GetConfigurator().Apply(MotorConfig);
     MotorConfig.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::Clockwise_Positive;
-    _ElevatorMotor2.GetConfigurator().Apply(MotorConfig);
+    _elevatorMotor2.GetConfigurator().Apply(MotorConfig);
 
     // Set motor 2 to follow motor 1
-    _ElevatorMotor2.SetControl(controls::Follower(_ElevatorMotor1.GetDeviceID(), false));
+    _elevatorMotor2.SetControl(controls::Follower(_elevatorMotor1.GetDeviceID(), false));
 }
 
 frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height){
     return RunOnce([this, height]{
     if(height < 0.432_m){
-       _ElevatorMotor1.SetControl(controls::MotionMagicVoltage(RotationsFromHeight(0.432_m)).WithEnableFOC(true));
+       _elevatorMotor1.SetControl(controls::MotionMagicVoltage(RotationsFromHeight(0.432_m)).WithEnableFOC(true));
         }
     else {
-         _ElevatorMotor1.SetControl(controls::MotionMagicVoltage(RotationsFromHeight(height)).WithEnableFOC(true));
+         _elevatorMotor1.SetControl(controls::MotionMagicVoltage(RotationsFromHeight(height)).WithEnableFOC(true));
     }
     });}
 
@@ -90,14 +90,64 @@ units::turns_per_second_t SubElevator::RotationsFromMetersPerSecond(units::meter
     return meterspersec.value() / _DRUM_CIRCUMFERENCE.value() * 1_tps;
 };
 
+//Reset motor position to 0
+frc2::CommandPtr SubElevator::ZeroElevator() {
+    return RunOnce([this]{
+    _elevatorMotor1.SetPosition(0_tr);
+   });
+}
+
+//Get motor1 current
+units::ampere_t SubElevator::GetM1Current() {
+    return _elevatorMotor1.GetStatorCurrent().GetValue();
+}
+
+frc2::CommandPtr SubElevator::ElevatorResetZero() {
+    return frc2::cmd::RunOnce([] {SubElevator::GetInstance().ZeroElevator();});
+}
+
+//Check if elevator has touched the bottom
+frc2::CommandPtr SubElevator::ElevatorResetCheck() {
+    return frc2::cmd::RunOnce ([this] {ResetM1 = false;})
+    .AndThen(
+    frc2::cmd::Run([this] {
+        
+        if (GetM1Current().value() > zeroingCurrentLimit && !ResetM1) {
+            _elevatorMotor1.StopMotor(); ResetM1 = true;
+        }
+        if (ResetM1) {
+            Reseting = false;
+        }
+    }).Until([this] { return ResetM1; }));
+}
+
+//Ptr cmd of Stop()
+frc2::CommandPtr SubElevator::ElevatorStop() {
+    return frc2::cmd::RunOnce([this] {SubElevator::GetInstance().Stop();});
+}
+
+//Auto climber reset by bringing elevator to zero position then reset (can be used in tele-op)
+frc2::CommandPtr SubElevator::ElevatorAutoReset() {
+    return frc2::cmd::RunOnce([this] { Reseting = true;})
+        .AndThen(ElevatorResetCheck())
+        .AndThen(ElevatorResetZero())
+        .AndThen(ElevatorStop())
+        .FinallyDo([this] {Reseting = false; Reseted = true; Stop();});
+}
+
+//Stop motor
+void SubElevator::Stop() {
+  _elevatorMotor1.StopMotor();
+}
+
 // This method will be called once per scheduler run
 void SubElevator::Periodic() {
-    Logger::LogFalcon("Elevator/Motor1", _ElevatorMotor1);
-    Logger::LogFalcon("Elevator/Motor2", _ElevatorMotor2);
+    Logger::LogFalcon("Elevator/Motor1", _elevatorMotor1);
+    Logger::LogFalcon("Elevator/Motor2", _elevatorMotor2);
 }
 
 void SubElevator::SimulationPeriodic() {
-    auto& motorState = _ElevatorMotor1.GetSimState();
+    auto& motorState = _elevatorMotor1.GetSimState();
     _motorSim.SetInputVoltage(motorState.GetMotorVoltage());
     _motorSim.Update(20_ms);
     _motorSim.GetVelocity();

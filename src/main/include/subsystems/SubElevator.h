@@ -26,18 +26,35 @@ class SubElevator : public frc2::SubsystemBase {
   frc2::CommandPtr CmdSetL3();
   frc2::CommandPtr CmdSetL4();
   frc2::CommandPtr CmdSetSource();
-
+  frc2::CommandPtr ZeroElevator();
+  frc2::CommandPtr ElevatorResetZero();
+  frc2::CommandPtr ElevatorResetCheck();
+  frc2::CommandPtr ElevatorAutoReset();
+  frc2::CommandPtr ElevatorStop();
   frc2::CommandPtr CmdElevatorToPosition(units::meter_t height);
+  
   units::turn_t RotationsFromHeight(units::meter_t height);
   units::turns_per_second_t RotationsFromMetersPerSecond(units::meters_per_second_t meterspersec);
+  units::ampere_t GetM1Current();
+
+  void Stop();
 
   void Periodic() override;
   void SimulationPeriodic() override;
 
 
+
+  //reset
+  bool Reseting = false;
+  bool Reseted = false;
+
+  bool ResetM1 = false; 
+
+
+
  private:
-  ctre::phoenix6::hardware::TalonFX _ElevatorMotor1 {13};
-  ctre::phoenix6::hardware::TalonFX _ElevatorMotor2 {14};
+  ctre::phoenix6::hardware::TalonFX _elevatorMotor1 {13};
+  ctre::phoenix6::hardware::TalonFX _elevatorMotor2 {14};
 
   static constexpr double _P = 7; //134.04;
   static constexpr double _I = 0;
@@ -59,7 +76,7 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr units::meter_t _SOURCE_HEIGHT = 0.93_m;
   static constexpr units::meters_per_second_t _CRUISE_VELOCITY = 1_mps; //0.82; //Adjust
   static constexpr units::meters_per_second_squared_t  _ACCELERATION = 3_mps_sq; //Adjust
-  
+  static constexpr double zeroingCurrentLimit = 15;
 
 
 
