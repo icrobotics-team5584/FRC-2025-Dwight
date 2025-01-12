@@ -44,7 +44,13 @@ void SubVision::UpdatePoseEstimator() {
   }
   for (auto result : results) {
       _pose = _robotPoseEstimater.Update(result); // Get estimate pose of robot by vision
-      if (result.HasTargets()) {
+      UpdateLatestTags(result);
+    }
+  frc::SmartDashboard::PutBoolean("Vision/Has value", _pose.has_value());
+}
+
+void SubVision::UpdateLatestTags(photon::PhotonPipelineResult result){
+        if (result.HasTargets()) {
         _latestTarget = result.GetBestTarget();
         frc::SmartDashboard::PutNumber("Vision/Target", _latestTarget.GetFiducialId());
         if(std::find(std::begin(blueReef), std::end(blueReef), _latestTarget.GetFiducialId()) != std::end(blueReef)){
@@ -52,19 +58,18 @@ void SubVision::UpdatePoseEstimator() {
         } else if (std::find(std::begin(redReef), std::end(redReef), _latestTarget.GetFiducialId()) != std::end(redReef)){
           _lastReefTag = _latestTarget;
         }
-
-
-      }
-  }
-  frc::SmartDashboard::PutBoolean("Vision/Has value", _pose.has_value());
-
-  
+}
 }
 
 
 std::optional<photon::EstimatedRobotPose> SubVision::GetPose() {
   return _pose;
 }
+
+frc::Pose2d SubVision::GetFieldElementTagLocation(FieldElement fieldElement){
+  return frc::Pose2d{0_m, 0_m, 0_deg};
+}
+
 
 frc::Translation2d SubVision::GetCameraToTarget() {
   if (_latestTarget == photon::PhotonTrackedTarget()) {return frc::Translation2d(0_m,0_m);}
@@ -88,23 +93,15 @@ frc::Pose2d SubVision::GetBestTarget() {
  * @returns The pose of the reef in the field coordinate system.
  */
 frc::Pose2d SubVision::GetReefPose( int side = 1) {
-    units::meter_t _X;
-    units::meter_t _Y;
     int reefTagID = _lastReefTag.GetFiducialId();
-    auto reefAngle = reefAngles[reefTagID];
-    auto reefPose = reefPositions[reefTagID];
-    auto targPose = std::make_pair<units::meter_t, units::meter_t>;
+    frc::Pose2d targPose;
     if (side == 1) {
-      auto targPose = reefPose.first;
-      _X = targPose.first;
-      _Y = targPose.second;
+      targPose = {tagToReefPositions[reefTagID].leftX, tagToReefPositions[reefTagID].leftY, tagToReefPositions[reefTagID].angle};
     }
     else {
-      auto targPose = reefPose.second;
-      _X = targPose.first;
-      _Y = targPose.second;
+      targPose = {tagToReefPositions[reefTagID].rightX, tagToReefPositions[reefTagID].rightY, tagToReefPositions[reefTagID].angle};
     }
-    return frc::Pose2d(_X, _Y, reefAngle);
+    return targPose;
 }
 
 bool SubVision::CheckValid(std::optional<photon::EstimatedRobotPose> pose) {

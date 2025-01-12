@@ -23,9 +23,9 @@ RobotContainer::RobotContainer() {
 
 void RobotContainer::ConfigureBindings() {
   //_driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd());
-  _driverController.RightTrigger().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
+  _driverController.B().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
   //_driverController.B().WhileTrue(cmd::YAlignWithTarget(-0.165_m, _driverController));
-  _driverController.A().WhileTrue(cmd::AlignToTarget(0.165_m));
+  _driverController.A().WhileTrue(cmd::AlignToTarget(0.165_m)); 
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
 }
 
