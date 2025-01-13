@@ -28,36 +28,48 @@ SubVision::SubVision() {
 void SubVision::Periodic() {
   frc::SmartDashboard::PutNumber("Vision/Cam to target x", GetCameraToTarget().X().value());
   frc::SmartDashboard::PutNumber("Vision/Cam to target y", GetCameraToTarget().Y().value());
-  UpdatePoseEstimator();
+  frc::SmartDashboard::PutNumber("Vision/LastReefTag", _lastReefTag.GetFiducialId());
+  auto results = _camera.GetAllUnreadResults();
+  UpdatePoseEstimator(results);
+  UpdateLatestTags(results);
 }
 
 void SubVision::SimulationPeriodic() {
   _visionSim.Update(SubDrivebase::GetInstance().GetSimPose());
 }
 
-void SubVision::UpdatePoseEstimator() {
-  auto results = _camera.GetAllUnreadResults();
+
+void SubVision::UpdatePoseEstimator(std::vector<photon::PhotonPipelineResult> results) {
+
   auto resultCount = results.size();
   frc::SmartDashboard::PutNumber("Vision/Reuslt count", resultCount);
   if (resultCount == 0) {
     return; // Return if no result, prevent null error later
   }
   for (auto result : results) {
+    if (result.HasTargets()){
       _pose = _robotPoseEstimater.Update(result); // Get estimate pose of robot by vision
-      UpdateLatestTags(result);
+    }
     }
   frc::SmartDashboard::PutBoolean("Vision/Has value", _pose.has_value());
 }
 
-void SubVision::UpdateLatestTags(photon::PhotonPipelineResult result){
+void SubVision::UpdateLatestTags(std::vector<photon::PhotonPipelineResult> results){
+      for (auto result : results) {
         if (result.HasTargets()) {
         _latestTarget = result.GetBestTarget();
         frc::SmartDashboard::PutNumber("Vision/Target", _latestTarget.GetFiducialId());
-        if(std::find(std::begin(blueReef), std::end(blueReef), _latestTarget.GetFiducialId()) != std::end(blueReef)){
-          _lastReefTag = _latestTarget;
-        } else if (std::find(std::begin(redReef), std::end(redReef), _latestTarget.GetFiducialId()) != std::end(redReef)){
+        if (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed){
+          if (std::find(std::begin(redReef), std::end(redReef), _latestTarget.GetFiducialId()) != std::end(redReef)){
           _lastReefTag = _latestTarget;
         }
+        }
+        else {
+        if(std::find(std::begin(blueReef), std::end(blueReef), _latestTarget.GetFiducialId()) != std::end(blueReef)){
+          _lastReefTag = _latestTarget;
+        }
+        }
+      }
 }
 }
 
@@ -66,8 +78,8 @@ std::optional<photon::EstimatedRobotPose> SubVision::GetPose() {
   return _pose;
 }
 
-frc::Pose2d SubVision::GetFieldElementTagLocation(FieldElement fieldElement){
-  return frc::Pose2d{0_m, 0_m, 0_deg};
+frc::Pose2d SubVision::GetSourcePose(int tagId) {
+  return tagToSourcePose[tagId];
 }
 
 

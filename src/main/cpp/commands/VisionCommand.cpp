@@ -18,10 +18,6 @@ using namespace frc2::cmd;
 frc2::CommandPtr YAlignWithTarget(int side, frc2::CommandXboxController &controller) {
   return SubDrivebase::GetInstance().Drive([side, &controller] {
     frc::ChassisSpeeds speeds = SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(SubVision::GetInstance().GetReefPose(side));
-
-    auto joystickSpeeds = SubDrivebase::GetInstance().CalcJoystickSpeeds(controller);
-    speeds.vx = joystickSpeeds.vx;
-
     return speeds;
   }, true);
 }
@@ -45,4 +41,30 @@ frc2::CommandPtr AddVisionMeasurement(){
       },
       {&SubVision::GetInstance()});
 }  // namespace cmd
+
+//check pose -> decide which source is closer -> drive there
+frc2::CommandPtr AlignToSource(frc2::CommandXboxController &controller) {
+  return SubDrivebase::GetInstance().Drive([&controller] {
+    frc::Pose2d sourcePose = {0_m, 0_m, 0_deg};
+    units::meter_t poseY = SubDrivebase::GetInstance().GetPose().Y();
+    if (poseY > 4.025_m) {
+      if (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) {
+        sourcePose = SubVision::GetInstance().GetSourcePose(2);
+      }
+      else {
+        sourcePose = SubVision::GetInstance().GetSourcePose(13);
+      }
+    }
+    else {
+      if (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) {
+        sourcePose = SubVision::GetInstance().GetSourcePose(1);
+      }
+      else {
+        sourcePose = SubVision::GetInstance().GetSourcePose(12);
+      }
+
+
+    }
+      return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(sourcePose);
+  }, true);}
 }

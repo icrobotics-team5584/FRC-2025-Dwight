@@ -137,7 +137,7 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
   // Apply deadbands
   double forwardStick = frc::ApplyDeadband(controller.GetLeftY(), deadband);
   double sidewaysStick = frc::ApplyDeadband(controller.GetLeftX(), deadband);
-  double rotationStick = frc::ApplyDeadband(controller.GetRightX(), deadband);
+  double rotationStick = frc::ApplyDeadband(-controller.GetRightX(), deadband);
 
   // Apply joystick rate limits
   auto forwardSpeed = _yStickLimiter.Calculate(forwardStick) * maxVelocity;
@@ -162,7 +162,7 @@ frc2::CommandPtr SubDrivebase::Drive(std::function<frc::ChassisSpeeds()> speeds,
 
 
 void SubDrivebase::DriveToPose(frc::Pose2d targetPose) {
-  DisplayPose("targetPose", targetPose);
+ // DisplayPose("targetPose", targetPose);
 
   frc::Pose2d currentPosition = _poseEstimator.GetEstimatedPosition();
   double speedX = _teleopTranslationController.Calculate(currentPosition.X().value(), targetPose.X().value());
@@ -268,7 +268,7 @@ void SubDrivebase::UpdateOdometry() {
 
 frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   // Find current and target values
-  DisplayPose("targetPose", targetPose);
+  DisplayPose("WERTY/targetPose", targetPose);
   double targetXMeters = targetPose.X().value();
   double targetYMeters = targetPose.Y().value();
   units::turn_t targetRotation = targetPose.Rotation().Radians();
@@ -288,7 +288,15 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   ySpeed = units::math::min(ySpeed, MAX_VELOCITY);
   ySpeed = units::math::max(ySpeed, -MAX_VELOCITY);
 
-  return frc::ChassisSpeeds{xSpeed, ySpeed, rSpeed};
+  frc::SmartDashboard::PutNumber("CalcDriveLogs/xSpeed", -xSpeed.value());
+  frc::SmartDashboard::PutNumber("CalcDriveLogs/ySpeed", ySpeed.value());
+  frc::SmartDashboard::PutNumber("CalcDriveLogs/rSpeed", rSpeed.value());
+  frc::SmartDashboard::PutNumber("CalcDriveLogs/targetXMeters", targetXMeters);
+  frc::SmartDashboard::PutNumber("CalcDriveLogs/targetYMeters", targetYMeters);
+  frc::SmartDashboard::PutNumber("CalcDriveLogs/currentXMeters", currentXMeters);
+  frc::SmartDashboard::PutNumber("CalcDriveLogs/currentYMeters", currentYMeters);
+  frc::SmartDashboard::PutNumber("CalcDriveLogs/currentRotation", currentRotation.value());
+  return frc::ChassisSpeeds{ xSpeed, ySpeed, rSpeed};
 }
 
 units::turns_per_second_t SubDrivebase::CalcRotateSpeed(units::turn_t rotationError) { 

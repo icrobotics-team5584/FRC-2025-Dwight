@@ -12,6 +12,7 @@
 #include "commands/DriveCommands.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 #include "subsystems/SubEndEffector.h"
+#include "commands/VisionCommand.h"
 
 RobotContainer::RobotContainer() {
   SubVision::GetInstance();
@@ -36,8 +37,12 @@ void RobotContainer::ConfigureBindings() {
 
 
   //Letters
+  _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
   _driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
-  
+  _driverController.RightTrigger().WhileTrue(cmd::AlignToSource(_driverController));
+  _driverController.LeftTrigger().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
+
+
   _driverController.B().ToggleOnTrue(frc2::cmd::StartEnd(
     [this] { _cameraStream.SetPath("/dev/video1"); }, //Toggle to second camera (climb cam)
     [this] { _cameraStream.SetPath("/dev/video0"); } //Toggle to first camera (drive cam)
