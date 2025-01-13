@@ -24,11 +24,11 @@ frc2::CommandPtr SubEndEffector::StopMotor() {
 }
 
 frc2::CommandPtr SubEndEffector::IntakeFromSource() {
-    return FeedDown().Until([this] {return CheckLineBreakLower;});
+    return FeedDown().Until([this] {return CheckLineBreakLower();});
 }
 
 frc2::CommandPtr SubEndEffector::IntakeFromGround() {
-    return FeedUp().Until([this] {return CheckLineBreakHigher;});
+    return FeedUp().Until([this] {return CheckLineBreakHigher();});
 }
 
 
