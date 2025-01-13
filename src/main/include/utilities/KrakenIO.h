@@ -36,19 +36,19 @@ class KrakenIO : public SwerveIO {
 
         const double TURNING_GEAR_RATIO = 150.0/7.0;
         const double DRIVE_GEAR_RATIO = 6.75; // L2 - Fast kit
-        const units::meter_t WHEEL_RADIUS = 0.0481098886_m;
+        const units::meter_t WHEEL_RADIUS = 0.04460721912986414_m;
         const units::meter_t WHEEL_CIRCUMFERENCE = 2 * std::numbers::pi * WHEEL_RADIUS;
 
         const double TURN_P = 40.0;
         const double TURN_I = 0.0;
         const double TURN_D = 0;
-        const double DRIVE_P = 0; 
+        const double DRIVE_P = 0.017401; // left
         const double DRIVE_I = 0.0;
         const double DRIVE_D = 0.0;
         const double DRIVE_F = 0;
-        const double DRIVE_S = 0.3017;  // Units is V
-        const double DRIVE_V = 0.65;  // Units is V/1m/s      //MAKE SURE TO TUNE WITH ROBOT BATTERY ABOVE 12.5 VOLTS
-        const double DRIVE_A = 0.34324; // Units is V/1m/s^2
+        const double DRIVE_S = 0.096844;  // Units is V 0.3017; left
+        const double DRIVE_V =  0.78528125; // Units is V/1m/s      //MAKE SURE TO TUNE WITH ROBOT BATTERY ABOVE 12.5 VOLTS 2.5129 left
+        const double DRIVE_A = 0.079385; // Units is V/1m/s^2 0.34324; left
 
         const int CURRENT_LIMIT = 40;
 
