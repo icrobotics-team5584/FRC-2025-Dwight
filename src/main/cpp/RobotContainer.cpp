@@ -21,10 +21,10 @@ RobotContainer::RobotContainer() {
 
   // AutoChooser options
   _autoChooser.AddOption("Default-Left", "Default-Left");  
-  _autoChooser.AddOption("Default-Middle", "placeholder-DM");
-  _autoChooser.AddOption("Default-Right", "Default-Right");
-  _autoChooser.AddOption("TeammateHelper-Left", "placeholder-THL");
-  _autoChooser.AddOption("TeammateHelper-Right", "placeholder-THR");
+  _autoChooser.AddOption("Default-Middle", "placeholder-DM"); // placeholder
+  _autoChooser.AddOption("Default-Right", "Default-Right"); 
+  _autoChooser.AddOption("TeammateHelper-Left", "placeholder-THL"); // placeholder
+  _autoChooser.AddOption("TeammateHelper-Right", "placeholder-THR"); // placeholder
   _autoChooser.AddOption("L-Shape", "L-Shape");
   _autoChooser.AddOption("L-Shape-Slow", "L-Shape-Slow");
   _autoChooser.AddOption("L-Shape-Spinning", "L-Shape-Spinning");
