@@ -74,7 +74,7 @@ class SubIntake : public frc2::SubsystemBase {
 
   frc::Mechanism2d _rollerMech{6, 4};
   frc::MechanismRoot2d* _rollerMechRoot = _rollerMech.GetRoot("rollerRoot", 1, 2);
-  MechanismCircle2d _rollerMechLeft{_rollerMechRoot, "leftRoller", 0.75, 0_deg, 36, 10};
+  //MechanismCircle2d _rollerMechLeft{_rollerMechRoot, "leftRoller", 0.75, 0_deg, 36, 10};
   frc::MechanismLigament2d* _rollerMechConnectorLig = 
     _rollerMechRoot->Append<frc::MechanismLigament2d>("connector", 3, 0_deg, 0);
   MechanismCircle2d _rollerMechRight{_rollerMechConnectorLig, "rightRoller", 0.75, 0_deg, 36, 10};

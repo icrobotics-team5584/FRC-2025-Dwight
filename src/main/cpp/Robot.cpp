@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "Robot.h"
+#include "subsystems/SubElevator.h"
 
 #include <frc2/command/CommandScheduler.h>
 
@@ -24,6 +25,9 @@ void Robot::AutonomousInit() {
   if (m_autonomousCommand) {
     m_autonomousCommand->Schedule();
   }
+
+//Auto climber reset by bringing elevator to zero position then reset
+  SubElevator::GetInstance().ElevatorAutoReset();
 }
 
 void Robot::AutonomousPeriodic() {}

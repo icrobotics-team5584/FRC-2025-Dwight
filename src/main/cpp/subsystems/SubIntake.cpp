@@ -8,6 +8,7 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include "utilities/RobotLogs.h"
 
+
 SubIntake::SubIntake() {
     _configIntakePivotMotor.Feedback.SensorToMechanismRatio = ARM_GEARING;
     _configIntakePivotMotor.Slot0.kP = P;
@@ -33,7 +34,7 @@ void SubIntake::Periodic() {
 
     units::angle::degree_t rollerAngle = _intakeMotor.GetPosition()/10;
     frc::SmartDashboard::PutNumber("rollerAngle", rollerAngle.value());
-    _rollerMechLeft.SetAngle(rollerAngle);
+    //_rollerMechLeft.SetAngle(rollerAngle);
     _rollerMechRight.SetAngle(rollerAngle*-1);
 }
 

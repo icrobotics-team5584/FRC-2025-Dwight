@@ -16,7 +16,6 @@
   },
   "C_Cpp.default.configurationProvider": "vscode-wpilib",
   "files.associations": {
-    "memory": "cpp",
     "string_view": "cpp",
     "any": "cpp",
     "array": "cpp",
@@ -26,7 +25,6 @@
     "bitset": "cpp",
     "cctype": "cpp",
     "cfenv": "cpp",
-    "chrono": "cpp",
     "cinttypes": "cpp",
     "clocale": "cpp",
     "cmath": "cpp",
@@ -108,6 +106,8 @@
     "xlocmes": "cpp",
     "xlocmon": "cpp",
     "xlocnum": "cpp",
-    "xloctime": "cpp"
+    "xloctime": "cpp",
+    "memory": "cpp",
+    "chrono": "cpp",
   }
 }

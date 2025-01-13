@@ -24,8 +24,7 @@ Needed functions:
 
 class MechanismCircle2d {
     public:
-        template <typename T>
-        MechanismCircle2d(T* location,
+        MechanismCircle2d(frc::MechanismLigament2d* location,
                             std::string name,
                             double radius,
                             units::degree_t angle,
