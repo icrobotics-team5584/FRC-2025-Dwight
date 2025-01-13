@@ -11,6 +11,7 @@
 #include <frc/simulation/ElevatorSim.h>
 #include <frc2/command/button/CommandXboxController.h>
 #include <units/constants.h>
+#include "Constants.h"
 
 class SubElevator : public frc2::SubsystemBase {
  public:
@@ -28,14 +29,15 @@ class SubElevator : public frc2::SubsystemBase {
   frc2::CommandPtr CmdSetL4();
   frc2::CommandPtr CmdSetSource();
   frc2::CommandPtr ZeroElevator();
-  frc2::CommandPtr ElevatorResetZero();
   frc2::CommandPtr ElevatorResetCheck();
   frc2::CommandPtr ElevatorAutoReset();
   frc2::CommandPtr ElevatorStop();
   frc2::CommandPtr ManualElevatorMovementUP();
   frc2::CommandPtr ManualElevatorMovementDOWN();
+  frc2::CommandPtr ManualElevatorMovementDOWNSLOW();
+
   frc2::CommandPtr CmdElevatorToPosition(units::meter_t height);
-  frc2::CommandPtr ElevatorJoystickDrive(frc2::CommandXboxController& _controller);
+  // frc2::CommandPtr ElevatorJoystickDrive(frc2::CommandXboxController& _controller);
   units::turn_t RotationsFromHeight(units::meter_t height);
   units::turns_per_second_t RotationsFromMetersPerSecond(units::meters_per_second_t meterspersec);
   units::ampere_t GetM1Current();
@@ -58,8 +60,8 @@ class SubElevator : public frc2::SubsystemBase {
 
 
  private:
-  ctre::phoenix6::hardware::TalonFX _elevatorMotor1 {13};
-  ctre::phoenix6::hardware::TalonFX _elevatorMotor2 {14};
+  ctre::phoenix6::hardware::TalonFX _elevatorMotor1 {canid::elevatorMotor1};
+  ctre::phoenix6::hardware::TalonFX _elevatorMotor2 {canid::elevatorMotor2};
 
   static constexpr double _P = 7; //134.04;
   static constexpr double _I = 0;

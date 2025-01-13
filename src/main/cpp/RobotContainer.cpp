@@ -60,6 +60,7 @@ void RobotContainer::ConfigureBindings() {
    _operatorController.X().OnTrue(SubElevator::GetInstance().CmdSetL2());
    _operatorController.B().OnTrue(SubElevator::GetInstance().CmdSetL3());
    _operatorController.Y().OnTrue(SubElevator::GetInstance().CmdSetL4());
+   _operatorController.LeftBumper().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
 
   //POV
   _operatorController.POVUp().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());

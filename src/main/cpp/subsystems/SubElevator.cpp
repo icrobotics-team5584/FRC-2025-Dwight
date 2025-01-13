@@ -30,11 +30,11 @@ SubElevator::SubElevator() {
 
     // Current Limits
     MotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    MotorConfig.CurrentLimits.SupplyCurrentLowerLimit = 40.0_A;
-    MotorConfig.CurrentLimits.SupplyCurrentLimit = 80.0_A;
+    MotorConfig.CurrentLimits.SupplyCurrentLowerLimit = 20.0_A; //40
+    MotorConfig.CurrentLimits.SupplyCurrentLimit = 20.0_A; //80
     MotorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.5_s;
     MotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    MotorConfig.CurrentLimits.StatorCurrentLimit = 30.0_A;
+    MotorConfig.CurrentLimits.StatorCurrentLimit = 20.0_A;//30
     MotorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     MotorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     MotorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = (_L4_HEIGHT/_DRUM_CIRCUMFERENCE).value() * 1_tr;
@@ -48,7 +48,6 @@ SubElevator::SubElevator() {
     MotorConfig.MotionMagic.MotionMagicAcceleration = _ACCELERATION.value() / _DRUM_CIRCUMFERENCE.value() * 1_tr / 1_s / 1_s; // Adjust
 
     _elevatorMotor1.GetConfigurator().Apply(MotorConfig);
-    MotorConfig.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::Clockwise_Positive;
     _elevatorMotor2.GetConfigurator().Apply(MotorConfig);
 
     // Set motor 2 to follow motor 1
@@ -106,19 +105,17 @@ units::ampere_t SubElevator::GetM1Current() {
     return _elevatorMotor1.GetStatorCurrent().GetValue();
 }
 
-frc2::CommandPtr SubElevator::ElevatorResetZero() {
-    return frc2::cmd::RunOnce([] {SubElevator::GetInstance().ZeroElevator();});
-}
 
 void SubElevator::EnableSoftLimit(bool enabled) {
     ctre::phoenix6::configs::TalonFXConfiguration MotorConfig{};
     // Configure the forward soft limit for elevatorMotor1
+    MotorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     _elevatorMotor1.GetConfigurator().Apply(MotorConfig);
-    MotorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;  
+      
 
     // Configure the reverse soft limit for elevatorMotor2
     _elevatorMotor1.GetConfigurator().Apply(MotorConfig);
-    MotorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    
 }
 
 frc2::CommandPtr SubElevator::ManualElevatorMovementUP() {
@@ -131,6 +128,11 @@ frc2::CommandPtr SubElevator::ManualElevatorMovementDOWN() {
   return frc2::cmd::StartEnd(
       [this] { _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-5_V)); },
       [this] { _elevatorMotor1.StopMotor(); });
+    }
+
+frc2::CommandPtr SubElevator::ManualElevatorMovementDOWNSLOW() {
+  return frc2::cmd::RunOnce(
+      [this] { _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-1_V)); });
     }
 
 //Check if elevator has touched the bottom
@@ -156,8 +158,9 @@ frc2::CommandPtr SubElevator::ElevatorStop() {
 //Auto elevator reset by bringing elevator to zero position then reset (can be used in tele-op)
 frc2::CommandPtr SubElevator::ElevatorAutoReset() {
     return frc2::cmd::RunOnce([this] { Reseting = true; EnableSoftLimit(false);})
+        .AndThen(ManualElevatorMovementDOWNSLOW())
         .AndThen(ElevatorResetCheck())
-        .AndThen(ElevatorResetZero())
+        .AndThen(ZeroElevator())
         .AndThen(ElevatorStop())
         .FinallyDo([this] {Reseting = false; Reseted = true; EnableSoftLimit(false); Stop();});
 }
