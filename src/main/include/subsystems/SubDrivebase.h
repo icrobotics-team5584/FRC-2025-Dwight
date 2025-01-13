@@ -82,10 +82,10 @@ class SubDrivebase : public frc2::SubsystemBase {
   studica::AHRS _gyro{studica::AHRS::NavXComType::kMXP_SPI};
 
   // Swerve modules
-  frc::Translation2d _frontLeftLocation{160.509_mm, 308.33_mm};
-  frc::Translation2d _frontRightLocation{160.509_mm, -308.33_mm};
-  frc::Translation2d _backLeftLocation{-306.141_mm, 308.33_mm};
-  frc::Translation2d _backRightLocation{-306.141_mm, -308.33_mm};
+  frc::Translation2d _frontLeftLocation{100_mm, 100_mm};
+  frc::Translation2d _frontRightLocation{100_mm, -100_mm};
+  frc::Translation2d _backLeftLocation{-100_mm, 100_mm};
+  frc::Translation2d _backRightLocation{-100_mm, -100_mm};
 
   const units::turn_t FRONT_RIGHT_MAG_OFFSET = -0.375732_tr;
   const units::turn_t FRONT_LEFT_MAG_OFFSET = -0.941406_tr;

@@ -11,6 +11,7 @@
 #include <pathplanner/lib/auto/AutoBuilder.h>
 #include <pathplanner/lib/config/RobotConfig.h>
 #include "utilities/RobotLogs.h"
+#include <frc/MathUtil.h>
 
 SubDrivebase::SubDrivebase() {
   frc::SmartDashboard::PutData("Drivebase/Teleop PID/Rotation Controller", &_teleopRotationController);
@@ -328,37 +329,66 @@ units::degree_t SubDrivebase::GetPitch() {
 }
 
 frc2::CommandPtr SubDrivebase::WheelCharecterisationCmd() {
-  static units::radian_t initialGyroHeading = 0_rad;
-  static units::radian_t initialWheelDistance = 0_rad;
+  static units::radian_t prevGyroAngle = 0_rad;
+  static units::radian_t gyroAccumulator = 0_rad;
+  static units::radian_t FRinitialWheelDistance = 0_rad;
+  static units::radian_t FLinitialWheelDistance = 0_rad;
+  static units::radian_t BRinitialWheelDistance = 0_rad;
+  static units::radian_t BLinitialWheelDistance = 0_rad;
 
   return RunOnce([this] {
-           initialGyroHeading = GetHeading().Radians();
-           // initialWheelDistance =
-           //     (_frontRight.GetPosition().distance + _frontLeft.GetPosition().distance +
-           //      _backRight.GetPosition().distance + _backLeft.GetPosition().distance) /
-           //     4;
-           initialWheelDistance = _frontRight.GetDrivenRotations();
+           prevGyroAngle = 0_rad;
+           gyroAccumulator = 0_rad;
+           FRinitialWheelDistance = _frontRight.GetDrivenRotations();
+           FLinitialWheelDistance = _frontLeft.GetDrivenRotations();
+           BRinitialWheelDistance = _backRight.GetDrivenRotations();
+           BLinitialWheelDistance = _backLeft.GetDrivenRotations(); 
+
          })
       .AndThen(Drive([] { return frc::ChassisSpeeds{0_mps, 0_mps, 15_deg_per_s}; }, false))
+      .AlongWith(frc2::cmd::Run([this] {
+        units::radian_t curGyroAngle = GetHeading().Radians();
+        gyroAccumulator = gyroAccumulator + frc::AngleModulus((prevGyroAngle - curGyroAngle));
+        prevGyroAngle = curGyroAngle;
+        frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/GyroAccum", gyroAccumulator.value());
+        frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/GyroCur", curGyroAngle.value());
+        frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/GyroPrev", prevGyroAngle.value());
+      }))
       .FinallyDo([this] {
         units::meter_t drivebaseRadius = _frontLeftLocation.Norm();
-        units::radian_t finalGyroHeading = GetHeading().Radians();
-        // auto finalWheelDistance =
-        //     (_frontRight.GetPosition().distance + _frontLeft.GetPosition().distance +
-        //      _backRight.GetPosition().distance + _backLeft.GetPosition().distance) /
-        //     4;
-        units::radian_t finalWheelDistance = _frontRight.GetDrivenRotations();
 
-        units::radian_t gyroDelta = finalGyroHeading - initialGyroHeading;
-        units::radian_t wheelDistanceDelta = finalWheelDistance - initialWheelDistance;
+        units::radian_t FRfinalWheelDistance = _frontRight.GetDrivenRotations();
+        units::radian_t FLfinalWheelDistance = _frontLeft.GetDrivenRotations();
+        units::radian_t BRfinalWheelDistance = _backRight.GetDrivenRotations();
+        units::radian_t BLfinalWheelDistance = _backLeft.GetDrivenRotations();
 
-        frc::SmartDashboard::PutNumber(
-            "Drivebase/WheelCharacterisation/CalcedWheelRadius",
-            ((gyroDelta * drivebaseRadius) / wheelDistanceDelta).value());
-        frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/Gyro", gyroDelta.value());
-        frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/DrivebaseRadius",
-                                       drivebaseRadius.value());
-        frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/WheelDistance",
-                                       wheelDistanceDelta.value());
+        units::radian_t FRdelta = units::math::abs(FRfinalWheelDistance - FRinitialWheelDistance);
+        units::radian_t FLdelta = units::math::abs(FLfinalWheelDistance - FLinitialWheelDistance);
+        units::radian_t BRdelta = units::math::abs(BRfinalWheelDistance - BRinitialWheelDistance);
+        units::radian_t BLdelta = units::math::abs(BLfinalWheelDistance - BLinitialWheelDistance);
+
+
+
+        units::radian_t avgWheelDelta = (FRdelta + FLdelta + BRdelta + BLdelta) / 4.0;
+
+        frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/CalcedWheelRadius",
+                                       ((gyroAccumulator * drivebaseRadius) / avgWheelDelta).value());
+        frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/DrivebaseRadius", drivebaseRadius.value());
+        frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/WheelDistance", avgWheelDelta.value());
+
+        // frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/FLinitialWheelDistance", FLinitialWheelDistance.value());
+        // frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/FRinitialWheelDistance", FRinitialWheelDistance.value());
+        // frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/BLinitialWheelDistance", BLinitialWheelDistance.value());
+        // frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/BRinitialWheelDistance", BRinitialWheelDistance.value());
+
+        // frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/FLfinalWheelDistance", FLfinalWheelDistance.value());
+        // frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/FRfinalWheelDistance", FRfinalWheelDistance.value());
+        // frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/BLfinalWheelDistance", BLfinalWheelDistance.value());
+        // frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/BRfinalWheelDistance", BRfinalWheelDistance.value());
+
+        frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/FLdelta", FLdelta.value());
+        frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/FRdelta", FRdelta.value());
+        frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/BLdelta", BLdelta.value());
+        frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/BRdelta", BRdelta.value());
       });
 }
