@@ -47,9 +47,8 @@ void SubVision::UpdatePoseEstimator(std::vector<photon::PhotonPipelineResult> re
     return; // Return if no result, prevent null error later
   }
   for (auto result : results) {
-    if (result.HasTargets()){
       _pose = _robotPoseEstimater.Update(result); // Get estimate pose of robot by vision
-    }
+
     }
   frc::SmartDashboard::PutBoolean("Vision/Has value", _pose.has_value());
 }
