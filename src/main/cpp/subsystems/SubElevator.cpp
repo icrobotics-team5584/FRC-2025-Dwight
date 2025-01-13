@@ -28,6 +28,9 @@ SubElevator::SubElevator() {
     MotorConfig.Voltage.PeakForwardVoltage = 12_V;
     MotorConfig.Voltage.PeakReverseVoltage = -12_V;
 
+    // invert motors
+    MotorConfig.MotorOutput.Inverted = true;
+
     // Current Limits
     MotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     MotorConfig.CurrentLimits.SupplyCurrentLowerLimit = 20.0_A; //40
@@ -89,6 +92,10 @@ units::turn_t SubElevator::RotationsFromHeight(units::meter_t height){
     return height.value() / _DRUM_CIRCUMFERENCE.value() * 1_tr;
 };
 
+units::meter_t SubElevator::HeightFromRotations(units::turn_t turns) {
+    return turns.value() * _DRUM_CIRCUMFERENCE.value() * 1_m;
+}
+
 units::turns_per_second_t SubElevator::RotationsFromMetersPerSecond(units::meters_per_second_t meterspersec){
     return meterspersec.value() / _DRUM_CIRCUMFERENCE.value() * 1_tps;
 };
@@ -96,7 +103,8 @@ units::turns_per_second_t SubElevator::RotationsFromMetersPerSecond(units::meter
 //Reset motor position to 0
 frc2::CommandPtr SubElevator::ZeroElevator() {
     return RunOnce([this]{
-    _elevatorMotor1.SetPosition(0_tr);
+    _elevatorMotor1.SetPosition(RotationsFromHeight(0.239_m));
+    _elevatorMotor2.SetPosition(RotationsFromHeight(0.239_m));
    });
 }
 
@@ -174,6 +182,8 @@ void SubElevator::Stop() {
 void SubElevator::Periodic() {
     Logger::LogFalcon("Elevator/Motor1", _elevatorMotor1);
     Logger::LogFalcon("Elevator/Motor2", _elevatorMotor2);
+    Logger::Log("Elevator/Motor1/Height", HeightFromRotations(_elevatorMotor1.GetPosition().GetValue()));
+    Logger::Log("Elevator/Motor2/Height", HeightFromRotations(_elevatorMotor2.GetPosition().GetValue()));
 }
 
 void SubElevator::SimulationPeriodic() {
