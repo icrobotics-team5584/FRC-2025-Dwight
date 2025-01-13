@@ -158,7 +158,7 @@ void SubDrivebase::Drive(units::meters_per_second_t xSpeed, units::meters_per_se
 
   // Discretize to get rid of translational drift while rotating
   constexpr bool inSim = frc::RobotBase::IsSimulation();
-  speeds = frc::ChassisSpeeds::Discretize(speeds, inSim ? 20_ms : -200_ms);
+  speeds = frc::ChassisSpeeds::Discretize(speeds, inSim ? 20_ms : 60_ms);
 
   // Get states of all swerve modules
   auto states = _kinematics.ToSwerveModuleStates(speeds);
@@ -283,7 +283,7 @@ void SubDrivebase::ResetGyroHeading(units::degree_t startingAngle) {
 }
 
 frc2::CommandPtr SubDrivebase::ResetGyroCmd() {
-  return RunOnce([this] { ResetGyroHeading(); });
+  return RunOnce([this] { _poseEstimator.ResetRotation(0_deg); });
 }
 
 frc::Pose2d SubDrivebase::GetPose() {
