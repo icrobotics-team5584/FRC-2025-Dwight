@@ -59,8 +59,8 @@ void RobotContainer::ConfigureBindings() {
   _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise camera object
 
   //Rumble controller when end effector line break triggers
-  SubEndEffector::GetInstance().CheckLineBreakTrigger().OnTrue(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
-  SubEndEffector::GetInstance().CheckLineBreakTrigger().OnTrue(ControllerRumbleLeft(_driverController).WithTimeout(0.1_s));
+  SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnTrue(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
+  SubEndEffector::GetInstance().CheckLineBreakTriggerLower().OnTrue(ControllerRumbleLeft(_driverController).WithTimeout(0.1_s));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
