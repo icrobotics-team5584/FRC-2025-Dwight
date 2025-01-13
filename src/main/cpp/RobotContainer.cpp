@@ -6,8 +6,9 @@
 #include "subsystems/SubDrivebase.h"
 #include "subsystems/SubVision.h"
 #include <frc2/command/Commands.h>
-#include <frc/smartdashboard/SmartDashboard.h>
-#include "subsystems/SubEndEffector.h"
+// auto includes
+#include <pathplanner/lib/commands/PathPlannerAuto.h>
+#include "subsystems/SubDrivebase.h"
 
 RobotContainer::RobotContainer() {
   SubVision::GetInstance();
@@ -17,6 +18,7 @@ RobotContainer::RobotContainer() {
   
   // Trigger Bindings
   ConfigureBindings();
+<<<<<<< HEAD
   SubDrivebase::GetInstance().SetDefaultCommand(SubDrivebase::GetInstance().JoystickDrive(_driverController));
 }
 
@@ -24,11 +26,39 @@ void RobotContainer::ConfigureBindings() {
   _driverController.X().WhileTrue(SubDrivebase::GetInstance().Drive([] {return frc::ChassisSpeeds(0.5_mps, 0_mps, 0.2_tps);}, true));
   _driverController.Y().WhileTrue(SubDrivebase::GetInstance().Drive([] {return frc::ChassisSpeeds(-0.5_mps, 0_mps, -0.2_tps);}, true));
   _driverController.B().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
+=======
+
+  // AutoChooser options
+  _autoChooser.AddOption("Default-Left", "Default-Left");  
+  _autoChooser.AddOption("Default-Middle", "placeholder-DM");
+  _autoChooser.AddOption("Default-Right", "Default-Right");
+  _autoChooser.AddOption("TeammateHelper-Left", "placeholder-THL");
+  _autoChooser.AddOption("TeammateHelper-Right", "placeholder-THR");
+  _autoChooser.AddOption("L-Shape", "L-Shape");
+  _autoChooser.AddOption("L-Shape-Slow", "L-Shape-Slow");
+  _autoChooser.AddOption("L-Shape-Spinning", "L-Shape-Spinning");
+  _autoChooser.AddOption("L-Shape-Spinning-Slow", "L-Shape-Spinning-Slow");
+  _autoChooser.AddOption("move", "move");
+  frc::SmartDashboard::PutData("Chosen Auton", &_autoChooser);   
+}
+
+void RobotContainer::ConfigureBindings() {
+  _driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd());
+  _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
+  _driverController.X().WhileTrue(SubDrivebase::GetInstance().Drive([] {return frc::ChassisSpeeds(0.1_mps, 0_mps, 0.5_tps);} ,false));
+  _driverController.B().WhileTrue(SubDrivebase::GetInstance().Drive([] {return frc::ChassisSpeeds(-0.1_mps, 0_mps, 0.5_tps);} ,false));
+>>>>>>> auton
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-  return frc2::cmd::Print("No autonomous command configured");
+  //return pathplanner::PathPlannerAuto("test auto").ToPtr();
+  auto _autoSelected = _autoChooser.GetSelected();
+  units::second_t delay = 0.00_s;
+  
+  return frc2::cmd::Wait(delay)
+    .AndThen(pathplanner::PathPlannerAuto(_autoSelected).ToPtr());
 }
+<<<<<<< HEAD
 
 // Controller rumble functions
 frc2::CommandPtr RobotContainer::ControllerRumbleLeft(frc2::CommandXboxController& controller) {
@@ -44,3 +74,5 @@ frc2::CommandPtr RobotContainer::ControllerRumbleRight(frc2::CommandXboxControll
 }
 
 
+=======
+>>>>>>> auton
