@@ -30,6 +30,10 @@ RobotContainer::RobotContainer() {
 
 void RobotContainer::ConfigureBindings() {
   _tuningController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd());
+  _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
+  _driverController.B().OnTrue(SubDrivebase::GetInstance()
+    .Drive([] { return frc::ChassisSpeeds{0.5_mps, 0_mps, 15_deg_per_s}; }, true)
+    .WithTimeout(3_s));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
