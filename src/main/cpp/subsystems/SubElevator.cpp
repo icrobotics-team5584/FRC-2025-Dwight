@@ -35,6 +35,10 @@ SubElevator::SubElevator() {
     MotorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.5_s;
     MotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     MotorConfig.CurrentLimits.StatorCurrentLimit = 30.0_A;
+    MotorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    MotorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    MotorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = (_L4_HEIGHT/_DRUM_CIRCUMFERENCE).value() * 1_tr;
+    MotorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0_tr;
 
     // Feedback Sensor Ratio
     MotorConfig.Feedback.SensorToMechanismRatio = 14;
@@ -106,6 +110,29 @@ frc2::CommandPtr SubElevator::ElevatorResetZero() {
     return frc2::cmd::RunOnce([] {SubElevator::GetInstance().ZeroElevator();});
 }
 
+void SubElevator::EnableSoftLimit(bool enabled) {
+    ctre::phoenix6::configs::TalonFXConfiguration MotorConfig{};
+    // Configure the forward soft limit for elevatorMotor1
+    _elevatorMotor1.GetConfigurator().Apply(MotorConfig);
+    MotorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;  
+
+    // Configure the reverse soft limit for elevatorMotor2
+    _elevatorMotor1.GetConfigurator().Apply(MotorConfig);
+    MotorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+}
+
+frc2::CommandPtr SubElevator::ManualElevatorMovementUP() {
+  return frc2::cmd::StartEnd(
+      [this] { _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(5_V)); },
+      [this] { _elevatorMotor1.StopMotor(); });
+    }
+
+frc2::CommandPtr SubElevator::ManualElevatorMovementDOWN() {
+  return frc2::cmd::StartEnd(
+      [this] { _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-5_V)); },
+      [this] { _elevatorMotor1.StopMotor(); });
+    }
+
 //Check if elevator has touched the bottom
 frc2::CommandPtr SubElevator::ElevatorResetCheck() {
     return frc2::cmd::RunOnce ([this] {ResetM1 = false;})
@@ -126,13 +153,13 @@ frc2::CommandPtr SubElevator::ElevatorStop() {
     return frc2::cmd::RunOnce([this] {SubElevator::GetInstance().Stop();});
 }
 
-//Auto climber reset by bringing elevator to zero position then reset (can be used in tele-op)
+//Auto elevator reset by bringing elevator to zero position then reset (can be used in tele-op)
 frc2::CommandPtr SubElevator::ElevatorAutoReset() {
-    return frc2::cmd::RunOnce([this] { Reseting = true;})
+    return frc2::cmd::RunOnce([this] { Reseting = true; EnableSoftLimit(false);})
         .AndThen(ElevatorResetCheck())
         .AndThen(ElevatorResetZero())
         .AndThen(ElevatorStop())
-        .FinallyDo([this] {Reseting = false; Reseted = true; Stop();});
+        .FinallyDo([this] {Reseting = false; Reseted = true; EnableSoftLimit(false); Stop();});
 }
 
 //Stop motor

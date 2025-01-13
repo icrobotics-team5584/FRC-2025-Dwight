@@ -9,6 +9,7 @@
 #include "utilities/ICSparkMax.h"
 #include "utilities/ICSparkEncoder.h"
 #include <frc/simulation/ElevatorSim.h>
+#include <frc2/command/button/CommandXboxController.h>
 #include <units/constants.h>
 
 class SubElevator : public frc2::SubsystemBase {
@@ -31,13 +32,17 @@ class SubElevator : public frc2::SubsystemBase {
   frc2::CommandPtr ElevatorResetCheck();
   frc2::CommandPtr ElevatorAutoReset();
   frc2::CommandPtr ElevatorStop();
+  frc2::CommandPtr ManualElevatorMovementUP();
+  frc2::CommandPtr ManualElevatorMovementDOWN();
   frc2::CommandPtr CmdElevatorToPosition(units::meter_t height);
-  
+  frc2::CommandPtr ElevatorJoystickDrive(frc2::CommandXboxController& _controller);
   units::turn_t RotationsFromHeight(units::meter_t height);
   units::turns_per_second_t RotationsFromMetersPerSecond(units::meters_per_second_t meterspersec);
   units::ampere_t GetM1Current();
 
   void Stop();
+  void EnableSoftLimit(bool enabled);
+
 
   void Periodic() override;
   void SimulationPeriodic() override;
