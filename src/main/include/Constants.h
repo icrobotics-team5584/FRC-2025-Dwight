@@ -25,5 +25,6 @@ namespace canid {
 }
 
 namespace dio {
-    constexpr int EndEffectorLineBreak = 1;  
+    constexpr int EndEffectorLineBreakHigher = 1;  
+    constexpr int EndEffectorLineBreakLower = 2;
 }

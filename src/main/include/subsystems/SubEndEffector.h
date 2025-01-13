@@ -25,9 +25,11 @@ class SubEndEffector : public frc2::SubsystemBase {
   frc2::CommandPtr FeedUp();
   frc2::CommandPtr FeedDown();
   frc2::CommandPtr StopMotor();
-  bool CheckLineBreak();
+  bool CheckLineBreakHigher();
+  bool CheckLineBreakLower();
   bool LineBreakDownSignal();
-  frc2::Trigger CheckLineBreakTrigger();
+  frc2::Trigger CheckLineBreakTriggerHigher();
+  frc2::Trigger CheckLineBreakTriggerLower();
 
 
   /**
@@ -36,7 +38,8 @@ class SubEndEffector : public frc2::SubsystemBase {
   void Periodic() override;
 
  private:
-  frc::DigitalInput _endEffectorLineBreak{dio::EndEffectorLineBreak};
+  frc::DigitalInput _endEffectorLineBreakHigher{dio::EndEffectorLineBreakHigher};
+  frc::DigitalInput _endEffectorLineBreakLower{dio::EndEffectorLineBreakLower};
   ICSparkMax _endEffectorMotor{canid::EndEffectorMotor, 30_A};
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
