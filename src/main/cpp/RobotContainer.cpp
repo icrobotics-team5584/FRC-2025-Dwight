@@ -4,29 +4,18 @@
 
 #include "RobotContainer.h"
 #include "subsystems/SubDrivebase.h"
-#include "subsystems/SubVision.h"
 #include <frc2/command/Commands.h>
 // auto includes
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 #include "subsystems/SubDrivebase.h"
 
 RobotContainer::RobotContainer() {
-  SubVision::GetInstance();
 
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(SubDrivebase::GetInstance().JoystickDrive(_driverController));
   
   // Trigger Bindings
   ConfigureBindings();
-<<<<<<< HEAD
-  SubDrivebase::GetInstance().SetDefaultCommand(SubDrivebase::GetInstance().JoystickDrive(_driverController));
-}
-
-void RobotContainer::ConfigureBindings() {
-  _driverController.X().WhileTrue(SubDrivebase::GetInstance().Drive([] {return frc::ChassisSpeeds(0.5_mps, 0_mps, 0.2_tps);}, true));
-  _driverController.Y().WhileTrue(SubDrivebase::GetInstance().Drive([] {return frc::ChassisSpeeds(-0.5_mps, 0_mps, -0.2_tps);}, true));
-  _driverController.B().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
-=======
 
   // AutoChooser options
   _autoChooser.AddOption("Default-Left", "Default-Left");  
@@ -47,7 +36,6 @@ void RobotContainer::ConfigureBindings() {
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
   _driverController.X().WhileTrue(SubDrivebase::GetInstance().Drive([] {return frc::ChassisSpeeds(0.1_mps, 0_mps, 0.5_tps);} ,false));
   _driverController.B().WhileTrue(SubDrivebase::GetInstance().Drive([] {return frc::ChassisSpeeds(-0.1_mps, 0_mps, 0.5_tps);} ,false));
->>>>>>> auton
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
@@ -58,7 +46,6 @@ frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   return frc2::cmd::Wait(delay)
     .AndThen(pathplanner::PathPlannerAuto(_autoSelected).ToPtr());
 }
-<<<<<<< HEAD
 
 // Controller rumble functions
 frc2::CommandPtr RobotContainer::ControllerRumbleLeft(frc2::CommandXboxController& controller) {
@@ -74,5 +61,3 @@ frc2::CommandPtr RobotContainer::ControllerRumbleRight(frc2::CommandXboxControll
 }
 
 
-=======
->>>>>>> auton
