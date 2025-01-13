@@ -59,8 +59,8 @@ SubElevator::SubElevator() {
 
 frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height){
     return RunOnce([this, height]{
-    if(height < 0.432_m){
-       _elevatorMotor1.SetControl(controls::MotionMagicVoltage(RotationsFromHeight(0.432_m)).WithEnableFOC(true));
+    if(height < _MIN_HEIGHT){
+       _elevatorMotor1.SetControl(controls::MotionMagicVoltage(RotationsFromHeight(_MIN_HEIGHT)).WithEnableFOC(true));
         }
     else {
          _elevatorMotor1.SetControl(controls::MotionMagicVoltage(RotationsFromHeight(height)).WithEnableFOC(true));
@@ -103,8 +103,8 @@ units::turns_per_second_t SubElevator::RotationsFromMetersPerSecond(units::meter
 //Reset motor position to 0
 frc2::CommandPtr SubElevator::ZeroElevator() {
     return RunOnce([this]{
-    _elevatorMotor1.SetPosition(RotationsFromHeight(0.239_m));
-    _elevatorMotor2.SetPosition(RotationsFromHeight(0.239_m));
+    _elevatorMotor1.SetPosition(RotationsFromHeight(_MIN_HEIGHT));
+    _elevatorMotor2.SetPosition(RotationsFromHeight(_MIN_HEIGHT));
    });
 }
 

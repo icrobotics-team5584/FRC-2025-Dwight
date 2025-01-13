@@ -74,7 +74,7 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr units::meter_t _DRUM_RADIUS = 1.84_cm * 2; // effective radius - doubled as 2 stage elevator
   static constexpr units::meter_t _DRUM_CIRCUMFERENCE = _DRUM_RADIUS * 2 * units::constants::pi;
   static constexpr units::meter_t _MAX_HEIGHT = 2_m;
-  static constexpr units::meter_t _MIN_HEIGHT = 0_m;
+  static constexpr units::meter_t _MIN_HEIGHT = 0.239_m;
   static constexpr units::meter_t _START_HEIGHT = 0_m;
   static constexpr units::kilogram_t _CARRIAGE_MASS = 6_kg;
   static constexpr units::meter_t _L1_HEIGHT = 0.51_m;
