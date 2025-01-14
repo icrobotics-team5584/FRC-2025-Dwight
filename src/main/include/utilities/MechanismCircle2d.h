@@ -10,28 +10,26 @@
 class MechanismCircle2d {
     public:
         template<typename T>
-        MechanismCircle2d(T* location,
-                            std::string name,
-                            double radius,
-                            units::degree_t angle,
-                            int backgroundSpokes=36,
-                            double spokeWidth=6,
-                            const frc::Color8Bit& indicatorColor={255, 255, 255},
-                            const frc::Color8Bit& color={235, 137, 52})
+        MechanismCircle2d(T* location, std::string name, double radius,
+            units::degree_t angle,
+            int backgroundSpokes=36,
+            double spokeWidth=6.0,
+            const frc::Color8Bit& indicatorColor={255, 255, 255},
+            const frc::Color8Bit& color={235, 137, 52})
         {
             //Create circle background spokes
             for (int i = 0; i < backgroundSpokes; i++) {
-                frc::MechanismLigament2d* spoke =
-                    location->Append<frc::MechanismLigament2d>(name+"_spoke"+std::to_string(i),
-                                                                radius,
-                                                                angle+(360_deg/backgroundSpokes)*i,
-                                                                spokeWidth,
-                                                                color); //append spoke ligament to chosen location
+                frc::MechanismLigament2d* spoke = location->template Append<frc::MechanismLigament2d>(
+                        name+"_spoke"+std::to_string(i),
+                        radius,
+                        angle+(360_deg/backgroundSpokes)*i,
+                        spokeWidth,
+                        color); //append spoke ligament to chosen location
                 _backgroundSpokeLigaments.push_back(spoke); //add to list of spokes
             }
 
             //Create indicator ligament
-            _indicatorLigament = location->Append<frc::MechanismLigament2d>(name+"~indicator", radius, angle, spokeWidth, indicatorColor);
+            _indicatorLigament = location->template Append<frc::MechanismLigament2d>(name+"~indicator", radius, angle, spokeWidth, indicatorColor);
             /* tilde is at the end of the ASCII character set. by putting it in the name
             the indicator ligament goes to the bottom of networktables, ensuring it is
             not hidden by the background spokes. */
