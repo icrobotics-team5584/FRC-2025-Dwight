@@ -34,7 +34,7 @@ SubElevator::SubElevator() {
     // Current Limits
     MotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     MotorConfig.CurrentLimits.SupplyCurrentLowerLimit = 20.0_A; //40
-    MotorConfig.CurrentLimits.SupplyCurrentLimit = 40.0_A; //80
+    MotorConfig.CurrentLimits.SupplyCurrentLimit = 0.0_A; //80
     MotorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.5_s;
     MotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     MotorConfig.CurrentLimits.StatorCurrentLimit = 30.0_A;//30
@@ -151,8 +151,12 @@ frc2::CommandPtr SubElevator::ManualElevatorMovementDOWN() {
     }
 
 frc2::CommandPtr SubElevator::ManualElevatorMovementDOWNSLOW() {
-  return frc2::cmd::RunOnce(
-      [this] { _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-1_V)); });
+  return frc2::cmd::StartEnd(
+      [this] { _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-2_V)); },
+      [this] {
+        auto targHeight = HeightFromRotations(_elevatorMotor1.GetPosition(true).GetValue());
+        _elevatorMotor1.SetControl(controls::PositionVoltage(RotationsFromHeight(targHeight)).WithEnableFOC(true));
+      });
     }
 
 //Check if elevator has touched the bottom

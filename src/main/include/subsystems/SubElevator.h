@@ -64,7 +64,7 @@ class SubElevator : public frc2::SubsystemBase {
   ctre::phoenix6::hardware::TalonFX _elevatorMotor1 {canid::elevatorMotor1};
   ctre::phoenix6::hardware::TalonFX _elevatorMotor2 {canid::elevatorMotor2};
 
-  static constexpr double _P = 20; //134.04;
+  static constexpr double _P = 30; //134.04;
   static constexpr double _I = 0;
   static constexpr double _D = 0.2;
   static constexpr double _V = 0;                     
