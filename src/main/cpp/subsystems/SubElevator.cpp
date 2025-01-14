@@ -55,6 +55,7 @@ SubElevator::SubElevator() {
 
     // Set motor 2 to follow motor 1
     _elevatorMotor2.SetControl(controls::Follower(_elevatorMotor1.GetDeviceID(), false));
+    _elevatorMotor1.GetClosedLoopReference().SetUpdateFrequency(100_Hz);
 }
 
 frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height){
@@ -62,6 +63,11 @@ frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height){
     if(height < _MIN_HEIGHT){
        _elevatorMotor1.SetControl(controls::MotionMagicVoltage(RotationsFromHeight(_MIN_HEIGHT)).WithEnableFOC(true));
         }
+
+    if(height > _L4_HEIGHT){
+        _elevatorMotor1.SetControl(controls::MotionMagicVoltage(RotationsFromHeight(_L4_HEIGHT)).WithEnableFOC(true));
+    }
+
     else {
          _elevatorMotor1.SetControl(controls::MotionMagicVoltage(RotationsFromHeight(height)).WithEnableFOC(true));
     }
@@ -128,14 +134,20 @@ void SubElevator::EnableSoftLimit(bool enabled) {
 
 frc2::CommandPtr SubElevator::ManualElevatorMovementUP() {
   return frc2::cmd::StartEnd(
-      [this] { _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(5_V)); },
-      [this] { _elevatorMotor1.StopMotor(); });
+      [this] { _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(4_V)); },
+      [this] {
+        auto targHeight = HeightFromRotations(_elevatorMotor1.GetPosition(true).GetValue());
+        _elevatorMotor1.SetControl(controls::PositionVoltage(RotationsFromHeight(targHeight)).WithEnableFOC(true));
+      });
     }
 
 frc2::CommandPtr SubElevator::ManualElevatorMovementDOWN() {
   return frc2::cmd::StartEnd(
-      [this] { _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-5_V)); },
-      [this] { _elevatorMotor1.StopMotor(); });
+      [this] { _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-4_V)); },
+      [this] {
+        auto targHeight = HeightFromRotations(_elevatorMotor1.GetPosition(true).GetValue());
+        _elevatorMotor1.SetControl(controls::PositionVoltage(RotationsFromHeight(targHeight)).WithEnableFOC(true));
+      });
     }
 
 frc2::CommandPtr SubElevator::ManualElevatorMovementDOWNSLOW() {
