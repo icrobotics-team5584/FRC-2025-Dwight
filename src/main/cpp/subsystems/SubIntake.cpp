@@ -10,9 +10,6 @@
 
 
 SubIntake::SubIntake() {
-    rev::spark::SparkBaseConfig intakeLeftConfig;
-    intakeLeftConfig.Follow(_intakeRightMotor.GetDeviceId(), true);
-    _intakeLeftMotor.AdjustConfig(intakeLeftConfig);
     _configIntakePivotMotor.Feedback.SensorToMechanismRatio = GearRatio;
     _configIntakePivotMotor.Slot0.kP = P;
     _configIntakePivotMotor.Slot0.kI = I;

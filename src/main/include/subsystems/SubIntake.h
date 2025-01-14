@@ -53,8 +53,7 @@ class SubIntake : public frc2::SubsystemBase {
   void SimulationPeriodic() override;
 
  private:
- ICSparkMax _intakeLeftMotor{canid::IntakeLeftMotor, 30_A};
- ICSparkMax _intakeRightMotor{canid::IntakeRightMotor, 30_A};
+ ICSparkMax _intakeRightMotor{canid::IntakeSpinningMotor, 30_A};
 
  ctre::phoenix6::configs::TalonFXConfiguration _configIntakePivotMotor{};
  ctre::phoenix6::hardware::TalonFX _intakePivotMotor{canid::IntakePivotMotor};

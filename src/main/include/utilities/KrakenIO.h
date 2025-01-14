@@ -39,7 +39,7 @@ class KrakenIO : public SwerveIO {
         const units::meter_t WHEEL_RADIUS = 0.04460721912986414_m;
         const units::meter_t WHEEL_CIRCUMFERENCE = 2 * std::numbers::pi * WHEEL_RADIUS;
 
-        const double TURN_P = 40.0;
+        const double TURN_P = 60.0;
         const double TURN_I = 0.0;
         const double TURN_D = 0;
         const double DRIVE_P = 0.017401; // left
