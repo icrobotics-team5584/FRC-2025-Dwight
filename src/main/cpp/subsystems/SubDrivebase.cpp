@@ -109,6 +109,16 @@ void SubDrivebase::SimulationPeriodic() {
   units::radian_t changeInRot = rotSpeed * 20_ms;
   units::degree_t newHeading = GetGyroAngle().RotateBy(changeInRot).Degrees();
   _gyro.SetAngleAdjustment(-newHeading.value());  // negative to switch to CW from CCW
+
+  auto fl = _frontLeft.GetPosition();
+  auto fr = _frontRight.GetPosition();
+  auto bl = _backLeft.GetPosition();
+  auto br = _backRight.GetPosition();
+
+  _simPoseEstimator.Update(GetGyroAngle(), {fl, fr, bl, br});
+  DisplayPose("Sim final pose v3 for real", _simPoseEstimator.GetEstimatedPosition());
+
+
 }
 
 void SubDrivebase::SetPathplannerRotationFeedbackSource(
@@ -141,9 +151,9 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
   }
 
   // Apply deadbands
-  double forwardStick = frc::ApplyDeadband(controller.GetLeftY(), deadband);
-  double sidewaysStick = frc::ApplyDeadband(controller.GetLeftX(), deadband);
-  double rotationStick = frc::ApplyDeadband(controller.GetRightX(), deadband);
+  double forwardStick = frc::ApplyDeadband(-controller.GetLeftY(), deadband);
+  double sidewaysStick = frc::ApplyDeadband(-controller.GetLeftX(), deadband);
+  double rotationStick = frc::ApplyDeadband(-controller.GetRightX(), deadband);
 
   // Apply joystick rate limits
   auto forwardSpeed = _yStickLimiter.Calculate(forwardStick) * maxVelocity;
@@ -164,6 +174,28 @@ frc2::CommandPtr SubDrivebase::Drive(std::function<frc::ChassisSpeeds()> speeds,
            Drive(speedVals.vx, speedVals.vy, speedVals.omega, fieldOriented);
          })
       .FinallyDo([this] { Drive(0_mps, 0_mps, 0_deg_per_s, false); });
+}
+
+
+void SubDrivebase::DriveToPose(frc::Pose2d targetPose) {
+ // DisplayPose("targetPose", targetPose);
+
+  frc::Pose2d currentPosition = _poseEstimator.GetEstimatedPosition();
+  double speedX = _teleopTranslationController.Calculate(currentPosition.X().value(), targetPose.X().value());
+  double speedY = _teleopTranslationController.Calculate(currentPosition.Y().value(), targetPose.Y().value());
+  double speedRot = _teleopRotationController.Calculate(currentPosition.Rotation().Radians(), targetPose.Rotation().Radians());
+
+  speedX = std::clamp(speedX, -0.5, 0.5);
+  speedY = std::clamp(speedY, -0.5, 0.5);
+  speedRot = std::clamp(speedRot, -2.0, 2.0);
+
+  // Drive speeds are relative to your alliance wall. Flip if we are on red,
+  // since we are using global coordinates (blue alliance at 0,0)
+  if (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed && frc::RobotBase::IsReal()) {
+    Drive(-speedX * 1_mps, -speedY * 1_mps, speedRot * 1_rad_per_s, true);
+  } else {
+    Drive(speedX * 1_mps, speedY * 1_mps, speedRot * 1_rad_per_s, true);
+  }
 }
 
 void SubDrivebase::Drive(units::meters_per_second_t xSpeed, units::meters_per_second_t ySpeed,
@@ -252,7 +284,7 @@ void SubDrivebase::UpdateOdometry() {
 
 frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   // Find current and target values
-  DisplayPose("targetPose", targetPose);
+  DisplayPose("WERTY/targetPose", targetPose);
   double targetXMeters = targetPose.X().value();
   double targetYMeters = targetPose.Y().value();
   units::turn_t targetRotation = targetPose.Rotation().Radians();
@@ -264,7 +296,7 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   // Use PID controllers to calculate speeds
   auto xSpeed = _teleopTranslationController.Calculate(currentXMeters, targetXMeters) * 1_mps;
   auto ySpeed = _teleopTranslationController.Calculate(currentYMeters, targetYMeters) * 1_mps;
-  auto rSpeed = CalcRotateSpeed(targetRotation - currentRotation);
+  auto rSpeed = CalcRotateSpeed(currentRotation - targetRotation);
 
   // Clamp to max velocity
   xSpeed = units::math::min(xSpeed, MAX_VELOCITY);
@@ -272,7 +304,15 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   ySpeed = units::math::min(ySpeed, MAX_VELOCITY);
   ySpeed = units::math::max(ySpeed, -MAX_VELOCITY);
 
-  return frc::ChassisSpeeds{xSpeed, ySpeed, rSpeed};
+  frc::SmartDashboard::PutNumber("CalcDriveLogs/xSpeed", -xSpeed.value());
+  frc::SmartDashboard::PutNumber("CalcDriveLogs/ySpeed", ySpeed.value());
+  frc::SmartDashboard::PutNumber("CalcDriveLogs/rSpeed", rSpeed.value());
+  frc::SmartDashboard::PutNumber("CalcDriveLogs/targetXMeters", targetXMeters);
+  frc::SmartDashboard::PutNumber("CalcDriveLogs/targetYMeters", targetYMeters);
+  frc::SmartDashboard::PutNumber("CalcDriveLogs/currentXMeters", currentXMeters);
+  frc::SmartDashboard::PutNumber("CalcDriveLogs/currentYMeters", currentYMeters);
+  frc::SmartDashboard::PutNumber("CalcDriveLogs/currentRotation", currentRotation.value());
+  return frc::ChassisSpeeds{ xSpeed, ySpeed, rSpeed};
 }
 
 units::turns_per_second_t SubDrivebase::CalcRotateSpeed(units::turn_t rotationError) { 
@@ -307,6 +347,9 @@ frc::Pose2d SubDrivebase::GetPose() {
   return _poseEstimator.GetEstimatedPosition();
 }
 
+frc::Pose2d SubDrivebase::GetSimPose() {
+  return _simPoseEstimator.GetEstimatedPosition();
+}
 void SubDrivebase::SetPose(frc::Pose2d pose) {
   auto fl = _frontLeft.GetPosition();
   auto fr = _frontRight.GetPosition();
@@ -330,7 +373,7 @@ void SubDrivebase::DisplayTrajectory(std::string name, frc::Trajectory trajector
 void SubDrivebase::AddVisionMeasurement(frc::Pose2d pose, double ambiguity,
                                         units::second_t timeStamp) {
   frc::SmartDashboard::PutNumber("Timestamp", timeStamp.value());
-  _poseEstimator.AddVisionMeasurement(pose, timeStamp);
+  _poseEstimator.AddVisionMeasurement(frc::Pose2d{pose.X(), pose.Y(), GetPose().Rotation()}, timeStamp);
 }
 
 void SubDrivebase::SetNeutralMode(bool mode) {

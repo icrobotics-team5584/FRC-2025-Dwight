@@ -8,7 +8,6 @@
 #include <frc2/command/Commands.h>
 #include <frc2/command/button/CommandXboxController.h>
 #include <frc/smartdashboard/SendableChooser.h>
-
 #include <cameraserver/CameraServer.h>
 
 class RobotContainer {
@@ -30,4 +29,6 @@ class RobotContainer {
   frc2::CommandXboxController _tuningController{5};
 
   frc::SendableChooser<std::string> _autoChooser;
+  
+  cs::UsbCamera _cameraStream; //Camera object
 };
