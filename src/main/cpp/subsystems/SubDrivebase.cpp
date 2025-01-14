@@ -135,8 +135,8 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
   }
 
   // Apply deadbands
-  double forwardStick = frc::ApplyDeadband(controller.GetLeftY(), deadband);
-  double sidewaysStick = frc::ApplyDeadband(controller.GetLeftX(), deadband);
+  double forwardStick = frc::ApplyDeadband(-controller.GetLeftY(), deadband);
+  double sidewaysStick = frc::ApplyDeadband(-controller.GetLeftX(), deadband);
   double rotationStick = frc::ApplyDeadband(-controller.GetRightX(), deadband);
 
   // Apply joystick rate limits
@@ -191,7 +191,7 @@ void SubDrivebase::Drive(units::meters_per_second_t xSpeed, units::meters_per_se
 
   // Discretize to get rid of translational drift while rotating
   constexpr bool inSim = frc::RobotBase::IsSimulation();
-  speeds = frc::ChassisSpeeds::Discretize(speeds, inSim ? 20_ms : -200_ms);
+  speeds = frc::ChassisSpeeds::Discretize(speeds, inSim ? 20_ms : 60_ms);
 
   // Get states of all swerve modules
   auto states = _kinematics.ToSwerveModuleStates(speeds);
@@ -324,7 +324,7 @@ void SubDrivebase::ResetGyroHeading(units::degree_t startingAngle) {
 }
 
 frc2::CommandPtr SubDrivebase::ResetGyroCmd() {
-  return RunOnce([this] { ResetGyroHeading(); });
+  return RunOnce([this] { _poseEstimator.ResetRotation(0_deg);});
 }
 
 frc::Pose2d SubDrivebase::GetPose() {
@@ -357,7 +357,7 @@ void SubDrivebase::DisplayTrajectory(std::string name, frc::Trajectory trajector
 void SubDrivebase::AddVisionMeasurement(frc::Pose2d pose, double ambiguity,
                                         units::second_t timeStamp) {
   frc::SmartDashboard::PutNumber("Timestamp", timeStamp.value());
-  _poseEstimator.AddVisionMeasurement(frc::Pose2d{pose.X(), pose.Y(), GetGyroAngle()}, timeStamp);
+  _poseEstimator.AddVisionMeasurement(frc::Pose2d{pose.X(), pose.Y(), GetPose().Rotation()}, timeStamp);
 }
 
 void SubDrivebase::SetNeutralMode(bool mode) {
