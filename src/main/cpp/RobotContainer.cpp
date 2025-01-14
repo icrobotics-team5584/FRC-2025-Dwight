@@ -53,18 +53,29 @@ void RobotContainer::ConfigureBindings() {
   /* OPERATOR */
   //Triggers
 
+  //Joystick
+  frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
+    return (_operatorController.GetLeftY() < -0.2);
+  }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
+
+  frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
+    return (_operatorController.GetLeftY() > 0.2);
+  }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
 
   //Bumpers
 
 
   //Letters
    _operatorController.A().OnTrue(SubElevator::GetInstance().CmdSetL1());
-   _operatorController.B().OnTrue(SubElevator::GetInstance().CmdSetL2());
-   _operatorController.X().OnTrue(SubElevator::GetInstance().CmdSetL3());
+   _operatorController.X().OnTrue(SubElevator::GetInstance().CmdSetL2());
+   _operatorController.B().OnTrue(SubElevator::GetInstance().CmdSetL3());
    _operatorController.Y().OnTrue(SubElevator::GetInstance().CmdSetL4());
+   _operatorController.LeftBumper().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
+   _operatorController.RightBumper().OnTrue(SubElevator::GetInstance().ZeroElevator().IgnoringDisable(true));
 
   //POV
-
+  _operatorController.POVUp().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
+  _operatorController.POVDown().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
