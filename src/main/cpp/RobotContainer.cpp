@@ -14,10 +14,10 @@
 #include "subsystems/SubEndEffector.h"
 #include "commands/VisionCommand.h"
 #include <frc/Filesystem.h>
-// #include <wpi/
+#include <wpinet/WebServer.h>
 
 RobotContainer::RobotContainer() {
-  // wpi::WebServer::GetInstance().Start(5800, frc::Filesystem::GetDeployDirectory());
+  wpi::WebServer::GetInstance().Start(5800, frc::filesystem::GetDeployDirectory());
 
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(SubDrivebase::GetInstance().JoystickDrive(_driverController));
