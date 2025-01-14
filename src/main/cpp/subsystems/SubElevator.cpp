@@ -34,10 +34,10 @@ SubElevator::SubElevator() {
     // Current Limits
     MotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     MotorConfig.CurrentLimits.SupplyCurrentLowerLimit = 20.0_A; //40
-    MotorConfig.CurrentLimits.SupplyCurrentLimit = 20.0_A; //80
+    MotorConfig.CurrentLimits.SupplyCurrentLimit = 40.0_A; //80
     MotorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.5_s;
     MotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    MotorConfig.CurrentLimits.StatorCurrentLimit = 20.0_A;//30
+    MotorConfig.CurrentLimits.StatorCurrentLimit = 30.0_A;//30
     MotorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     MotorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     MotorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = (_L4_HEIGHT/_DRUM_CIRCUMFERENCE).value() * 1_tr;
