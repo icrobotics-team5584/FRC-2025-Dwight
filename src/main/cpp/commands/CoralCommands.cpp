@@ -6,7 +6,7 @@ namespace cmd {
         return SubIntake::GetInstance().Deploy().AndThen(
             SubIntake::GetInstance().Intake().AlongWith(
                 SubEndEffector::GetInstance().FeedUp()
-                ).Until( [] {return SubEndEffector::GetInstance().CheckLineBreak();})
+                ).Until( [] {return SubEndEffector::GetInstance().CheckLineBreakHigher();})
                 .AndThen(SubEndEffector::GetInstance().StopMotor().AndThen(SubIntake::GetInstance().Stow()))
         );
     }
