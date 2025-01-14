@@ -3,18 +3,17 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "RobotContainer.h"
+#include "subsystems/SubElevator.h"
 #include <frc2/command/Commands.h>
-#include <frc/smartdashboard/SmartDashboard.h>
-
-#include "commands/CoralCommands.h"
 #include "subsystems/SubDrivebase.h"
 #include "subsystems/SubVision.h"
+#include <frc/smartdashboard/SmartDashboard.h>
 #include "subsystems/SubEndEffector.h"
-#include "subsystems/SubElevator.h"
 #include "subsystems/SubIntake.h"
 
 RobotContainer::RobotContainer() {
   SubVision::GetInstance();
+  SubIntake::GetInstance();
 
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(SubDrivebase::GetInstance().JoystickDrive(_driverController));
@@ -25,32 +24,25 @@ RobotContainer::RobotContainer() {
 
 
 void RobotContainer::ConfigureBindings() {
-  _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise camera object
-  
-  /* DRIVER */
-  //Rumble controller when end effector line break triggers
-  SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnTrue(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
-  SubEndEffector::GetInstance().CheckLineBreakTriggerLower().OnTrue(ControllerRumbleLeft(_driverController).WithTimeout(0.1_s));
+  //Driver
 
   //Triggers
-  _driverController.LeftTrigger().WhileTrue(cmd::IntakeFullSequence());
-  _driverController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor().AlongWith(SubIntake::GetInstance().Stow()));
+
   
   //Bumpers
 
 
   //Letters
-  //_driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
-  _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
-  _driverController.A().ToggleOnTrue(frc2::cmd::StartEnd(
+  _driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
+  
+  _driverController.B().ToggleOnTrue(frc2::cmd::StartEnd(
     [this] { _cameraStream.SetPath("/dev/video1"); }, //Toggle to second camera (climb cam)
     [this] { _cameraStream.SetPath("/dev/video0"); } //Toggle to first camera (drive cam)
   ));
 
-  //POV
-  
+//POV
+  //Opperator
 
-  /* OPERATOR */
   //Triggers
 
   //Joystick
@@ -62,8 +54,8 @@ void RobotContainer::ConfigureBindings() {
     return (_operatorController.GetLeftY() > 0.2);
   }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
 
-  //Bumpers
 
+  //Bumpers
 
   //Letters
    _operatorController.A().OnTrue(SubElevator::GetInstance().CmdSetL1());
@@ -76,6 +68,14 @@ void RobotContainer::ConfigureBindings() {
   //POV
   _operatorController.POVUp().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
   _operatorController.POVDown().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
+
+
+
+  _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise camera object
+
+  //Rumble controller when end effector line break triggers
+  SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnTrue(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
+  SubEndEffector::GetInstance().CheckLineBreakTriggerLower().OnTrue(ControllerRumbleLeft(_driverController).WithTimeout(0.1_s));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
@@ -94,5 +94,3 @@ frc2::CommandPtr RobotContainer::ControllerRumbleRight(frc2::CommandXboxControll
       [this, &controller] { controller.SetRumble(frc::XboxController::RumbleType::kLeftRumble, 1.0); },
       [this, &controller] { controller.SetRumble(frc::XboxController::RumbleType::kLeftRumble, 0); });
 }
-
-
