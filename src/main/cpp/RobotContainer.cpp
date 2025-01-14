@@ -44,6 +44,12 @@ RobotContainer::RobotContainer() {
   _autoChooser.AddOption("L-Shape-Spinning", "L-Shape-Spinning");
   _autoChooser.AddOption("L-Shape-Spinning-Slow", "L-Shape-Spinning-Slow");
   _autoChooser.AddOption("move", "move");
+  _autoChooser.AddOption("WheelCharecterisation-5m-0.1ms", "MoveForward-5M-0.1ms");
+  _autoChooser.AddOption("WheelCharecterisation-5m-0.5ms", "MoveForward-5M-0.5ms");
+  _autoChooser.AddOption("WheelCharecterisation-5m-1.0ms", "MoveForward-5M-1.0ms");
+  _autoChooser.AddOption("WheelCharecterisation-5m-1.5ms", "MoveForward-5M-1.5ms");
+  _autoChooser.AddOption("WheelCharecterisation-5m-2.0ms", "MoveForward-5M-2.0ms");
+
   frc::SmartDashboard::PutData("Chosen Auton", &_autoChooser);   
 }
 
