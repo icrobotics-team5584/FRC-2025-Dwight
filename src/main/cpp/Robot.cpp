@@ -4,6 +4,7 @@
 
 #include "Robot.h"
 #include "subsystems/SubElevator.h"
+#include "commands/CoralCommands.h"
 
 #include <frc2/command/CommandScheduler.h>
 
@@ -11,6 +12,7 @@ Robot::Robot() {}
 
 void Robot::RobotPeriodic() {
   frc2::CommandScheduler::GetInstance().Run();
+  cmd::AutoAdjustElevatorHeight(3);
 }
 
 void Robot::DisabledInit() {}
