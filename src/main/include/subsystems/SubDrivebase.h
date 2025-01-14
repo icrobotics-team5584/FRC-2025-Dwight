@@ -48,6 +48,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   units::turns_per_second_t CalcRotateSpeed(units::turn_t rotationError);
   units::degree_t GetPitch();
   frc::Pose2d GetPose();
+  frc::Pose2d GetSimPose();
   frc::Rotation2d GetHeading(); // Heading as recorded by the pose estimator (matches field orientation)
   frc::Rotation2d GetGyroAngle(); // Heading as recorded by the gyro (zero is direction when switched on)
   units::meters_per_second_t GetVelocity();
@@ -58,6 +59,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   // Commands
   frc2::CommandPtr JoystickDrive(frc2::CommandXboxController& controller);
   frc2::CommandPtr Drive(std::function<frc::ChassisSpeeds()> speeds, bool fieldOriented);
+  void DriveToPose(frc::Pose2d targetPose);
   frc2::CommandPtr SyncSensorBut();
   frc2::CommandPtr ResetGyroCmd();
   frc2::CommandPtr SysIdQuasistatic(frc2::sysid::Direction direction) {
@@ -107,7 +109,7 @@ class SubDrivebase : public frc2::SubsystemBase {
 
   frc::PIDController _teleopTranslationController{2.0, 0, 0};
   frc::ProfiledPIDController<units::radian> _teleopRotationController{
-      6, 0, 0.3, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
+      3, 0, 0.3, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
   std::shared_ptr<pathplanner::PPHolonomicDriveController> _pathplannerController =
       std::make_shared<pathplanner::PPHolonomicDriveController>(
           pathplanner::PIDConstants{2.0, 0.0, 0.0},  // Translation PID constants
@@ -123,7 +125,18 @@ class SubDrivebase : public frc2::SubsystemBase {
        frc::SwerveModulePosition{0_m, _backLeft.GetAngle()},
        frc::SwerveModulePosition{0_m, _backRight.GetAngle()}},
       frc::Pose2d()};
+
   frc::Field2d _fieldDisplay;
+
+  // Sim pose estimation
+  frc::SwerveDrivePoseEstimator<4> _simPoseEstimator{
+      _kinematics,
+      _gyro.GetRotation2d(),
+      {frc::SwerveModulePosition{0_m, _frontLeft.GetAngle()},
+       frc::SwerveModulePosition{0_m, _frontRight.GetAngle()},
+       frc::SwerveModulePosition{0_m, _backLeft.GetAngle()},
+       frc::SwerveModulePosition{0_m, _backRight.GetAngle()}},
+      frc::Pose2d()};
 
   // Joystick controller rate limiters
   double _tunedMaxJoystickAccel = MAX_JOYSTICK_ACCEL;

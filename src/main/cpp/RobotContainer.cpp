@@ -7,18 +7,26 @@
 #include <frc2/command/Commands.h>
 #include "subsystems/SubDrivebase.h"
 #include "subsystems/SubVision.h"
+#include "commands/VisionCommand.h"
+#include <frc2/command/Commands.h>
+#include "commands/DriveCommands.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 #include "subsystems/SubEndEffector.h"
+#include "commands/VisionCommand.h"
+#include <frc/Filesystem.h>
+#include <wpinet/WebServer.h>
 
 RobotContainer::RobotContainer() {
-  SubVision::GetInstance();
+  wpi::WebServer::GetInstance().Start(5800, frc::filesystem::GetDeployDirectory());
 
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(SubDrivebase::GetInstance().JoystickDrive(_driverController));
-  
+  SubVision::GetInstance().SetDefaultCommand(cmd::AddVisionMeasurement());
+
   // Trigger Bindings
   ConfigureBindings();
 };
+
 
 
 void RobotContainer::ConfigureBindings() {
@@ -31,12 +39,17 @@ void RobotContainer::ConfigureBindings() {
 
 
   //Letters
-  _driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
-  
-  _driverController.B().ToggleOnTrue(frc2::cmd::StartEnd(
-    [this] { _cameraStream.SetPath("/dev/video1"); }, //Toggle to second camera (climb cam)
-    [this] { _cameraStream.SetPath("/dev/video0"); } //Toggle to first camera (drive cam)
-  ));
+  _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
+  _driverController.X().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
+  // _driverController.RightTrigger().WhileTrue(cmd::AlignToSource(_driverController));
+  _driverController.A().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
+  _driverController.B().WhileTrue(cmd::YAlignWithTarget(2, _driverController));
+
+
+  // _driverController.B().ToggleOnTrue(frc2::cmd::StartEnd(
+  //   [this] { _cameraStream.SetPath("/dev/video1"); }, //Toggle to second camera (climb cam)
+  //   [this] { _cameraStream.SetPath("/dev/video0"); } //Toggle to first camera (drive cam)
+  // ));
 
 //POV
   //Opperator
