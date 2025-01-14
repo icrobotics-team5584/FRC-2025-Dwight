@@ -7,24 +7,10 @@
 #include <frc/smartdashboard/Mechanism2d.h>
 #include <frc/smartdashboard/MechanismLigament2d.h>
 
-/*
-Parameters:
-- std::string_view name (will correlate with iterative ligament names, probably)
-- double radius (will correlate with ligament length)
-- units::degree_t angle
-- const frc::Color8Bit& indicatorColor = {r, g, b} (for the one ligament that is a different colour to show rotation)
-- const frc::Color8Bit& color = {235, 137, 52} (background colour of circle)
-- int spokes = 36 (how many ligaments will be used to make up the circle; consequently, how many spokes it will have)
-- double spokeWidth = 6 (will correlate with ligament lineWidth)
-
-Needed functions:
-- setters and getters for all parameters EXCEPT spokes
-- spin
-*/
-
 class MechanismCircle2d {
     public:
-        MechanismCircle2d(frc::MechanismLigament2d* location,
+        template<typename T>
+        MechanismCircle2d(T* location,
                             std::string name,
                             double radius,
                             units::degree_t angle,
