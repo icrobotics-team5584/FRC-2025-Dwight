@@ -93,6 +93,14 @@ frc2::CommandPtr SubElevator::CmdSetSource(){
     return CmdElevatorToPosition(_SOURCE_HEIGHT);
     }
 
+frc2::CommandPtr SubElevator::CmdSetClearHighAlgea(){
+    return CmdElevatorToPosition(_CLEAR_HIGH_ALGELA);
+}
+
+frc2::CommandPtr SubElevator::CmdSetClearLowAlgea(){
+    return CmdElevatorToPosition(_CLEAR_LOW_ALGELA);
+}
+
 
 units::turn_t SubElevator::RotationsFromHeight(units::meter_t height){
     return height.value() / _DRUM_CIRCUMFERENCE.value() * 1_tr;

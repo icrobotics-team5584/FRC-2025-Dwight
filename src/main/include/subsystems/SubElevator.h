@@ -27,6 +27,8 @@ class SubElevator : public frc2::SubsystemBase {
   frc2::CommandPtr CmdSetL2();
   frc2::CommandPtr CmdSetL3();
   frc2::CommandPtr CmdSetL4();
+  frc2::CommandPtr CmdSetClearHighAlgea();
+  frc2::CommandPtr CmdSetClearLowAlgea();
   frc2::CommandPtr CmdSetSource();
   frc2::CommandPtr ZeroElevator();
   frc2::CommandPtr ElevatorResetCheck();
@@ -81,6 +83,8 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr units::meter_t _L2_HEIGHT = 0.86_m;
   static constexpr units::meter_t _L3_HEIGHT = 1.26_m;
   static constexpr units::meter_t _L4_HEIGHT = 1.7_m;//1.88
+  static constexpr units::meter_t _CLEAR_HIGH_ALGELA = 1.88_m;
+  static constexpr units::meter_t _CLEAR_LOW_ALGELA = 1.88_m;
   static constexpr units::meter_t _SOURCE_HEIGHT = 0.93_m;
   static constexpr units::meters_per_second_t _CRUISE_VELOCITY = 1.75_mps; //0.82; //Adjust
   static constexpr units::meters_per_second_squared_t  _ACCELERATION = 6_mps_sq; //Adjust
