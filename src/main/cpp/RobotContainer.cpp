@@ -4,6 +4,7 @@
 
 #include "RobotContainer.h"
 #include "subsystems/SubElevator.h"
+#include "commands/CoralCommands.h"
 #include <frc2/command/Commands.h>
 #include "subsystems/SubDrivebase.h"
 #include "subsystems/SubVision.h"
@@ -27,14 +28,15 @@ void RobotContainer::ConfigureBindings() {
   //Driver
 
   //Triggers
+  _driverController.LeftTrigger().WhileTrue(cmd::IntakeFullSequence());
+  _driverController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor().AlongWith(SubIntake::GetInstance().Stow()));
 
-  
   //Bumpers
 
 
   //Letters
   _driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
-  
+
   _driverController.B().ToggleOnTrue(frc2::cmd::StartEnd(
     [this] { _cameraStream.SetPath("/dev/video1"); }, //Toggle to second camera (climb cam)
     [this] { _cameraStream.SetPath("/dev/video0"); } //Toggle to first camera (drive cam)
