@@ -4,6 +4,7 @@
 
 #include "RobotContainer.h"
 #include "subsystems/SubElevator.h"
+#include "commands/CoralCommands.h"
 #include <frc2/command/Commands.h>
 #include "subsystems/SubDrivebase.h"
 #include "subsystems/SubVision.h"
@@ -27,7 +28,8 @@ void RobotContainer::ConfigureBindings() {
   //Driver
 
   //Triggers
-
+  _driverController.LeftTrigger().WhileTrue(cmd::IntakeFullSequence());
+  _driverController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor().AlongWith(SubIntake::GetInstance().Stow()));
   
   //Bumpers
 
