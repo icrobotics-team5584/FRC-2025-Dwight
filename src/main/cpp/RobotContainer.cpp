@@ -15,7 +15,6 @@
 #include "commands/VisionCommand.h"
 
 RobotContainer::RobotContainer() {
-  SubVision::GetInstance();
 
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(SubDrivebase::GetInstance().JoystickDrive(_driverController));
@@ -38,15 +37,16 @@ void RobotContainer::ConfigureBindings() {
 
   //Letters
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
-  _driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
-  _driverController.RightTrigger().WhileTrue(cmd::AlignToSource(_driverController));
-  _driverController.LeftTrigger().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
+  _driverController.X().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
+  // _driverController.RightTrigger().WhileTrue(cmd::AlignToSource(_driverController));
+  _driverController.A().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
+  _driverController.B().WhileTrue(cmd::YAlignWithTarget(2, _driverController));
 
 
-  _driverController.B().ToggleOnTrue(frc2::cmd::StartEnd(
-    [this] { _cameraStream.SetPath("/dev/video1"); }, //Toggle to second camera (climb cam)
-    [this] { _cameraStream.SetPath("/dev/video0"); } //Toggle to first camera (drive cam)
-  ));
+  // _driverController.B().ToggleOnTrue(frc2::cmd::StartEnd(
+  //   [this] { _cameraStream.SetPath("/dev/video1"); }, //Toggle to second camera (climb cam)
+  //   [this] { _cameraStream.SetPath("/dev/video0"); } //Toggle to first camera (drive cam)
+  // ));
 
 //POV
   //Opperator

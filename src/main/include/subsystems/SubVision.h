@@ -37,12 +37,6 @@ class SubVision : public frc2::SubsystemBase {
 
   std::optional<photon::EstimatedRobotPose> GetPose();
 
-  /**
-   *  Get transformation from camera to current target
-   */
-  frc::Translation2d GetCameraToTarget();
-
-  frc::Pose2d GetBestTarget();
   frc::Pose2d GetSourcePose(int tagId);
 
 
@@ -102,7 +96,7 @@ std::map<int, ReefPositions> tagToReefPositions = {
   photon::PhotonCamera _camera{_cameraName};
   photon::PhotonCameraSim _cameraSim{&_camera}; // For simulation
 //
-  frc::Transform3d _camToBot{{-325_mm, -260_mm, 0_mm}, {0_deg, 180_deg, 0_deg}};
+  frc::Transform3d _camToBot{{325_mm, -250_mm, 0_mm}, {0_deg, 0_deg, 0_deg}};
   std::string _tagLayoutPath = frc::filesystem::GetDeployDirectory() + "/2025-reefscape.json";
   frc::AprilTagFieldLayout _tagLayout{_tagLayoutPath};
 

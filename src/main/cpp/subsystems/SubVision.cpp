@@ -10,11 +10,10 @@
 #include <photon/estimation/CameraTargetRelation.h>
 
 SubVision::SubVision() {
-
-  _visionSim.AddAprilTags(_tagLayout); // Configure vision sim
+  _visionSim.AddAprilTags(_tagLayout);  // Configure vision sim
   _visionSim.AddCamera(&_cameraSim, _camToBot.Inverse());
 
-  for (auto target : _visionSim.GetVisionTargets()) { //Add AprilTags to field visualization
+  for (auto target : _visionSim.GetVisionTargets()) {  // Add AprilTags to field visualization
     SubDrivebase::GetInstance().DisplayPose(fmt::format("tag{}", target.fiducialId),
                                             target.GetPose().ToPose2d());
   }
@@ -22,12 +21,9 @@ SubVision::SubVision() {
   // Call this once just to get rid of the warnings that it is unused.
   // Its a photonlib bug.
   photon::VisionEstimation::EstimateCamPosePNP({}, {}, {}, {}, photon::TargetModel{1_m});
-
 }
 
 void SubVision::Periodic() {
-  frc::SmartDashboard::PutNumber("Vision/Cam to target x", GetCameraToTarget().X().value());
-  frc::SmartDashboard::PutNumber("Vision/Cam to target y", GetCameraToTarget().Y().value());
   frc::SmartDashboard::PutNumber("Vision/LastReefTag", _lastReefTag.GetFiducialId());
   auto results = _camera.GetAllUnreadResults();
   UpdatePoseEstimator(results);
@@ -38,40 +34,36 @@ void SubVision::SimulationPeriodic() {
   _visionSim.Update(SubDrivebase::GetInstance().GetSimPose());
 }
 
-
 void SubVision::UpdatePoseEstimator(std::vector<photon::PhotonPipelineResult> results) {
-
   auto resultCount = results.size();
   frc::SmartDashboard::PutNumber("Vision/Reuslt count", resultCount);
   if (resultCount == 0) {
-    return; // Return if no result, prevent null error later
+    return;  // Return if no result, prevent null error later
   }
   for (auto result : results) {
-      _pose = _robotPoseEstimater.Update(result); // Get estimate pose of robot by vision
-
-    }
-  frc::SmartDashboard::PutBoolean("Vision/Has value", _pose.has_value());
+    _pose = _robotPoseEstimater.Update(result);  // Get estimate pose of robot by vision
+  }
 }
 
-void SubVision::UpdateLatestTags(std::vector<photon::PhotonPipelineResult> results){
-      for (auto result : results) {
-        if (result.HasTargets()) {
-        _latestTarget = result.GetBestTarget();
-        frc::SmartDashboard::PutNumber("Vision/Target", _latestTarget.GetFiducialId());
-        if (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed){
-          if (std::find(std::begin(redReef), std::end(redReef), _latestTarget.GetFiducialId()) != std::end(redReef)){
+void SubVision::UpdateLatestTags(std::vector<photon::PhotonPipelineResult> results) {
+  for (auto result : results) {
+    if (result.HasTargets()) {
+      _latestTarget = result.GetBestTarget();
+      frc::SmartDashboard::PutNumber("Vision/Target", _latestTarget.GetFiducialId());
+      if (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) {
+        if (std::find(std::begin(redReef), std::end(redReef), _latestTarget.GetFiducialId()) !=
+            std::end(redReef)) {
           _lastReefTag = _latestTarget;
         }
-        }
-        else {
-        if(std::find(std::begin(blueReef), std::end(blueReef), _latestTarget.GetFiducialId()) != std::end(blueReef)){
+      } else {
+        if (std::find(std::begin(blueReef), std::end(blueReef), _latestTarget.GetFiducialId()) !=
+            std::end(blueReef)) {
           _lastReefTag = _latestTarget;
-        }
         }
       }
+    }
+  }
 }
-}
-
 
 std::optional<photon::EstimatedRobotPose> SubVision::GetPose() {
   return _pose;
@@ -81,38 +73,25 @@ frc::Pose2d SubVision::GetSourcePose(int tagId) {
   return tagToSourcePose[tagId];
 }
 
-
-frc::Translation2d SubVision::GetCameraToTarget() {
-  if (_latestTarget == photon::PhotonTrackedTarget()) {return frc::Translation2d(0_m,0_m);}
-  frc::Pose2d targetPose = _tagLayout.GetTagPose(_latestTarget.fiducialId).value().ToPose2d();
-  frc::Pose2d robotPose = SubDrivebase::GetInstance().GetPose();
-  frc::Pose2d relativePose = robotPose.RelativeTo(targetPose);
-  return relativePose.Translation();
-}
-
-frc::Pose2d SubVision::GetBestTarget() {
- if (_latestTarget == photon::PhotonTrackedTarget()) {return frc::Pose2d(0_m,0_m,0_deg);}
- return _tagLayout.GetTagPose(_latestTarget.fiducialId).value().ToPose2d();
-}
-
-
 /**
  * @brief Get the pose of the reef from the apriltag.
  *
- * @param side The side of the reef you want to get the pose of. 1 for the left side, 2 for the right side.
+ * @param side The side of the reef you want to get the pose of. 1 for the left side, 2 for the
+ * right side.
  *
  * @returns The pose of the reef in the field coordinate system.
  */
-frc::Pose2d SubVision::GetReefPose( int side = 1) {
-    int reefTagID = _lastReefTag.GetFiducialId();
-    frc::Pose2d targPose;
-    if (side == 1) {
-      targPose = {tagToReefPositions[reefTagID].leftX, tagToReefPositions[reefTagID].leftY, tagToReefPositions[reefTagID].angle};
-    }
-    else {
-      targPose = {tagToReefPositions[reefTagID].rightX, tagToReefPositions[reefTagID].rightY, tagToReefPositions[reefTagID].angle};
-    }
-    return targPose;
+frc::Pose2d SubVision::GetReefPose(int side = 1) {
+  int reefTagID = _lastReefTag.GetFiducialId();
+  frc::Pose2d targPose;
+  if (side == 1) {
+    targPose = {tagToReefPositions[reefTagID].leftX, tagToReefPositions[reefTagID].leftY,
+                tagToReefPositions[reefTagID].angle};
+  } else {
+    targPose = {tagToReefPositions[reefTagID].rightX, tagToReefPositions[reefTagID].rightY,
+                tagToReefPositions[reefTagID].angle};
+  }
+  return targPose;
 }
 
 bool SubVision::CheckValid(std::optional<photon::EstimatedRobotPose> pose) {
@@ -124,9 +103,10 @@ bool SubVision::CheckValid(std::optional<photon::EstimatedRobotPose> pose) {
 
   auto data = pose.value();
 
-  frc::SmartDashboard::PutNumber("Vision/Target detected", data.targetsUsed.size()); // Display number of target detected
+  frc::SmartDashboard::PutNumber("Vision/Target detected",
+                                 data.targetsUsed.size());  // Display number of target detected
 
-  //Check number of target
+  // Check number of target
   if (data.targetsUsed.size() > desiredTargetLimit) {
     return false;
   }
@@ -143,12 +123,12 @@ bool SubVision::CheckValid(std::optional<photon::EstimatedRobotPose> pose) {
   frc::SmartDashboard::PutNumber("Vision/Target avg area", area);
   frc::SmartDashboard::PutNumber("Vision/Target avg ambiguity", ambiguity);
 
-  //Check area
+  // Check area
   if (area < minArea || area > maxArea) {
     return false;
   }
 
-  //Check ambiguity
+  // Check ambiguity
   if ((ambiguity < minAmbiguity || ambiguity > maxAmbiguity) && !frc::RobotBase::IsSimulation()) {
     return false;
   }
