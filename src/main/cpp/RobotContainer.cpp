@@ -68,8 +68,8 @@ void RobotContainer::ConfigureBindings() {
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
   _driverController.X().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
   /*_driverController.RightTrigger().WhileTrue(cmd::AlignToSource(_driverController));*/
-  _driverController.A().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
-  _driverController.B().WhileTrue(cmd::YAlignWithTarget(2, _driverController));
+  // _driverController.A().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
+  // _driverController.B().WhileTrue(cmd::YAlignWithTarget(2, _driverController));
     //POV / d-pad
 
   //Triggers
@@ -86,24 +86,24 @@ void RobotContainer::ConfigureBindings() {
   _driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
   _driverController.X().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
-  _driverController.B().ToggleOnTrue(frc2::cmd::StartEnd(
-    [this] { _cameraStream.SetPath("/dev/video1"); }, //Toggle to second camera (climb cam)
-    [this] { _cameraStream.SetPath("/dev/video0"); } //Toggle to first camera (drive cam)
-  ));
-  */
+  // _driverController.B().ToggleOnTrue(frc2::cmd::StartEnd(
+  //   [this] { _cameraStream.SetPath("/dev/video1"); }, //Toggle to second camera (climb cam)
+  //   [this] { _cameraStream.SetPath("/dev/video0"); } //Toggle to first camera (drive cam)
+  // ));
+  
 
   //Opperator
 
   //Triggers
 
   //Joystick
-  frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
-    return (_operatorController.GetLeftY() < -0.2);
-  }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
+  // frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
+  //   return (_operatorController.GetLeftY() < -0.2);
+  // }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
 
-  frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
-    return (_operatorController.GetLeftY() > 0.2);
-  }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
+  // frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
+  //   return (_operatorController.GetLeftY() > 0.2);
+  // }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
 
 
   //Bumpers
@@ -125,7 +125,7 @@ void RobotContainer::ConfigureBindings() {
 
 
 
-  _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise camera object
+  // _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise camera object
 
   //Rumble controller when end effector line break triggers
   SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnFalse(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));

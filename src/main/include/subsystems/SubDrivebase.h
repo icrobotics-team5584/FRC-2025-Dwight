@@ -96,13 +96,13 @@ class SubDrivebase : public frc2::SubsystemBase {
   const units::turn_t BACK_LEFT_MAG_OFFSET = -0.329590_tr;
 
   SwerveModule _frontLeft{canid::DriveBaseFrontLeftDrive, canid::DriveBaseFrontLeftTurn,
-                          canid::DriveBaseFrontLeftEncoder, (FRONT_LEFT_MAG_OFFSET*1_tr) };
+                          canid::DriveBaseFrontLeftEncoder, FRONT_LEFT_MAG_OFFSET };
   SwerveModule _frontRight{canid::DriveBaseFrontRightDrive, canid::DriveBaseFrontRightTurn,
-                           canid::DriveBaseFrontRightEncoder, (FRONT_RIGHT_MAG_OFFSET*1_tr) };
+                           canid::DriveBaseFrontRightEncoder, FRONT_RIGHT_MAG_OFFSET };
   SwerveModule _backLeft{canid::DriveBaseBackLeftDrive, canid::DriveBaseBackLeftTurn,
-                         canid::DriveBaseBackLeftEncoder, (BACK_LEFT_MAG_OFFSET*1_tr) };
+                         canid::DriveBaseBackLeftEncoder, BACK_LEFT_MAG_OFFSET };
   SwerveModule _backRight{canid::DriveBaseBackRightDrive, canid::DriveBaseBackRightTurn,
-                          canid::DriveBaseBackRightEncoder, (BACK_RIGHT_MAG_OFFSET*1_tr) };
+                          canid::DriveBaseBackRightEncoder, BACK_RIGHT_MAG_OFFSET };
 
   // Control objects
   frc::SwerveDriveKinematics<4> _kinematics{_frontLeftLocation, _frontRightLocation,
