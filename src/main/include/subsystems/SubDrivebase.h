@@ -79,7 +79,9 @@ class SubDrivebase : public frc2::SubsystemBase {
 
  private:
   void Drive(units::meters_per_second_t xSpeed, units::meters_per_second_t ySpeed,
-             units::turns_per_second_t rot, bool fieldRelative);
+             units::turns_per_second_t rot, bool fieldRelative,
+             std::optional<std::array<units::newton_t, 4>> xForceFeedforwards = std::nullopt,
+             std::optional<std::array<units::newton_t, 4>> yForceFeedforwards = std::nullopt);
 
   studica::AHRS _gyro{studica::AHRS::NavXComType::kMXP_SPI};
 

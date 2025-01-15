@@ -33,8 +33,20 @@ SubDrivebase::SubDrivebase() {
 
       // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally
       // outputs individual module feedforwards
-      [this](auto speeds, auto feedforwards) { Drive(speeds.vx, speeds.vy, speeds.omega, false); },
-
+      [this](auto speeds, auto feedforwards) {
+        if (feedforwards.robotRelativeForcesX.size() == 4 &&
+            feedforwards.robotRelativeForcesY.size() == 4) {
+          std::array<units::newton_t, 4> xForces = {
+              feedforwards.robotRelativeForcesX[0], feedforwards.robotRelativeForcesX[1],
+              feedforwards.robotRelativeForcesX[2], feedforwards.robotRelativeForcesX[3]};
+          std::array<units::newton_t, 4> yForces = {
+              feedforwards.robotRelativeForcesY[0], feedforwards.robotRelativeForcesY[1],
+              feedforwards.robotRelativeForcesY[2], feedforwards.robotRelativeForcesY[3]};
+          Drive(speeds.vx, speeds.vy, speeds.omega, false, xForces, yForces);
+        } else {
+          Drive(speeds.vx, speeds.vy, speeds.omega, false);
+        }
+      },
       // PID Feedback controller for translation and rotation
       _pathplannerController,
 
@@ -83,7 +95,7 @@ void SubDrivebase::Periodic() {
   Logger::Log("Drivebase/DistanceDriven/fr", (frRotations)*(0.04121451348939883*2*std::numbers::pi));
   Logger::Log("Drivebase/DistanceDriven/bl", (blRotations)*(0.04121451348939883*2*std::numbers::pi));
   Logger::Log("Drivebase/DistanceDriven/br", (brRotations)*(0.04121451348939883*2*std::numbers::pi));
-  // 0.04121451348939883_m
+  // 0.04121451348939883
   // 4.465m
 
   _frontLeft.SendSensorsToDash();
@@ -198,8 +210,14 @@ void SubDrivebase::DriveToPose(frc::Pose2d targetPose) {
   }
 }
 
-void SubDrivebase::Drive(units::meters_per_second_t xSpeed, units::meters_per_second_t ySpeed,
-                         units::turns_per_second_t rot, bool fieldRelative) {
+void SubDrivebase::Drive(
+  units::meters_per_second_t xSpeed, 
+  units::meters_per_second_t ySpeed,
+  units::turns_per_second_t rot, 
+  bool fieldRelative,
+  std::optional<std::array<units::newton_t, 4>> xForceFeedforwards,
+  std::optional<std::array<units::newton_t, 4>> yForceFeedforwards
+) {
   // Optionally convert speeds to field relative
   auto speeds = fieldRelative
                     ? frc::ChassisSpeeds::FromFieldRelativeSpeeds(xSpeed, ySpeed, rot, GetHeading())
@@ -216,14 +234,19 @@ void SubDrivebase::Drive(units::meters_per_second_t xSpeed, units::meters_per_se
   _kinematics.DesaturateWheelSpeeds(
       &states,
       frc::SmartDashboard::GetNumber("Drivebase/Config/MaxVelocity", MAX_VELOCITY.value()) * 1_mps);
+  
+  // Extract force feedforwards
+  std::array<units::newton_t, 4> defaults{0_N, 0_N, 0_N, 0_N};
+  auto [flXForce, frXForce, blXForce, brXForce] = xForceFeedforwards.value_or(defaults);
+  auto [flYForce, frYForce, blYForce, brYForce] = yForceFeedforwards.value_or(defaults);
 
   // Setting modules from aquired states
   Logger::Log("Drivebase/Desired Swerve States", states);
   auto [fl, fr, bl, br] = states;
-  _frontLeft.SetDesiredState(fl);
-  _frontRight.SetDesiredState(fr);
-  _backLeft.SetDesiredState(bl);
-  _backRight.SetDesiredState(br);
+  _frontLeft.SetDesiredState(fl, flXForce, flYForce);
+  _frontRight.SetDesiredState(fr, frXForce, frYForce);
+  _backLeft.SetDesiredState(bl, blXForce, blYForce);
+  _backRight.SetDesiredState(br, brXForce, brYForce);
 }
 
 frc::ChassisSpeeds SubDrivebase::GetRobotRelativeSpeeds() {
