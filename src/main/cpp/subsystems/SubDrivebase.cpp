@@ -35,7 +35,7 @@ SubDrivebase::SubDrivebase() {
       // outputs individual module feedforwards
 
       [this](auto speeds, auto feedforwards) {
-        double _voltageFFscaler = 4.0; // the 2.0 is a scaler for the voltageFF
+        double _voltageFFscaler = 1.0; // this a scaler for the voltageFF
         if (feedforwards.robotRelativeForcesX.size() == 4 &&
             feedforwards.robotRelativeForcesY.size() == 4) {
           std::array<units::newton_t, 4> xForces = {
@@ -237,18 +237,31 @@ void SubDrivebase::Drive(
       &states,
       frc::SmartDashboard::GetNumber("Drivebase/Config/MaxVelocity", MAX_VELOCITY.value()) * 1_mps);
   
+
   // Extract force feedforwards
   std::array<units::newton_t, 4> defaults{0_N, 0_N, 0_N, 0_N};
   auto [flXForce, frXForce, blXForce, brXForce] = xForceFeedforwards.value_or(defaults);
   auto [flYForce, frYForce, blYForce, brYForce] = yForceFeedforwards.value_or(defaults);
 
+  // logging
+  Logger::Log("Drivebase/xForceFeedforwards(pre-divide)/FL", flXForce.value());
+  Logger::Log("Drivebase/xForceFeedforwards(pre-divide)/FR", frXForce.value());
+  Logger::Log("Drivebase/xForceFeedforwards(pre-divide)/BL", blXForce.value());
+  Logger::Log("Drivebase/xForceFeedforwards(pre-divide)/BR", brXForce.value());  
+  // divider
+  Logger::Log("Drivebase/xForceFeedforwards(post-divide)/FL", flXForce.value()/300);
+  Logger::Log("Drivebase/xForceFeedforwards(post-divide)/FR", frXForce.value()/300);
+  Logger::Log("Drivebase/xForceFeedforwards(post-divide)/BL", blXForce.value()/300);
+  Logger::Log("Drivebase/xForceFeedforwards(post-divide)/BR", brXForce.value()/300);  
+  
+
   // Setting modules from aquired states
   Logger::Log("Drivebase/Desired Swerve States", states);
   auto [fl, fr, bl, br] = states;
-  _frontLeft.SetDesiredState(fl, flXForce, flYForce);
-  _frontRight.SetDesiredState(fr, frXForce, frYForce);
-  _backLeft.SetDesiredState(bl, blXForce, blYForce);
-  _backRight.SetDesiredState(br, brXForce, brYForce);
+  _frontLeft.SetDesiredState(fl, flXForce/300, flYForce/300);
+  _frontRight.SetDesiredState(fr, frXForce/300, frYForce/300);
+  _backLeft.SetDesiredState(bl, blXForce/300, blYForce/300);
+  _backRight.SetDesiredState(br, brXForce/300, brYForce/300);
 }
 
 frc::ChassisSpeeds SubDrivebase::GetRobotRelativeSpeeds() {
