@@ -127,7 +127,7 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
   // Apply deadbands
   double forwardStick = frc::ApplyDeadband(controller.GetLeftY(), deadband);
   double sidewaysStick = frc::ApplyDeadband(controller.GetLeftX(), deadband);
-  double rotationStick = frc::ApplyDeadband(controller.GetRightX(), deadband);
+  double rotationStick = frc::ApplyDeadband(-controller.GetRightX(), deadband);
 
   // Apply joystick rate limits
   auto forwardSpeed = _yStickLimiter.Calculate(forwardStick) * maxVelocity;

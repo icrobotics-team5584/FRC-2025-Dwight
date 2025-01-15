@@ -28,15 +28,19 @@ void RobotContainer::ConfigureBindings() {
   //Driver
 
   //Triggers
-  _driverController.LeftTrigger().WhileTrue(cmd::IntakeFullSequence());
-  _driverController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor().AlongWith(SubIntake::GetInstance().Stow()));
+  _operatorController.LeftTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromSource());
+  _operatorController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
+  _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromGround());
+  _operatorController.RightTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
+  _operatorController.POVRight().OnTrue(SubEndEffector::GetInstance().ScoreCoral());
 
   //Bumpers
 
 
   //Letters
   _driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
-
+  _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
+  _driverController.X().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
   _driverController.B().ToggleOnTrue(frc2::cmd::StartEnd(
     [this] { _cameraStream.SetPath("/dev/video1"); }, //Toggle to second camera (climb cam)
     [this] { _cameraStream.SetPath("/dev/video0"); } //Toggle to first camera (drive cam)
@@ -65,12 +69,13 @@ void RobotContainer::ConfigureBindings() {
    _operatorController.B().OnTrue(SubElevator::GetInstance().CmdSetL3());
    _operatorController.Y().OnTrue(SubElevator::GetInstance().CmdSetL4());
    _operatorController.LeftBumper().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
-   _operatorController.RightBumper().OnTrue(SubElevator::GetInstance().ZeroElevator().IgnoringDisable(true));
-
+  //  _operatorController.RightBumper().OnTrue(SubElevator::GetInstance().ZeroElevator().IgnoringDisable(true));
+   _operatorController.RightBumper().WhileTrue(SubElevator::GetInstance().Climb());
   //POV
   _operatorController.POVUp().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
   _operatorController.POVDown().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
-  _operatorController.POVUpLeft().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWNSLOW());
+  _operatorController.POVLeft().WhileTrue(SubElevator::GetInstance().CmdSetSource());
+
   
 
 
@@ -78,8 +83,8 @@ void RobotContainer::ConfigureBindings() {
   _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise camera object
 
   //Rumble controller when end effector line break triggers
-  SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnTrue(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
-  SubEndEffector::GetInstance().CheckLineBreakTriggerLower().OnTrue(ControllerRumbleLeft(_driverController).WithTimeout(0.1_s));
+  SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnFalse(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
+  SubEndEffector::GetInstance().CheckLineBreakTriggerLower().OnFalse(ControllerRumbleLeft(_driverController).WithTimeout(0.1_s));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
