@@ -4,10 +4,12 @@
 
 #include "subsystems/SubEndEffector.h"
 #include <frc/smartdashboard/SmartDashboard.h>
+#include "utilities/ICSpark.h"
 
 
 
-SubEndEffector::SubEndEffector() = default;
+SubEndEffector::SubEndEffector() {
+}
 
 // This method will be called once per scheduler run
 void SubEndEffector::Periodic() {
@@ -37,7 +39,9 @@ frc2::CommandPtr SubEndEffector::StopMotor() {
 
 frc2::CommandPtr SubEndEffector::IntakeFromSource() {
     return FeedDown().Until([this] {return CheckLineBreakHigher();})
-    .AndThen(FeedDownSLOW().Until([this] {return CheckLineBreakLower();}));
+    .FinallyDo([this] {if(CheckLineBreakHigher()) 
+    {FeedDownSLOW().Until([this] {return CheckLineBreakLower();});}
+    });
 }
 
 frc2::CommandPtr SubEndEffector::IntakeFromGround() {
