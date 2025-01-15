@@ -36,7 +36,18 @@ class SubEndEffector : public frc2::SubsystemBase {
   void Periodic() override;
 
  private:
-  frc::DigitalInput _endEffectorLineBreak{dio::EndEffectorLineBreak};
+  // frc::DigitalInput _endEffectorLineBreak{dio::EndEffectorLineBreak};
+  frc::DigitalInput _endEffectorLineBreak{10};
+  frc::DigitalInput _1{1};
+  frc::DigitalInput _2{2};
+  frc::DigitalInput _3{3};
+  frc::DigitalInput _4{4};
+  frc::DigitalInput _5{5};
+  frc::DigitalInput _6{6};
+  frc::DigitalInput _7{7};
+  frc::DigitalInput _8{8};
+  frc::DigitalInput _9{9};
+
   ICSparkMax _endEffectorMotor{canid::EndEffectorMotor, 30_A};
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
