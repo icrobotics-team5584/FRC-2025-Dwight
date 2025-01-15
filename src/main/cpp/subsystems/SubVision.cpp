@@ -73,6 +73,15 @@ frc::Pose2d SubVision::GetSourcePose(int tagId) {
   return tagToSourcePose[tagId];
 }
 
+units::degree_t SubVision::getLastReefIdAngle(){
+  int id = _lastReefTag.GetFiducialId();
+  ReefPositions reefpos = SubVision::tagToReefPositions[id];
+  return reefpos.angle;
+  
+}
+
+
+
 /**
  * @brief Get the pose of the reef from the apriltag.
  *

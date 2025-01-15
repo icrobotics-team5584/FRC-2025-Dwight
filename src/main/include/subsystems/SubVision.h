@@ -39,6 +39,8 @@ class SubVision : public frc2::SubsystemBase {
 
   frc::Pose2d GetSourcePose(int tagId);
 
+  units::degree_t getLastReefIdAngle();
+
 
 
  private:
