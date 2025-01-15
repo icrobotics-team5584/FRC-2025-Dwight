@@ -54,11 +54,11 @@ void KrakenIO::SetDesiredVelocity(units::meters_per_second_t velocity, units::ne
 
   units::newton_meter_t torque = forceFF * WHEEL_RADIUS;
   units::volt_t torqueVoltageFF = _driveMotorModel.Voltage(torque, TurnsPerSec);
-  torqueVoltageFF *= Logger::Tune("swerve/currentFF enabled", true);
+  torqueVoltageFF *= Logger::Tune("swerve/volatgeFF enabled", true);
 
-  _canDriveMotor.SetControl(ctre::phoenix6::controls::VelocityVoltage{(TurnsPerSec)}.WithFeedForward(torqueVoltageFF));
+  _canDriveMotor.SetControl(ctre::phoenix6::controls::VelocityVoltage{(TurnsPerSec)}.WithEnableFOC(true).WithFeedForward(torqueVoltageFF));
 
-  Logger::Log("swerve/drive " + std::to_string(_canDriveMotor.GetDeviceID()) + " torqueCurrent", torqueVoltageFF);
+  Logger::Log("swerve/drive " + std::to_string(_canDriveMotor.GetDeviceID()) + " torqueVoltage", torqueVoltageFF);
 }
 
 void KrakenIO::DriveStraightVolts(units::volt_t volts){

@@ -33,15 +33,17 @@ SubDrivebase::SubDrivebase() {
 
       // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally
       // outputs individual module feedforwards
+
       [this](auto speeds, auto feedforwards) {
+        double _voltageFFscaler = 4.0; // the 2.0 is a scaler for the voltageFF
         if (feedforwards.robotRelativeForcesX.size() == 4 &&
             feedforwards.robotRelativeForcesY.size() == 4) {
           std::array<units::newton_t, 4> xForces = {
-              feedforwards.robotRelativeForcesX[0], feedforwards.robotRelativeForcesX[1],
-              feedforwards.robotRelativeForcesX[2], feedforwards.robotRelativeForcesX[3]};
+              (feedforwards.robotRelativeForcesX[0]/_voltageFFscaler), (feedforwards.robotRelativeForcesX[1]/_voltageFFscaler),
+              (feedforwards.robotRelativeForcesX[2]/_voltageFFscaler), (feedforwards.robotRelativeForcesX[3]/_voltageFFscaler)};
           std::array<units::newton_t, 4> yForces = {
-              feedforwards.robotRelativeForcesY[0], feedforwards.robotRelativeForcesY[1],
-              feedforwards.robotRelativeForcesY[2], feedforwards.robotRelativeForcesY[3]};
+              (feedforwards.robotRelativeForcesY[0]/_voltageFFscaler), (feedforwards.robotRelativeForcesY[1]/_voltageFFscaler),
+              (feedforwards.robotRelativeForcesY[2]/_voltageFFscaler), (feedforwards.robotRelativeForcesY[3]/_voltageFFscaler)};
           Drive(speeds.vx, speeds.vy, speeds.omega, false, xForces, yForces);
         } else {
           Drive(speeds.vx, speeds.vy, speeds.omega, false);

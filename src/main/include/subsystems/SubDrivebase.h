@@ -115,7 +115,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   std::shared_ptr<pathplanner::PPHolonomicDriveController> _pathplannerController =
       std::make_shared<pathplanner::PPHolonomicDriveController>(
         // translation needs tuning and such
-          pathplanner::PIDConstants{4.0, 0.0, 0.0},  // Translation PID constants
+          pathplanner::PIDConstants{0.0, 0.0, 0.0},  // Translation PID constants
           pathplanner::PIDConstants{2.0, 0.0, 0.0}   // Rotation PID constants
       );
 
