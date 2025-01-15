@@ -10,6 +10,7 @@
 class MechanismCircle2d {
     public:
         template<typename T>
+        requires std::same_as<T*, frc::MechanismRoot2d*> || std::convertible_to<T*, frc::MechanismObject2d*>
         MechanismCircle2d(T* location, std::string name, double radius,
             units::degree_t angle,
             int backgroundSpokes=36,

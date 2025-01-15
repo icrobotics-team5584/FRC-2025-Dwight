@@ -34,8 +34,8 @@ void SubIntake::Periodic() {
 
     units::angle::degree_t rollerAngle = _intakeMotor.GetPosition()/10;
     frc::SmartDashboard::PutNumber("rollerAngle", rollerAngle.value());
-    //_rollerMechLeft.SetAngle(rollerAngle);
-    _rollerMechRight.SetAngle(rollerAngle*-1);
+    _rollerMechLeft.SetAngle(rollerAngle);
+    _rollerMechRight.SetAngle((rollerAngle+180_deg)*-1); //+180 to make it face inwards, and *-1 to rotate in opposite direction
 }
 
 void SubIntake::SimulationPeriodic() {

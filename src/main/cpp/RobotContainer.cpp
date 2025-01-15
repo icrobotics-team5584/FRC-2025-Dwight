@@ -61,10 +61,12 @@ frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
 }
 
 void RobotContainer::ConfigureBindings() {
-  //Driver
-    //Triggers
-    //Bumpers
-    //Letters
+  //DRIVER
+  //Bumpers
+  _driverController.LeftBumper().WhileTrue(cmd::YAlignWithTarget(1, _driverController)); //temp
+  _driverController.RightBumper().WhileTrue(cmd::YAlignWithTarget(2, _driverController)); //temp
+
+  //Letters
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
   _driverController.X().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
   /*_driverController.RightTrigger().WhileTrue(cmd::AlignToSource(_driverController));*/
@@ -95,6 +97,8 @@ void RobotContainer::ConfigureBindings() {
   //Opperator
 
   //Triggers
+  _driverController.LeftTrigger().WhileTrue(cmd::IntakeFullSequence());
+  _driverController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor().AlongWith(SubIntake::GetInstance().Stow()));
 
   //Joystick
   // frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
@@ -107,6 +111,7 @@ void RobotContainer::ConfigureBindings() {
 
 
   //Bumpers
+
 
   //Letters
    _operatorController.A().OnTrue(SubElevator::GetInstance().CmdSetL1());
