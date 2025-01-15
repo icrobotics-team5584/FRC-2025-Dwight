@@ -51,11 +51,12 @@ void KrakenIO::SendSensorsToDash(){
 
 void KrakenIO::SetDesiredVelocity(units::meters_per_second_t velocity, units::newton_t forceFF){
   units::turns_per_second_t TurnsPerSec = (velocity.value() / WHEEL_CIRCUMFERENCE.value()) * 1_tps;
-
   units::newton_meter_t torque = forceFF * WHEEL_RADIUS;
-  units::volt_t torqueVoltageFF = _driveMotorModel.Voltage(torque, TurnsPerSec);
-  torqueVoltageFF *= Logger::Tune("swerve/volatgeFF enabled", true);
 
+  // solve for voltage with 0 speed bc/ speed voltage clac is already handled
+  units::volt_t torqueVoltageFF = _driveMotorModel.Voltage(torque, 0_tps); 
+
+  torqueVoltageFF *= Logger::Tune("swerve/volatgeFF enabled", true);
   _canDriveMotor.SetControl(ctre::phoenix6::controls::VelocityVoltage{(TurnsPerSec)}.WithEnableFOC(true).WithFeedForward(torqueVoltageFF));
 
   Logger::Log("swerve/drive " + std::to_string(_canDriveMotor.GetDeviceID()) + " torqueVoltage", torqueVoltageFF);

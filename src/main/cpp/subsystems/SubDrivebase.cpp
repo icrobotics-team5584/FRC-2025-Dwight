@@ -258,10 +258,10 @@ void SubDrivebase::Drive(
   // Setting modules from aquired states
   Logger::Log("Drivebase/Desired Swerve States", states);
   auto [fl, fr, bl, br] = states;
-  _frontLeft.SetDesiredState(fl, flXForce/300, flYForce/300);
-  _frontRight.SetDesiredState(fr, frXForce/300, frYForce/300);
-  _backLeft.SetDesiredState(bl, blXForce/300, blYForce/300);
-  _backRight.SetDesiredState(br, brXForce/300, brYForce/300);
+  _frontLeft.SetDesiredState(fl, flXForce, flYForce);
+  _frontRight.SetDesiredState(fr, frXForce, frYForce);
+  _backLeft.SetDesiredState(bl, blXForce, blYForce);
+  _backRight.SetDesiredState(br, brXForce, brYForce);
 }
 
 frc::ChassisSpeeds SubDrivebase::GetRobotRelativeSpeeds() {
