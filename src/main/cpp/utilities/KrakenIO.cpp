@@ -49,16 +49,16 @@ void KrakenIO::SendSensorsToDash(){
   frc::SmartDashboard::PutNumber(turnMotorName  + "error", _canTurnMotor.GetClosedLoopError().GetValue());
 }
 
-void KrakenIO::SetDesiredVelocity(units::meters_per_second_t velocity, units::newton_t forceFF){
+void KrakenIO::SetDesiredVelocity(units::meters_per_second_t velocity, units::meters_per_second_squared_t accel){
   units::turns_per_second_t TurnsPerSec = (velocity.value() / WHEEL_CIRCUMFERENCE.value()) * 1_tps;
+  units::turns_per_second_squared_t TurnsPerSec2 = (accel.value() / WHEEL_CIRCUMFERENCE.value()) * 1_tr_per_s_sq;
 
-  units::newton_meter_t torque = forceFF * WHEEL_RADIUS;
-  units::volt_t torqueVoltageFF = _driveMotorModel.Voltage(torque, TurnsPerSec);
-  torqueVoltageFF *= Logger::Tune("swerve/volatgeFF enabled", true);
+  Logger::Log("swerve/drive motor" + std::to_string(_canDriveMotor.GetDeviceID()) + " wheel accel ff", TurnsPerSec2);
+  Logger::Log("swerve/drive motor" + std::to_string(_canDriveMotor.GetDeviceID()) + " accel ff", accel);
 
-  _canDriveMotor.SetControl(ctre::phoenix6::controls::VelocityVoltage{(TurnsPerSec)}.WithEnableFOC(true).WithFeedForward(torqueVoltageFF));
+  TurnsPerSec2 *= Logger::Tune("swerve/volatgeFF enabled", true);
 
-  Logger::Log("swerve/drive " + std::to_string(_canDriveMotor.GetDeviceID()) + " torqueVoltage", torqueVoltageFF);
+  _canDriveMotor.SetControl(ctre::phoenix6::controls::VelocityVoltage{(TurnsPerSec)}.WithEnableFOC(true).WithAcceleration(TurnsPerSec2));
 }
 
 void KrakenIO::DriveStraightVolts(units::volt_t volts){

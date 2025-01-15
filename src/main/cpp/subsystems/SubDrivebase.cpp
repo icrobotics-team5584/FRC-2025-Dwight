@@ -35,19 +35,25 @@ SubDrivebase::SubDrivebase() {
       // outputs individual module feedforwards
 
       [this](auto speeds, auto feedforwards) {
-        double _voltageFFscaler = 1.0; // this a scaler for the voltageFF
-        if (feedforwards.robotRelativeForcesX.size() == 4 &&
-            feedforwards.robotRelativeForcesY.size() == 4) {
-          std::array<units::newton_t, 4> xForces = {
-              (feedforwards.robotRelativeForcesX[0]/_voltageFFscaler), (feedforwards.robotRelativeForcesX[1]/_voltageFFscaler),
-              (feedforwards.robotRelativeForcesX[2]/_voltageFFscaler), (feedforwards.robotRelativeForcesX[3]/_voltageFFscaler)};
-          std::array<units::newton_t, 4> yForces = {
-              (feedforwards.robotRelativeForcesY[0]/_voltageFFscaler), (feedforwards.robotRelativeForcesY[1]/_voltageFFscaler),
-              (feedforwards.robotRelativeForcesY[2]/_voltageFFscaler), (feedforwards.robotRelativeForcesY[3]/_voltageFFscaler)};
-          Drive(speeds.vx, speeds.vy, speeds.omega, false, xForces, yForces);
-        } else {
-          Drive(speeds.vx, speeds.vy, speeds.omega, false);
-        }
+        // Find hypotenuse of robot relative forces
+        std::array<units::newton_t, 4> robotRelativeForces = { 
+          units::math::hypot(feedforwards.robotRelativeForcesX[0], feedforwards.robotRelativeForcesY[0]),
+          units::math::hypot(feedforwards.robotRelativeForcesX[1], feedforwards.robotRelativeForcesY[1]),
+          units::math::hypot(feedforwards.robotRelativeForcesX[2], feedforwards.robotRelativeForcesY[2]),
+          units::math::hypot(feedforwards.robotRelativeForcesX[3], feedforwards.robotRelativeForcesY[3])
+        };
+
+        // Convert robot relative forces to robot relative accelrations.
+        // Mass of robot = 56kg, each wheel accelerates 1/4 of the mass of the robot
+        units::kilogram_t quarterRobotMass = 56_kg / 4;
+        std::array<units::meters_per_second_squared_t, 4> robotRelativeAccelerations = {
+          robotRelativeForces[0] / quarterRobotMass,
+          robotRelativeForces[1] / quarterRobotMass,
+          robotRelativeForces[2] / quarterRobotMass,
+          robotRelativeForces[3] / quarterRobotMass
+        };
+
+        Drive(speeds.vx, speeds.vy, speeds.omega, false, robotRelativeAccelerations);
       },
       // PID Feedback controller for translation and rotation
       _pathplannerController,
@@ -217,8 +223,7 @@ void SubDrivebase::Drive(
   units::meters_per_second_t ySpeed,
   units::turns_per_second_t rot, 
   bool fieldRelative,
-  std::optional<std::array<units::newton_t, 4>> xForceFeedforwards,
-  std::optional<std::array<units::newton_t, 4>> yForceFeedforwards
+  std::optional<std::array<units::meters_per_second_squared_t, 4>> accelerations
 ) {
   // Optionally convert speeds to field relative
   auto speeds = fieldRelative
@@ -239,29 +244,16 @@ void SubDrivebase::Drive(
   
 
   // Extract force feedforwards
-  std::array<units::newton_t, 4> defaults{0_N, 0_N, 0_N, 0_N};
-  auto [flXForce, frXForce, blXForce, brXForce] = xForceFeedforwards.value_or(defaults);
-  auto [flYForce, frYForce, blYForce, brYForce] = yForceFeedforwards.value_or(defaults);
-
-  // logging
-  Logger::Log("Drivebase/xForceFeedforwards(pre-divide)/FL", flXForce.value());
-  Logger::Log("Drivebase/xForceFeedforwards(pre-divide)/FR", frXForce.value());
-  Logger::Log("Drivebase/xForceFeedforwards(pre-divide)/BL", blXForce.value());
-  Logger::Log("Drivebase/xForceFeedforwards(pre-divide)/BR", brXForce.value());  
-  // divider
-  Logger::Log("Drivebase/xForceFeedforwards(post-divide)/FL", flXForce.value()/300);
-  Logger::Log("Drivebase/xForceFeedforwards(post-divide)/FR", frXForce.value()/300);
-  Logger::Log("Drivebase/xForceFeedforwards(post-divide)/BL", blXForce.value()/300);
-  Logger::Log("Drivebase/xForceFeedforwards(post-divide)/BR", brXForce.value()/300);  
-  
+  std::array<units::meters_per_second_squared_t, 4> defaults{0_mps_sq, 0_mps_sq, 0_mps_sq, 0_mps_sq};
+  auto [flAccel, frAccel, blAccel, brAccel] = accelerations.value_or(defaults);
 
   // Setting modules from aquired states
   Logger::Log("Drivebase/Desired Swerve States", states);
   auto [fl, fr, bl, br] = states;
-  _frontLeft.SetDesiredState(fl, flXForce/300, flYForce/300);
-  _frontRight.SetDesiredState(fr, frXForce/300, frYForce/300);
-  _backLeft.SetDesiredState(bl, blXForce/300, blYForce/300);
-  _backRight.SetDesiredState(br, brXForce/300, brYForce/300);
+  _frontLeft.SetDesiredState(fl, flAccel);
+  _frontRight.SetDesiredState(fr, frAccel);
+  _backLeft.SetDesiredState(bl, blAccel);
+  _backRight.SetDesiredState(br, brAccel);
 }
 
 frc::ChassisSpeeds SubDrivebase::GetRobotRelativeSpeeds() {

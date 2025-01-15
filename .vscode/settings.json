@@ -109,5 +109,7 @@
     "xloctime": "cpp",
     "memory": "cpp",
     "chrono": "cpp",
+    "xhash": "cpp",
+    "xtree": "cpp"
   }
 }

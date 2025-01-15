@@ -24,7 +24,7 @@ class SwerveIO{
         virtual void SetDesiredAngle(units::degree_t angle) = 0;
         virtual void SetAngle(units::turn_t angle) = 0;
         virtual void SendSensorsToDash() = 0;
-        virtual void SetDesiredVelocity(units::meters_per_second_t velocity, units::newton_t forceFF) = 0;
+        virtual void SetDesiredVelocity(units::meters_per_second_t velocity, units::meters_per_second_squared_t accel) = 0;
         virtual void DriveStraightVolts(units::volt_t volts) = 0;
         virtual void StopMotors() = 0;
         virtual void UpdateSim(units::second_t deltaTime) = 0;

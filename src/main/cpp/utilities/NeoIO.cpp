@@ -51,7 +51,7 @@ void NeoIO::SendSensorsToDash(){
     //use Brayden logging tool once imported
 }
 
-void NeoIO::SetDesiredVelocity(units::meters_per_second_t velocity, units::newton_t forceFF){
+void NeoIO::SetDesiredVelocity(units::meters_per_second_t velocity, units::meters_per_second_squared_t accel){
     units::turns_per_second_t TurnsPerSec = (velocity.value() / WHEEL_CIRCUMFERENCE.value()) * 1_tps;
     _canDriveMotor.SetVelocityTarget(TurnsPerSec);
 }
