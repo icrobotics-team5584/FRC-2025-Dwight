@@ -21,7 +21,7 @@ void KrakenIO::ConfigTurnMotor(){
     _configTurnMotor.Slot0.kI = TURN_I;
     _configTurnMotor.Slot0.kD = TURN_D;
     _configTurnMotor.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::Clockwise_Positive;
-    _configTurnMotor.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
+    _configTurnMotor.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
     _canTurnMotor.GetConfigurator().Apply(_configTurnMotor);
     }
 
@@ -92,7 +92,7 @@ void KrakenIO::ConfigDriveMotor(){
   _configDriveMotor.Slot0.kS = DRIVE_S;
   _configDriveMotor.Slot0.kV = DRIVE_V;
   _configDriveMotor.Slot0.kA = DRIVE_A;
-  _configDriveMotor.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+  _configDriveMotor.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
   _canDriveMotor.GetConfigurator().Apply(_configDriveMotor);
 }
 

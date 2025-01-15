@@ -7,81 +7,97 @@
 #include "commands/CoralCommands.h"
 #include <frc2/command/Commands.h>
 #include "subsystems/SubDrivebase.h"
+// auto includes
+#include <pathplanner/lib/commands/PathPlannerAuto.h>
+#include "subsystems/SubDrivebase.h"
+
 #include "subsystems/SubVision.h"
+#include "commands/VisionCommand.h"
+#include "commands/DriveCommands.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 #include "subsystems/SubEndEffector.h"
 #include "subsystems/SubIntake.h"
+#include "commands/VisionCommand.h"
+#include <frc/Filesystem.h>
+#include <wpinet/WebServer.h>
 
 RobotContainer::RobotContainer() {
-  SubVision::GetInstance();
-  SubIntake::GetInstance();
+  wpi::WebServer::GetInstance().Start(5800, frc::filesystem::GetDeployDirectory());
 
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(SubDrivebase::GetInstance().JoystickDrive(_driverController));
-  
+  SubVision::GetInstance().SetDefaultCommand(cmd::AddVisionMeasurement());
+
   // Trigger Bindings
   ConfigureBindings();
-};
 
+  //Initialise camera object(s)
+  _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); 
+
+
+  // AutoChooser options
+  _autoChooser.AddOption("Default-Left", "Default-Left");  
+  _autoChooser.AddOption("Default-Middle", "placeholder-DM");
+  _autoChooser.AddOption("Default-Right", "Default-Right");
+  _autoChooser.AddOption("TeammateHelper-Left", "placeholder-THL");
+  _autoChooser.AddOption("TeammateHelper-Right", "placeholder-THR");
+  _autoChooser.AddOption("L-Shape", "L-Shape");
+  _autoChooser.AddOption("L-Shape-Slow", "L-Shape-Slow");
+  _autoChooser.AddOption("L-Shape-Spinning", "L-Shape-Spinning");
+  _autoChooser.AddOption("L-Shape-Spinning-Slow", "L-Shape-Spinning-Slow");
+  _autoChooser.AddOption("move", "move");
+  frc::SmartDashboard::PutData("Chosen Auton", &_autoChooser);   
+}
+
+frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
+  //return pathplanner::PathPlannerAuto("test auto").ToPtr();
+  auto _autoSelected = _autoChooser.GetSelected();
+  units::second_t delay = 0.00_s;
+  
+  return frc2::cmd::Wait(delay)
+    .AndThen(pathplanner::PathPlannerAuto(_autoSelected).ToPtr());
+}
 
 void RobotContainer::ConfigureBindings() {
-  //Driver
-
-  //Triggers
-  _driverController.LeftTrigger().WhileTrue(cmd::IntakeFullSequence());
-  _driverController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor().AlongWith(SubIntake::GetInstance().Stow()));
-  
+  //DRIVER
   //Bumpers
-
+  _driverController.LeftBumper().WhileTrue(cmd::YAlignWithTarget(1, _driverController)); //temp
+  _driverController.RightBumper().WhileTrue(cmd::YAlignWithTarget(2, _driverController)); //temp
 
   //Letters
-  _driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
-  
+  _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
+  _driverController.X().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
   _driverController.B().ToggleOnTrue(frc2::cmd::StartEnd(
     [this] { _cameraStream.SetPath("/dev/video1"); }, //Toggle to second camera (climb cam)
     [this] { _cameraStream.SetPath("/dev/video0"); } //Toggle to first camera (drive cam)
   ));
-
-//POV
-  //Opperator
+  /*_driverController.RightTrigger().WhileTrue(cmd::AlignToSource(_driverController));*/
+  
+  //POV / d-pad
+  
 
   //Triggers
+  _driverController.LeftTrigger().WhileTrue(cmd::IntakeFullSequence());
+  _driverController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor().AlongWith(SubIntake::GetInstance().Stow()));
 
-  //Joystick
-  frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
-    return (_operatorController.GetLeftY() < -0.2);
-  }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
-
-  frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
-    return (_operatorController.GetLeftY() > 0.2);
-  }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
+  //OPERATOR
+  //Triggers
 
 
   //Bumpers
 
+
   //Letters
-   _operatorController.A().OnTrue(SubElevator::GetInstance().CmdSetL1());
-   _operatorController.X().OnTrue(SubElevator::GetInstance().CmdSetL2());
-   _operatorController.B().OnTrue(SubElevator::GetInstance().CmdSetL3());
-   _operatorController.Y().OnTrue(SubElevator::GetInstance().CmdSetL4());
-   _operatorController.LeftBumper().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
-   _operatorController.RightBumper().OnTrue(SubElevator::GetInstance().ZeroElevator().IgnoringDisable(true));
-
-  //POV
-  _operatorController.POVUp().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
-  _operatorController.POVDown().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
-
-
-
-  _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise camera object
+  _operatorController.A().OnTrue(SubElevator::GetInstance().CmdSetL1());
+  _operatorController.X().OnTrue(SubElevator::GetInstance().CmdSetL2());
+  _operatorController.B().OnTrue(SubElevator::GetInstance().CmdSetL3());
+  _operatorController.Y().OnTrue(SubElevator::GetInstance().CmdSetL4());
+  
+  //POV / d-pad
 
   //Rumble controller when end effector line break triggers
   SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnTrue(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
   SubEndEffector::GetInstance().CheckLineBreakTriggerLower().OnTrue(ControllerRumbleLeft(_driverController).WithTimeout(0.1_s));
-}
-
-frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-  return frc2::cmd::Print(".");
 }
 
 // Controller rumble functions
