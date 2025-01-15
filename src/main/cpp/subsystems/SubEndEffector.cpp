@@ -3,13 +3,24 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "subsystems/SubEndEffector.h"
+#include <frc/smartdashboard/SmartDashboard.h>
 
 
 
 SubEndEffector::SubEndEffector() = default;
 
 // This method will be called once per scheduler run
-void SubEndEffector::Periodic() {}
+void SubEndEffector::Periodic() {
+    frc::SmartDashboard::PutBoolean("EndEffector/dio/1", _1.Get());
+    frc::SmartDashboard::PutBoolean("EndEffector/dio/2", _2.Get());
+    frc::SmartDashboard::PutBoolean("EndEffector/dio/3", _3.Get());
+    frc::SmartDashboard::PutBoolean("EndEffector/dio/4", _4.Get());
+    frc::SmartDashboard::PutBoolean("EndEffector/dio/5", _5.Get());
+    frc::SmartDashboard::PutBoolean("EndEffector/dio/6", _6.Get());
+    frc::SmartDashboard::PutBoolean("EndEffector/dio/7", _7.Get());
+    frc::SmartDashboard::PutBoolean("EndEffector/dio/8", _8.Get());
+    frc::SmartDashboard::PutBoolean("EndEffector/dio/9", _9.Get());
+}
 
 frc2::CommandPtr SubEndEffector::FeedUp() {
     return StartEnd([this] {_endEffectorMotor.Set(0.5);}, [this] {_endEffectorMotor.Set(0);});

@@ -67,6 +67,7 @@ class SubElevator : public frc2::SubsystemBase {
 
   ctre::phoenix6::hardware::TalonFX _elevatorMotor1 {canid::elevatorMotor1};
   ctre::phoenix6::hardware::TalonFX _elevatorMotor2 {canid::elevatorMotor2};
+  
 
   static constexpr double _P = 30; //134.04;
   static constexpr double _I = 0;
@@ -90,7 +91,7 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr units::meter_t _SOURCE_HEIGHT = 0.93_m;
   static constexpr units::meters_per_second_t _CRUISE_VELOCITY = 1.75_mps; //0.82; //Adjust
   static constexpr units::meters_per_second_squared_t  _ACCELERATION = 6_mps_sq; //Adjust
-  static constexpr double zeroingCurrentLimit = 15;
+  static constexpr units::ampere_t zeroingCurrentLimit = 15_A;
 
 
 
