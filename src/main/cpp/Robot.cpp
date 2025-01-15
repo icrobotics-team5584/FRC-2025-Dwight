@@ -28,7 +28,7 @@ void Robot::AutonomousInit() {
 
 //Auto climber reset by bringing elevator to zero position then reset
   SubElevator::GetInstance().ElevatorAutoReset();
-}
+} 
 
 void Robot::AutonomousPeriodic() {}
 

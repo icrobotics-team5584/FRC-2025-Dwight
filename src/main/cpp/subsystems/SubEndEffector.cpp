@@ -11,6 +11,8 @@ SubEndEffector::SubEndEffector() = default;
 
 // This method will be called once per scheduler run
 void SubEndEffector::Periodic() {
+    frc::SmartDashboard::PutBoolean("EndEffector/Linebreak/1", SubEndEffector::GetInstance().CheckLineBreakHigher());
+    frc::SmartDashboard::PutBoolean("EndEffector/Linebreak/2", SubEndEffector::GetInstance().CheckLineBreakHigher());
 }
 
 frc2::CommandPtr SubEndEffector::FeedUp() {

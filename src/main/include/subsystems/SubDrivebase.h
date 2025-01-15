@@ -49,6 +49,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   units::turns_per_second_t CalcRotateSpeed(units::turn_t rotationError);
   units::degree_t GetPitch();
   frc::Pose2d GetPose();
+  frc::Pose2d GetSimPose();
   frc::Rotation2d GetHeading(); // Heading as recorded by the pose estimator (matches field orientation)
   frc::Rotation2d GetGyroAngle(); // Heading as recorded by the gyro (zero is direction when switched on)
   units::meters_per_second_t GetVelocity();
@@ -59,6 +60,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   // Commands
   frc2::CommandPtr JoystickDrive(frc2::CommandXboxController& controller);
   frc2::CommandPtr Drive(std::function<frc::ChassisSpeeds()> speeds, bool fieldOriented);
+  void DriveToPose(frc::Pose2d targetPose);
   frc2::CommandPtr SyncSensorBut();
   frc2::CommandPtr ResetGyroCmd();
   frc2::CommandPtr SysIdQuasistatic(frc2::sysid::Direction direction) {
@@ -69,7 +71,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   }
 
   // Constants
-  static constexpr units::meters_per_second_t MAX_VELOCITY = 6.1_mps;
+  static constexpr units::meters_per_second_t MAX_VELOCITY = 2_mps;
   static constexpr units::turns_per_second_t MAX_ANGULAR_VELOCITY = 360_deg_per_s;
   static constexpr units::turns_per_second_squared_t MAX_ANG_ACCEL{std::numbers::pi};
   static constexpr double MAX_JOYSTICK_ACCEL = 3;
@@ -83,20 +85,15 @@ class SubDrivebase : public frc2::SubsystemBase {
   studica::AHRS _gyro{studica::AHRS::NavXComType::kMXP_SPI};
 
   // Swerve modules
-  frc::Translation2d _frontLeftLocation{100_mm, 100_mm};
-  frc::Translation2d _frontRightLocation{100_mm, -100_mm};
-  frc::Translation2d _backLeftLocation{-100_mm, 100_mm};
-  frc::Translation2d _backRightLocation{-100_mm, -100_mm};
-
-  // const units::turn_t FRONT_RIGHT_MAG_OFFSET = -0.375732_tr;
-  // const units::turn_t FRONT_LEFT_MAG_OFFSET = -0.941406_tr;
-  // const units::turn_t BACK_RIGHT_MAG_OFFSET = -0.462891_tr;
-  // const units::turn_t BACK_LEFT_MAG_OFFSET = -0.329590_tr;
-
-  const double FRONT_RIGHT_MAG_OFFSET = BotVars::Choose(-0.876953125 + 0.5, -0.515380859375);
-  const double FRONT_LEFT_MAG_OFFSET = BotVars::Choose(-0.443603515625+ 0.5, -0.172607421875);
-  const double BACK_RIGHT_MAG_OFFSET = BotVars::Choose(-0.962158203125+ 0.5, -0.395263671875);
-  const double BACK_LEFT_MAG_OFFSET = BotVars::Choose(-0.840087890625+ 0.5, -0.94921875);
+  frc::Translation2d _frontLeftLocation{+0.281_m, +0.281_m};
+  frc::Translation2d _frontRightLocation{+0.281_m, -0.281_m};
+  frc::Translation2d _backLeftLocation{-0.281_m, +0.281_m};
+  frc::Translation2d _backRightLocation{-0.281_m, -0.281_m};
+  
+  const units::turn_t FRONT_RIGHT_MAG_OFFSET = -0.375732_tr;
+  const units::turn_t FRONT_LEFT_MAG_OFFSET = -0.941406_tr;
+  const units::turn_t BACK_RIGHT_MAG_OFFSET = -0.462891_tr;
+  const units::turn_t BACK_LEFT_MAG_OFFSET = -0.329590_tr;
 
   SwerveModule _frontLeft{canid::DriveBaseFrontLeftDrive, canid::DriveBaseFrontLeftTurn,
                           canid::DriveBaseFrontLeftEncoder, (FRONT_LEFT_MAG_OFFSET*1_tr) };
@@ -113,11 +110,11 @@ class SubDrivebase : public frc2::SubsystemBase {
 
   frc::PIDController _teleopTranslationController{2.0, 0, 0};
   frc::ProfiledPIDController<units::radian> _teleopRotationController{
-      6, 0, 0.3, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
+      3, 0, 0.3, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
   std::shared_ptr<pathplanner::PPHolonomicDriveController> _pathplannerController =
       std::make_shared<pathplanner::PPHolonomicDriveController>(
-          pathplanner::PIDConstants{2.0, 0.0, 0.0},  // Translation PID constants
-          pathplanner::PIDConstants{0.5, 0.0, 0.0}   // Rotation PID constants
+          pathplanner::PIDConstants{6.0, 0.0, 1.0},  // Translation PID constants
+          pathplanner::PIDConstants{2.0, 0.0, 0.0}   // Rotation PID constants
       );
 
   // Pose estimation
@@ -129,7 +126,18 @@ class SubDrivebase : public frc2::SubsystemBase {
        frc::SwerveModulePosition{0_m, _backLeft.GetAngle()},
        frc::SwerveModulePosition{0_m, _backRight.GetAngle()}},
       frc::Pose2d()};
+
   frc::Field2d _fieldDisplay;
+
+  // Sim pose estimation
+  frc::SwerveDrivePoseEstimator<4> _simPoseEstimator{
+      _kinematics,
+      _gyro.GetRotation2d(),
+      {frc::SwerveModulePosition{0_m, _frontLeft.GetAngle()},
+       frc::SwerveModulePosition{0_m, _frontRight.GetAngle()},
+       frc::SwerveModulePosition{0_m, _backLeft.GetAngle()},
+       frc::SwerveModulePosition{0_m, _backRight.GetAngle()}},
+      frc::Pose2d()};
 
   // Joystick controller rate limiters
   double _tunedMaxJoystickAccel = MAX_JOYSTICK_ACCEL;
