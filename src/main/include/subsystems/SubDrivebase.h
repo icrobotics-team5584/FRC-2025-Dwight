@@ -70,7 +70,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   }
 
   // Constants
-  static constexpr units::meters_per_second_t MAX_VELOCITY = 2_mps;
+  static constexpr units::meters_per_second_t MAX_VELOCITY = 5_mps;
   static constexpr units::turns_per_second_t MAX_ANGULAR_VELOCITY = 720_deg_per_s;
   static constexpr units::turns_per_second_squared_t MAX_ANG_ACCEL{std::numbers::pi};
   static constexpr double MAX_JOYSTICK_ACCEL = 3;
@@ -116,7 +116,7 @@ class SubDrivebase : public frc2::SubsystemBase {
       std::make_shared<pathplanner::PPHolonomicDriveController>(
         // translation needs tuning and such
           pathplanner::PIDConstants{3.2, 0.0, 0.3},  // Translation PID constants
-          pathplanner::PIDConstants{24.0, 0.0, 0.0}   // Rotation PID constants
+          pathplanner::PIDConstants{1.0, 0.0, 0.0}   // Rotation PID constants
       );
 
   // Pose estimation

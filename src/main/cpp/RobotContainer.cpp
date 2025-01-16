@@ -36,6 +36,7 @@ RobotContainer::RobotContainer() {
 
 
   // AutoChooser options
+  _autoChooser.AddOption("Default-Left-Slowed", "Default-Left-SlowTest"); // auton testing
   _autoChooser.AddOption("Default-Left", "Default-Left");  
   _autoChooser.AddOption("Default-Middle", "placeholder-DM"); // placeholder
   _autoChooser.AddOption("Default-Right", "Default-Right"); 
