@@ -14,6 +14,6 @@ namespace cmd {
     }
 
     frc2::CommandPtr RemoveAlgae() {
-        return SubEndEffector::GetInstance().FeedDown().AlongWith(SubElevator::GetInstance().ManualElevatorMovementDOWNSLOW());
+        return SubEndEffector::GetInstance().FeedDown().AlongWith(SubElevator::GetInstance().ManualElevatorMovementDOWN());
     }
 }
