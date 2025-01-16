@@ -73,14 +73,11 @@ void RobotContainer::ConfigureBindings() {
   /*_driverController.RightTrigger().WhileTrue(cmd::AlignToSource(_driverController));*/
 
   //Triggers
-  _operatorController.LeftTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromSource());
-  _operatorController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
-  _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromGround());
-  _operatorController.RightTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
+  _driverController.LeftTrigger().WhileTrue(cmd::IntakeFullSequence());
+  _driverController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor().AlongWith(SubIntake::GetInstance().Stow()));
 
   //POV
-  _operatorController.POVRight().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
-  _operatorController.POVLeft().WhileTrue(SubEndEffector::GetInstance().ScoreCoralSLOW());
+
 
   //Bumpers
 
@@ -106,8 +103,10 @@ void RobotContainer::ConfigureBindings() {
   }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
 
   //Triggers
-  _operatorController.LeftTrigger().WhileTrue(cmd::IntakeFullSequence());
-  _operatorController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor().AlongWith(SubIntake::GetInstance().Stow()));
+  _operatorController.LeftTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromSource());
+  _operatorController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
+  _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromGround());
+  _operatorController.RightTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
 
   //Bumpers
   _operatorController.LeftBumper().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
@@ -124,6 +123,9 @@ void RobotContainer::ConfigureBindings() {
   // _operatorController.POVUp().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
   // _operatorController.POVDown().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
   _operatorController.POVDown().WhileTrue(SubElevator::GetInstance().CmdSetSource());
+  _operatorController.POVRight().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
+  _operatorController.POVLeft().WhileTrue(SubEndEffector::GetInstance().ScoreCoralSLOW());
+
 
   //Rumble controller when end effector line break triggers
   SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnFalse(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
