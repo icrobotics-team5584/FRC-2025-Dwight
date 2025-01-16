@@ -76,6 +76,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   static constexpr double MAX_JOYSTICK_ACCEL = 3;
   static constexpr double MAX_ANGULAR_JOYSTICK_ACCEL = 3;
   static constexpr double JOYSTICK_DEADBAND = 0.08;
+  static constexpr double R_SCALING = 4;
 
  private:
   void Drive(units::meters_per_second_t xSpeed, units::meters_per_second_t ySpeed,

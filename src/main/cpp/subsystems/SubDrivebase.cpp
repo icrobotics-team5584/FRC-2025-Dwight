@@ -131,13 +131,13 @@ void SubDrivebase::ResetPathplannerRotationFeedbackSource() {
 }
 
 frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController& controller) {
-  std::string path = "Drivebase/Config/";
-  auto deadband = Logger::Tune(path + "Joystick Deadband", JOYSTICK_DEADBAND);
-  auto maxVelocity = Logger::Tune(path + "Max Velocity", MAX_VELOCITY);
-  auto maxAngularVelocity = Logger::Tune(path + "Max Angular Velocity", MAX_ANGULAR_VELOCITY);
-  auto maxJoystickAccel = Logger::Tune(path + "Max Joystick Accel", MAX_JOYSTICK_ACCEL);
-  auto maxAngularJoystickAccel =
-      Logger::Tune(path + "Max Joystick Angular Accel", MAX_ANGULAR_JOYSTICK_ACCEL);
+  std::string configPath = "Drivebase/Config/";
+  auto deadband = Logger::Tune(configPath + "Joystick Deadband", JOYSTICK_DEADBAND);
+  auto maxVelocity = Logger::Tune(configPath + "Max Velocity", MAX_VELOCITY);
+  auto maxAngularVelocity = Logger::Tune(configPath + "Max Angular Velocity", MAX_ANGULAR_VELOCITY);
+  auto maxJoystickAccel = Logger::Tune(configPath + "Max Joystick Accel", MAX_JOYSTICK_ACCEL);
+  auto maxAngularJoystickAccel = Logger::Tune(configPath + "Max Joystick Angular Accel", MAX_ANGULAR_JOYSTICK_ACCEL);
+  auto rScaling = Logger::Tune(configPath + "R-value Scaling", R_SCALING);
 
   // Recreate slew rate limiters if limits have changed
   if (maxJoystickAccel != _tunedMaxJoystickAccel) {
@@ -151,14 +151,32 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
   }
 
   // Apply deadbands
-  double forwardStick = frc::ApplyDeadband(-controller.GetLeftY(), deadband);
-  double sidewaysStick = frc::ApplyDeadband(-controller.GetLeftX(), deadband);
+  double translationStickY = frc::ApplyDeadband(-controller.GetLeftY(), deadband);
+  double translationStickX = frc::ApplyDeadband(-controller.GetLeftX(), deadband);
   double rotationStick = frc::ApplyDeadband(-controller.GetRightX(), deadband);
 
-  // Apply joystick rate limits
-  auto forwardSpeed = _yStickLimiter.Calculate(forwardStick) * maxVelocity;
-  auto sidewaysSpeed = _xStickLimiter.Calculate(sidewaysStick) * maxVelocity;
+  // Convert cartesian (x, y) translation stick coordinates to polar (R, theta) and scale R-value
+  double translationStickR = std::min(1.0, sqrt(pow(translationStickX, 2) + pow(translationStickY, 2)));
+  double translationStickTheta = atan2(translationStickY, translationStickX);
+  double scaledR = pow(translationStickR, rScaling);
+
+  // Convert polar coordinates (with scaled R-value) back to cartesian
+  double scaledY = scaledR*sin(translationStickTheta);
+  double scaledX = scaledR*cos(translationStickTheta);
+
+  // Apply joystick rate limits and calculate speed
+  auto forwardSpeed = _yStickLimiter.Calculate(scaledY) * maxVelocity;
+  auto sidewaysSpeed = _xStickLimiter.Calculate(scaledX) * maxVelocity;
   auto rotationSpeed = _rotStickLimiter.Calculate(rotationStick) * maxAngularVelocity;
+
+  // Dashboard things
+  frc::SmartDashboard::PutNumber("Drivebase/Scaling/translationStickY", translationStickY);
+  frc::SmartDashboard::PutNumber("Drivebase/Scaling/translationStickX", translationStickX);
+  frc::SmartDashboard::PutNumber("Drivebase/Scaling/translationStickR", translationStickR);
+  frc::SmartDashboard::PutNumber("Drivebase/Scaling/translationStickTheta", translationStickTheta*(180/3.141592653589793238463));
+  frc::SmartDashboard::PutNumber("Drivebase/Scaling/scaledR", scaledR);
+  frc::SmartDashboard::PutNumber("Drivebase/Scaling/scaledY", scaledY);
+  frc::SmartDashboard::PutNumber("Drivebase/Scaling/scaledX", scaledX);
 
   return frc::ChassisSpeeds{forwardSpeed, sidewaysSpeed, rotationSpeed};
 }
