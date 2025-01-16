@@ -4,7 +4,7 @@
 
 #include "RobotContainer.h"
 #include "subsystems/SubElevator.h"
-#include "commands/CoralCommands.h"
+#include "commands/GamePieceCommands.h"
 #include <frc2/command/Commands.h>
 #include "subsystems/SubDrivebase.h"
 
@@ -92,7 +92,7 @@ void RobotContainer::ConfigureBindings() {
   _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromGround());
   _operatorController.RightTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
   _operatorController.POVRight().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
-  _operatorController.POVLeft().WhileTrue(SubEndEffector::GetInstance().ScoreCoralSLOW());
+  _operatorController.POVLeft().WhileTrue(cmd::RemoveAlgae());
 
   //Bumpers
 
