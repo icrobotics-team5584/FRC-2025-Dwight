@@ -71,7 +71,7 @@ class SubDrivebase : public frc2::SubsystemBase {
 
   // Constants
   static constexpr units::meters_per_second_t MAX_VELOCITY = 2_mps;
-  static constexpr units::turns_per_second_t MAX_ANGULAR_VELOCITY = 360_deg_per_s;
+  static constexpr units::turns_per_second_t MAX_ANGULAR_VELOCITY = 720_deg_per_s;
   static constexpr units::turns_per_second_squared_t MAX_ANG_ACCEL{std::numbers::pi};
   static constexpr double MAX_JOYSTICK_ACCEL = 3;
   static constexpr double MAX_ANGULAR_JOYSTICK_ACCEL = 3;
@@ -111,12 +111,12 @@ class SubDrivebase : public frc2::SubsystemBase {
 
   frc::PIDController _teleopTranslationController{2.0, 0, 0};
   frc::ProfiledPIDController<units::radian> _teleopRotationController{
-      3, 0, 0.3, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
+      3, 0, 0.2, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
   std::shared_ptr<pathplanner::PPHolonomicDriveController> _pathplannerController =
       std::make_shared<pathplanner::PPHolonomicDriveController>(
         // translation needs tuning and such
-          pathplanner::PIDConstants{0.0, 0.0, 0.0},  // Translation PID constants
-          pathplanner::PIDConstants{2.0, 0.0, 0.0}   // Rotation PID constants
+          pathplanner::PIDConstants{3.2, 0.0, 0.3},  // Translation PID constants
+          pathplanner::PIDConstants{24.0, 0.0, 0.0}   // Rotation PID constants
       );
 
   // Pose estimation

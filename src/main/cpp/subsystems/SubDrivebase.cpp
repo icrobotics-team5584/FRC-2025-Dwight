@@ -35,7 +35,7 @@ SubDrivebase::SubDrivebase() {
       // outputs individual module feedforwards
 
       [this](auto speeds, auto feedforwards) {
-        double _voltageFFscaler = 1.0; // this a scaler for the voltageFF
+        double _voltageFFscaler = 2.0; //Logger::Tune("drivebase/volatageFFscaler", 1.0); // this a scaler for the voltageFF
         if (feedforwards.robotRelativeForcesX.size() == 4 &&
             feedforwards.robotRelativeForcesY.size() == 4) {
           std::array<units::newton_t, 4> xForces = {
@@ -242,18 +242,6 @@ void SubDrivebase::Drive(
   std::array<units::newton_t, 4> defaults{0_N, 0_N, 0_N, 0_N};
   auto [flXForce, frXForce, blXForce, brXForce] = xForceFeedforwards.value_or(defaults);
   auto [flYForce, frYForce, blYForce, brYForce] = yForceFeedforwards.value_or(defaults);
-
-  // logging
-  Logger::Log("Drivebase/xForceFeedforwards(pre-divide)/FL", flXForce.value());
-  Logger::Log("Drivebase/xForceFeedforwards(pre-divide)/FR", frXForce.value());
-  Logger::Log("Drivebase/xForceFeedforwards(pre-divide)/BL", blXForce.value());
-  Logger::Log("Drivebase/xForceFeedforwards(pre-divide)/BR", brXForce.value());  
-  // divider
-  Logger::Log("Drivebase/xForceFeedforwards(post-divide)/FL", flXForce.value()/300);
-  Logger::Log("Drivebase/xForceFeedforwards(post-divide)/FR", frXForce.value()/300);
-  Logger::Log("Drivebase/xForceFeedforwards(post-divide)/BL", blXForce.value()/300);
-  Logger::Log("Drivebase/xForceFeedforwards(post-divide)/BR", brXForce.value()/300);  
-  
 
   // Setting modules from aquired states
   Logger::Log("Drivebase/Desired Swerve States", states);
