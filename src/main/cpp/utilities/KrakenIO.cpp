@@ -5,6 +5,7 @@
 #include <ctre/phoenix6/controls/PositionTorqueCurrentFOC.hpp>
 #include <ctre/phoenix6/signals/SpnEnums.hpp>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <utilities/RobotLogs.h>
 
 const bool FOCstate = true;
 
@@ -49,10 +50,17 @@ void KrakenIO::SendSensorsToDash(){
   frc::SmartDashboard::PutNumber(turnMotorName  + "error", _canTurnMotor.GetClosedLoopError().GetValue());
 }
 
-void KrakenIO::SetDesiredVelocity(units::meters_per_second_t velocity){
+void KrakenIO::SetDesiredVelocity(units::meters_per_second_t velocity, units::newton_t forceFF){
   units::turns_per_second_t TurnsPerSec = (velocity.value() / WHEEL_CIRCUMFERENCE.value()) * 1_tps;
+  units::newton_meter_t torque = forceFF * WHEEL_RADIUS;
 
-  _canDriveMotor.SetControl(ctre::phoenix6::controls::VelocityVoltage{(TurnsPerSec)});
+  // solve for voltage with 0 speed bc/ speed voltage clac is already handled
+  units::volt_t torqueVoltageFF = _driveMotorModel.Voltage(torque, 0_tps); 
+
+  torqueVoltageFF *= Logger::Tune("swerve/volatgeFF enabled", true);
+  _canDriveMotor.SetControl(ctre::phoenix6::controls::VelocityVoltage{(TurnsPerSec)}.WithEnableFOC(true).WithFeedForward(torqueVoltageFF));
+
+  Logger::Log("swerve/drive " + std::to_string(_canDriveMotor.GetDeviceID()) + " torqueVoltage", torqueVoltageFF);
 }
 
 void KrakenIO::DriveStraightVolts(units::volt_t volts){
@@ -93,7 +101,7 @@ void KrakenIO::ConfigDriveMotor(){
   _configDriveMotor.Slot0.kS = DRIVE_S;
   _configDriveMotor.Slot0.kV = DRIVE_V;
   _configDriveMotor.Slot0.kA = DRIVE_A;
-  _configDriveMotor.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
+  _configDriveMotor.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
   _canDriveMotor.GetConfigurator().Apply(_configDriveMotor);
 }
 
