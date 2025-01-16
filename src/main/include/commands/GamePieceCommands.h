@@ -4,4 +4,5 @@
 
 namespace cmd {
     frc2::CommandPtr IntakeFullSequence();
+    frc2::CommandPtr RemoveAlgae();
 }
