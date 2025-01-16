@@ -17,7 +17,7 @@ namespace canid {
     constexpr int DriveBaseBackLeftTurn = 11;
     constexpr int DriveBaseBackLeftEncoder = 12; 
 
-    constexpr int IntakeMotor = 15;
+    constexpr int IntakeRollerMotor = 15;
     constexpr int EndEffectorMotor = 16; 
     constexpr int IntakePivotMotor = 17;
 

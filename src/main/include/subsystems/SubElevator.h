@@ -12,6 +12,9 @@
 #include <frc2/command/button/CommandXboxController.h>
 #include <units/constants.h>
 #include "Constants.h"
+#include <frc/smartdashboard/Mechanism2d.h>
+#include <frc/smartdashboard/MechanismLigament2d.h>
+#include "utilities/MechanismCircle2d.h"
 
 class SubElevator : public frc2::SubsystemBase {
  public:
@@ -50,26 +53,18 @@ class SubElevator : public frc2::SubsystemBase {
   void Stop();
   void EnableSoftLimit(bool enabled);
 
-
   void Periodic() override;
   void SimulationPeriodic() override;
-
-
 
   //reset
   bool Reseting = false;
   bool Reseted = false;
-
   bool ResetM1 = false; 
-
-
 
  private:
   ctre::phoenix6::configs::TalonFXConfiguration _motorConfig{};
-
   ctre::phoenix6::hardware::TalonFX _elevatorMotor1 {canid::elevatorMotor1};
   ctre::phoenix6::hardware::TalonFX _elevatorMotor2 {canid::elevatorMotor2};
-  
 
   static constexpr double _P = 30; //134.04;
   static constexpr double _I = 0;
@@ -95,11 +90,9 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr units::meters_per_second_squared_t  _ACCELERATION = 6_mps_sq; //Adjust
   static constexpr units::ampere_t zeroingCurrentLimit = 15_A;
 
+  //Elevator sim and mechanism2d
+  frc::sim::ElevatorSim _elevatorSim{frc::DCMotor::Falcon500(2), _GEAR_RATIO, _CARRIAGE_MASS, _DRUM_RADIUS, _MIN_HEIGHT, _MAX_HEIGHT, true, _START_HEIGHT};
 
-
-
-
-
-  //   //Simulation stuff
-  frc::sim::ElevatorSim _motorSim{frc::DCMotor::Falcon500(2), _GEAR_RATIO, _CARRIAGE_MASS, _DRUM_RADIUS, _MIN_HEIGHT, _MAX_HEIGHT, true, _START_HEIGHT};
+  frc::Mechanism2d _elevatorMech{3, 3};
+  frc::MechanismRoot2d* _elevatorMechRoot = _elevatorMech.GetRoot("elevatorRoot", 1, 1);
 };

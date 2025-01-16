@@ -22,20 +22,20 @@ SubIntake::SubIntake() {
     _configIntakePivotMotor.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.25_tr;
     _configIntakePivotMotor.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0_tr;
     _intakePivotMotor.GetConfigurator().Apply(_configIntakePivotMotor);
-    frc::SmartDashboard::PutData("Intake/armMechDisplay", &_singleJointedArmMech);
-    frc::SmartDashboard::PutData("Intake/rollerMechDisplay", &_rollerMech);
+    frc::SmartDashboard::PutData("Intake/mech2dDisplay", &_intakeMech);
 }
 
 // This method will be called once per scheduler run
 void SubIntake::Periodic() {
     units::angle::degree_t pivotAngle = _intakePivotMotor.GetPosition().GetValue();
-    _arm1Ligament->SetAngle(pivotAngle);
+    _intakeMechArmLig1->SetAngle(pivotAngle);
     Logger::LogFalcon("Intake/pivotMotor", _intakePivotMotor);
+    
 
-    units::angle::degree_t rollerAngle = _intakeMotor.GetPosition()/10;
-    frc::SmartDashboard::PutNumber("rollerAngle", rollerAngle.value());
-    _rollerMechLeft.SetAngle(rollerAngle);
-    _rollerMechRight.SetAngle((rollerAngle+180_deg)*-1); //+180 to make it face inwards, and *-1 to rotate in opposite direction
+    // units::angle::degree_t rollerAngle = _intakeRollerMotor.GetPosition()/10;
+    // frc::SmartDashboard::PutNumber("rollerAngle", rollerAngle.value());
+    // _intakeMechTopRoller.SetAngle(rollerAngle);
+    // _intakeMechBottomRoller.SetAngle(-rollerAngle); //negative to rotate in opposite direction
 }
 
 void SubIntake::SimulationPeriodic() {
@@ -50,17 +50,17 @@ void SubIntake::SimulationPeriodic() {
     frc::SmartDashboard::PutNumber("Intake/armAngle", armAngle.value());
     frc::SmartDashboard::PutNumber("Intake/armVelocity", armVel.value());
 
-    _rollerSim.SetInputVoltage(_intakeMotor.CalcSimVoltage());
+    _rollerSim.SetInputVoltage(_intakeRollerMotor.CalcSimVoltage());
     _rollerSim.Update(20_ms);
-    _intakeMotor.IterateSim(_rollerSim.GetAngularVelocity());
+    _intakeRollerMotor.IterateSim(_rollerSim.GetAngularVelocity());
 }   
 
 frc2::CommandPtr SubIntake::Intake() {
-    return StartEnd([this] {_intakeMotor.Set(0.5);}, [this] {_intakeMotor.Set(0);});
+    return StartEnd([this] {_intakeRollerMotor.Set(0.5);}, [this] {_intakeRollerMotor.Set(0);});
 }
 
 frc2::CommandPtr SubIntake::Outtake() {
-    return StartEnd([this] {_intakeMotor.Set(-0.5);}, [this] {_intakeMotor.Set(0);});
+    return StartEnd([this] {_intakeRollerMotor.Set(-0.5);}, [this] {_intakeRollerMotor.Set(0);});
 }
 
 void SubIntake::SetDesiredAngle(units::degree_t angle){
