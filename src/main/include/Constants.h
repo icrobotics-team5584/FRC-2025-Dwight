@@ -28,6 +28,6 @@ namespace canid {
 }
 
 namespace dio {
-    constexpr int EndEffectorLineBreakHigher = 1;  
+    constexpr int EndEffectorLineBreakHigher = 3;  
     constexpr int EndEffectorLineBreakLower = 2;
 }
