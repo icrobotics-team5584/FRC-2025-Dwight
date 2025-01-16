@@ -89,20 +89,25 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc::Translation2d _frontRightLocation{+0.281_m, -0.281_m};
   frc::Translation2d _backLeftLocation{-0.281_m, +0.281_m};
   frc::Translation2d _backRightLocation{-0.281_m, -0.281_m};
-  
-  const units::turn_t FRONT_RIGHT_MAG_OFFSET = -0.375732_tr;
-  const units::turn_t FRONT_LEFT_MAG_OFFSET = -0.941406_tr;
-  const units::turn_t BACK_RIGHT_MAG_OFFSET = -0.462891_tr;
-  const units::turn_t BACK_LEFT_MAG_OFFSET = -0.329590_tr;
+
+  // const units::turn_t FRONT_RIGHT_MAG_OFFSET = -0.375732_tr;
+  // const units::turn_t FRONT_LEFT_MAG_OFFSET = -0.941406_tr;
+  // const units::turn_t BACK_RIGHT_MAG_OFFSET = -0.462891_tr;
+  // const units::turn_t BACK_LEFT_MAG_OFFSET = -0.329590_tr;
+
+  const double FRONT_RIGHT_MAG_OFFSET = BotVars::Choose(-0.876953125 + 0.5, -0.515380859375);
+  const double FRONT_LEFT_MAG_OFFSET = BotVars::Choose(-0.443603515625+ 0.5, -0.172607421875);
+  const double BACK_RIGHT_MAG_OFFSET = BotVars::Choose(-0.962158203125+ 0.5, -0.395263671875);
+  const double BACK_LEFT_MAG_OFFSET = BotVars::Choose(-0.840087890625+ 0.5, -0.94921875);
 
   SwerveModule _frontLeft{canid::DriveBaseFrontLeftDrive, canid::DriveBaseFrontLeftTurn,
-                          canid::DriveBaseFrontLeftEncoder, FRONT_LEFT_MAG_OFFSET };
+                          canid::DriveBaseFrontLeftEncoder, (FRONT_LEFT_MAG_OFFSET*1_tr) };
   SwerveModule _frontRight{canid::DriveBaseFrontRightDrive, canid::DriveBaseFrontRightTurn,
-                           canid::DriveBaseFrontRightEncoder, FRONT_RIGHT_MAG_OFFSET };
+                           canid::DriveBaseFrontRightEncoder, (FRONT_RIGHT_MAG_OFFSET*1_tr) };
   SwerveModule _backLeft{canid::DriveBaseBackLeftDrive, canid::DriveBaseBackLeftTurn,
-                         canid::DriveBaseBackLeftEncoder, BACK_LEFT_MAG_OFFSET };
+                         canid::DriveBaseBackLeftEncoder, (BACK_LEFT_MAG_OFFSET*1_tr) };
   SwerveModule _backRight{canid::DriveBaseBackRightDrive, canid::DriveBaseBackRightTurn,
-                          canid::DriveBaseBackRightEncoder, BACK_RIGHT_MAG_OFFSET };
+                          canid::DriveBaseBackRightEncoder, (BACK_RIGHT_MAG_OFFSET*1_tr) };
 
   // Control objects
   frc::SwerveDriveKinematics<4> _kinematics{_frontLeftLocation, _frontRightLocation,

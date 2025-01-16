@@ -79,7 +79,8 @@ void RobotContainer::ConfigureBindings() {
   _operatorController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
   _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromGround());
   _operatorController.RightTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
-  _operatorController.POVRight().OnTrue(SubEndEffector::GetInstance().ScoreCoral());
+  _operatorController.POVRight().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
+  _driverController.POVRight().WhileTrue(SubEndEffector::GetInstance().ScoreCoralSLOW());
 
   //Bumpers
 
@@ -97,11 +98,7 @@ void RobotContainer::ConfigureBindings() {
   //Opperator
 
   //Triggers
-  _driverController.LeftTrigger().WhileTrue(cmd::IntakeFullSequence());
-  _driverController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor().AlongWith(SubIntake::GetInstance().Stow()));
-
-  //Joystick
-  // frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
+    // frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
   //   return (_operatorController.GetLeftY() < -0.2);
   // }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
 

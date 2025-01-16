@@ -85,12 +85,12 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr units::meter_t _START_HEIGHT = 0_m;
   static constexpr units::kilogram_t _CARRIAGE_MASS = 6_kg;
   static constexpr units::meter_t _L1_HEIGHT = 0.658325_m;
-  static constexpr units::meter_t _L2_HEIGHT = 0.42_m;
-  static constexpr units::meter_t _L3_HEIGHT = 0.82_m;
-  static constexpr units::meter_t _L4_HEIGHT = 1.5_m;//1.88
+  static constexpr units::meter_t _L2_HEIGHT = 0.445_m; //0.42
+  static constexpr units::meter_t _L3_HEIGHT = 0.845_m; //0.82
+  static constexpr units::meter_t _L4_HEIGHT = 1.525_m; //1.5
   static constexpr units::meter_t _ALGAE_LOW_HEIGHT = 0_m;//get numbers later
   static constexpr units::meter_t _ALGAE_HIGH_HEIGHT = 0_m;
-  static constexpr units::meter_t _SOURCE_HEIGHT = 0.15_m;
+  static constexpr units::meter_t _SOURCE_HEIGHT = 0.135_m;
   static constexpr units::meters_per_second_t _CRUISE_VELOCITY = 1.75_mps; //0.82; //Adjust
   static constexpr units::meters_per_second_squared_t  _ACCELERATION = 6_mps_sq; //Adjust
   static constexpr units::ampere_t zeroingCurrentLimit = 15_A;
