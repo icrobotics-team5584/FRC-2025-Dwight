@@ -4,7 +4,7 @@
 
 #include "Robot.h"
 #include "subsystems/SubElevator.h"
-
+#include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/CommandScheduler.h>
 
 Robot::Robot() {}

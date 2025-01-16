@@ -23,10 +23,13 @@ class SubEndEffector : public frc2::SubsystemBase {
   frc2::CommandPtr IntakeFromSource();
   frc2::CommandPtr IntakeFromGround();
   frc2::CommandPtr FeedUp();
-  frc2::CommandPtr FeedUpSLOWER();
+  frc2::CommandPtr FeedUpSLOW();
   frc2::CommandPtr FeedDown();
-  frc2::CommandPtr FeedDownSLOWER();
+  frc2::CommandPtr FeedDownSLOW();
   frc2::CommandPtr StopMotor();
+  frc2::CommandPtr ScoreCoral();
+  frc2::CommandPtr Shoot();
+  frc2::CommandPtr ScoreCoralSLOW();
   bool CheckLineBreakHigher();
   bool CheckLineBreakLower();
   bool LineBreakDownSignal();
