@@ -42,6 +42,7 @@ void KrakenIO::SendSensorsToDash(){
 
   frc::SmartDashboard::PutNumber(driveMotorName + "Target velocity", _canDriveMotor.GetClosedLoopReference().GetValue());
   frc::SmartDashboard::PutNumber(driveMotorName + "velocity", _canDriveMotor.GetVelocity().GetValue().value());
+  frc::SmartDashboard::PutNumber(driveMotorName + "voltage", _canDriveMotor.GetMotorVoltage().GetValue().value());
   frc::SmartDashboard::PutNumber(turnMotorName  + "position", _canTurnMotor.GetPosition().GetValue().value());
   frc::SmartDashboard::PutNumber(turnMotorName  + "voltage", _canTurnMotor.GetMotorVoltage().GetValueAsDouble());
   frc::SmartDashboard::PutNumber(turnMotorName  + "target", _canTurnMotor.GetClosedLoopReference().GetValue());
