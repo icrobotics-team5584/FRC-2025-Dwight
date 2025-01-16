@@ -80,7 +80,7 @@ void RobotContainer::ConfigureBindings() {
   _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromGround());
   _operatorController.RightTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
   _operatorController.POVRight().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
-  _driverController.POVRight().WhileTrue(SubEndEffector::GetInstance().ScoreCoralSLOW());
+  _operatorController.POVLeft().WhileTrue(SubEndEffector::GetInstance().ScoreCoralSLOW());
 
   //Bumpers
 
@@ -98,13 +98,13 @@ void RobotContainer::ConfigureBindings() {
   //Opperator
 
   //Triggers
-    // frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
-  //   return (_operatorController.GetLeftY() < -0.2);
-  // }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
+  frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
+    return (_operatorController.GetLeftY() > 0.2);
+  }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
 
-  // frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
-  //   return (_operatorController.GetLeftY() > 0.2);
-  // }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
+  frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
+    return (_operatorController.GetLeftY() < -0.2);
+  }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
 
 
   //Bumpers
@@ -119,9 +119,9 @@ void RobotContainer::ConfigureBindings() {
   //  _operatorController.RightBumper().OnTrue(SubElevator::GetInstance().ZeroElevator().IgnoringDisable(true));
    _operatorController.RightBumper().WhileTrue(SubElevator::GetInstance().Climb());
   //POV
-  _operatorController.POVUp().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
-  _operatorController.POVDown().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
-  _operatorController.POVLeft().WhileTrue(SubElevator::GetInstance().CmdSetSource());
+  // _operatorController.POVUp().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
+  // _operatorController.POVDown().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
+  _operatorController.POVDown().WhileTrue(SubElevator::GetInstance().CmdSetSource());
 
   
 
