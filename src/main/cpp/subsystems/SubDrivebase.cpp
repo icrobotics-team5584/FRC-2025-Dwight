@@ -151,7 +151,8 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
   auto maxAngularVelocity = Logger::Tune(configPath + "Max Angular Velocity", MAX_ANGULAR_VELOCITY);
   auto maxJoystickAccel = Logger::Tune(configPath + "Max Joystick Accel", MAX_JOYSTICK_ACCEL);
   auto maxAngularJoystickAccel = Logger::Tune(configPath + "Max Joystick Angular Accel", MAX_ANGULAR_JOYSTICK_ACCEL);
-  auto rScaling = Logger::Tune(configPath + "R-value Scaling", R_SCALING);
+  auto translationRScaling = Logger::Tune(configPath + "Translation R-value Scaling", TRANSLATION_R_SCALING);
+  auto rotationRScaling = Logger::Tune(configPath + "Rotation R-value Scaling", ROTATION_R_SCALING);
 
   // Recreate slew rate limiters if limits have changed
   if (maxJoystickAccel != _tunedMaxJoystickAccel) {
@@ -165,32 +166,35 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
   }
 
   // Apply deadbands
-  double translationStickY = frc::ApplyDeadband(-controller.GetLeftY(), deadband);
-  double translationStickX = frc::ApplyDeadband(-controller.GetLeftX(), deadband);
-  double rotationStick = frc::ApplyDeadband(-controller.GetRightX(), deadband);
+  double rawTranslationY = frc::ApplyDeadband(-controller.GetLeftY(), deadband);
+  double rawTranslationX = frc::ApplyDeadband(-controller.GetLeftX(), deadband);
+  double rawRotation = frc::ApplyDeadband(-controller.GetRightX(), deadband);
 
   // Convert cartesian (x, y) translation stick coordinates to polar (R, theta) and scale R-value
-  double translationStickR = std::min(1.0, sqrt(pow(translationStickX, 2) + pow(translationStickY, 2)));
-  double translationStickTheta = atan2(translationStickY, translationStickX);
-  double scaledR = pow(translationStickR, rScaling);
+  double rawTranslationR = std::min(1.0, sqrt(pow(rawTranslationX, 2) + pow(rawTranslationY, 2)));
+  double translationTheta = atan2(rawTranslationY, rawTranslationX);
+  double scaledTranslationR = pow(rawTranslationR, translationRScaling);
 
-  // Convert polar coordinates (with scaled R-value) back to cartesian
-  double scaledY = scaledR*sin(translationStickTheta);
-  double scaledX = scaledR*cos(translationStickTheta);
+  // Convert polar coordinates (with scaled R-value) back to cartesian; scale rotation as well
+  double scaledTranslationY = scaledTranslationR*sin(translationTheta);
+  double scaledTranslationX = scaledTranslationR*cos(translationTheta);
+  double scaledRotation = std::copysign(pow(rawRotation, rotationRScaling), rawRotation);
 
   // Apply joystick rate limits and calculate speed
-  auto forwardSpeed = _yStickLimiter.Calculate(scaledY) * maxVelocity;
-  auto sidewaysSpeed = _xStickLimiter.Calculate(scaledX) * maxVelocity;
-  auto rotationSpeed = _rotStickLimiter.Calculate(rotationStick) * maxAngularVelocity;
+  auto forwardSpeed = _yStickLimiter.Calculate(scaledTranslationY) * maxVelocity;
+  auto sidewaysSpeed = _xStickLimiter.Calculate(scaledTranslationX) * maxVelocity;
+  auto rotationSpeed = _rotStickLimiter.Calculate(scaledRotation) * maxAngularVelocity;
 
   // Dashboard things
-  frc::SmartDashboard::PutNumber("Drivebase/Scaling/translationStickY", translationStickY);
-  frc::SmartDashboard::PutNumber("Drivebase/Scaling/translationStickX", translationStickX);
-  frc::SmartDashboard::PutNumber("Drivebase/Scaling/translationStickR", translationStickR);
-  frc::SmartDashboard::PutNumber("Drivebase/Scaling/translationStickTheta", translationStickTheta*(180/3.141592653589793238463));
-  frc::SmartDashboard::PutNumber("Drivebase/Scaling/scaledR", scaledR);
-  frc::SmartDashboard::PutNumber("Drivebase/Scaling/scaledY", scaledY);
-  frc::SmartDashboard::PutNumber("Drivebase/Scaling/scaledX", scaledX);
+  frc::SmartDashboard::PutNumber("Drivebase/Scaling/rawTranslationY", rawTranslationY);
+  frc::SmartDashboard::PutNumber("Drivebase/Scaling/rawTranslationX", rawTranslationX);
+  frc::SmartDashboard::PutNumber("Drivebase/Scaling/rawTranslationR", rawTranslationR);
+  frc::SmartDashboard::PutNumber("Drivebase/Scaling/translationTheta", translationTheta*(180/3.141592653589793238463));
+  frc::SmartDashboard::PutNumber("Drivebase/Scaling/scaledTranslationR", scaledTranslationR);
+  frc::SmartDashboard::PutNumber("Drivebase/Scaling/scaledTranslationY", scaledTranslationY);
+  frc::SmartDashboard::PutNumber("Drivebase/Scaling/scaledTranslationX", scaledTranslationX);
+  frc::SmartDashboard::PutNumber("Drivebase/Scaling/rawRotation", rawRotation);
+  frc::SmartDashboard::PutNumber("Drivebase/Scaling/scaledRotation", scaledRotation);
 
   return frc::ChassisSpeeds{forwardSpeed, sidewaysSpeed, rotationSpeed};
 }

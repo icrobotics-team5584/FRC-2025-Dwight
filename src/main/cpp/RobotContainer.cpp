@@ -80,7 +80,7 @@ void RobotContainer::ConfigureBindings() {
 
   //Letters
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
-  _driverController.X().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
+  _driverController.X().WhileTrue(SubDrivebase::GetInstance().SyncSensorBut()); //Wheel characterisation
   /*_driverController.RightTrigger().WhileTrue(cmd::AlignToSource(_driverController));*/
   _driverController.A().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
   _driverController.B().WhileTrue(cmd::YAlignWithTarget(2, _driverController));
@@ -91,7 +91,7 @@ void RobotContainer::ConfigureBindings() {
   _operatorController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
   _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromGround());
   _operatorController.RightTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
-  _operatorController.POVRight().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
+  _operatorController.A().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
   _operatorController.POVLeft().WhileTrue(cmd::RemoveAlgae());
 
   //Bumpers
@@ -123,7 +123,7 @@ void RobotContainer::ConfigureBindings() {
 
 
   //Letters
-   _operatorController.A().OnTrue(SubElevator::GetInstance().CmdSetL1());
+  //  _operatorController.A().OnTrue(SubElevator::GetInstance().CmdSetL1());
    _operatorController.X().OnTrue(SubElevator::GetInstance().CmdSetL2());
    _operatorController.B().OnTrue(SubElevator::GetInstance().CmdSetL3());
    _operatorController.Y().OnTrue(SubElevator::GetInstance().CmdSetL4());
