@@ -183,6 +183,15 @@ frc2::CommandPtr SubElevator::ManualElevatorMovementDOWN() {
       });
     }
 
+frc2::CommandPtr SubElevator::ManualElevatorMovementAlgae() {
+  return frc2::cmd::StartEnd(
+      [this] { _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-1_V)); },
+      [this] {
+        auto targHeight = HeightFromRotations(_elevatorMotor1.GetPosition(true).GetValue());
+        _elevatorMotor1.SetControl(controls::PositionVoltage(RotationsFromHeight(targHeight)).WithEnableFOC(true));
+      });
+    }
+
 frc2::CommandPtr SubElevator::ManualElevatorMovementDOWNSLOW() {
   return frc2::cmd::RunOnce([this] {_elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-1_V));});
     }
