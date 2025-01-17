@@ -46,7 +46,7 @@ class SubIntake : public frc2::SubsystemBase {
   const units::mass::kilogram_t ARM_MASS = 6_kg;
   const units::angle::degree_t ARM_MIN_ANGLE = 0_deg;
   const units::angle::degree_t ARM_MAX_ANGLE = 90_deg;
-  const units::angle::degree_t ARM_HOME_ANGLE = 45_deg;
+  const units::angle::degree_t ARM_HOME_ANGLE = 90_deg;
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.
@@ -66,14 +66,14 @@ class SubIntake : public frc2::SubsystemBase {
   static constexpr units::kilogram_square_meter_t ROLLER_MOI = 0.001_kg_sq_m; //need correct moment of inertia for intake motor
   frc::sim::DCMotorSim _rollerSim{frc::LinearSystemId::DCMotorSystem(frc::DCMotor::NeoVortex(), ROLLER_MOI, ROLLER_GEARING), frc::DCMotor::NeoVortex()};
 
-  frc::Mechanism2d _intakeMech{6, 4};  // canvas width and height
-  frc::MechanismRoot2d* _intakeMechRoot = _intakeMech.GetRoot("intakeRoot", 1, 1);  // root x and y
+  frc::Mechanism2d _intakeMech{3, 3};  // canvas width and height
+  frc::MechanismRoot2d* _intakeMechRoot = _intakeMech.GetRoot("intakeRoot", 1.875, 0);  // root x and y
   frc::MechanismLigament2d* _intakeMechArmLig1 =
     _intakeMechRoot->Append<frc::MechanismLigament2d>("armLigament1", 2, 0_deg);
-  // MechanismCircle2d _intakeMechTopRoller{_intakeMechArmLig1, "topRoller", 0.75, 0_deg, 36, 10};
-  // frc::MechanismLigament2d* _intakeMechArmLig2 = 
-  //   _intakeMechRoot->Append<frc::MechanismLigament2d>("armLigament2", 3, 90_deg, 0);
-  // MechanismCircle2d _intakeMechBottomRoller{_intakeMechArmLig2, "bottomRoller", 0.75, 180_deg, 36, 10};
+  MechanismCircle2d _intakeMechTopRoller{_intakeMechArmLig1, "topRoller", 0.75, 0_deg, 36, 10};
+  frc::MechanismLigament2d* _intakeMechArmLig2 = 
+    _intakeMechArmLig1->Append<frc::MechanismLigament2d>("armLigament2", 2, 270_deg);
+  MechanismCircle2d _intakeMechBottomRoller{_intakeMechArmLig2, "bottomRoller", 0.75, 180_deg, 36, 10};
   
   nt::GenericEntry* _armXOffset;
   nt::GenericEntry* _armYOffset;

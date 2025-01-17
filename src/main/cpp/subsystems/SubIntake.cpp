@@ -32,10 +32,10 @@ void SubIntake::Periodic() {
     Logger::LogFalcon("Intake/pivotMotor", _intakePivotMotor);
     
 
-    // units::angle::degree_t rollerAngle = _intakeRollerMotor.GetPosition()/10;
-    // frc::SmartDashboard::PutNumber("rollerAngle", rollerAngle.value());
-    // _intakeMechTopRoller.SetAngle(rollerAngle);
-    // _intakeMechBottomRoller.SetAngle(-rollerAngle); //negative to rotate in opposite direction
+    units::angle::degree_t rollerAngle = _intakeRollerMotor.GetPosition()/10;
+    frc::SmartDashboard::PutNumber("rollerAngle", rollerAngle.value());
+    _intakeMechTopRoller.SetAngle(rollerAngle);
+    _intakeMechBottomRoller.SetAngle(-rollerAngle); //negative to rotate in opposite direction
 }
 
 void SubIntake::SimulationPeriodic() {
