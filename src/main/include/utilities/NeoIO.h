@@ -10,7 +10,7 @@ class NeoIO : public SwerveIO{
         void SetDesiredAngle(units::degree_t angle) override;
         void SetAngle(units::turn_t angle) override;
         void SendSensorsToDash() override;
-        void SetDesiredVelocity(units::meters_per_second_t velocity) override;
+        void SetDesiredVelocity(units::meters_per_second_t velocity, units::newton_t forceFF) override;
         void DriveStraightVolts(units::volt_t volts) override;
         void StopMotors() override;
         void UpdateSim(units::second_t deltaTime) override;
