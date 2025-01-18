@@ -66,4 +66,24 @@ frc2::CommandPtr AlignToSource(frc2::CommandXboxController& controller) {
       },
       true);
 }
+
+frc2::CommandPtr rotateToReef(frc2::CommandXboxController& controller){
+  return SubDrivebase::GetInstance().Drive(
+    [&controller] {
+    
+    units::degree_t targetAngle = SubVision::GetInstance().getLastReefIdAngle();
+    units::degree_t currentAngle = SubDrivebase::GetInstance().GetPose().Rotation().Degrees();
+    units::turns_per_second_t rotSpeed = SubDrivebase::GetInstance().CalcRotateSpeed(currentAngle - targetAngle);
+
+    frc::ChassisSpeeds joystickSpeeds = SubDrivebase::GetInstance().CalcJoystickSpeeds(controller);
+
+    frc::ChassisSpeeds speeds;
+    speeds.vx = joystickSpeeds.vx;
+    speeds.vy = joystickSpeeds.vy;
+    speeds.omega = rotSpeed;
+
+    return speeds;
+  }, true);
+
+} 
 }  // namespace cmd
