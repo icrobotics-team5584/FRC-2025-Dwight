@@ -178,7 +178,10 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
   // Convert polar coordinates (with scaled R-value) back to cartesian; scale rotation as well
   double scaledTranslationY = scaledTranslationR*sin(translationTheta);
   double scaledTranslationX = scaledTranslationR*cos(translationTheta);
-  double scaledRotation = std::copysign(pow(rawRotation, rotationRScaling), rawRotation);
+
+  double scaledRotation;
+  if (rawRotation >= 0) { scaledRotation = pow(rawRotation, rotationRScaling); }
+  else { scaledRotation = std::copysign(pow(abs(rawRotation), rotationRScaling), rawRotation); }
 
   // Apply joystick rate limits and calculate speed
   auto forwardSpeed = _yStickLimiter.Calculate(scaledTranslationY) * maxVelocity;
