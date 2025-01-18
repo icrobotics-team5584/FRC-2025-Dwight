@@ -28,6 +28,15 @@ void SubVision::Periodic() {
   auto results = _camera.GetAllUnreadResults();
   UpdatePoseEstimator(results);
   UpdateLatestTags(results);
+  bool x;
+  if ((SubDrivebase::GetInstance().GetPose().Rotation().Degrees() - getLastReefIdAngle()) <= 1_deg){
+    x = true;
+  } else {
+    x = false;
+  }
+  frc::SmartDashboard::PutBoolean("vision/is robot at angle for reef", x);
+  frc::SmartDashboard::PutNumber("vision/last reef id angle", getLastReefIdAngle().value());
+  frc::SmartDashboard::PutNumber("vision/gyro angle", SubDrivebase::GetInstance().GetPose().Rotation().Degrees().value());
 }
 
 void SubVision::SimulationPeriodic() {

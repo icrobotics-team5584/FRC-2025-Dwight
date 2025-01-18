@@ -93,6 +93,7 @@ void SubDrivebase::Periodic() {
 
   UpdateOdometry();
   frc::SmartDashboard::PutNumber("Drivebase/loop time (sec)", (frc::GetTime() - loopStart).value());
+  frc::SmartDashboard::PutNumber("Drivebase/gyro angle", SubDrivebase::GetInstance().GetPose().Rotation().Degrees().value());
 }
 
 void SubDrivebase::SimulationPeriodic() {

@@ -64,8 +64,9 @@ void RobotContainer::ConfigureBindings() {
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
   _driverController.X().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
   /*_driverController.RightTrigger().WhileTrue(cmd::AlignToSource(_driverController));*/
-  _driverController.A().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
+  //_driverController.A().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
   _driverController.B().WhileTrue(cmd::YAlignWithTarget(2, _driverController));
+  _driverController.A().WhileTrue(cmd::rotateToReef(_driverController));
     //POV / d-pad
 
   /*
