@@ -20,6 +20,7 @@
 #include "commands/VisionCommand.h"
 #include <frc/Filesystem.h>
 #include <wpinet/WebServer.h>
+#include "subsystems/SubFunnel.h"
 
 RobotContainer::RobotContainer() {
   wpi::WebServer::GetInstance().Start(5800, frc::filesystem::GetDeployDirectory());
@@ -87,8 +88,8 @@ void RobotContainer::ConfigureBindings() {
     //POV / d-pad
 
   //Triggers
-  _operatorController.LeftTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromSource());
-  _operatorController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
+  _operatorController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
+  _operatorController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor().AlongWith(SubFunnel::GetInstance().StopFunnelMotor()));
   _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromGround());
   _operatorController.RightTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
   _operatorController.POVRight().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
