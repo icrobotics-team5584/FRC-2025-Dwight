@@ -25,11 +25,13 @@
 class SwerveModule {
  public:
   SwerveModule(int canDriveMotorID, int canTurnMotorID, int canTurnEncoderID, units::turn_t cancoderMagOffset); 
-  void SetDesiredState(frc::SwerveModuleState& state);
+  void SetDesiredState(frc::SwerveModuleState& state, 
+    units::newton_t xForceFF = 0_N,
+    units::newton_t yForceFF = 0_N); 
   void SyncSensors();
   void SendSensorsToDash();
   void SetDesiredAngle(units::degree_t angle);
-  void SetDesiredVelocity(units::meters_per_second_t velocity);
+  void SetDesiredVelocity(units::meters_per_second_t velocity, units::newton_t forceFF);
   void DriveStraightVolts(units::volt_t volts);
   void StopMotors();
   void UpdateSim(units::second_t deltaTime);

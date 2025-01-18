@@ -38,16 +38,28 @@ RobotContainer::RobotContainer() {
 
 
   // AutoChooser options
+  _autoChooser.AddOption("Default-Left-Slowed", "Default-Left-SlowTest"); // auton testing
   _autoChooser.AddOption("Default-Left", "Default-Left");  
-  _autoChooser.AddOption("Default-Middle", "placeholder-DM");
-  _autoChooser.AddOption("Default-Right", "Default-Right");
-  _autoChooser.AddOption("TeammateHelper-Left", "placeholder-THL");
-  _autoChooser.AddOption("TeammateHelper-Right", "placeholder-THR");
+  _autoChooser.AddOption("Default-Middle", "placeholder-DM"); // placeholder
+  _autoChooser.AddOption("Default-Right", "Default-Right"); 
+  _autoChooser.AddOption("TeammateHelper-Left", "placeholder-THL"); // placeholder
+  _autoChooser.AddOption("TeammateHelper-Right", "placeholder-THR"); // placeholder
   _autoChooser.AddOption("L-Shape", "L-Shape");
   _autoChooser.AddOption("L-Shape-Slow", "L-Shape-Slow");
   _autoChooser.AddOption("L-Shape-Spinning", "L-Shape-Spinning");
   _autoChooser.AddOption("L-Shape-Spinning-Slow", "L-Shape-Spinning-Slow");
   _autoChooser.AddOption("move", "move");
+  _autoChooser.AddOption("WheelCharecterisation-4m-0.1ms", "MoveForward-4M-0.1ms");
+  _autoChooser.AddOption("WheelCharecterisation-4m-0.5ms", "MoveForward-4M-0.5ms");
+  _autoChooser.AddOption("WheelCharecterisation-4m-1.0ms", "MoveForward-4M-1.0ms");
+  _autoChooser.AddOption("WheelCharecterisation-4m-1.5ms", "MoveForward-4M-1.5ms");
+  _autoChooser.AddOption("WheelCharecterisation-4m-2.0ms", "MoveForward-4M-2.0ms");
+  _autoChooser.AddOption("WheelCharecterisation-7ishm-0.1ms", "MoveForward-7ishM-0.1ms");
+  _autoChooser.AddOption("SpinInSpot-180", "SpinInSpot-180");
+  _autoChooser.AddOption("SpinInSpot-180-Slow", "SpinInSpot-180-Slow");
+  _autoChooser.AddOption("SpinInSpot-360", "SpinInSpot-360");
+  _autoChooser.AddOption("SpinInSpot-360-Slow", "SpinInSpot360-Slow");  
+
   frc::SmartDashboard::PutData("Chosen Auton", &_autoChooser);   
 }
 
@@ -70,8 +82,8 @@ void RobotContainer::ConfigureBindings() {
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
   _driverController.X().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
   /*_driverController.RightTrigger().WhileTrue(cmd::AlignToSource(_driverController));*/
-  // _driverController.A().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
-  // _driverController.B().WhileTrue(cmd::YAlignWithTarget(2, _driverController));
+  _driverController.A().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
+  _driverController.B().WhileTrue(cmd::YAlignWithTarget(2, _driverController));
     //POV / d-pad
 
   //Triggers
