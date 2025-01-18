@@ -4,8 +4,8 @@
 
 #include "Robot.h"
 #include "subsystems/SubElevator.h"
+#include "frc/DataLogManager.h"
 #include <frc/smartdashboard/SmartDashboard.h>
-
 #include <frc2/command/CommandScheduler.h>
 #include "grpl/CanBridge.h"
 #include <iostream>
@@ -17,6 +17,7 @@ Robot::Robot() {
   //lc->set_ranging_mode(grpl::LaserCanRangingMode::Long);
   //lc->set_timing_budget(grpl::LaserCanTimingBudget::TimingBudget100ms);
   //lc->set_roi(grpl::LaserCanROI{ 8, 8, 16, 16 });
+  frc::DataLogManager::Start();
 }
 
 void Robot::RobotPeriodic() {
@@ -43,7 +44,7 @@ void Robot::AutonomousInit() {
 
 //Auto climber reset by bringing elevator to zero position then reset
   SubElevator::GetInstance().ElevatorAutoReset();
-}
+} 
 
 void Robot::AutonomousPeriodic() {}
 
