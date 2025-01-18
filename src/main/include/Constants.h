@@ -31,3 +31,7 @@ namespace dio {
     constexpr int EndEffectorLineBreakHigher = 3;  
     constexpr int EndEffectorLineBreakLower = 2;
 }
+
+namespace math {
+    constexpr double pi = 3.14159265358979323846;
+}

@@ -41,6 +41,7 @@ class SubVision : public frc2::SubsystemBase {
 
 
 
+
  private:
  /**
  * Check if the pose if good enough to be used as reference

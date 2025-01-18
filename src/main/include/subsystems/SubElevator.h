@@ -10,7 +10,6 @@
 #include "utilities/ICSparkEncoder.h"
 #include <frc/simulation/ElevatorSim.h>
 #include <frc2/command/button/CommandXboxController.h>
-#include <units/constants.h>
 #include "Constants.h"
 
 class SubElevator : public frc2::SubsystemBase {
@@ -48,6 +47,8 @@ class SubElevator : public frc2::SubsystemBase {
   units::turns_per_second_t RotationsFromMetersPerSecond(units::meters_per_second_t meterspersec);
   units::ampere_t GetM1Current();
 
+  bool IsAtTarget();
+
   void Stop();
   void EnableSoftLimit(bool enabled);
 
@@ -80,7 +81,7 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr double _G = 0.15; //8.6704096794128409086;
   static constexpr double _GEAR_RATIO = 14;
   static constexpr units::meter_t _DRUM_RADIUS = 1.84_cm * 2; // effective radius - doubled as 2 stage elevator
-  static constexpr units::meter_t _DRUM_CIRCUMFERENCE = _DRUM_RADIUS * 2 * units::constants::pi;
+  static constexpr units::meter_t _DRUM_CIRCUMFERENCE = _DRUM_RADIUS * 2 * math::pi;
   static constexpr units::meter_t _MAX_HEIGHT = 1.65_m;
   static constexpr units::meter_t _MIN_HEIGHT = 0.0_m; // reset setpoint
   static constexpr units::meter_t _START_HEIGHT = 0_m;

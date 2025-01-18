@@ -31,7 +31,6 @@ class SubDrivebase : public frc2::SubsystemBase {
   // Instantaneous functions
   void AddVisionMeasurement(frc::Pose2d pose, double ambiguity, units::second_t timeStamp);
   void ResetGyroHeading(units::degree_t startingAngle = 0_deg);
-  void UpdatePosition(frc::Pose2d robotPosition);
   void DisplayTrajectory(std::string name, frc::Trajectory trajectory);
   void SetNeutralMode(bool mode);
   void SetPose(frc::Pose2d pose);
@@ -46,6 +45,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   bool IsAtPose(frc::Pose2d pose);
   frc::ChassisSpeeds CalcDriveToPoseSpeeds(frc::Pose2d targetPose);
   frc::ChassisSpeeds CalcJoystickSpeeds(frc2::CommandXboxController& controller);
+  frc::ChassisSpeeds CalcJoystickSpeedsEndEffectorForward(frc2::CommandXboxController& controller);
   units::turns_per_second_t CalcRotateSpeed(units::turn_t rotationError);
   units::degree_t GetPitch();
   frc::Pose2d GetPose();
@@ -60,6 +60,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   // Commands
   frc2::CommandPtr JoystickDrive(frc2::CommandXboxController& controller);
   frc2::CommandPtr Drive(std::function<frc::ChassisSpeeds()> speeds, bool fieldOriented);
+  frc2::CommandPtr RobotCentricDrive(frc2::CommandXboxController& controller);
   void DriveToPose(frc::Pose2d targetPose);
   frc2::CommandPtr SyncSensorBut();
   frc2::CommandPtr ResetGyroCmd();
