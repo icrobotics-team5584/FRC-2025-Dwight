@@ -36,7 +36,6 @@ void SubVision::Periodic() {
   }
   frc::SmartDashboard::PutBoolean("vision/is robot at angle for reef", x);
   frc::SmartDashboard::PutNumber("vision/last reef id angle", getLastReefIdAngle().value());
-  frc::SmartDashboard::PutNumber("vision/gyro angle", SubDrivebase::GetInstance().GetPose().Rotation().Degrees().value());
 }
 
 void SubVision::SimulationPeriodic() {
