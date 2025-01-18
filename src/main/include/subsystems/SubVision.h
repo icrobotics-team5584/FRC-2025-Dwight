@@ -77,28 +77,29 @@ struct ReefPositions {
 };
 
 std::map<int, ReefPositions> tagToReefPositions = {
-    {17, {60_deg, 3.860_m, 3.270_m, 4.135_m, 3.100_m}},
-    {18, {0_deg, 3.500_m, 4.190_m, 3.500_m, 3.870_m}},
-    {19, {300_deg, 4.140_m, 4.960_m, 3.850_m, 4.800_m}},
-    {20, {240_deg, 5.130_m, 4.800_m, 4.840_m, 4.950_m}},
-    {21, {180_deg, 5.460_m, 3.860_m, 5.460_m, 4.190_m}},
-    {22, {120_deg, 4.830_m, 3.100_m, 5.110_m, 3.280_m}},
+    {17, {60_deg-90_deg, 3.860_m, 3.270_m, 4.135_m, 3.100_m}},//-90deg accounts for scoring side of robot not being "front"
+    {18, {0_deg-90_deg, 3.500_m, 4.190_m, 3.500_m, 3.870_m}},
+    {19, {300_deg-90_deg, 4.140_m, 4.960_m, 3.850_m, 4.800_m}},
+    {20, {240_deg-90_deg, 5.130_m, 4.800_m, 4.840_m, 4.950_m}},
+    {21, {180_deg-90_deg, 5.460_m, 3.860_m, 5.460_m, 4.190_m}},
+    {22, {120_deg-90_deg, 4.830_m, 3.100_m, 5.110_m, 3.280_m}},
 
-    {6, {120_deg, 13.410_m, 3.100_m, 13.700_m, 3.260_m}},
-    {7, {180_deg, 14.060_m, 3.860_m, 14.060_m, 4.190_m}},
-    {8, {240_deg, 13.700_m, 4.800_m, 13.420_m, 4.980_m}},
-    {9, {300_deg, 12.710_m, 4.970_m, 12.430_m, 4.800_m}},
-    {10, {0_deg, 4.190_m, 12.080_m, 3.860_m, 12.080_m}},
-    {11, {60_deg, 12.430_m, 3.260_m, 12.720_m, 3.100_m}}
+    {6, {120_deg-90_deg, 13.410_m, 3.100_m, 13.700_m, 3.260_m}},
+    {7, {180_deg-90_deg, 14.060_m, 3.860_m, 14.060_m, 4.190_m}},
+    {8, {240_deg-90_deg, 13.700_m, 4.800_m, 13.420_m, 4.980_m}},
+    {9, {300_deg-90_deg, 12.710_m, 4.970_m, 12.430_m, 4.800_m}},
+    {10, {0_deg-90_deg, 4.190_m, 12.080_m, 3.860_m, 12.080_m}},
+    {11, {60_deg-90_deg, 12.430_m, 3.260_m, 12.720_m, 3.100_m}}
 };
 
   //+9.4418
   photon::PhotonTrackedTarget _lastReefTag;
   std::string _cameraName = "photonvision_5584";
+
   photon::PhotonCamera _camera{_cameraName};
   photon::PhotonCameraSim _cameraSim{&_camera}; // For simulation
 //
-  frc::Transform3d _camToBot{{325_mm, -250_mm, 0_mm}, {0_deg, 0_deg, 0_deg}};
+  frc::Transform3d _botToCam{{300_mm, 300_mm, 200_mm}, {0_deg, 0_deg, 117_deg}};
   std::string _tagLayoutPath = frc::filesystem::GetDeployDirectory() + "/2025-reefscape.json";
   frc::AprilTagFieldLayout _tagLayout{_tagLayoutPath};
 
@@ -108,7 +109,7 @@ std::map<int, ReefPositions> tagToReefPositions = {
       _tagLayout,
       photon::PoseStrategy::LOWEST_AMBIGUITY,
       // Change to: photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
-      _camToBot.Inverse()
+      _botToCam
   };
 
   photon::PhotonTrackedTarget _latestTarget = photon::PhotonTrackedTarget();

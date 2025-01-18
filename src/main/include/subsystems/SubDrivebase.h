@@ -16,6 +16,7 @@
 #include "utilities/SwerveModule.h"
 #include <frc2/command/button/CommandXboxController.h>
 #include <frc2/command/sysid/SysIdRoutine.h>
+#include "utilities/BotVars.h"
 
 class SubDrivebase : public frc2::SubsystemBase {
  public:
@@ -70,8 +71,8 @@ class SubDrivebase : public frc2::SubsystemBase {
   }
 
   // Constants
-  static constexpr units::meters_per_second_t MAX_VELOCITY = 2_mps;
-  static constexpr units::turns_per_second_t MAX_ANGULAR_VELOCITY = 360_deg_per_s;
+  static constexpr units::meters_per_second_t MAX_VELOCITY = 5_mps;
+  static constexpr units::turns_per_second_t MAX_ANGULAR_VELOCITY = 720_deg_per_s;
   static constexpr units::turns_per_second_squared_t MAX_ANG_ACCEL{std::numbers::pi};
   static constexpr double MAX_JOYSTICK_ACCEL = 3;
   static constexpr double MAX_ANGULAR_JOYSTICK_ACCEL = 3;
@@ -79,7 +80,9 @@ class SubDrivebase : public frc2::SubsystemBase {
 
  private:
   void Drive(units::meters_per_second_t xSpeed, units::meters_per_second_t ySpeed,
-             units::turns_per_second_t rot, bool fieldRelative);
+             units::turns_per_second_t rot, bool fieldRelative,
+             std::optional<std::array<units::newton_t, 4>> xForceFeedforwards = std::nullopt,
+             std::optional<std::array<units::newton_t, 4>> yForceFeedforwards = std::nullopt);
 
   studica::AHRS _gyro{studica::AHRS::NavXComType::kMXP_SPI};
 
@@ -88,20 +91,25 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc::Translation2d _frontRightLocation{+0.281_m, -0.281_m};
   frc::Translation2d _backLeftLocation{-0.281_m, +0.281_m};
   frc::Translation2d _backRightLocation{-0.281_m, -0.281_m};
-  
-  const units::turn_t FRONT_RIGHT_MAG_OFFSET = -0.375732_tr;
-  const units::turn_t FRONT_LEFT_MAG_OFFSET = -0.941406_tr;
-  const units::turn_t BACK_RIGHT_MAG_OFFSET = -0.462891_tr;
-  const units::turn_t BACK_LEFT_MAG_OFFSET = -0.329590_tr;
+
+  // const units::turn_t FRONT_RIGHT_MAG_OFFSET = -0.375732_tr;
+  // const units::turn_t FRONT_LEFT_MAG_OFFSET = -0.941406_tr;
+  // const units::turn_t BACK_RIGHT_MAG_OFFSET = -0.462891_tr;
+  // const units::turn_t BACK_LEFT_MAG_OFFSET = -0.329590_tr;
+
+  const double FRONT_RIGHT_MAG_OFFSET = BotVars::Choose(-0.876953125 + 0.5, -0.515380859375);
+  const double FRONT_LEFT_MAG_OFFSET = BotVars::Choose(-0.443603515625+ 0.5, -0.172607421875);
+  const double BACK_RIGHT_MAG_OFFSET = BotVars::Choose(-0.962158203125+ 0.5, -0.395263671875);
+  const double BACK_LEFT_MAG_OFFSET = BotVars::Choose(-0.840087890625+ 0.5, -0.94921875);
 
   SwerveModule _frontLeft{canid::DriveBaseFrontLeftDrive, canid::DriveBaseFrontLeftTurn,
-                          canid::DriveBaseFrontLeftEncoder, FRONT_LEFT_MAG_OFFSET};
+                          canid::DriveBaseFrontLeftEncoder, (FRONT_LEFT_MAG_OFFSET*1_tr) };
   SwerveModule _frontRight{canid::DriveBaseFrontRightDrive, canid::DriveBaseFrontRightTurn,
-                           canid::DriveBaseFrontRightEncoder, FRONT_RIGHT_MAG_OFFSET};
+                           canid::DriveBaseFrontRightEncoder, (FRONT_RIGHT_MAG_OFFSET*1_tr) };
   SwerveModule _backLeft{canid::DriveBaseBackLeftDrive, canid::DriveBaseBackLeftTurn,
-                         canid::DriveBaseBackLeftEncoder, BACK_LEFT_MAG_OFFSET};
+                         canid::DriveBaseBackLeftEncoder, (BACK_LEFT_MAG_OFFSET*1_tr) };
   SwerveModule _backRight{canid::DriveBaseBackRightDrive, canid::DriveBaseBackRightTurn,
-                          canid::DriveBaseBackRightEncoder, BACK_RIGHT_MAG_OFFSET};
+                          canid::DriveBaseBackRightEncoder, (BACK_RIGHT_MAG_OFFSET*1_tr) };
 
   // Control objects
   frc::SwerveDriveKinematics<4> _kinematics{_frontLeftLocation, _frontRightLocation,
@@ -109,11 +117,12 @@ class SubDrivebase : public frc2::SubsystemBase {
 
   frc::PIDController _teleopTranslationController{2.0, 0, 0};
   frc::ProfiledPIDController<units::radian> _teleopRotationController{
-      3, 0, 0.3, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
+      3, 0, 0.2, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
   std::shared_ptr<pathplanner::PPHolonomicDriveController> _pathplannerController =
       std::make_shared<pathplanner::PPHolonomicDriveController>(
-          pathplanner::PIDConstants{6.0, 0.0, 1.0},  // Translation PID constants
-          pathplanner::PIDConstants{2.0, 0.0, 0.0}   // Rotation PID constants
+        // translation needs tuning and such
+          pathplanner::PIDConstants{3.2, 0.0, 0.3},  // Translation PID constants
+          pathplanner::PIDConstants{1.0, 0.0, 0.0}   // Rotation PID constants
       );
 
   // Pose estimation

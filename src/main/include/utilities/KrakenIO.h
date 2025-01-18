@@ -21,7 +21,7 @@ class KrakenIO : public SwerveIO {
         void SetDesiredAngle(units::degree_t angle) override;
         void SetAngle(units::turn_t angle) override;
         void SendSensorsToDash() override;
-        void SetDesiredVelocity(units::meters_per_second_t velocity) override;
+        void SetDesiredVelocity(units::meters_per_second_t velocity, units::newton_t forceFF) override;
         void DriveStraightVolts(units::volt_t volts) override;
         void StopMotors() override;
         void UpdateSim(units::second_t deltaTime) override;
@@ -36,7 +36,7 @@ class KrakenIO : public SwerveIO {
 
         const double TURNING_GEAR_RATIO = 150.0/7.0;
         const double DRIVE_GEAR_RATIO = 6.75; // L2 - Fast kit
-        const units::meter_t WHEEL_RADIUS = 0.04460721912986414_m;
+        const units::meter_t WHEEL_RADIUS = 0.0485554951_m; // thank you jarred for helping
         const units::meter_t WHEEL_CIRCUMFERENCE = 2 * std::numbers::pi * WHEEL_RADIUS;
 
         const double TURN_P = 60.0;
@@ -60,13 +60,14 @@ class KrakenIO : public SwerveIO {
         ctre::phoenix6::hardware::TalonFX _canDriveMotor;
         ctre::phoenix6::configs::TalonFXConfiguration _configDriveMotor{};
 
-
+    frc::DCMotor _driveMotorModel = frc::DCMotor::KrakenX60FOC().WithReduction(DRIVE_GEAR_RATIO);
+    frc::DCMotor _turnMotorModel = frc::DCMotor::Falcon500().WithReduction(TURNING_GEAR_RATIO);
     
     frc::sim::DCMotorSim _turnMotorSim{
         frc::LinearSystemId::DCMotorSystem(frc::DCMotor::Falcon500(), 0.000000001_kg_sq_m, TURNING_GEAR_RATIO),
-        frc::DCMotor::Falcon500().WithReduction(TURNING_GEAR_RATIO)};
+        _turnMotorModel};
         
     frc::sim::DCMotorSim _driveMotorSim{
         frc::LinearSystemId::DCMotorSystem(frc::DCMotor::KrakenX60FOC(), 0.01_kg_sq_m, DRIVE_GEAR_RATIO),
-        frc::DCMotor::KrakenX60FOC().WithReduction(DRIVE_GEAR_RATIO)};
+        _driveMotorModel};
 };

@@ -11,7 +11,7 @@
 
 SubVision::SubVision() {
   _visionSim.AddAprilTags(_tagLayout);  // Configure vision sim
-  _visionSim.AddCamera(&_cameraSim, _camToBot.Inverse());
+  _visionSim.AddCamera(&_cameraSim, _botToCam);
 
   for (auto target : _visionSim.GetVisionTargets()) {  // Add AprilTags to field visualization
     SubDrivebase::GetInstance().DisplayPose(fmt::format("tag{}", target.fiducialId),
