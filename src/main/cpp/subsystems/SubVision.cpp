@@ -14,8 +14,9 @@ SubVision::SubVision() {
   _visionSim.AddCamera(&_cameraSim, _botToCam);
 
   for (auto target : _visionSim.GetVisionTargets()) {  // Add AprilTags to field visualization
-    SubDrivebase::GetInstance().DisplayPose(fmt::format("tag{}", target.fiducialId),
-                                            target.GetPose().ToPose2d());
+    SubDrivebase::GetInstance().DisplayPose(
+        fmt::format("tag{}", target.fiducialId),
+        target.GetPose().ToPose2d());
   }
 
   // Call this once just to get rid of the warnings that it is unused.

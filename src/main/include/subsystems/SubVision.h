@@ -15,7 +15,7 @@
 #include <frc/Filesystem.h>
 
 class SubVision : public frc2::SubsystemBase {
- public:
+public:
   SubVision();
   static SubVision& GetInstance() {
     static SubVision inst;
@@ -27,30 +27,27 @@ class SubVision : public frc2::SubsystemBase {
   void SimulationPeriodic() override;
 
   /**
- * Update pose estimater with vision, should be called every frame
- */
+   * Update pose estimater with vision, should be called every frame
+   */
   void UpdatePoseEstimator(std::vector<photon::PhotonPipelineResult> results);
   void UpdateLatestTags(std::vector<photon::PhotonPipelineResult> results);
 
   frc::Pose2d GetReefPose(int side);
 
-
   std::optional<photon::EstimatedRobotPose> GetPose();
 
   frc::Pose2d GetSourcePose(int tagId);
 
-
-
- private:
- /**
- * Check if the pose if good enough to be used as reference
- * 
- * @param pose Pose of the target
- */
+private:
+  /**
+   * Check if the pose if good enough to be used as reference
+   * 
+   * @param pose Pose of the target
+   */
   bool CheckValid(std::optional<photon::EstimatedRobotPose> pose);
 
   std::optional<photon::EstimatedRobotPose> _pose;
- 
+
   std::map<int, frc::Pose2d> tagToSourcePose = {
     {13, {1.621_m, 7.378_m, 324_deg}},
     {12, {1.621_m, 0.686_m, 36_deg}},
@@ -66,16 +63,16 @@ class SubVision : public frc2::SubsystemBase {
     7, 8, 6, 10, 9, 11
   };
 
-struct ReefPositions {
+  struct ReefPositions {
     units::degree_t angle;
     units::meter_t leftX;
     units::meter_t leftY;
     units::meter_t rightX;
     units::meter_t rightY;
-};
+  };
 
-std::map<int, ReefPositions> tagToReefPositions = {
-    {17, {60_deg-90_deg, 3.860_m, 3.270_m, 4.135_m, 3.100_m}},//-90deg accounts for scoring side of robot not being "front"
+  std::map<int, ReefPositions> tagToReefPositions = {
+    {17, {60_deg-90_deg, 3.860_m, 3.270_m, 4.135_m, 3.100_m}}, //-90deg accounts for scoring side of robot not being "front"
     {18, {0_deg-90_deg, 3.500_m, 4.190_m, 3.500_m, 3.870_m}},
     {19, {300_deg-90_deg, 4.140_m, 4.960_m, 3.850_m, 4.800_m}},
     {20, {240_deg-90_deg, 5.130_m, 4.800_m, 4.840_m, 4.950_m}},
@@ -88,7 +85,7 @@ std::map<int, ReefPositions> tagToReefPositions = {
     {9, {300_deg-90_deg, 12.710_m, 4.970_m, 12.430_m, 4.800_m}},
     {10, {0_deg-90_deg, 4.190_m, 12.080_m, 3.860_m, 12.080_m}},
     {11, {60_deg-90_deg, 12.430_m, 3.260_m, 12.720_m, 3.100_m}}
-};
+  };
 
   //+9.4418
   photon::PhotonTrackedTarget _lastReefTag;
@@ -96,7 +93,7 @@ std::map<int, ReefPositions> tagToReefPositions = {
 
   photon::PhotonCamera _camera{_cameraName};
   photon::PhotonCameraSim _cameraSim{&_camera}; // For simulation
-//
+
   frc::Transform3d _botToCam{{300_mm, 300_mm, 200_mm}, {0_deg, 0_deg, 117_deg}};
   std::string _tagLayoutPath = frc::filesystem::GetDeployDirectory() + "/2025-reefscape.json";
   frc::AprilTagFieldLayout _tagLayout{_tagLayoutPath};
@@ -104,11 +101,12 @@ std::map<int, ReefPositions> tagToReefPositions = {
   photon::VisionSystemSim _visionSim{_cameraName};
 
   photon::PhotonPoseEstimator _robotPoseEstimater{
-      _tagLayout,
-      photon::PoseStrategy::LOWEST_AMBIGUITY,
-      // Change to: photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
-      _botToCam
+    _tagLayout,
+    photon::PoseStrategy::LOWEST_AMBIGUITY,
+    // Change to: photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
+    _botToCam
   };
 
   photon::PhotonTrackedTarget _latestTarget = photon::PhotonTrackedTarget();
 };
+
