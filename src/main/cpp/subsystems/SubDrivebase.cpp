@@ -190,28 +190,6 @@ frc2::CommandPtr SubDrivebase::Drive(std::function<frc::ChassisSpeeds()> speeds,
       .FinallyDo([this] { Drive(0_mps, 0_mps, 0_deg_per_s, false); });
 }
 
-
-void SubDrivebase::DriveToPose(frc::Pose2d targetPose) {
- // DisplayPose("targetPose", targetPose);
-
-  frc::Pose2d currentPosition = _poseEstimator.GetEstimatedPosition();
-  double speedX = _teleopTranslationController.Calculate(currentPosition.X().value(), targetPose.X().value());
-  double speedY = _teleopTranslationController.Calculate(currentPosition.Y().value(), targetPose.Y().value());
-  double speedRot = _teleopRotationController.Calculate(currentPosition.Rotation().Radians(), targetPose.Rotation().Radians());
-
-  speedX = std::clamp(speedX, -0.5, 0.5);
-  speedY = std::clamp(speedY, -0.5, 0.5);
-  speedRot = std::clamp(speedRot, -2.0, 2.0);
-
-  // Drive speeds are relative to your alliance wall. Flip if we are on red,
-  // since we are using global coordinates (blue alliance at 0,0)
-  if (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed && frc::RobotBase::IsReal()) {
-    Drive(-speedX * 1_mps, -speedY * 1_mps, speedRot * 1_rad_per_s, true);
-  } else {
-    Drive(speedX * 1_mps, speedY * 1_mps, speedRot * 1_rad_per_s, true);
-  }
-}
-
 void SubDrivebase::Drive(
   units::meters_per_second_t xSpeed, 
   units::meters_per_second_t ySpeed,
