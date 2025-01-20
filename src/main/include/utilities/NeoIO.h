@@ -35,7 +35,6 @@ class NeoIO : public SwerveIO{
     const double DRIVE_I = 0.0;
     const double DRIVE_D = 0.0;
     const double DRIVE_FF = 0.12; // CHANGE AND UPDATE FOR NEW ICSPARKMAX
-    const int CURRENT_LIMIT = 40;
   private:
 
     ICSparkMax _canTurnMotor;
