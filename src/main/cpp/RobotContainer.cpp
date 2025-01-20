@@ -38,6 +38,8 @@ RobotContainer::RobotContainer() {
 
 
   // AutoChooser options
+  _autoChooser.SetDefaultOption("Default-Move-Forward-4m-0.1ms", "MoveForward-4M-0.1ms");
+
   _autoChooser.AddOption("Default-Left-Slowed", "Default-Left-SlowTest"); // auton testing
   _autoChooser.AddOption("Default-Left", "Default-Left");  
   _autoChooser.AddOption("Default-Middle", "placeholder-DM"); // placeholder

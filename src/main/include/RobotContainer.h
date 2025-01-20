@@ -30,5 +30,6 @@ class RobotContainer {
 
   frc::SendableChooser<std::string> _autoChooser;
   
+  
   cs::UsbCamera _cameraStream; //Camera object
 };
