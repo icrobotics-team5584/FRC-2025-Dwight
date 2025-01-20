@@ -27,10 +27,17 @@ RobotContainer::RobotContainer() {
   SubVision::GetInstance();
   SubIntake::GetInstance();
 
-  // replace sometime
   // registar named commands                                                                                                  // replace with L4 score command
-  pathplanner::NamedCommands::registerCommand("Score-WithVision", cmd::YAlignWithTarget(1, _driverController).WithTimeout(3_s).AndThen(frc2::cmd::Wait(5_s)));
-  pathplanner::NamedCommands::registerCommand("IntakeSource-WithVision", cmd::AlignToSource(_driverController).WithTimeout(3_s).AndThen(cmd::IntakeFullSequence()));
+  pathplanner::NamedCommands::registerCommand("Score-WithVision", cmd::YAlignWithTarget(1, _driverController).WithTimeout(3_s)
+    .AndThen(SubElevator::GetInstance().ElevatorAutoReset())
+    .AndThen(SubElevator::GetInstance().CmdSetL4())
+    .AndThen(SubEndEffector::GetInstance().ScoreCoral())
+  );
+  pathplanner::NamedCommands::registerCommand("IntakeSource-WithVision", cmd::AlignToSource(_driverController).WithTimeout(3_s)
+    .AndThen(SubElevator::GetInstance().ElevatorAutoReset())
+    .AndThen(SubElevator::GetInstance().CmdSetSource())
+    .AndThen(SubEndEffector::GetInstance().IntakeFromSource())
+);
 
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(SubDrivebase::GetInstance().JoystickDrive(_driverController));
