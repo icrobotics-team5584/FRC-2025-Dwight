@@ -9,6 +9,7 @@
 #include "subsystems/SubDrivebase.h"
 
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
+#include <pathplanner/lib/auto/NamedCommands.h>
 #include "subsystems/SubDrivebase.h"
 
 #include "subsystems/SubVision.h"
@@ -26,6 +27,11 @@ RobotContainer::RobotContainer() {
   SubVision::GetInstance();
   SubIntake::GetInstance();
 
+  // replace sometime
+  // registar named commands                                                                                                  // replace with L4 score command
+  pathplanner::NamedCommands::registerCommand("Score-WithVision", cmd::YAlignWithTarget(1, _driverController).WithTimeout(3_s).AndThen(frc2::cmd::Wait(5_s)));
+  pathplanner::NamedCommands::registerCommand("IntakeSource-WithVision", cmd::AlignToSource(_driverController).WithTimeout(3_s).AndThen(cmd::IntakeFullSequence()));
+
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(SubDrivebase::GetInstance().JoystickDrive(_driverController));
   SubVision::GetInstance().SetDefaultCommand(cmd::AddVisionMeasurement());
@@ -35,7 +41,6 @@ RobotContainer::RobotContainer() {
 
   //Initialise camera object(s)
   _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); 
-
 
   // AutoChooser options
   _autoChooser.SetDefaultOption("Default-Move-Forward-4m-0.1ms", "MoveForward-4M-0.1ms");
