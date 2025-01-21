@@ -16,8 +16,8 @@
 SubDrivebase::SubDrivebase() {
   frc::SmartDashboard::PutData("Drivebase/Teleop PID/Rotation Controller", &_teleopRotationController);
   frc::SmartDashboard::PutData("Drivebase/Teleop PID/Translation Controller", &_teleopTranslationController);
-
-  _teleopRotationController.EnableContinuousInput(0_deg, 360_deg);
+  ConfigPigeon2();
+  _teleopRotationController.EnableContinuousInput(0_deg, 360_deg); 
   frc::SmartDashboard::PutData("field", &_fieldDisplay);
 
   using namespace pathplanner;
@@ -33,7 +33,6 @@ SubDrivebase::SubDrivebase() {
 
       // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally
       // outputs individual module feedforwards
-
       [this](auto speeds, auto feedforwards) {
         double _voltageFFscaler = 2.0; //Logger::Tune("drivebase/volatageFFscaler", 1.0); // this a scaler for the voltageFF
         if (feedforwards.robotRelativeForcesX.size() == 4 &&
@@ -83,8 +82,8 @@ void SubDrivebase::Periodic() {
   Logger::Log("Drivebase/CANCoder Swerve States",
               wpi::array{_frontLeft.GetCANCoderState(), _frontRight.GetCANCoderState(),
                          _backLeft.GetCANCoderState(), _backRight.GetCANCoderState()});
-  Logger::Log("Drivebase/Navx raw angle", _gyro.GetAngle());
-  Logger::Log("Drivebase/Navx raw Rotation2d", _gyro.GetRotation2d().Degrees());
+  Logger::Log("Drivebase/Pigeon raw angle", _gyro.GetYaw().GetValue().value());
+  Logger::Log("Drivebase/Pigeon raw Rotation2d", _gyro.GetRotation2d().Degrees());
 
   units::turn_t flRotations = _frontLeft.GetDrivenRotations();
   units::turn_t frRotations = _frontRight.GetDrivenRotations();
@@ -125,7 +124,7 @@ void SubDrivebase::SimulationPeriodic() {
                       .omega;
   units::radian_t changeInRot = rotSpeed * 20_ms;
   units::degree_t newHeading = GetGyroAngle().RotateBy(changeInRot).Degrees();
-  _gyro.SetAngleAdjustment(-newHeading.value());  // negative to switch to CW from CCW
+  _gyro.SetYaw(newHeading);
 
   auto fl = _frontLeft.GetPosition();
   auto fr = _frontRight.GetPosition();
@@ -134,8 +133,6 @@ void SubDrivebase::SimulationPeriodic() {
 
   _simPoseEstimator.Update(GetGyroAngle(), {fl, fr, bl, br});
   DisplayPose("Sim final pose v3 for real", _simPoseEstimator.GetEstimatedPosition());
-
-
 }
 
 void SubDrivebase::SetPathplannerRotationFeedbackSource(
@@ -145,6 +142,16 @@ void SubDrivebase::SetPathplannerRotationFeedbackSource(
 
 void SubDrivebase::ResetPathplannerRotationFeedbackSource() {
   pathplanner::PPHolonomicDriveController::clearRotationFeedbackOverride();
+}
+
+void SubDrivebase::ConfigPigeon2(){
+  _mountPoseConfig.WithMountPosePitch(0_deg)
+  .WithMountPoseRoll(0_deg)
+  .WithMountPoseYaw(0_deg);
+
+  _gyroConfig.WithMountPose(_mountPoseConfig);
+
+  _gyro.GetConfigurator().Apply(_gyroConfig);
 }
 
 frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController& controller) {
@@ -384,7 +391,7 @@ bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
 
 void SubDrivebase::ResetGyroHeading(units::degree_t startingAngle) {
   _gyro.Reset();
-  _gyro.SetAngleAdjustment(startingAngle.value());
+  _gyro.SetYaw(startingAngle);
 }
 
 frc2::CommandPtr SubDrivebase::ResetGyroCmd() {
@@ -428,7 +435,7 @@ void SubDrivebase::SetNeutralMode(bool mode) {
 }
 
 units::degree_t SubDrivebase::GetPitch() {
-  return _gyro.GetPitch() * 1_deg;
+  return (_gyro.GetPitch().GetValue().value() * 1_deg);
 }
 
 frc2::CommandPtr SubDrivebase::WheelCharecterisationCmd() {
