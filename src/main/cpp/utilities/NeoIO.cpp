@@ -98,7 +98,7 @@ void NeoIO::ConfigDriveMotor(){
 }
 
 frc::SwerveModulePosition NeoIO::GetPosition(){
- units::meter_t distance = 1_m;
+ units::meter_t distance = _canDriveMotor.GetPosition().value()*WHEEL_CIRCUMFERENCE;
  return {distance, GetAngle()};
 }
 

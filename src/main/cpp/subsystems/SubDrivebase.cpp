@@ -83,6 +83,9 @@ void SubDrivebase::Periodic() {
   Logger::Log("Drivebase/CANCoder Swerve States",
               wpi::array{_frontLeft.GetCANCoderState(), _frontRight.GetCANCoderState(),
                          _backLeft.GetCANCoderState(), _backRight.GetCANCoderState()});
+  Logger::Log("Drivebase/Navx raw angle", _gyro.GetAngle());
+  Logger::Log("Drivebase/Navx raw Rotation2d", _gyro.GetRotation2d().Degrees());
+
   units::turn_t flRotations = _frontLeft.GetDrivenRotations();
   units::turn_t frRotations = _frontRight.GetDrivenRotations();
   units::turn_t blRotations = _backLeft.GetDrivenRotations();

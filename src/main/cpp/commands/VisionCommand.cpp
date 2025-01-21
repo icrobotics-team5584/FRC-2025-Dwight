@@ -23,10 +23,7 @@ frc2::CommandPtr YAlignWithTarget(int side, frc2::CommandXboxController& control
   return SubDrivebase::GetInstance()
       .Drive(
           [side, &controller] {
-            targetPose = frc::Pose2d{Logger::Tune("tuner/TargetX", 2.5_m),
-                                     Logger::Tune("tuner/TargetY", 3.87_m),
-                                     Logger::Tune("tuner/Rotate", 0_deg)};
-            // frc::Pose2d targetPose = SubVision::GetInstance().GetReefPose(side);
+            frc::Pose2d targetPose = SubVision::GetInstance().GetReefPose(side);
             frc::ChassisSpeeds speeds =
                 SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose);
             speeds.omega = SubDrivebase::GetInstance().CalcJoystickSpeeds(controller).omega;
@@ -60,7 +57,6 @@ frc2::CommandPtr AddVisionMeasurement() {
       },
       {&SubVision::GetInstance()});
 }  // namespace cmd
-
 // check pose -> decide which source is closer -> drive there
 frc2::CommandPtr AlignToSource(frc2::CommandXboxController& controller) {
   return SubDrivebase::GetInstance().Drive(

@@ -17,6 +17,7 @@
 #include <frc2/command/button/CommandXboxController.h>
 #include <frc2/command/sysid/SysIdRoutine.h>
 #include "utilities/BotVars.h"
+#include "utilities/RobotLogs.h"
 
 class SubDrivebase : public frc2::SubsystemBase {
  public:
@@ -37,8 +38,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   void DisplayPose(std::string label, frc::Pose2d pose);
   void UpdateOdometry();
   void SyncSensors();
-  void SetPathplannerRotationFeedbackSource(
-      std::function<units::turns_per_second_t()> rotationFeedbackSource);
+  void SetPathplannerRotationFeedbackSource(std::function<units::turns_per_second_t()> rotationFeedbackSource);
   void ResetPathplannerRotationFeedbackSource();
 
   // Getters
@@ -85,7 +85,7 @@ class SubDrivebase : public frc2::SubsystemBase {
              std::optional<std::array<units::newton_t, 4>> xForceFeedforwards = std::nullopt,
              std::optional<std::array<units::newton_t, 4>> yForceFeedforwards = std::nullopt);
 
-  studica::AHRS _gyro{studica::AHRS::NavXComType::kMXP_SPI};
+  studica::AHRS _gyro{studica::AHRS::NavXComType::kUSB1};
 
   // Swerve modules
   frc::Translation2d _frontLeftLocation{+0.281_m, +0.281_m};
@@ -116,7 +116,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc::SwerveDriveKinematics<4> _kinematics{_frontLeftLocation, _frontRightLocation,
                                             _backLeftLocation, _backRightLocation};
 
-  frc::PIDController _teleopTranslationController{2.0, 0, 0};
+  frc::PIDController _teleopTranslationController{Logger::Tune("tuner/TeleopP", 5.0), Logger::Tune("tuner/TeleopI", 0.0), Logger::Tune("tuner/TeleopD", 50.0)};
   frc::ProfiledPIDController<units::radian> _teleopRotationController{
       3, 0, 0.2, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
   std::shared_ptr<pathplanner::PPHolonomicDriveController> _pathplannerController =
