@@ -35,11 +35,6 @@ void KrakenIO::SetAngle(units::turn_t angle) {
 }
 
 void KrakenIO::SendSensorsToDash() {
-    std::string driveMotorName = "swerve/drive motor/" + std::to_string(_canDriveMotor.GetDeviceID());
-    std::string turnMotorName = "swerve/turn motor/" + std::to_string(_canTurnMotor.GetDeviceID());
-}
-
-void KrakenIO::SendSensorsToDash() {
   std::string driveMotorName = "swerve/drive motor/" + std::to_string(_canDriveMotor.GetDeviceID());
   std::string turnMotorName = "swerve/turn motor/" + std::to_string(_canTurnMotor.GetDeviceID());
 
