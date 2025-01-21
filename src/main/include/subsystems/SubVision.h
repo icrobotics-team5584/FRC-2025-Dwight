@@ -33,6 +33,7 @@ public:
   void UpdateLatestTags(std::vector<photon::PhotonPipelineResult> results);
 
   frc::Pose2d GetReefPose(int side);
+  frc::Pose2d GetAutonReefPose(int side, int tagID);
 
   std::optional<photon::EstimatedRobotPose> GetPose();
 

@@ -95,6 +95,19 @@ frc::Pose2d SubVision::GetReefPose(int side = 1) {
   return targPose;
 }
 
+frc::Pose2d SubVision::GetAutonReefPose(int side, int tagID) {
+  int reefTagID = tagID;
+  frc::Pose2d targPose;
+  if (side == 1) {
+    targPose = {tagToReefPositions[reefTagID].leftX, tagToReefPositions[reefTagID].leftY,
+                tagToReefPositions[reefTagID].angle};
+  } else {
+    targPose = {tagToReefPositions[reefTagID].rightX, tagToReefPositions[reefTagID].rightY,
+                tagToReefPositions[reefTagID].angle};
+  }
+  return targPose;
+}
+
 bool SubVision::CheckValid(std::optional<photon::EstimatedRobotPose> pose) {
   const double minArea = 20;
   const double maxArea = 80;

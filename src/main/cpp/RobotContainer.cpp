@@ -28,15 +28,15 @@ RobotContainer::RobotContainer() {
   SubIntake::GetInstance();
 
   // registar named commands                                                                                                  // replace with L4 score command
-  pathplanner::NamedCommands::registerCommand("Score-WithVision", cmd::YAlignWithTarget(1, _driverController).WithTimeout(3_s)
-    .AndThen(SubElevator::GetInstance().ElevatorAutoReset())
-    .AndThen(SubElevator::GetInstance().CmdSetL4())
-    .AndThen(SubEndEffector::GetInstance().ScoreCoral())
+  pathplanner::NamedCommands::registerCommand("Score-WithVision", SubElevator::GetInstance().ElevatorAutoReset()
+    .AndThen(cmd::YAutonAlignWithTarget(1, 11).WithName("YAutonAlignWithTarget").WithTimeout(4_s))
+    //.AndThen(SubElevator::GetInstance().CmdSetL4().WithName("CmdSetL4"))
+    //.AndThen(SubEndEffector::GetInstance().ScoreCoral().WithName("ScoreCoral"))
   );
-  pathplanner::NamedCommands::registerCommand("IntakeSource-WithVision", cmd::AlignToSource(_driverController).WithTimeout(3_s)
-    .AndThen(SubElevator::GetInstance().ElevatorAutoReset())
-    .AndThen(SubElevator::GetInstance().CmdSetSource())
-    .AndThen(SubEndEffector::GetInstance().IntakeFromSource())
+  pathplanner::NamedCommands::registerCommand("IntakeSource-WithVision", SubElevator::GetInstance().ElevatorAutoReset().WithName("ElevatorAutoReset")
+    .AndThen(cmd::AutonAlignToSource().WithName("AutonAlignToSource"))
+    .AndThen(SubElevator::GetInstance().CmdSetSource().WithName("CmdSetSource"))
+    .AndThen(SubEndEffector::GetInstance().IntakeFromSource().WithName("IntakeFromSource"))
 );
 
   // Default Commands

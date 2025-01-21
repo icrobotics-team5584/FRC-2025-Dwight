@@ -7,9 +7,11 @@
 #include "frc/DataLogManager.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/CommandScheduler.h>
+#include "utilities/RobotLogs.h"
 
 Robot::Robot() {
   frc::DataLogManager::Start();
+  frc::SmartDashboard::PutData( &frc2::CommandScheduler::GetInstance() );
 }
 
 void Robot::RobotPeriodic() {
