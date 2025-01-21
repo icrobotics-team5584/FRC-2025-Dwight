@@ -15,10 +15,11 @@ using namespace frc2::cmd;
  * @param offset The y offset from the tag to align to, in meters.
  * @return A command that will align to the tag when executed.
  */
+
+//CHANGE WNEN VISION IS MERGED TO MAIN
 frc2::CommandPtr AlignToTarget(units::meter_t offset) {
-  return Run([] {
-    SubDrivebase::GetInstance().DriveToPose(
-        frc::Pose2d(frc::Translation2d(0_m, 0_m), frc::Rotation2d(0_deg)));
-  });
+  return RunOnce([]{return 0;});
 }
+
+
 }

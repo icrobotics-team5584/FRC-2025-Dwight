@@ -15,6 +15,7 @@ SubEndEffector::SubEndEffector() {
 void SubEndEffector::Periodic() {
     frc::SmartDashboard::PutBoolean("EndEffector/Linebreak/1", SubEndEffector::GetInstance().CheckLineBreakHigher());
     frc::SmartDashboard::PutBoolean("EndEffector/Linebreak/2", SubEndEffector::GetInstance().CheckLineBreakLower());
+    frc::SmartDashboard::PutNumber("EndEffector/Motor", _endEffectorMotor.GetAppliedOutput());
 }
 
 frc2::CommandPtr SubEndEffector::FeedUp() {
@@ -34,7 +35,7 @@ frc2::CommandPtr SubEndEffector::FeedDownSLOW() {
 }
 
 frc2::CommandPtr SubEndEffector::Shoot() {
-    return StartEnd([this] {_endEffectorMotor.Set(-0.6);}, [this] {_endEffectorMotor.Set(0);});
+    return StartEnd([this] {_endEffectorMotor.Set(-0.8);}, [this] {_endEffectorMotor.Set(0);});
 }
 
 frc2::CommandPtr SubEndEffector::StopMotor() {
