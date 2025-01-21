@@ -38,12 +38,15 @@ public:
 
   frc::Pose2d GetSourcePose(int tagId);
 
-private:
-  /**
-   * Check if the pose if good enough to be used as reference
-   * 
-   * @param pose Pose of the target
-   */
+
+
+
+ private:
+ /**
+ * Check if the pose if good enough to be used as reference
+ * 
+ * @param pose Pose of the target
+ */
   bool CheckValid(std::optional<photon::EstimatedRobotPose> pose);
 
   std::optional<photon::EstimatedRobotPose> _pose;
@@ -71,13 +74,13 @@ private:
     units::meter_t rightY;
   };
 
-  std::map<int, ReefPositions> tagToReefPositions = {
-    {17, {60_deg-90_deg, 3.860_m, 3.270_m, 4.135_m, 3.100_m}}, //-90deg accounts for scoring side of robot not being "front"
-    {18, {0_deg-90_deg, 3.500_m, 4.190_m, 3.500_m, 3.870_m}},
-    {19, {300_deg-90_deg, 4.140_m, 4.960_m, 3.850_m, 4.800_m}},
-    {20, {240_deg-90_deg, 5.130_m, 4.800_m, 4.840_m, 4.950_m}},
-    {21, {180_deg-90_deg, 5.460_m, 3.860_m, 5.460_m, 4.190_m}},
-    {22, {120_deg-90_deg, 4.830_m, 3.100_m, 5.110_m, 3.280_m}},
+std::map<int, ReefPositions> tagToReefPositions = {
+    {17, {60_deg-90_deg, 3.675_m, 2.965_m, 3.960_m, 2.800_m}},
+    {18, {0_deg-90_deg, 3.150_m, 4.190_m, 3.150_m, 3.870_m}},
+    {19, {300_deg-90_deg, 3.960_m, 5.250_m, 3.690_m, 5.090_m}},
+    {20, {240_deg-90_deg, 5.290_m, 5.095_m, 5.020_m, 5.250_m}},
+    {21, {180_deg-90_deg, 5.810_m, 3.860_m, 5.810_m, 4.190_m}},
+    {22, {120_deg-90_deg, 5.010_m, 2.800_m, 5.290_m, 2.950_m}},
 
     {6, {120_deg-90_deg, 13.410_m, 3.100_m, 13.700_m, 3.260_m}},
     {7, {180_deg-90_deg, 14.060_m, 3.860_m, 14.060_m, 4.190_m}},

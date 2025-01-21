@@ -7,21 +7,36 @@
 #include "subsystems/SubDriveBase.h"
 #include <frc2/command/Commands.h>
 #include <frc/DriverStation.h>
+#include "subsystems/SubElevator.h"
+#include "subsystems/SubEndEffector.h"
+#include "utilities/RobotLogs.h"
 namespace cmd {
 using namespace frc2::cmd;
 /**
  * Command to align to Apriltag with y offset (to match left or right of reef)
  * @param side align to left: 1, align to right: 2
- * @return A command that will align to the tag when executed.
+ * @return A command that will align to the tag when executed.* 3.500_m, 3.870
  */
-frc2::CommandPtr YAlignWithTarget(int side, frc2::CommandXboxController& controller) {
-  return SubDrivebase::GetInstance().Drive(
-      [side, &controller] {
-        frc::ChassisSpeeds speeds = SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(
-            SubVision::GetInstance().GetReefPose(side));
-        return speeds;
-      },
-      true);
+frc2::CommandPtr YAlignWithTarget(int side, frc2::CommandXboxController& controller) 
+{
+  static frc::Pose2d targetPose;
+  return SubDrivebase::GetInstance()
+      .Drive(
+          [side, &controller] {
+            frc::Pose2d targetPose = SubVision::GetInstance().GetReefPose(side);
+            frc::ChassisSpeeds speeds =
+                SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose);
+            speeds.omega = SubDrivebase::GetInstance().CalcJoystickSpeeds(controller).omega;
+
+            return speeds;
+          },
+          true)
+      .Until([] {
+        return SubDrivebase::GetInstance().IsAtPose(frc::Pose2d{
+            targetPose.X(), targetPose.Y(), SubDrivebase::GetInstance().GetPose().Rotation()});
+      })
+      .AndThen(SubDrivebase::GetInstance().Drive(
+          [] { return frc::ChassisSpeeds{0_mps, 0.5_mps, 0_deg_per_s}; }, false));
 }
 
 frc2::CommandPtr AddVisionMeasurement() {
@@ -42,7 +57,6 @@ frc2::CommandPtr AddVisionMeasurement() {
       },
       {&SubVision::GetInstance()});
 }  // namespace cmd
-
 // check pose -> decide which source is closer -> drive there
 frc2::CommandPtr AlignToSource(frc2::CommandXboxController& controller) {
   return SubDrivebase::GetInstance().Drive(
@@ -65,5 +79,13 @@ frc2::CommandPtr AlignToSource(frc2::CommandXboxController& controller) {
         return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(sourcePose);
       },
       true);
+}
+
+frc2::CommandPtr AutoShootIfAligned(int side) {
+  return Sequence(
+    WaitUntil([side] {return SubDrivebase::GetInstance().IsAtPose(SubVision::GetInstance().GetReefPose(side));}),
+    WaitUntil([] {return SubElevator::GetInstance().IsAtTarget();}),
+    SubEndEffector::GetInstance().ScoreCoral()
+  );
 }
 }  // namespace cmd

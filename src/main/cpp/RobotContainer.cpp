@@ -73,32 +73,15 @@ frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
 }
 
 void RobotContainer::ConfigureBindings() {
-  //DRIVER
-  //Bumpers
-  _driverController.LeftBumper().WhileTrue(cmd::YAlignWithTarget(1, _driverController)); //temp
-  _driverController.RightBumper().WhileTrue(cmd::YAlignWithTarget(2, _driverController)); //temp
-
-  //Letters
-  _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
-  _driverController.X().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
-  /*_driverController.RightTrigger().WhileTrue(cmd::AlignToSource(_driverController));*/
   _driverController.A().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
   _driverController.B().WhileTrue(cmd::YAlignWithTarget(2, _driverController));
-    //POV / d-pad
-
-  //Triggers
+  _driverController.LeftTrigger().WhileTrue(SubDrivebase::GetInstance().RobotCentricDrive(_driverController));
   _operatorController.LeftTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromSource());
   _operatorController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
   _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromGround());
   _operatorController.RightTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
   _operatorController.POVRight().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
   _operatorController.POVLeft().WhileTrue(cmd::RemoveAlgae());
-
-  //Bumpers
-
-
-  //Letters
-  _driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
   _driverController.X().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
   // _driverController.B().ToggleOnTrue(frc2::cmd::StartEnd(
@@ -139,7 +122,7 @@ void RobotContainer::ConfigureBindings() {
 
 
 
-  // _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise camera object
+   _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise camera object
 
   //Rumble controller when end effector line break triggers
   SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnFalse(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));

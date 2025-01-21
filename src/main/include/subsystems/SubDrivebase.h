@@ -17,6 +17,7 @@
 #include <frc2/command/button/CommandXboxController.h>
 #include <frc2/command/sysid/SysIdRoutine.h>
 #include "utilities/BotVars.h"
+#include "utilities/RobotLogs.h"
 
 class SubDrivebase : public frc2::SubsystemBase {
  public:
@@ -31,21 +32,20 @@ class SubDrivebase : public frc2::SubsystemBase {
   // Instantaneous functions
   void AddVisionMeasurement(frc::Pose2d pose, double ambiguity, units::second_t timeStamp);
   void ResetGyroHeading(units::degree_t startingAngle = 0_deg);
-  void UpdatePosition(frc::Pose2d robotPosition);
   void DisplayTrajectory(std::string name, frc::Trajectory trajectory);
   void SetNeutralMode(bool mode);
   void SetPose(frc::Pose2d pose);
   void DisplayPose(std::string label, frc::Pose2d pose);
   void UpdateOdometry();
   void SyncSensors();
-  void SetPathplannerRotationFeedbackSource(
-      std::function<units::turns_per_second_t()> rotationFeedbackSource);
+  void SetPathplannerRotationFeedbackSource(std::function<units::turns_per_second_t()> rotationFeedbackSource);
   void ResetPathplannerRotationFeedbackSource();
 
   // Getters
   bool IsAtPose(frc::Pose2d pose);
   frc::ChassisSpeeds CalcDriveToPoseSpeeds(frc::Pose2d targetPose);
   frc::ChassisSpeeds CalcJoystickSpeeds(frc2::CommandXboxController& controller);
+  frc::ChassisSpeeds CalcJoystickSpeedsEndEffectorForward(frc2::CommandXboxController& controller);
   units::turns_per_second_t CalcRotateSpeed(units::turn_t rotationError);
   units::degree_t GetPitch();
   frc::Pose2d GetPose();
@@ -60,6 +60,8 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc2::CommandPtr JoystickDrive(frc2::CommandXboxController& controller);
   frc2::CommandPtr WheelCharecterisationCmd();
   frc2::CommandPtr Drive(std::function<frc::ChassisSpeeds()> speeds, bool fieldOriented);
+  frc2::CommandPtr RobotCentricDrive(frc2::CommandXboxController& controller);
+  void DriveToPose(frc::Pose2d targetPose);
   frc2::CommandPtr SyncSensorBut();
   frc2::CommandPtr ResetGyroCmd();
   frc2::CommandPtr SysIdQuasistatic(frc2::sysid::Direction direction) {
@@ -83,7 +85,7 @@ class SubDrivebase : public frc2::SubsystemBase {
              std::optional<std::array<units::newton_t, 4>> xForceFeedforwards = std::nullopt,
              std::optional<std::array<units::newton_t, 4>> yForceFeedforwards = std::nullopt);
 
-  studica::AHRS _gyro{studica::AHRS::NavXComType::kMXP_SPI};
+  studica::AHRS _gyro{studica::AHRS::NavXComType::kUSB1};
 
   // Swerve modules
   frc::Translation2d _frontLeftLocation{+0.281_m, +0.281_m};
@@ -110,7 +112,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc::SwerveDriveKinematics<4> _kinematics{_frontLeftLocation, _frontRightLocation,
                                             _backLeftLocation, _backRightLocation};
 
-  frc::PIDController _teleopTranslationController{2.0, 0, 0};
+  frc::PIDController _teleopTranslationController{Logger::Tune("tuner/TeleopP", 5.0), Logger::Tune("tuner/TeleopI", 0.0), Logger::Tune("tuner/TeleopD", 50.0)};
   frc::ProfiledPIDController<units::radian> _teleopRotationController{
       3, 0, 0.2, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
   std::shared_ptr<pathplanner::PPHolonomicDriveController> _pathplannerController =
