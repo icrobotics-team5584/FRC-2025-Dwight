@@ -5,7 +5,6 @@
 #include "Robot.h"
 #include "subsystems/SubElevator.h"
 #include "commands/CoralCommands.h"
-
 #include "frc/DataLogManager.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/CommandScheduler.h>
