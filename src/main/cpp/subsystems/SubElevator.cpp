@@ -98,11 +98,11 @@ frc2::CommandPtr SubElevator::CmdSetSource(){
     }
 
 frc2::CommandPtr SubElevator::AlgaeLow(){
-    return CmdElevatorToPosition(_ALGAE_LOW_HEIGHT);
+    return CmdElevatorToPosition(_CLEAR_LOW_ALGELA);
     }
 
 frc2::CommandPtr SubElevator::AlgaeHigh(){
-    return CmdElevatorToPosition(_ALGAE_HIGH_HEIGHT);
+    return CmdElevatorToPosition(_CLEAR_HIGH_ALGELA);
     }
 
 
