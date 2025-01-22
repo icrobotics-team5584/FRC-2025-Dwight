@@ -8,7 +8,7 @@
 
 #include <frc/TimedRobot.h>
 #include <frc2/command/CommandPtr.h>
-
+#include <grpl/LaserCan.h>
 #include "RobotContainer.h"
 
 class Robot : public frc::TimedRobot {
@@ -30,6 +30,6 @@ class Robot : public frc::TimedRobot {
 
  private:
   std::optional<frc2::CommandPtr> m_autonomousCommand;
-
+  grpl::LaserCan *lc;
   RobotContainer m_container;
 };
