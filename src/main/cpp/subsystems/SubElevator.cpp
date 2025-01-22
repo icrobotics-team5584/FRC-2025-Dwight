@@ -12,6 +12,7 @@
 #include <ctre/phoenix6/configs/Configs.hpp>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/MathUtil.h>
+#include <utilities/RobotLogs.h>
 
 using namespace ctre::phoenix6;
 
@@ -42,7 +43,7 @@ SubElevator::SubElevator() {
     _motorConfig.CurrentLimits.StatorCurrentLimit = 30.0_A;//30
     _motorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     _motorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    _motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = (_L4_HEIGHT/_DRUM_CIRCUMFERENCE).value() * 1_tr;
+    _motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = (_MAX_HEIGHT/_DRUM_CIRCUMFERENCE).value() * 1_tr;
     _motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0_tr;
 
     // Feedback Sensor Ratio
@@ -112,7 +113,7 @@ units::turn_t SubElevator::RotationsFromHeight(units::meter_t height){
 
 units::meter_t SubElevator::HeightFromRotations(units::turn_t turns) {
     return turns.value() * _DRUM_CIRCUMFERENCE.value() * 1_m;
-}
+};
 
 units::turns_per_second_t SubElevator::RotationsFromMetersPerSecond(units::meters_per_second_t meterspersec){
     return meterspersec.value() / _DRUM_CIRCUMFERENCE.value() * 1_tps;
@@ -157,6 +158,19 @@ void SubElevator::EnableSoftLimit(bool enabled) {
     _elevatorMotor1.GetConfigurator().Apply(_motorConfig);
 }
 
+frc2::CommandPtr SubElevator::ElevatorToClimbHeight() {
+    return CmdElevatorToPosition(0.14_m);
+}
+
+frc2::CommandPtr SubElevator::Climb() {
+  return frc2::cmd::Run([this] {_elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(
+                            Logger::Tune("ElevatorClimbVoltage", 0_V)));})
+      .Until([this] {return HeightFromRotations(_elevatorMotor1.GetPosition(true).GetValue()) < 0.02_m;})
+      .FinallyDo([this] {auto targHeight = HeightFromRotations(_elevatorMotor1.GetPosition(true).GetValue());
+        _elevatorMotor1.SetControl(controls::PositionVoltage(RotationsFromHeight(targHeight)).WithEnableFOC(true));});
+  
+}
+
 frc2::CommandPtr SubElevator::ManualElevatorMovementUP() {
   return frc2::cmd::RunEnd(
       [this] {
@@ -187,8 +201,17 @@ frc2::CommandPtr SubElevator::ManualElevatorMovementDOWN() {
       });
     }
 
+frc2::CommandPtr SubElevator::ManualElevatorMovementAlgae() {
+  return frc2::cmd::StartEnd(
+      [this] { _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-1_V)); },
+      [this] {
+        auto targHeight = HeightFromRotations(_elevatorMotor1.GetPosition(true).GetValue());
+        _elevatorMotor1.SetControl(controls::PositionVoltage(RotationsFromHeight(targHeight)).WithEnableFOC(true));
+      });
+    }
+
 frc2::CommandPtr SubElevator::ManualElevatorMovementDOWNSLOW() {
-  return frc2::cmd::RunOnce([this] {_elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-2_V));});
+  return frc2::cmd::RunOnce([this] {_elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-1_V));});
     }
 
 //Check if elevator has touched the bottom
@@ -198,7 +221,7 @@ frc2::CommandPtr SubElevator::ElevatorResetCheck() {
     frc2::cmd::Run([this] {
         
         if (GetM1Current() > zeroingCurrentLimit) {
-            _elevatorMotor1.StopMotor(); ResetM1 = true;
+            ResetM1 = true;
         }
         else {
             Reseting = false;
@@ -211,12 +234,26 @@ frc2::CommandPtr SubElevator::ElevatorStop() {
     return frc2::cmd::RunOnce([this] {SubElevator::GetInstance().Stop();});
 }
 
+bool SubElevator::IsAtTarget() {
+    units::meter_t TargetHeight = HeightFromRotations(_elevatorMotor1.GetClosedLoopReference().GetValue()*1_tr);
+    units::meter_t CurrentHeight = HeightFromRotations(_elevatorMotor1.GetPosition().GetValue());
+    units::meter_t Tolerance = 0.05_m;
+    if( CurrentHeight > TargetHeight - Tolerance || CurrentHeight < TargetHeight + Tolerance) {
+        return true;
+    }
+
+    else {
+        return false;
+    }
+}
+
 //Auto elevator reset by bringing elevator to zero position then reset (can be used in tele-op)
 frc2::CommandPtr SubElevator::ElevatorAutoReset() {
     return frc2::cmd::RunOnce([this] { Reseting = true; EnableSoftLimit(false);})
         .AndThen(ManualElevatorMovementDOWNSLOW())
         .AndThen(ElevatorResetCheck())
         .AndThen(ZeroElevator())
+        .AndThen([this] {Stop();})
         .FinallyDo([this] {EnableSoftLimit(true);} );
         }
 

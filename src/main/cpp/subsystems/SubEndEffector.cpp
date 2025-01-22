@@ -4,30 +4,38 @@
 
 #include "subsystems/SubEndEffector.h"
 #include <frc/smartdashboard/SmartDashboard.h>
+#include "utilities/ICSpark.h"
 
 
 
-SubEndEffector::SubEndEffector() = default;
+SubEndEffector::SubEndEffector() {
+}
 
 // This method will be called once per scheduler run
 void SubEndEffector::Periodic() {
-    frc::SmartDashboard::PutBoolean("EndEffector/dio/1", _1.Get());
-    frc::SmartDashboard::PutBoolean("EndEffector/dio/2", _2.Get());
-    frc::SmartDashboard::PutBoolean("EndEffector/dio/3", _3.Get());
-    frc::SmartDashboard::PutBoolean("EndEffector/dio/4", _4.Get());
-    frc::SmartDashboard::PutBoolean("EndEffector/dio/5", _5.Get());
-    frc::SmartDashboard::PutBoolean("EndEffector/dio/6", _6.Get());
-    frc::SmartDashboard::PutBoolean("EndEffector/dio/7", _7.Get());
-    frc::SmartDashboard::PutBoolean("EndEffector/dio/8", _8.Get());
-    frc::SmartDashboard::PutBoolean("EndEffector/dio/9", _9.Get());
+    frc::SmartDashboard::PutBoolean("EndEffector/Linebreak/1", SubEndEffector::GetInstance().CheckLineBreakHigher());
+    frc::SmartDashboard::PutBoolean("EndEffector/Linebreak/2", SubEndEffector::GetInstance().CheckLineBreakLower());
+    frc::SmartDashboard::PutNumber("EndEffector/Motor", _endEffectorMotor.GetAppliedOutput());
 }
 
 frc2::CommandPtr SubEndEffector::FeedUp() {
-    return StartEnd([this] {_endEffectorMotor.Set(0.5);}, [this] {_endEffectorMotor.Set(0);});
+    return StartEnd([this] {_endEffectorMotor.Set(0.8);}, [this] {_endEffectorMotor.Set(0);});
+}
+
+frc2::CommandPtr SubEndEffector::FeedUpSLOW() {
+    return StartEnd([this] {_endEffectorMotor.Set(0.1);}, [this] {_endEffectorMotor.Set(0);});
 }
 
 frc2::CommandPtr SubEndEffector::FeedDown() {
-    return StartEnd([this] {_endEffectorMotor.Set(-0.5);}, [this] {_endEffectorMotor.Set(0);});
+    return StartEnd([this] {_endEffectorMotor.Set(-0.8);}, [this] {_endEffectorMotor.Set(0);});
+}
+
+frc2::CommandPtr SubEndEffector::FeedDownSLOW() {
+    return StartEnd([this] {_endEffectorMotor.Set(-0.1);}, [this] {_endEffectorMotor.Set(0);});
+}
+
+frc2::CommandPtr SubEndEffector::Shoot() {
+    return StartEnd([this] {_endEffectorMotor.Set(-0.8);}, [this] {_endEffectorMotor.Set(0);});
 }
 
 frc2::CommandPtr SubEndEffector::StopMotor() {
@@ -35,30 +43,36 @@ frc2::CommandPtr SubEndEffector::StopMotor() {
 }
 
 frc2::CommandPtr SubEndEffector::IntakeFromSource() {
-    return FeedDown().Until([this] {return CheckLineBreak();});
+    return FeedDown().Until([this] {return CheckLineBreakHigher();})
+    .AndThen(FeedDownSLOW().Until([this] {return CheckLineBreakLower();}));
 }
 
 frc2::CommandPtr SubEndEffector::IntakeFromGround() {
-    return FeedUp().Until([this] {return LineBreakDownSignal();});
+    return FeedUp().Until([this] {return CheckLineBreakHigher();})
+    .AndThen(FeedUpSLOW().Until([this] {return !CheckLineBreakLower();}))
+    .AndThen(FeedDownSLOW().Until([this] {return CheckLineBreakLower();}));
 }
 
-
-bool SubEndEffector::CheckLineBreak() {
-    return _endEffectorLineBreak.Get();
+frc2::CommandPtr SubEndEffector::ScoreCoral() {
+    return Shoot();
 }
 
-frc2::Trigger SubEndEffector::CheckLineBreakTrigger() {
-    return frc2::Trigger {[this] {return CheckLineBreak();}};
+frc2::CommandPtr SubEndEffector::ScoreCoralSLOW() {
+    return FeedDownSLOW();
 }
 
-bool SubEndEffector::LineBreakDownSignal() {
-    static bool PrevState = false;
-    bool State = _endEffectorLineBreak.Get();
-    if (PrevState == false && State == true) {
-        return true;
-    }
-    else {
-        PrevState = State;
-        return false;
-    }
+bool SubEndEffector::CheckLineBreakHigher() {
+    return !_endEffectorLineBreakHigher.Get();
+}
+
+bool SubEndEffector::CheckLineBreakLower() {
+    return !_endEffectorLineBreakLower.Get();
+}
+
+frc2::Trigger SubEndEffector::CheckLineBreakTriggerHigher() {
+    return frc2::Trigger {[this] {return this->CheckLineBreakHigher();}};
+}
+
+frc2::Trigger SubEndEffector::CheckLineBreakTriggerLower() {
+    return frc2::Trigger {[this] {return this->CheckLineBreakLower();}};
 }

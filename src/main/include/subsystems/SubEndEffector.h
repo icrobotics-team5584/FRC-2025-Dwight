@@ -23,11 +23,18 @@ class SubEndEffector : public frc2::SubsystemBase {
   frc2::CommandPtr IntakeFromSource();
   frc2::CommandPtr IntakeFromGround();
   frc2::CommandPtr FeedUp();
+  frc2::CommandPtr FeedUpSLOW();
   frc2::CommandPtr FeedDown();
+  frc2::CommandPtr FeedDownSLOW();
   frc2::CommandPtr StopMotor();
-  bool CheckLineBreak();
+  frc2::CommandPtr ScoreCoral();
+  frc2::CommandPtr Shoot();
+  frc2::CommandPtr ScoreCoralSLOW();
+  bool CheckLineBreakHigher();
+  bool CheckLineBreakLower();
   bool LineBreakDownSignal();
-  frc2::Trigger CheckLineBreakTrigger();
+  frc2::Trigger CheckLineBreakTriggerHigher();
+  frc2::Trigger CheckLineBreakTriggerLower();
 
 
   /**
@@ -36,18 +43,8 @@ class SubEndEffector : public frc2::SubsystemBase {
   void Periodic() override;
 
  private:
-  // frc::DigitalInput _endEffectorLineBreak{dio::EndEffectorLineBreak};
-  frc::DigitalInput _endEffectorLineBreak{10};
-  frc::DigitalInput _1{1};
-  frc::DigitalInput _2{2};
-  frc::DigitalInput _3{3};
-  frc::DigitalInput _4{4};
-  frc::DigitalInput _5{5};
-  frc::DigitalInput _6{6};
-  frc::DigitalInput _7{7};
-  frc::DigitalInput _8{8};
-  frc::DigitalInput _9{9};
-
+  frc::DigitalInput _endEffectorLineBreakHigher{dio::EndEffectorLineBreakHigher};
+  frc::DigitalInput _endEffectorLineBreakLower{dio::EndEffectorLineBreakLower};
   ICSparkMax _endEffectorMotor{canid::EndEffectorMotor, 30_A};
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
