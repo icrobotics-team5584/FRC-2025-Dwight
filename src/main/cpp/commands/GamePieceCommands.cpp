@@ -16,7 +16,7 @@ namespace cmd {
     }
 
     frc2::CommandPtr AutoAdjustElevatorHeight(int targetLevel) {
-        return SubElevator::GetInstance().CmdElevatorToPosition(2_m*tan(55) + 1.8_m);
+        return SubElevator::GetInstance().CmdElevatorToPosition(2_m*tan(55) + 1.8_m);}
         /*
         this is a placeholder function - instructions for implementation below
 
@@ -37,5 +37,5 @@ namespace cmd {
         */
     frc2::CommandPtr RemoveAlgae() {
         return SubEndEffector::GetInstance().FeedDown().AlongWith(SubElevator::GetInstance().ManualElevatorMovementAlgae());
-    }
+    };
 }
