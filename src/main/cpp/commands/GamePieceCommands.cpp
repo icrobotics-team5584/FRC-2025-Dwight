@@ -3,6 +3,7 @@
 #include "subsystems/SubElevator.h"
 #include <math.h>
 #include <units/length.h>
+#include "commands/GamePieceCommands.h"
 
 namespace cmd {
     frc2::CommandPtr IntakeFullSequence() {
@@ -34,5 +35,7 @@ namespace cmd {
             L4 - 1500mm / 1.5m
         these will need to be tuned when the elevator and end effector are actually ready.
         */
+    frc2::CommandPtr RemoveAlgae() {
+        return SubEndEffector::GetInstance().FeedDown().AlongWith(SubElevator::GetInstance().ManualElevatorMovementAlgae());
     }
 }

@@ -6,9 +6,13 @@
 #include "subsystems/SubElevator.h"
 #include "commands/CoralCommands.h"
 
+#include "frc/DataLogManager.h"
+#include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/CommandScheduler.h>
 
-Robot::Robot() {}
+Robot::Robot() {
+  frc::DataLogManager::Start();
+}
 
 void Robot::RobotPeriodic() {
   frc2::CommandScheduler::GetInstance().Run();
@@ -30,7 +34,7 @@ void Robot::AutonomousInit() {
 
 //Auto climber reset by bringing elevator to zero position then reset
   SubElevator::GetInstance().ElevatorAutoReset();
-}
+} 
 
 void Robot::AutonomousPeriodic() {}
 

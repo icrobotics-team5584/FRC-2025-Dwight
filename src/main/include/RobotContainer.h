@@ -7,20 +7,28 @@
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/Commands.h>
 #include <frc2/command/button/CommandXboxController.h>
+#include <frc/smartdashboard/SendableChooser.h>
 #include <cameraserver/CameraServer.h>
 
 class RobotContainer {
  public:
   RobotContainer();
+
   frc2::CommandPtr GetAutonomousCommand();
   frc2::CommandPtr ControllerRumbleLeft(frc2::CommandXboxController& controller);
   frc2::CommandPtr ControllerRumbleRight(frc2::CommandXboxController& controller);
   frc2::CommandPtr ControllerRumble(frc2::CommandXboxController& controller);
 
- private:
 
+ private:
   void ConfigureBindings();
+  
+  //controllers
   frc2::CommandXboxController _driverController{0};
   frc2::CommandXboxController _operatorController{1};
+  frc2::CommandXboxController _tuningController{5};
+
+  frc::SendableChooser<std::string> _autoChooser;
+  
   cs::UsbCamera _cameraStream; //Camera object
 };
