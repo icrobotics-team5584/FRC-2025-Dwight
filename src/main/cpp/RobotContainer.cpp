@@ -40,7 +40,7 @@ void RobotContainer::ConfigureBindings() {
 
 //POV
   //Opperator
-
+ _operatorController.Start().OnTrue(frc2::cmd::RunOnce([]{SubElevator::GetInstance().ElevatorAutoReset();}));
   //Triggers
 
   //Joystick
@@ -54,7 +54,7 @@ void RobotContainer::ConfigureBindings() {
 
 
   //Bumpers
-
+  _operatorController.RightBumper().WhileTrue(SubElevator::GetInstance().ElevatorAutoReset());
   //Letters
    _operatorController.A().OnTrue(SubElevator::GetInstance().CmdSetL1());
    _operatorController.X().OnTrue(SubElevator::GetInstance().CmdSetL2());
@@ -66,6 +66,8 @@ void RobotContainer::ConfigureBindings() {
   //POV
   _operatorController.POVUp().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
   _operatorController.POVDown().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
+  _operatorController.POVUpLeft().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWNSLOW());
+  
 
 
 
