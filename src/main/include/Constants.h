@@ -17,14 +17,14 @@ namespace canid {
     constexpr int DriveBaseBackLeftTurn = 11;
     constexpr int DriveBaseBackLeftEncoder = 12; 
 
+    constexpr int ElevatorMotor1 = 13;
+    constexpr int ElevatorMotor2 = 14;
+
     constexpr int IntakeMotor = 15;
     constexpr int EndEffectorMotor = 16; 
     constexpr int IntakePivotMotor = 17;
 
-    constexpr int elevatorMotor1 = 13;
-    constexpr int elevatorMotor2 = 14;
-
-
+    constexpr int WristMotor = 18;
 }
 
 namespace dio {

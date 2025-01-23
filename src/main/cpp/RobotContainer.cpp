@@ -20,11 +20,13 @@
 #include "commands/VisionCommand.h"
 #include <frc/Filesystem.h>
 #include <wpinet/WebServer.h>
+#include "subsystems/SubWrist.h"
 
 RobotContainer::RobotContainer() {
   wpi::WebServer::GetInstance().Start(5800, frc::filesystem::GetDeployDirectory());
   SubVision::GetInstance();
   SubIntake::GetInstance();
+  SubWrist::GetInstance();
 
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(SubDrivebase::GetInstance().JoystickDrive(_driverController));
@@ -83,8 +85,13 @@ void RobotContainer::ConfigureBindings() {
   _driverController.X().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
   /*_driverController.RightTrigger().WhileTrue(cmd::AlignToSource(_driverController));*/
   _driverController.A().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
-  _driverController.B().WhileTrue(cmd::YAlignWithTarget(2, _driverController));
-    //POV / d-pad
+  //_driverController.B().WhileTrue(cmd::YAlignWithTarget(2, _driverController));
+  
+  //POV / d-pad
+  _driverController.B().ToggleOnTrue(frc2::cmd::StartEnd(
+    [this] {SubWrist::GetInstance().SetAngle(45_deg);},
+    [this] {SubWrist::GetInstance().SetAngle(0_deg);}
+  ));
 
   //Triggers
   _operatorController.LeftTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromSource());
