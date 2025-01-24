@@ -74,9 +74,10 @@ frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
 
 void RobotContainer::ConfigureBindings() {
   _driverController.A().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
+  _driverController.A().WhileTrue(cmd::rotateToReef(_driverController));
   _driverController.B().WhileTrue(cmd::YAlignWithTarget(2, _driverController));
   _driverController.LeftTrigger().WhileTrue(SubDrivebase::GetInstance().RobotCentricDrive(_driverController));
-  
+
   _operatorController.LeftTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromSource());
   _operatorController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
   _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromGround());
