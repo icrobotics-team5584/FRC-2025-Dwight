@@ -1,0 +1,73 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DL-StartToReef-SlowTest.0"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PLACEHOLDER - ScoreWIthVision"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DL-ReefToSource-SlowTest.0"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PLACEHOLDER - IntakeSourceWithVision"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DL-CycleToReef-SlowTest.0"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PLACEHOLDER - ScoreWIthVision"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DL-CycleToSource-SlowTest.0"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PLACEHOLDER - IntakeSourceWithVision"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DL-CycleToReef-SlowTest.0"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PLACEHOLDER - ScoreWIthVision"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": true
+}
