@@ -1,0 +1,49 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DL-StartToReef-Vision.0"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score-WithVision"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DL-ReefToSource-Vision.0"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DL-CycleToReef-Vision.0"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DL-CycleToSource-Vision.0"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DL-CycleToReef-Vision.0"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": true
+}

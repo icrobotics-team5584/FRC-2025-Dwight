@@ -29,12 +29,12 @@ RobotContainer::RobotContainer() {
 
   // registar named commands                                                                                                  // replace with L4 score command
   pathplanner::NamedCommands::registerCommand("Score-WithVision", SubElevator::GetInstance().ElevatorAutoReset()
-    .AndThen(cmd::YAutonAlignWithTarget(1, 11))
+    .AndThen(cmd::YAlignWithTarget(1, _driverController)).WithName("AlignWithTarget")
     .AndThen(SubElevator::GetInstance().CmdSetL4().WithName("CmdSetL4"))
     .AndThen(SubEndEffector::GetInstance().ScoreCoral().WithName("ScoreCoral"))
   );
   pathplanner::NamedCommands::registerCommand("IntakeSource-WithVision", SubElevator::GetInstance().ElevatorAutoReset().WithName("ElevatorAutoReset")
-    .AndThen(cmd::AutonAlignToSource().WithName("AutonAlignToSource"))
+    .AndThen(cmd::AlignToSource(_driverController).WithName("AutonAlignToSource"))
     .AndThen(SubElevator::GetInstance().CmdSetSource().WithName("CmdSetSource"))
     .AndThen(SubEndEffector::GetInstance().IntakeFromSource().WithName("IntakeFromSource"))
 );
@@ -53,6 +53,7 @@ RobotContainer::RobotContainer() {
   _autoChooser.SetDefaultOption("Default-Move-Forward-4m-0.1ms", "MoveForward-4M-0.1ms");
 
   _autoChooser.AddOption("Default-Left-Slowed", "Default-Left-SlowTest"); // auton testing
+  _autoChooser.AddOption("Default-Left-Vision", "Default-Left-Vision"); // auton testing
   _autoChooser.AddOption("Default-Left", "Default-Left");  
   _autoChooser.AddOption("Default-Middle", "placeholder-DM"); // placeholder
   _autoChooser.AddOption("Default-Right", "Default-Right"); 
