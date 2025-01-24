@@ -412,6 +412,7 @@ void SubDrivebase::SetPose(frc::Pose2d pose) {
   auto bl = _backLeft.GetPosition();
   auto br = _backRight.GetPosition();
   _poseEstimator.ResetPosition(GetGyroAngle(), {fl, fr, bl, br}, pose);
+  _simPoseEstimator.ResetPosition(GetGyroAngle(), {fl, fr, bl,  br}, pose);
 }
 
 void SubDrivebase::DisplayPose(std::string label, frc::Pose2d pose) {
