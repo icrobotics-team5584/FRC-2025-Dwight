@@ -8,9 +8,15 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 
 SubWrist::SubWrist() {
-    _wristMotor.SetConversionFactor(1/WRIST_GEARING);
+    _wristMotorConfig.encoder
+        .PositionConversionFactor(1 / WRIST_GEARING)
+        .VelocityConversionFactor(WRIST_GEARING / 60);
+    _wristMotor.AdjustConfig(_wristMotorConfig);
+
+    _wristMotor.SetFeedbackGains(0, 0, 0);
+    _wristMotor.SetFeedforwardGains(0_V, 0_V, true, (0_V / 1_tps), (0_V / 1_tr_per_s_sq));
+
     frc::SmartDashboard::PutData("Wrist/Wrist Mechanism2d", &_wristMech);
-    frc::SmartDashboard::PutNumber("Wrist/Estimated MOI", WRIST_MOI.value());
     frc::SmartDashboard::PutData("Wrist/Wrist Motor", (wpi::Sendable*)&_wristMotor);
 }
 
@@ -28,7 +34,6 @@ void SubWrist::SimulationPeriodic() {
 void SubWrist::SetAngle(units::degree_t angle){
     if( (angle >= MIN_ANGLE) && (angle <= MAX_ANGLE) ) {
         _wristMotor.SetPositionTarget(angle);
-        frc::SmartDashboard::PutNumber("Position Target", angle.value());
     } 
 }
 

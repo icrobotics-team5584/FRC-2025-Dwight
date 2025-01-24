@@ -32,21 +32,22 @@ class SubWrist : public frc2::SubsystemBase {
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
   ICSparkMax _wristMotor{canid::WristMotor, 30_A};
+  rev::spark::SparkBaseConfig _wristMotorConfig;
 
   //CONSTANTS
-  static constexpr units::degree_t MIN_ANGLE = 0_deg; //horizontal
-  static constexpr units::degree_t MAX_ANGLE = 90_deg; //vertical (default position)
-  static constexpr units::degree_t INITIAL_ANGLE = 90_deg;
+  static constexpr units::degree_t MIN_ANGLE = -360_deg;
+  static constexpr units::degree_t MAX_ANGLE = 360_deg;
+  static constexpr units::degree_t INITIAL_ANGLE = 0_deg;
 
   //note: end effector is part of the wrist mechanism, so include it in these values
   static constexpr units::meter_t WRIST_LENGTH = 0.4_m;
   static constexpr units::kilogram_t WRIST_MASS = 3_kg;
-  //static constexpr units::kilogram_square_meter_t WRIST_MOI = frc::sim::SingleJointedArmSim::EstimateMOI(WRIST_LENGTH, WRIST_MASS);
-  static constexpr units::kilogram_square_meter_t WRIST_MOI = 0.01_kg_sq_m;
+  static constexpr units::kilogram_square_meter_t WRIST_MOI = frc::sim::SingleJointedArmSim::EstimateMOI(WRIST_LENGTH, WRIST_MASS);
   static constexpr double WRIST_GEARING = 90; //reduction 90:1
 
   //sim
   frc::sim::SingleJointedArmSim  _wristSim{frc::DCMotor::NeoVortex(), WRIST_GEARING, WRIST_MOI, WRIST_LENGTH, MIN_ANGLE, MAX_ANGLE, true, INITIAL_ANGLE};
+  
   frc::Mechanism2d _wristMech{3, 3};
   frc::MechanismRoot2d* _wristMechRoot = _wristMech.GetRoot("wristRoot", 1, 1);
   frc::MechanismLigament2d* _wristMechArmLig =
