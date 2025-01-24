@@ -4,7 +4,7 @@
 
 #include "commands/VisionCommand.h"
 #include "subsystems/SubVision.h"
-#include "subsystems/SubDriveBase.h"
+#include "subsystems/SubDrivebase.h"
 #include <frc2/command/Commands.h>
 #include <frc/DriverStation.h>
 #include "subsystems/SubElevator.h"
@@ -23,20 +23,19 @@ frc2::CommandPtr YAlignWithTarget(int side, frc2::CommandXboxController& control
   return SubDrivebase::GetInstance()
       .Drive(
           [side, &controller] {
-            frc::Pose2d targetPose = SubVision::GetInstance().GetReefPose(side);
+            targetPose = SubVision::GetInstance().GetReefPose(side);
             frc::ChassisSpeeds speeds =
                 SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose);
-            speeds.omega = SubDrivebase::GetInstance().CalcJoystickSpeeds(controller).omega;
 
             return speeds;
           },
           true)
+      .AlongWith(Run([]{ frc::SmartDashboard::PutNumber("Drivebase/targetpose", targetPose.X().value()); }))
       .Until([] {
-        return SubDrivebase::GetInstance().IsAtPose(frc::Pose2d{
-            targetPose.X(), targetPose.Y(), SubDrivebase::GetInstance().GetPose().Rotation()});
+        return SubDrivebase::GetInstance().IsAtPose(targetPose);
       })
       .AndThen(SubDrivebase::GetInstance().Drive(
-          [] { return frc::ChassisSpeeds{0_mps, 0.5_mps, 0_deg_per_s}; }, false));
+          [] { return frc::ChassisSpeeds{0_mps, 0.15_mps, 0_deg_per_s}; }, false));
 }
 
 frc2::CommandPtr YAutonAlignWithTarget(int side, int tagID) {

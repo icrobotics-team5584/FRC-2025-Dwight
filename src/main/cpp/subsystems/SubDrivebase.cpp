@@ -347,10 +347,10 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   auto rSpeed = CalcRotateSpeed(currentRotation - targetRotation);
 
   // Clamp to max velocity
-  xSpeed = units::math::min(xSpeed, MAX_VELOCITY);
-  xSpeed = units::math::max(xSpeed, -MAX_VELOCITY);
-  ySpeed = units::math::min(ySpeed, MAX_VELOCITY);
-  ySpeed = units::math::max(ySpeed, -MAX_VELOCITY);
+  xSpeed = units::math::min(xSpeed, MAX_DRIVE_TO_POSE_VELOCITY); //Max_Velocity
+  xSpeed = units::math::max(xSpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
+  ySpeed = units::math::min(ySpeed, MAX_DRIVE_TO_POSE_VELOCITY);
+  ySpeed = units::math::max(ySpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
 
   frc::SmartDashboard::PutNumber("CalcDriveLogs/xSpeed", -xSpeed.value());
   frc::SmartDashboard::PutNumber("CalcDriveLogs/ySpeed", ySpeed.value());
@@ -375,7 +375,15 @@ bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
   auto rotError = currentPose.Rotation() - pose.Rotation();
   auto posError = currentPose.Translation().Distance(pose.Translation());
 
-  if (units::math::abs(rotError.Degrees()) < 1_deg && posError < 3_cm) {
+  DisplayPose("current pose", currentPose);
+  DisplayPose("target pose", pose);
+  
+  frc::SmartDashboard::PutNumber("Drivebase/rotError", units::math::abs(rotError.Degrees()).value());
+  frc::SmartDashboard::PutNumber("Drivebase/posError", posError.value());
+
+  frc::SmartDashboard::PutBoolean("Drivebase/IsAtPose", units::math::abs(rotError.Degrees()) < 1_deg && posError < 2_cm);
+
+  if (units::math::abs(rotError.Degrees()) < 1_deg && posError < 2_cm) {
     return true;
   } else {
     return false;
