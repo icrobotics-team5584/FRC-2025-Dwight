@@ -7,6 +7,8 @@
 #include "subsystems/SubDrivebase.h"
 #include "subsystems/SubVision.h"
 
+
+
 namespace cmd {
 using namespace frc2::cmd;
 /**
@@ -19,6 +21,12 @@ frc2::CommandPtr AlignToTarget(units::meter_t offset) {
   return Run([] {
     SubDrivebase::GetInstance().DriveToPose(
         frc::Pose2d(frc::Translation2d(0_m, 0_m), frc::Rotation2d(0_deg)));
+  });
+}
+
+frc2::CommandPtr toggleBrakeCoast() {
+  return Run([] {
+    SubDrivebase::GetInstance().SetNeutralMode(SubDrivebase::GetInstance().CheckButton());
   });
 }
 }

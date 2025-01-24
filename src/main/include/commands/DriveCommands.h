@@ -12,5 +12,6 @@ namespace cmd {
    * Command to align to Apriltag with y offset (to match left or right of reef)
    */
   frc2::CommandPtr AlignToTarget(units::meter_t offset);
+  frc2::CommandPtr toggleBrakeCoast();
 
 }
