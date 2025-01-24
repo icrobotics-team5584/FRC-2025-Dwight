@@ -24,6 +24,8 @@ namespace canid {
     constexpr int elevatorMotor1 = 13;
     constexpr int elevatorMotor2 = 14;
 
+    constexpr int climberMotor = 15;
+
 
 }
 
