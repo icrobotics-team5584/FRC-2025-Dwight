@@ -10,6 +10,8 @@
 #include <photon/estimation/CameraTargetRelation.h>
 
 SubVision::SubVision() {
+  _robotPoseEstimater.SetMultiTagFallbackStrategy(photon::PoseStrategy::LOWEST_AMBIGUITY);
+
   _visionSim.AddAprilTags(_tagLayout);  // Configure vision sim
   _visionSim.AddCamera(&_cameraSim, _botToCam);
 
@@ -26,6 +28,7 @@ SubVision::SubVision() {
 
 void SubVision::Periodic() {
   frc::SmartDashboard::PutNumber("Vision/LastReefTag", _lastReefTag.GetFiducialId());
+  auto result = _camera.GetLatestResult();
   auto results = _camera.GetAllUnreadResults();
   UpdatePoseEstimator(results);
   UpdateLatestTags(results);
@@ -47,6 +50,7 @@ void SubVision::UpdatePoseEstimator(std::vector<photon::PhotonPipelineResult> re
 }
 
 void SubVision::UpdateLatestTags(std::vector<photon::PhotonPipelineResult> results) {
+  if (results.size() == 0) {return;}
   for (auto result : results) {
     if (result.HasTargets()) {
       _latestTarget = result.GetBestTarget();
