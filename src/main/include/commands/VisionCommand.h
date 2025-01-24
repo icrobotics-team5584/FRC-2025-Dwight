@@ -17,4 +17,5 @@ namespace cmd {
   frc2::CommandPtr AddVisionMeasurement();
   frc2::CommandPtr AlignToSource(frc2::CommandXboxController &controller);
   frc2::CommandPtr rotateToReef(frc2::CommandXboxController& controller);
+  frc2::CommandPtr AutoShootIfAligned(int side);
 }
