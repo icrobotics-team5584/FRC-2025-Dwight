@@ -259,6 +259,8 @@ frc::Rotation2d SubDrivebase::GetGyroAngle() {
   return _gyro.GetRotation2d();
 }
 
+
+
 units::meters_per_second_t SubDrivebase::GetVelocity() {
   // Use pythag to find velocity from x and y components
   auto speeds = _kinematics.ToChassisSpeeds(_frontLeft.GetState(), _frontRight.GetState(),
@@ -360,6 +362,10 @@ void SubDrivebase::SetPose(frc::Pose2d pose) {
 
 void SubDrivebase::DisplayPose(std::string label, frc::Pose2d pose) {
   _fieldDisplay.GetObject(label)->SetPose(pose);
+}
+
+bool SubDrivebase::CheckButton(){
+  return _toggleBrakeCoast.Get();
 }
 
 void SubDrivebase::UpdatePosition(frc::Pose2d robotPosition) {
