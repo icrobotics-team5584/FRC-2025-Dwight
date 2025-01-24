@@ -29,12 +29,12 @@ RobotContainer::RobotContainer() {
 
   // registar named commands                                                                                                  // replace with L4 score command
   pathplanner::NamedCommands::registerCommand("Score-WithVision", SubElevator::GetInstance().ElevatorAutoReset()
-    .AndThen(cmd::YAlignWithTarget(1, _driverController)).WithName("AlignWithTarget")
+    .AndThen(cmd::YAutonAlignWithTarget(1)).WithName("AlignWithTarget")
     .AndThen(SubElevator::GetInstance().CmdSetL4().WithName("CmdSetL4"))
     .AndThen(SubEndEffector::GetInstance().ScoreCoral().WithName("ScoreCoral"))
   );
   pathplanner::NamedCommands::registerCommand("IntakeSource-WithVision", SubElevator::GetInstance().ElevatorAutoReset().WithName("ElevatorAutoReset")
-    .AndThen(cmd::AlignToSource(_driverController).WithName("AutonAlignToSource"))
+    .AndThen(cmd::AutonAlignToSource().WithName("AutonAlignToSource"))
     .AndThen(SubElevator::GetInstance().CmdSetSource().WithName("CmdSetSource"))
     .AndThen(SubEndEffector::GetInstance().IntakeFromSource().WithName("IntakeFromSource"))
 );

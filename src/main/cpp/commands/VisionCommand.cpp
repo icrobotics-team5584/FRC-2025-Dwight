@@ -38,7 +38,7 @@ frc2::CommandPtr YAlignWithTarget(int side, frc2::CommandXboxController& control
           [] { return frc::ChassisSpeeds{0_mps, 0.15_mps, 0_deg_per_s}; }, false));
 }
 
-frc2::CommandPtr YAutonAlignWithTarget(int side, int tagID) {
+frc2::CommandPtr YAutonAlignWithTarget(int side) {
   
   static frc::Pose2d targetPose; //= SubVision::GetInstance().GetReefPose(side);
   // printf("\nhello-\nTargetPose-GetReefPose-ROTATION%f deg\n", targetPose.Rotation().Degrees().value());
@@ -46,8 +46,8 @@ frc2::CommandPtr YAutonAlignWithTarget(int side, int tagID) {
   // printf("\nhello-\nTargetPose-GetReefPose-TRANS-X%f m\n", targetPose.Translation().X().value());
   return SubDrivebase::GetInstance()
       .Drive(
-          [side, tagID] {
-            frc::Pose2d targetPose = SubVision::GetInstance().GetAutonReefPose(side, tagID);
+          [side] {
+            frc::Pose2d targetPose = SubVision::GetInstance().GetAutonReefPose(side);
             frc::ChassisSpeeds speeds =
                 SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose);
 
