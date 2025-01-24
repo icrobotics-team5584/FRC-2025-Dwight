@@ -109,6 +109,12 @@
     "xloctime": "cpp",
     "memory": "cpp",
     "chrono": "cpp",
-    "*.inc": "cpp"
+    "coroutine": "cpp",
+    "filesystem": "cpp",
+    "ios": "cpp",
+    "queue": "cpp",
+    "stack": "cpp",
+    "xhash": "cpp",
+    "xtree": "cpp"
   }
 }
