@@ -33,11 +33,6 @@ void SubVision::Periodic() {
 
 void SubVision::SimulationPeriodic() {
   _visionSim.Update(SubDrivebase::GetInstance().GetSimPose());
-  
-  frc::SmartDashboard::PutNumber("Vision/LastReefTag", _lastReefTag.GetFiducialId());
-  auto results = _camera.GetAllUnreadResults();
-  UpdatePoseEstimator(results);
-  UpdateLatestTags(results);
 }
 
 void SubVision::UpdatePoseEstimator(std::vector<photon::PhotonPipelineResult> results) {
