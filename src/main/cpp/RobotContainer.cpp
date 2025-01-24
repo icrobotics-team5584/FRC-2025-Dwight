@@ -88,10 +88,7 @@ void RobotContainer::ConfigureBindings() {
   //_driverController.B().WhileTrue(cmd::YAlignWithTarget(2, _driverController));
   
   //POV / d-pad
-  _driverController.B().ToggleOnTrue(frc2::cmd::StartEnd(
-    [this] {SubWrist::GetInstance().SetAngle(45_deg);},
-    [this] {SubWrist::GetInstance().SetAngle(0_deg);}
-  ));
+  _driverController.B().ToggleOnTrue(SubWrist::GetInstance().SetWristAngle(0_deg));
 
   //Triggers
   _operatorController.LeftTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromSource());

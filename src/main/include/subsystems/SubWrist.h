@@ -35,12 +35,20 @@ class SubWrist : public frc2::SubsystemBase {
   rev::spark::SparkBaseConfig _wristMotorConfig;
 
   //CONSTANTS
+  static constexpr double P = 0;
+  static constexpr double I = 0;
+  static constexpr double D = 0;
+  static constexpr units::volt_t G = 0.1361_V;
+  static constexpr units::volt_t S = 0_V;
+  static constexpr ICSpark::VoltsPerTps V = (0_V / 1_tps);
+  static constexpr ICSpark::VoltsPerTpsSq A = (0_V / 1_tr_per_s_sq);
+
   static constexpr units::degree_t MIN_ANGLE = -360_deg;
   static constexpr units::degree_t MAX_ANGLE = 360_deg;
   static constexpr units::degree_t INITIAL_ANGLE = 0_deg;
 
   //note: end effector is part of the wrist mechanism, so include it in these values
-  static constexpr units::meter_t WRIST_LENGTH = 0.4_m;
+  static constexpr units::meter_t WRIST_LENGTH = 0.25_m;
   static constexpr units::kilogram_t WRIST_MASS = 3_kg;
   static constexpr units::kilogram_square_meter_t WRIST_MOI = frc::sim::SingleJointedArmSim::EstimateMOI(WRIST_LENGTH, WRIST_MASS);
   static constexpr double WRIST_GEARING = 90; //reduction 90:1

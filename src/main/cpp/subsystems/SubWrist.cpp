@@ -13,16 +13,19 @@ SubWrist::SubWrist() {
         .VelocityConversionFactor(WRIST_GEARING / 60);
     _wristMotor.AdjustConfig(_wristMotorConfig);
 
-    _wristMotor.SetFeedbackGains(0, 0, 0);
-    _wristMotor.SetFeedforwardGains(0_V, 0_V, true, (0_V / 1_tps), (0_V / 1_tr_per_s_sq));
+    _wristMotor.SetFeedbackGains(P, I, D);
+    _wristMotor.SetFeedforwardGains(S, G, true, V, A);
 
     frc::SmartDashboard::PutData("Wrist/Wrist Mechanism2d", &_wristMech);
+    frc::SmartDashboard::PutNumber("Wrist/Estimated MOI", WRIST_MOI.value());
     frc::SmartDashboard::PutData("Wrist/Wrist Motor", (wpi::Sendable*)&_wristMotor);
 }
 
 // This method will be called once per scheduler run
 void SubWrist::Periodic() {
-    _wristMechArmLig->SetAngle(_wristMotor.GetPosition());
+    units::degree_t wristAngle = _wristMotor.GetPosition();
+    frc::SmartDashboard::PutNumber("Wrist/Motor Degrees", wristAngle.value());
+    _wristMechArmLig->SetAngle(wristAngle);
 }
 
 void SubWrist::SimulationPeriodic() {
