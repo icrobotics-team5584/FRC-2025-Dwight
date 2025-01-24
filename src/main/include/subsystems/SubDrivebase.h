@@ -44,7 +44,7 @@ class SubDrivebase : public frc2::SubsystemBase {
 
   // Getters
   bool IsAtPose(frc::Pose2d pose);
-  bool CheckButton(); 
+  frc2::Trigger CheckCoastButton(); 
 
   frc::ChassisSpeeds CalcDriveToPoseSpeeds(frc::Pose2d targetPose);
   frc::ChassisSpeeds CalcJoystickSpeeds(frc2::CommandXboxController& controller);

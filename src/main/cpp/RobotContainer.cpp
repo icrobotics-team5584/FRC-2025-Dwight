@@ -66,6 +66,7 @@ void RobotContainer::ConfigureBindings() {
   /*_driverController.RightTrigger().WhileTrue(cmd::AlignToSource(_driverController));*/
   _driverController.A().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
   _driverController.B().WhileTrue(cmd::YAlignWithTarget(2, _driverController));
+  SubDrivebase::GetInstance().CheckButton().OnTrue(cmd::toggleBrakeCoast());
     //POV / d-pad
 
   /*

@@ -24,9 +24,18 @@ frc2::CommandPtr AlignToTarget(units::meter_t offset) {
   });
 }
 
+
+
 frc2::CommandPtr toggleBrakeCoast() {
   return Run([] {
-    SubDrivebase::GetInstance().SetNeutralMode(SubDrivebase::GetInstance().CheckButton());
-  });
-}
+    static bool toggle = false;
+    
+    if (toggle == true){
+      toggle = false;
+      SubDrivebase::GetInstance().SetNeutralMode(true);
+    } else {
+      toggle = true;
+      SubDrivebase::GetInstance().SetNeutralMode(false);
+    }
+    });}
 }

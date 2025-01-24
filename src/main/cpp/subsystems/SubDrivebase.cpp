@@ -364,8 +364,8 @@ void SubDrivebase::DisplayPose(std::string label, frc::Pose2d pose) {
   _fieldDisplay.GetObject(label)->SetPose(pose);
 }
 
-bool SubDrivebase::CheckButton(){
-  return _toggleBrakeCoast.Get();
+frc2::Trigger SubDrivebase::CheckCoastButton(){
+  return frc2::Trigger {[this] {return _toggleBrakeCoast.Get();}};
 }
 
 void SubDrivebase::UpdatePosition(frc::Pose2d robotPosition) {
