@@ -96,6 +96,20 @@ frc::Pose2d SubVision::GetReefPose(int side = 1) {
 }
 
 frc::Pose2d SubVision::GetAutonReefPose(int side, int tagID) {
+  // A = [18,7] <- april tag ids
+  // B = [18,7]
+  // C = [17,8]  
+  // D = [17,8]
+  // E = [22,9]
+  // F = [22,9]  
+  // G = [1,1]
+  // H = [1,1]
+  // I = [1,1]
+  // J = [1,1]
+  // K = [1,1]
+  // L = [1,1]  
+  // [A, B, C, D, E, F, G, H, I, J, K, L]
+  // even index is leftsided alignment (e.g side = 1)
   int reefTagID = tagID;
   frc::Pose2d targPose;
   if (side == 1) {

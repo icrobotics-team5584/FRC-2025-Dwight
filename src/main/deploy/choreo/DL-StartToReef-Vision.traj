@@ -1,5 +1,5 @@
 {
- "name":"DL-StartToReef-SlowTest",
+ "name":"DL-StartToReef-Vision",
  "version":1,
  "snapshot":{
   "waypoints":[
@@ -16,7 +16,7 @@
  "params":{
   "waypoints":[
     {"x":{"exp":"7.18711519241333 m", "val":7.18711519241333}, "y":{"exp":"7.632555961608887 m", "val":7.632555961608887}, "heading":{"exp":"-3.126209243596663 rad", "val":-3.126209243596663}, "intervals":137, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":{"exp":"5.1468353271484375 m", "val":5.1468353271484375}, "y":{"exp":"5.180098056793213 m", "val":5.180098056793213}, "heading":{"exp":"-2.098266903232711 rad", "val":-2.098266903232711}, "intervals":20, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
+    {"x":{"exp":"5.444687366485596 m", "val":5.444687366485596}, "y":{"exp":"5.575076103210449 m", "val":5.575076103210449}, "heading":{"exp":"150 deg", "val":2.6179938779914944}, "intervals":20, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"last", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
