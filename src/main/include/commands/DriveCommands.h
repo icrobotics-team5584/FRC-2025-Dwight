@@ -6,6 +6,7 @@
 
 #include <frc2/command/Command.h>
 #include <units/length.h>
+#include <frc2/command/button/CommandXboxController.h>
 
 namespace cmd {
   /**

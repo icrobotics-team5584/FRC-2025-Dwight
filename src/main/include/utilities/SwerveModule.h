@@ -25,11 +25,13 @@
 class SwerveModule {
  public:
   SwerveModule(int canDriveMotorID, int canTurnMotorID, int canTurnEncoderID, units::turn_t cancoderMagOffset); 
-  void SetDesiredState(frc::SwerveModuleState& state);
+  void SetDesiredState(frc::SwerveModuleState& state, 
+    units::newton_t xForceFF = 0_N,
+    units::newton_t yForceFF = 0_N); 
   void SyncSensors();
   void SendSensorsToDash();
   void SetDesiredAngle(units::degree_t angle);
-  void SetDesiredVelocity(units::meters_per_second_t velocity);
+  void SetDesiredVelocity(units::meters_per_second_t velocity, units::newton_t forceFF);
   void DriveStraightVolts(units::volt_t volts);
   void StopMotors();
   void UpdateSim(units::second_t deltaTime);
@@ -47,14 +49,6 @@ class SwerveModule {
 
  private:
   std::unique_ptr<SwerveIO> _io;
-  int _cancoderID;
-  int _driveMotorID;
-  int _turnMotorID;
-
-  const double TURNING_GEAR_RATIO = 150.0/7.0;
-  const double DRIVE_GEAR_RATIO = 6.75; // L2 - Fast kit
-  const units::meter_t WHEEL_RADIUS = 0.04841_m;
-  const units::meter_t WHEEL_CIRCUMFERENCE = 2 * std::numbers::pi * WHEEL_RADIUS;
 
   ctre::phoenix6::hardware::CANcoder _cancoder;
   ctre::phoenix6::configs::CANcoderConfiguration _cancoderConfig;

@@ -49,14 +49,31 @@ void SwerveModule::ConfigDriveMotor(){
   _io->ConfigDriveMotor();
 }
 
-void SwerveModule::SetDesiredState(frc::SwerveModuleState& referenceState) {
-  auto curAngle = GetAngle();
+void SwerveModule::SetDesiredState(
+  frc::SwerveModuleState& referenceState,
+  units::newton_t xForceFF,
+  units::newton_t yForceFF
+) {
   // Optimize the reference state to avoid spinning further than 90 degrees
+  auto curAngle = GetAngle();
   referenceState.Optimize(curAngle);
+
+  //finds force required for FF, scaled by distance to correct angle error
+  namespace math = units::math;
+  units::turn_t forceFFAngle    = math::atan(yForceFF / xForceFF);   //finds angle of the force to apply
+  units::turn_t angleError      = forceFFAngle - curAngle.Radians(); //checks error between angle to apply force on and current angle
+  units::newton_t forceFFNorm   = math::sqrt(math::pow<2>(xForceFF) + math::pow<2>(yForceFF)); //finds required amount of force
+  units::newton_t scaledForceFF = forceFFNorm * math::cos(angleError); // scales force by depending on the distance from required angle
+
+  // matches velocity's sign and the FF force
+  scaledForceFF = math::copysign(scaledForceFF, referenceState.speed);
+
+  // Slow down drive speed when not pointing the right way. This results in smoother driving.
+  referenceState.CosineScale(curAngle);
 
   // Drive! These functions do some conversions and send targets to falcons
   SetDesiredAngle(referenceState.angle.Degrees());
-  SetDesiredVelocity(referenceState.speed);
+  SetDesiredVelocity(referenceState.speed, scaledForceFF);
 }
 
 frc::SwerveModulePosition SwerveModule::GetPosition() {
@@ -65,7 +82,7 @@ frc::SwerveModulePosition SwerveModule::GetPosition() {
 
 void SwerveModule::SendSensorsToDash() {
   _io->SendSensorsToDash();
-  std::string turnEncoderName = "swerve/turn encoder/" + std::to_string(_cancoderID);
+  std::string turnEncoderName = "swerve/turn encoder/" + std::to_string(_cancoder.GetDeviceID());
   frc::SmartDashboard::PutNumber(turnEncoderName + "Abs position", _cancoder.GetAbsolutePosition().GetValue().value());
   frc::SmartDashboard::PutNumber(turnEncoderName + "Supply Voltage", _cancoder.GetSupplyVoltage().GetValue().value());
   frc::SmartDashboard::PutString(turnEncoderName + "Magnet Health", _cancoder.GetMagnetHealth().GetValue().ToString());
@@ -105,8 +122,8 @@ void SwerveModule::SetDesiredAngle(units::degree_t angle) {
   _io->SetDesiredAngle(angle);
 }
 
-void SwerveModule::SetDesiredVelocity(units::meters_per_second_t velocity) {
-  _io->SetDesiredVelocity(velocity);
+void SwerveModule::SetDesiredVelocity(units::meters_per_second_t velocity, units::newton_t forceFF) {
+  _io->SetDesiredVelocity(velocity, forceFF);
 }
 
 void SwerveModule::DriveStraightVolts(units::volt_t volts) {
