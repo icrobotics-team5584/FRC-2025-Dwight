@@ -10,6 +10,7 @@
 
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 #include "subsystems/SubDrivebase.h"
+#include "subsystems/SubClimber.h"
 
 #include "subsystems/SubVision.h"
 #include "commands/VisionCommand.h"
@@ -89,9 +90,9 @@ void RobotContainer::ConfigureBindings() {
     return (_operatorController.GetLeftY() > 0.2);
   }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
 
-  frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
-    return (_operatorController.GetLeftY() < -0.2);
-  }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
+  // frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
+  //   return (_operatorController.GetLeftY() < -0.2);
+  // }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
 
   _operatorController.A().OnTrue(SubElevator::GetInstance().CmdSetL1());
   _operatorController.X().OnTrue(SubElevator::GetInstance().CmdSetL2());
@@ -106,7 +107,7 @@ void RobotContainer::ConfigureBindings() {
   _operatorController.LeftTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromSource());
 
 
-   _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise camera object
+  //  _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise camera object
 
   //Rumble controller when end effector line break triggers
   // SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnFalse(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
