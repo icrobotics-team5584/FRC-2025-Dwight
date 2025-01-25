@@ -28,7 +28,6 @@ SubVision::SubVision() {
 
 void SubVision::Periodic() {
   frc::SmartDashboard::PutNumber("Vision/LastReefTag", _lastReefTag.GetFiducialId());
-  auto result = _camera.GetLatestResult();
   auto results = _camera.GetAllUnreadResults();
   UpdatePoseEstimator(results);
   UpdateLatestTags(results);
