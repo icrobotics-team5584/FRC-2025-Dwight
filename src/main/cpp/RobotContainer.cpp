@@ -83,6 +83,8 @@ void RobotContainer::ConfigureBindings() {
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
   _driverController.RightTrigger().OnTrue(SubEndEffector::GetInstance().ScoreCoral());
 
+  _driverController.A().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
+
 
   //Opperator
 
