@@ -17,6 +17,7 @@ SubDrivebase::SubDrivebase() {
   frc::SmartDashboard::PutData("Drivebase/Teleop PID/Rotation Controller", &_teleopRotationController);
   frc::SmartDashboard::PutData("Drivebase/Teleop PID/Translation Controller", &_teleopTranslationController);
 
+
   _teleopRotationController.EnableContinuousInput(0_deg, 360_deg);
   frc::SmartDashboard::PutData("field", &_fieldDisplay);
 
@@ -74,6 +75,8 @@ SubDrivebase::SubDrivebase() {
 }
 
 void SubDrivebase::Periodic() {
+  frc::SmartDashboard::PutBoolean("Drivebase/Check button", CheckCoastButton().Get());
+
   auto loopStart = frc::GetTime();
   Logger::Log("Drivebase/heading", GetHeading());
   Logger::Log("Drivebase/velocity", GetVelocity());
@@ -392,7 +395,7 @@ void SubDrivebase::DisplayPose(std::string label, frc::Pose2d pose) {
 }
 
 frc2::Trigger SubDrivebase::CheckCoastButton(){
-  return frc2::Trigger {[this] {return _toggleBrakeCoast.Get();}};
+  return frc2::Trigger {[this] {return !_toggleBrakeCoast.Get();}};
 }
 
 void SubDrivebase::DisplayTrajectory(std::string name, frc::Trajectory trajectory) {

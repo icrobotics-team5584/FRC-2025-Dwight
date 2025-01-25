@@ -83,7 +83,7 @@ void RobotContainer::ConfigureBindings() {
   _operatorController.RightTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
   _operatorController.POVRight().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
   _operatorController.POVLeft().WhileTrue(cmd::RemoveAlgae());
-  
+
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
   _driverController.X().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
   // _driverController.B().ToggleOnTrue(frc2::cmd::StartEnd(
@@ -95,7 +95,7 @@ void RobotContainer::ConfigureBindings() {
   //Opperator
 
   //Triggers
-  SubDrivebase::GetInstance().CheckButton().OnTrue(cmd::toggleBrakeCoast());
+  SubDrivebase::GetInstance().CheckCoastButton().ToggleOnTrue(cmd::toggleBrakeCoast());
   frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
     return (_operatorController.GetLeftY() > 0.2);
   }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());

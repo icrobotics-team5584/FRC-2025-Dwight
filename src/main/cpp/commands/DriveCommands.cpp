@@ -17,6 +17,8 @@ using namespace frc2::cmd;
  * @param offset The y offset from the tag to align to, in meters.
  * @return A command that will align to the tag when executed.
  */
+
+/*
 frc2::CommandPtr AlignToTarget(units::meter_t offset) {
   return Run([] {
     SubDrivebase::GetInstance().DriveToPose(
@@ -24,18 +26,11 @@ frc2::CommandPtr AlignToTarget(units::meter_t offset) {
   });
 }
 
-
+*/
 
 frc2::CommandPtr toggleBrakeCoast() {
-  return Run([] {
-    static bool toggle = false;
-    
-    if (toggle == true){
-      toggle = false;
-      SubDrivebase::GetInstance().SetNeutralMode(true);
-    } else {
-      toggle = true;
-      SubDrivebase::GetInstance().SetNeutralMode(false);
-    }
-    });}
+  return StartEnd([] { SubDrivebase::GetInstance().SetNeutralMode(false); },
+                  [] { SubDrivebase::GetInstance().SetNeutralMode(true); })
+      .IgnoringDisable(true);
 }
+}  // namespace cmd
