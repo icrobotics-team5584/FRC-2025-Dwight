@@ -6,6 +6,8 @@
 #include <frc2/command/Commands.h>
 #include "subsystems/SubDrivebase.h"
 #include "subsystems/SubVision.h"
+#include "subsystems/SubClimber.h"
+#include <frc/DriverStation.h>
 
 
 
@@ -29,8 +31,16 @@ frc2::CommandPtr AlignToTarget(units::meter_t offset) {
 */
 
 frc2::CommandPtr toggleBrakeCoast() {
-  return StartEnd([] { SubDrivebase::GetInstance().SetNeutralMode(false); },
-                  [] { SubDrivebase::GetInstance().SetNeutralMode(true); })
-      .IgnoringDisable(true);
+  return StartEnd(
+             [] {
+               SubDrivebase::GetInstance().SetNeutralMode(false);
+               SubClimber::GetInstance().SetBrakeMode(false);
+             },
+             [] {
+               SubDrivebase::GetInstance().SetNeutralMode(true);
+               SubClimber::GetInstance().SetBrakeMode(true);
+             })
+      .IgnoringDisable(true)
+      .Until([] { return frc::DriverStation::IsEnabled(); });
 }
 }  // namespace cmd
