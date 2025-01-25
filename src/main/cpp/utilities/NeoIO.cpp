@@ -74,12 +74,12 @@ void NeoIO::SetNeutralMode(bool brakeModeToggle) {
 
   if (brakeModeToggle == true) {
     _neutralModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
-    _canDriveMotor.AdjustConfig(_neutralModeConfig);
-    _canTurnMotor.AdjustConfig(_neutralModeConfig);
+    _canDriveMotor.AdjustConfigNoPersist(_neutralModeConfig);
+    _canTurnMotor.AdjustConfigNoPersist(_neutralModeConfig);
   } else if (brakeModeToggle == false) {
     _neutralModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
-    _canDriveMotor.AdjustConfig(_neutralModeConfig);
-    _canTurnMotor.AdjustConfig(_neutralModeConfig);
+    _canDriveMotor.AdjustConfigNoPersist(_neutralModeConfig);
+    _canTurnMotor.AdjustConfigNoPersist(_neutralModeConfig);
   }
 }
 
