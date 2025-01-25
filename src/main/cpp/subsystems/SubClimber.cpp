@@ -22,11 +22,7 @@ SubClimber::SubClimber() {
         .SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
     auto err = _climberMotor.AdjustConfig(_climberMotorConfig);
     frc::SmartDashboard::PutNumber("Climber/config set err", (int)err);
-    units::angular_velocity::turns_per_second_t maxVel = 100000_tps;
-    units::angular_acceleration::turns_per_second_squared_t maxAccel = 1000_tr_per_s_sq;
-    // _climberMotor.SetMotionMaxVel(maxVel);
-    // _climberMotor.SetMotionMaxAccel(maxAccel);
-    
+
 }
 
 // This method will be called once per scheduler run
