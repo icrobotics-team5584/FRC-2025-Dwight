@@ -34,7 +34,7 @@ RobotContainer::RobotContainer() {
   // Trigger Bindings
   ConfigureBindings();
 
-  //Initialise camera object(s)
+  //Initialise camera objects
   _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); 
 
 
