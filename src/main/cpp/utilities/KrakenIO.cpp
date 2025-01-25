@@ -29,7 +29,7 @@ void KrakenIO::ConfigTurnMotor() {
     _configTurnMotor.CurrentLimits.SupplyCurrentLowerLimit = 30.0_A;
     _configTurnMotor.CurrentLimits.SupplyCurrentLimit = 40.0_A;
     _configTurnMotor.CurrentLimits.SupplyCurrentLowerTime = 0.1_s;
-    _configTurnMotor.CurrentLimits.StatorCurrentLimit = 40.0_A; 
+    _configTurnMotor.CurrentLimits.StatorCurrentLimit = 120.0_A; 
 
     _canTurnMotor.GetConfigurator().Apply(_configTurnMotor);
 }
