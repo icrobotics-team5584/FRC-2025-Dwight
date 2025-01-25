@@ -5,7 +5,7 @@
 #pragma once
 
 #include <frc2/command/SubsystemBase.h>
-#include "utilities/ICSparkMax.h"
+#include "utilities/ICSparkFlex.h"
 #include "Constants.h"
 #include <frc2/command/CommandPtr.h>
 
@@ -31,5 +31,5 @@ class SubFunnel : public frc2::SubsystemBase {
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
-  ICSparkMax _funnelMotor{canid::funnelMotor, 30_A};
+  ICSparkFlex _funnelMotor{canid::funnelMotor, 30_A};
 };
