@@ -23,6 +23,14 @@ void KrakenIO::ConfigTurnMotor() {
     _configTurnMotor.Slot0.kD = TURN_D;
     _configTurnMotor.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::Clockwise_Positive;
     _configTurnMotor.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+
+    _configTurnMotor.CurrentLimits.SupplyCurrentLimitEnable = true;
+    _configTurnMotor.CurrentLimits.StatorCurrentLimitEnable = true;
+    _configTurnMotor.CurrentLimits.SupplyCurrentLowerLimit = 30.0_A;
+    _configTurnMotor.CurrentLimits.SupplyCurrentLimit = 40.0_A;
+    _configTurnMotor.CurrentLimits.SupplyCurrentLowerTime = 0.1_s;
+    _configTurnMotor.CurrentLimits.StatorCurrentLimit = 40.0_A; 
+
     _canTurnMotor.GetConfigurator().Apply(_configTurnMotor);
 }
 
