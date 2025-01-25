@@ -74,6 +74,19 @@ frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
 }
 
 void RobotContainer::ConfigureBindings() {
+  _driverController.A().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
+  _driverController.B().WhileTrue(cmd::YAlignWithTarget(2, _driverController));
+  _driverController.LeftTrigger().WhileTrue(SubDrivebase::GetInstance().RobotCentricDrive(_driverController));
+
+  _operatorController.LeftTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromSource());
+  _operatorController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
+  _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromGround());
+  _operatorController.RightTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
+  _operatorController.POVRight().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
+  _operatorController.POVLeft().WhileTrue(cmd::RemoveAlgae());
+
+  _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
+  _driverController.X().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
 
   // _driverController.A().ToggleOnTrue(frc2::cmd::StartEnd(
   //   [this] { _cameraStream.SetPath("/dev/video1"); }, //Toggle to second camera (climb cam)
@@ -86,6 +99,8 @@ void RobotContainer::ConfigureBindings() {
 
   //Opperator
 
+  //Triggers
+  SubDrivebase::GetInstance().CheckCoastButton().ToggleOnTrue(cmd::toggleBrakeCoast());
   frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
     return (_operatorController.GetLeftY() > 0.2);
   }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());

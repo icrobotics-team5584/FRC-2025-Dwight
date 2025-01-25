@@ -32,6 +32,7 @@ namespace canid {
 namespace dio {
     constexpr int EndEffectorLineBreakHigher = 3;  
     constexpr int EndEffectorLineBreakLower = 2;
+    constexpr int toggleBrakeCoast = 4;
 }
 
 namespace math {

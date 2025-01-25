@@ -16,6 +16,7 @@
 #include "utilities/SwerveModule.h"
 #include <frc2/command/button/CommandXboxController.h>
 #include <frc2/command/sysid/SysIdRoutine.h>
+#include <frc/DigitalInput.h>
 #include "utilities/BotVars.h"
 #include "utilities/RobotLogs.h"
 
@@ -43,6 +44,8 @@ class SubDrivebase : public frc2::SubsystemBase {
 
   // Getters
   bool IsAtPose(frc::Pose2d pose);
+  frc2::Trigger CheckCoastButton(); 
+
   frc::ChassisSpeeds CalcDriveToPoseSpeeds(frc::Pose2d targetPose);
   frc::ChassisSpeeds CalcJoystickSpeeds(frc2::CommandXboxController& controller);
   frc::ChassisSpeeds CalcJoystickSpeedsEndEffectorForward(frc2::CommandXboxController& controller);
@@ -55,6 +58,9 @@ class SubDrivebase : public frc2::SubsystemBase {
   units::meters_per_second_t GetVelocity();
   frc::SwerveDriveKinematics<4> GetKinematics();
   frc::ChassisSpeeds GetRobotRelativeSpeeds();
+
+
+
 
   // Commands
   frc2::CommandPtr JoystickDrive(frc2::CommandXboxController& controller);
@@ -80,6 +86,8 @@ class SubDrivebase : public frc2::SubsystemBase {
   static constexpr double MAX_ANGULAR_JOYSTICK_ACCEL = 3;
   static constexpr double JOYSTICK_DEADBAND = 0.08;
 
+
+
  private:
   void Drive(units::meters_per_second_t xSpeed, units::meters_per_second_t ySpeed,
              units::turns_per_second_t rot, bool fieldRelative,
@@ -99,6 +107,8 @@ class SubDrivebase : public frc2::SubsystemBase {
   const units::turn_t FRONT_LEFT_MAG_OFFSET = BotVars::Choose(-0.443603515625+ 0.5, -0.172607421875) * 1_tr;
   const units::turn_t BACK_RIGHT_MAG_OFFSET = BotVars::Choose(-0.962158203125+ 0.5, -0.395263671875) * 1_tr;
   const units::turn_t BACK_LEFT_MAG_OFFSET = BotVars::Choose(-0.840087890625+ 0.5, -0.94921875) * 1_tr;
+
+  frc::DigitalInput _toggleBrakeCoast{dio::toggleBrakeCoast};
 
   SwerveModule _frontLeft{canid::DriveBaseFrontLeftDrive, canid::DriveBaseFrontLeftTurn,
                           canid::DriveBaseFrontLeftEncoder, (FRONT_LEFT_MAG_OFFSET) };

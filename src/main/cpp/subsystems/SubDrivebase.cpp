@@ -17,6 +17,7 @@ SubDrivebase::SubDrivebase() {
   frc::SmartDashboard::PutData("Drivebase/Teleop PID/Rotation Controller", &_teleopRotationController);
   frc::SmartDashboard::PutData("Drivebase/Teleop PID/Translation Controller", &_teleopTranslationController);
 
+
   _teleopRotationController.EnableContinuousInput(0_deg, 360_deg);
   frc::SmartDashboard::PutData("field", &_fieldDisplay);
 
@@ -74,6 +75,8 @@ SubDrivebase::SubDrivebase() {
 }
 
 void SubDrivebase::Periodic() {
+  frc::SmartDashboard::PutBoolean("Drivebase/Check button", CheckCoastButton().Get());
+
   auto loopStart = frc::GetTime();
   Logger::Log("Drivebase/heading", GetHeading());
   Logger::Log("Drivebase/velocity", GetVelocity());
@@ -278,6 +281,8 @@ frc::Rotation2d SubDrivebase::GetGyroAngle() {
   return _gyro.GetRotation2d();
 }
 
+
+
 units::meters_per_second_t SubDrivebase::GetVelocity() {
   // Use pythag to find velocity from x and y components
   auto speeds = _kinematics.ToChassisSpeeds(_frontLeft.GetState(), _frontRight.GetState(),
@@ -387,6 +392,10 @@ void SubDrivebase::SetPose(frc::Pose2d pose) {
 
 void SubDrivebase::DisplayPose(std::string label, frc::Pose2d pose) {
   _fieldDisplay.GetObject(label)->SetPose(pose);
+}
+
+frc2::Trigger SubDrivebase::CheckCoastButton(){
+  return frc2::Trigger {[this] {return !_toggleBrakeCoast.Get();}};
 }
 
 void SubDrivebase::DisplayTrajectory(std::string name, frc::Trajectory trajectory) {

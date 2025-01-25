@@ -7,6 +7,8 @@
 #include "subsystems/SubDrivebase.h"
 #include "subsystems/SubVision.h"
 
+
+
 namespace cmd {
 using namespace frc2::cmd;
 /**
@@ -16,6 +18,19 @@ using namespace frc2::cmd;
  * @return A command that will align to the tag when executed.
  */
 
-
-
+/*
+frc2::CommandPtr AlignToTarget(units::meter_t offset) {
+  return Run([] {
+    SubDrivebase::GetInstance().DriveToPose(
+        frc::Pose2d(frc::Translation2d(0_m, 0_m), frc::Rotation2d(0_deg)));
+  });
 }
+
+*/
+
+frc2::CommandPtr toggleBrakeCoast() {
+  return StartEnd([] { SubDrivebase::GetInstance().SetNeutralMode(false); },
+                  [] { SubDrivebase::GetInstance().SetNeutralMode(true); })
+      .IgnoringDisable(true);
+}
+}  // namespace cmd
