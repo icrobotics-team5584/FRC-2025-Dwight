@@ -73,26 +73,18 @@ frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
 }
 
 void RobotContainer::ConfigureBindings() {
-  _driverController.A().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
-  _driverController.B().WhileTrue(cmd::YAlignWithTarget(2, _driverController));
-  _driverController.LeftTrigger().WhileTrue(SubDrivebase::GetInstance().RobotCentricDrive(_driverController));
-  _operatorController.LeftTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromSource());
-  _operatorController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
-  _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromGround());
-  _operatorController.RightTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
-  _operatorController.POVRight().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
-  _operatorController.POVLeft().WhileTrue(cmd::RemoveAlgae());
-  _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
-  _driverController.X().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
-  // _driverController.B().ToggleOnTrue(frc2::cmd::StartEnd(
+
+  // _driverController.A().ToggleOnTrue(frc2::cmd::StartEnd(
   //   [this] { _cameraStream.SetPath("/dev/video1"); }, //Toggle to second camera (climb cam)
   //   [this] { _cameraStream.SetPath("/dev/video0"); } //Toggle to first camera (drive cam)
   // ));
-  
+  _driverController.X().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
+  _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
+  _driverController.RightTrigger().OnTrue(SubEndEffector::GetInstance().ScoreCoral());
+
 
   //Opperator
 
-  //Triggers
   frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
     return (_operatorController.GetLeftY() > 0.2);
   }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
@@ -101,31 +93,23 @@ void RobotContainer::ConfigureBindings() {
     return (_operatorController.GetLeftY() < -0.2);
   }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
 
-
-  //Bumpers
-
-
-  //Letters
-   _operatorController.A().OnTrue(SubElevator::GetInstance().CmdSetL1());
-   _operatorController.X().OnTrue(SubElevator::GetInstance().CmdSetL2());
-   _operatorController.B().OnTrue(SubElevator::GetInstance().CmdSetL3());
-   _operatorController.Y().OnTrue(SubElevator::GetInstance().CmdSetL4());
-   _operatorController.LeftBumper().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
-  //  _operatorController.RightBumper().OnTrue(SubElevator::GetInstance().ZeroElevator().IgnoringDisable(true));
-   _operatorController.RightBumper().WhileTrue(SubElevator::GetInstance().Climb());
-  //POV
-  // _operatorController.POVUp().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
-  // _operatorController.POVDown().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
-  _operatorController.POVDown().WhileTrue(SubElevator::GetInstance().CmdSetSource());
-
+  _operatorController.A().OnTrue(SubElevator::GetInstance().CmdSetL1());
+  _operatorController.X().OnTrue(SubElevator::GetInstance().CmdSetL2());
+  _operatorController.B().OnTrue(SubElevator::GetInstance().CmdSetL3());
+  _operatorController.Y().OnTrue(SubElevator::GetInstance().CmdSetL4());
   
-
+  _operatorController.POVLeft().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
+  _operatorController.POVRight().OnTrue(SubElevator::GetInstance().CmdSetSource());
+  // _operatorController.POVUp.OnTrue()
+  // _operatorController.POVDown.OnTrue()
+  
+  _operatorController.LeftTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromSource());
 
 
    _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise camera object
 
   //Rumble controller when end effector line break triggers
-  SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnFalse(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
+  // SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnFalse(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
   SubEndEffector::GetInstance().CheckLineBreakTriggerLower().OnFalse(ControllerRumbleLeft(_driverController).WithTimeout(0.1_s));
 }
 
