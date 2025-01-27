@@ -98,6 +98,10 @@ frc::Pose2d SubVision::GetReefPose(int side = 1) {
   return targPose;
 }
 
+units::degree_t SubVision::GetTagAngle(){
+  return _latestTarget.GetYaw()*1_deg;
+}
+
 bool SubVision::CheckValid(std::optional<photon::EstimatedRobotPose> pose) {
   const double minArea = 20;
   const double maxArea = 80;

@@ -38,6 +38,20 @@ frc2::CommandPtr YAlignWithTarget(int side, frc2::CommandXboxController& control
           [] { return frc::ChassisSpeeds{0_mps, 0.15_mps, 0_deg_per_s}; }, false));
 }
 
+frc2::CommandPtr ForceAlignWithTarget(int side, frc2::CommandXboxController& controller) {
+  return SubDrivebase::GetInstance().Drive([side, &controller]{
+    if (SubVision::GetInstance().GetTagAngle() > 30_deg){
+    return frc::ChassisSpeeds{0.3_mps, 0_mps, 0_deg_per_s};
+    }
+    else {
+      return frc::ChassisSpeeds{-0.3_mps, 0_mps, 0_deg_per_s};
+    }
+  }, false);
+  // .Until([] {
+  //   return SubVision::GetInstance().GetTagAngle() == 30_deg;
+  // });
+}
+
 frc2::CommandPtr AddVisionMeasurement() {
   return Run(
       [] {
