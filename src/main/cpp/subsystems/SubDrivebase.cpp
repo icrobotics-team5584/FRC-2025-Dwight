@@ -348,7 +348,6 @@ bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
   auto rotError = currentPose.Rotation() - pose.Rotation();
   auto posError = currentPose.Translation().Distance(pose.Translation());
   auto velocity = GetVelocity();
-
   DisplayPose("current pose", currentPose);
   DisplayPose("target pose", pose);
   

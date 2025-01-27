@@ -89,10 +89,11 @@ void NeoIO::ConfigDriveMotor() {
   _canDriveConfig.SmartCurrentLimit(40);
   _canDriveConfig.closedLoop.Pidf(DRIVE_P, DRIVE_I, DRIVE_D, DRIVE_FF);
   _canDriveConfig.encoder.PositionConversionFactor(1.0 / DRIVE_GEAR_RATIO)
-    .VelocityConversionFactor(DRIVE_GEAR_RATIO / 60);
+    .VelocityConversionFactor(1.0/ (DRIVE_GEAR_RATIO * 60));
   _canDriveConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
 
   _canDriveMotor.AdjustConfig(_canDriveConfig);
+
 }
 
 frc::SwerveModulePosition NeoIO::GetPosition() {
@@ -106,6 +107,9 @@ frc::Rotation2d NeoIO::GetAngle() {
 }
 
 units::meters_per_second_t NeoIO::GetSpeed() {
+  frc::SmartDashboard::PutNumber("Swerve/module" + std::to_string(_canDriveMotor.GetDeviceId()) + " tps", _canDriveMotor.GetVelocity().value()); 
+  frc::SmartDashboard::PutNumber("Swerve/module" + std::to_string(_canDriveMotor.GetDeviceId()) + " mps", (_canDriveMotor.GetVelocity().value() * WHEEL_CIRCUMFERENCE.value())
+  ); 
   return (_canDriveMotor.GetVelocity().value() * WHEEL_CIRCUMFERENCE.value()) * 1_mps;
 }
 
