@@ -44,7 +44,7 @@ frc2::CommandPtr ForceAlignWithTarget(int side, frc2::CommandXboxController& con
   return SubDrivebase::GetInstance().Drive(
       [side, &controller] {
         units::degree_t goalAngle = side == 1 ? 30_deg : -20_deg;
-        units::degree_t driveAngle = 2_deg;
+        units::degree_t driveAngle = -20_deg;
         units::degree_t tagAngle = SubVision::GetInstance().GetReefTagAngle();
         units::degree_t error = tagAngle - goalAngle;
         units::meters_per_second_t overallVelocity = 0.05_mps * error.value();

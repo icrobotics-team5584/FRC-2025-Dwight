@@ -47,25 +47,31 @@ void SubVision::UpdatePoseEstimator(std::vector<photon::PhotonPipelineResult> re
     _pose = _robotPoseEstimater.Update(result);  // Get estimate pose of robot by vision
   }
 }
-
 void SubVision::UpdateLatestTags(std::vector<photon::PhotonPipelineResult> results) {
-  std::string currentlyVisibleTagIDs = "";
-  for (auto& result : results) {
-    for (auto& target : result.targets) {
+  std::string currentlyVisibleTagIDs;
+  std::optional<photon::PhotonTrackedTarget> largestTarget;
+  double largestArea = 0.0;
+  const auto& myReef =
+      (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) ? redReef : blueReef;
+
+  for (const auto& result : results) {
+    for (const auto& target : result.targets) {
       currentlyVisibleTagIDs += std::to_string(target.GetFiducialId()) + " ";
-      if (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) {
-        if (std::find(std::begin(redReef), std::end(redReef), target.GetFiducialId()) !=
-            std::end(redReef)) {
-          _lastReefTag = target;
-        }
-      } else {
-        if (std::find(std::begin(blueReef), std::end(blueReef), target.GetFiducialId()) !=
-            std::end(blueReef)) {
-          _lastReefTag = target;
+      double targetArea = target.GetArea();
+
+      if (std::find(myReef.begin(), myReef.end(), target.GetFiducialId()) != myReef.end()) {
+        if (targetArea > largestArea) {
+          largestTarget = target;
+          largestArea = targetArea;
         }
       }
     }
   }
+
+  if (largestTarget) {
+    _lastReefTag = *largestTarget;
+  }
+
   frc::SmartDashboard::PutString("Vision/Currently visible tags", currentlyVisibleTagIDs);
 }
 
