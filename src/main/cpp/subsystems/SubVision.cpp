@@ -49,24 +49,24 @@ void SubVision::UpdatePoseEstimator(std::vector<photon::PhotonPipelineResult> re
 }
 
 void SubVision::UpdateLatestTags(std::vector<photon::PhotonPipelineResult> results) {
-  if (results.size() == 0) {return;}
+  std::string currentlyVisibleTagIDs = "";
   for (auto& result : results) {
     for (auto& target : result.targets) {
-      _latestTarget = target;
-      frc::SmartDashboard::PutNumber("Vision/Target", _latestTarget.GetFiducialId());
+      currentlyVisibleTagIDs += std::to_string(target.GetFiducialId()) + " ";
       if (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) {
-        if (std::find(std::begin(redReef), std::end(redReef), _latestTarget.GetFiducialId()) !=
+        if (std::find(std::begin(redReef), std::end(redReef), target.GetFiducialId()) !=
             std::end(redReef)) {
-          _lastReefTag = _latestTarget;
+          _lastReefTag = target;
         }
       } else {
-        if (std::find(std::begin(blueReef), std::end(blueReef), _latestTarget.GetFiducialId()) !=
+        if (std::find(std::begin(blueReef), std::end(blueReef), target.GetFiducialId()) !=
             std::end(blueReef)) {
-          _lastReefTag = _latestTarget;
+          _lastReefTag = target;
         }
       }
     }
   }
+  frc::SmartDashboard::PutString("Vision/Currently visible tags", currentlyVisibleTagIDs);
 }
 
 std::optional<photon::EstimatedRobotPose> SubVision::GetPose() {
@@ -98,8 +98,8 @@ frc::Pose2d SubVision::GetReefPose(int side = 1) {
   return targPose;
 }
 
-units::degree_t SubVision::GetTagAngle(){
-  return _latestTarget.GetYaw()*1_deg;
+units::degree_t SubVision::GetReefTagAngle(){
+  return _lastReefTag.GetYaw()*1_deg;
 }
 
 bool SubVision::CheckValid(std::optional<photon::EstimatedRobotPose> pose) {

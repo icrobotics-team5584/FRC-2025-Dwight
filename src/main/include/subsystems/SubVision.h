@@ -32,7 +32,7 @@ public:
   void UpdatePoseEstimator(std::vector<photon::PhotonPipelineResult> results);
   void UpdateLatestTags(std::vector<photon::PhotonPipelineResult> results);
 
-  units::degree_t GetTagAngle();
+  units::degree_t GetReefTagAngle();
   frc::Pose2d GetReefPose(int side);
 
   std::optional<photon::EstimatedRobotPose> GetPose();
@@ -111,7 +111,5 @@ std::map<int, ReefPositions> tagToReefPositions = {
     photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
     _botToCam
   };
-
-  photon::PhotonTrackedTarget _latestTarget = photon::PhotonTrackedTarget();
 };
 
