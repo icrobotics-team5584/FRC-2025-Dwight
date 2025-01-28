@@ -133,6 +133,7 @@ void SubDrivebase::SimulationPeriodic() {
   auto br = _backRight.GetPosition();
 
   _simPoseEstimator.Update(GetGyroAngle(), {fl, fr, bl, br});
+  _simPoseEstimator.ResetRotation(GetPose().Rotation());
   DisplayPose("Sim final pose v3 for real", _simPoseEstimator.GetEstimatedPosition());
 
 
@@ -398,7 +399,6 @@ void SubDrivebase::DisplayTrajectory(std::string name, frc::Trajectory trajector
 
 void SubDrivebase::AddVisionMeasurement(frc::Pose2d pose, double ambiguity,
                                         units::second_t timeStamp) {
-  frc::SmartDashboard::PutNumber("Timestamp", timeStamp.value());
   _poseEstimator.AddVisionMeasurement(frc::Pose2d{pose.X(), pose.Y(), GetPose().Rotation()}, timeStamp);
 }
 
