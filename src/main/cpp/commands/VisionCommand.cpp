@@ -39,17 +39,21 @@ frc2::CommandPtr YAlignWithTarget(int side, frc2::CommandXboxController& control
 }
 
 frc2::CommandPtr ForceAlignWithTarget(int side, frc2::CommandXboxController& controller) {
-  return SubDrivebase::GetInstance().Drive([side, &controller]{
-    if (SubVision::GetInstance().GetTagAngle() > 30_deg){
-    return frc::ChassisSpeeds{0.3_mps, 0_mps, 0_deg_per_s};
-    }
-    else {
-      return frc::ChassisSpeeds{-0.3_mps, 0_mps, 0_deg_per_s};
-    }
-  }, false);
-  // .Until([] {
-  //   return SubVision::GetInstance().GetTagAngle() == 30_deg;
-  // });
+  // Strafe until the tag is at a known scoring angle, with a small velocity component towards the
+  // reef so you stay aligned rotationally and at the right distance.
+  return SubDrivebase::GetInstance().Drive(
+      [side, &controller] {
+        units::degree_t goalAngle = side == 1 ? 30_deg : -20_deg;
+        units::degree_t driveAngle = 2_deg;
+        units::degree_t tagAngle = SubVision::GetInstance().GetTagAngle();
+        units::degree_t error = tagAngle - goalAngle;
+        units::meters_per_second_t overallVelocity = 0.05_mps * error.value();
+        // Calc x and y from known angle and hypotenuse length
+        units::meters_per_second_t xVel = overallVelocity * units::math::cos(driveAngle);
+        units::meters_per_second_t yVel = overallVelocity * units::math::sin(driveAngle);
+        return frc::ChassisSpeeds{xVel, yVel, 0_deg_per_s};
+      },
+      false);
 }
 
 frc2::CommandPtr AddVisionMeasurement() {
