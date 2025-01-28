@@ -43,11 +43,11 @@ frc2::CommandPtr ForceAlignWithTarget(int side, frc2::CommandXboxController& con
   // reef so you stay aligned rotationally and at the right distance.
   return SubDrivebase::GetInstance().Drive(
       [side, &controller] {
-        units::degree_t goalAngle = side == 1 ? 30_deg : -20_deg;
-        units::degree_t driveAngle = -20_deg;
+        units::degree_t goalAngle = side == 1 ? 15.60_deg : -20_deg; // 16.45 for left reef face, 15.60_deg for front reef face (all left side so far)
         units::degree_t tagAngle = SubVision::GetInstance().GetReefTagAngle();
         units::degree_t error = tagAngle - goalAngle;
         units::meters_per_second_t overallVelocity = 0.05_mps * error.value();
+        units::degree_t driveAngle = units::math::copysign(3_deg, error);
         // Calc x and y from known angle and hypotenuse length
         units::meters_per_second_t xVel = overallVelocity * units::math::cos(driveAngle);
         units::meters_per_second_t yVel = overallVelocity * units::math::sin(driveAngle);
