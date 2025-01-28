@@ -99,7 +99,7 @@ std::map<int, ReefPositions> tagToReefPositions = {
   photon::PhotonCamera _camera{_cameraName};
   photon::PhotonCameraSim _cameraSim{&_camera}; // For simulation
 
-  frc::Transform3d _botToCam{{300_mm, 300_mm, 200_mm}, {0_deg, 0_deg, 117_deg}};
+  frc::Transform3d _botToCam{{-100_mm, 200_mm, 1000_mm}, {0_deg, 45_deg, 90_deg}};
   std::string _tagLayoutPath = frc::filesystem::GetDeployDirectory() + "/2025-reefscape.json";
   frc::AprilTagFieldLayout _tagLayout{_tagLayoutPath};
 
