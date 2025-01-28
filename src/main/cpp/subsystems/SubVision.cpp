@@ -50,9 +50,9 @@ void SubVision::UpdatePoseEstimator(std::vector<photon::PhotonPipelineResult> re
 
 void SubVision::UpdateLatestTags(std::vector<photon::PhotonPipelineResult> results) {
   if (results.size() == 0) {return;}
-  for (auto result : results) {
-    if (result.HasTargets()) {
-      _latestTarget = result.GetBestTarget();
+  for (auto& result : results) {
+    for (auto& target : result.targets) {
+      _latestTarget = target;
       frc::SmartDashboard::PutNumber("Vision/Target", _latestTarget.GetFiducialId());
       if (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) {
         if (std::find(std::begin(redReef), std::end(redReef), _latestTarget.GetFiducialId()) !=
