@@ -51,9 +51,11 @@ class SubElevator : public frc2::SubsystemBase {
 
   bool IsAtTarget();
 
+  void SetMotorVoltageLimits12V();
+  void CheckAndChangeCurrentLimitIfReset();
+
   void Stop();
   void EnableSoftLimit(bool enabled);
-
 
   void Periodic() override;
   void SimulationPeriodic() override;
@@ -65,6 +67,7 @@ class SubElevator : public frc2::SubsystemBase {
   bool Reseted = false;
 
   bool ResetM1 = false; 
+
 
 
 

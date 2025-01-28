@@ -28,8 +28,8 @@ SubElevator::SubElevator() {
     _motorConfig.Slot0.kG = _G;
 
     // Voltage Configuration
-    _motorConfig.Voltage.PeakForwardVoltage = 12_V;
-    _motorConfig.Voltage.PeakReverseVoltage = -12_V;
+    _motorConfig.Voltage.PeakForwardVoltage = 0_V;
+    _motorConfig.Voltage.PeakReverseVoltage = -0_V;
 
     // invert motors
     _motorConfig.MotorOutput.Inverted = true;
@@ -247,14 +247,30 @@ bool SubElevator::IsAtTarget() {
     }
 }
 
+void SubElevator::SetMotorVoltageLimits12V(){
+    _motorConfig.Voltage.PeakForwardVoltage = 12_V;
+    _motorConfig.Voltage.PeakReverseVoltage = 12_V;
+    _elevatorMotor1.GetConfigurator().Apply(_motorConfig);
+    _elevatorMotor2.GetConfigurator().Apply(_motorConfig);
+}
+
+void SubElevator::CheckAndChangeCurrentLimitIfReset(){
+    if (ResetM1 == false) {
+        _motorConfig.Voltage.PeakForwardVoltage = 0_V;
+        _motorConfig.Voltage.PeakReverseVoltage = 0_V;
+        _elevatorMotor1.GetConfigurator().Apply(_motorConfig);
+        _elevatorMotor2.GetConfigurator().Apply(_motorConfig);
+    }
+}
 //Auto elevator reset by bringing elevator to zero position then reset (can be used in tele-op)
 frc2::CommandPtr SubElevator::ElevatorAutoReset() {
     return frc2::cmd::RunOnce([this] { Reseting = true; EnableSoftLimit(false);})
+        .AndThen([this] {SetMotorVoltageLimits12V();})
         .AndThen(ManualElevatorMovementDOWNSLOW())
         .AndThen(ElevatorResetCheck())
         .AndThen(ZeroElevator())
         .AndThen([this] {Stop();})
-        .FinallyDo([this] {EnableSoftLimit(true);} );
+        .FinallyDo([this] {EnableSoftLimit(true); CheckAndChangeCurrentLimitIfReset();} );
         }
 
 //Stop motor
