@@ -319,12 +319,20 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   auto xSpeed = _teleopTranslationController.Calculate(currentXMeters, targetXMeters) * 1_mps;
   auto ySpeed = _teleopTranslationController.Calculate(currentYMeters, targetYMeters) * 1_mps;
   auto rSpeed = CalcRotateSpeed(currentRotation - targetRotation);
+  
+  // frc::PIDController _driveToPoseTranslationController{1.7,0.5,0.0};
+  // frc::ProfiledPIDController<units::radian> _driveToPoseRotationController{3,0.5,0.2, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
+  // auto xSpeed = _driveToPoseTranslationController.Calculate(currentXMeters, targetXMeters) * 1_mps;
+  // auto ySpeed = _driveToPoseTranslationController.Calculate(currentYMeters, targetYMeters) * 1_mps;
+  // auto rSpeed = _driveToPoseRotationController.Calculate(currentRotation - targetRotation, 0_deg) * 1_rad_per_s; 
 
-  // Clamp to max velocity
+  // Clamp to max velocity & angular velocity
   xSpeed = units::math::min(xSpeed, MAX_DRIVE_TO_POSE_VELOCITY); //Max_Velocity
   xSpeed = units::math::max(xSpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
   ySpeed = units::math::min(ySpeed, MAX_DRIVE_TO_POSE_VELOCITY);
   ySpeed = units::math::max(ySpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
+  // rSpeed = units::math::min(rSpeed, MAX_ANGULAR_VELOCITY);
+  // rSpeed = units::math::max(rSpeed, -MAX_ANGULAR_VELOCITY);
 
   frc::SmartDashboard::PutNumber("CalcDriveLogs/xSpeed", -xSpeed.value());
   frc::SmartDashboard::PutNumber("CalcDriveLogs/ySpeed", ySpeed.value());

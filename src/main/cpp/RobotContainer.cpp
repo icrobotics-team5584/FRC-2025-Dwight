@@ -35,7 +35,7 @@ RobotContainer::RobotContainer() {
     .AndThen(SubEndEffector::GetInstance().ScoreCoral().WithName("ScoreCoral"))
   );
   pathplanner::NamedCommands::registerCommand("IntakeSource-WithVision", SubElevator::GetInstance().ElevatorAutoReset().WithName("ElevatorAutoReset")
-    .AndThen(cmd::AutonAlignToSource().WithName("AutonAlignToSource"))
+    .AndThen(cmd::ForceAlignWithTarget(1, _driverController).WithName("AutonAlignToSource"))
     .AndThen(SubElevator::GetInstance().CmdSetSource().WithName("CmdSetSource"))
     .AndThen(SubEndEffector::GetInstance().IntakeFromSource().WithName("IntakeFromSource"))
 );
