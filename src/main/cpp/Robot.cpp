@@ -8,12 +8,21 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/CommandScheduler.h>
 
+// UCRL
+#include "frc/DataLogManager.h"
+#include "URCL.h"
+
 Robot::Robot() {
   frc::DataLogManager::Start();
 }
 
 void Robot::RobotPeriodic() {
   frc2::CommandScheduler::GetInstance().Run();
+}
+
+void Robot::RobotInit() {
+  frc::DataLogManager::Start();
+  URCL::Start();
 }
 
 void Robot::DisabledInit() {}
