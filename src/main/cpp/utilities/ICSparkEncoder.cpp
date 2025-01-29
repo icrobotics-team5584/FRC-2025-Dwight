@@ -1,4 +1,4 @@
-#include <Utilities/ICSparkEncoder.h>
+#include <utilities/ICSparkEncoder.h>
 #include <frc/RobotBase.h>
 #include <utility>
 #include <frc/smartdashboard/SmartDashboard.h>
