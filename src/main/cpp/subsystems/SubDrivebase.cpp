@@ -193,6 +193,9 @@ frc2::CommandPtr SubDrivebase::RobotCentricDrive(frc2::CommandXboxController& co
   return {SubDrivebase::GetInstance().Drive([this, &controller] 
   {
     auto speeds = CalcJoystickSpeeds(controller);
+    speeds.vx = speeds.vx/3;
+    speeds.vy = speeds.vy/3;
+    speeds.omega = speeds.omega/3;
     std::swap(speeds.vx, speeds.vy);
 
     return speeds;
