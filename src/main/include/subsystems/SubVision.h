@@ -32,6 +32,7 @@ public:
   void UpdatePoseEstimator(std::vector<photon::PhotonPipelineResult> results);
   void UpdateLatestTags(std::vector<photon::PhotonPipelineResult> results);
 
+  units::degree_t GetReefTagAngle();
   frc::Pose2d GetReefPose(int side);
   frc::Pose2d GetAutonReefPose(int side);
 
@@ -73,24 +74,25 @@ public:
     units::meter_t leftY;
     units::meter_t rightX;
     units::meter_t rightY;
+    units::degree_t scoreAngle;
   };
 
 std::map<int, ReefPositions> tagToReefPositions = {
-    {17, {60_deg-90_deg, 3.529_m, 2.805_m, 3.820_m, 2.671_m}}, //{17, {0_deg, 3.470_m, 2_m, 3.470_m, 2_m}},
-    {18, {0_deg-90_deg, 3.150_m, 4.190_m, 3.150_m, 3.870_m}},
-    {19, {300_deg-90_deg, 3.960_m, 5.250_m, 3.690_m, 5.090_m}},
-    {20, {240_deg-90_deg, 5.290_m, 5.095_m, 5.020_m, 5.250_m}},
-    {21, {180_deg-90_deg, 5.810_m, 3.860_m, 5.810_m, 4.190_m}},
-    {22, {120_deg-90_deg, 5.010_m, 2.800_m, 5.290_m, 2.950_m}},
+    {17, {60_deg-90_deg, 3.529_m, 2.805_m, 3.820_m, 2.671_m, 30_deg}},
+    {18, {0_deg-90_deg, 3.150_m, 4.190_m, 3.150_m, 3.870_m, 30_deg}},
+    {19, {300_deg-90_deg, 3.960_m, 5.250_m, 3.690_m, 5.090_m, 30_deg}},
+    {20, {240_deg-90_deg, 5.290_m, 5.095_m, 5.020_m, 5.250_m, 30_deg}},
+    {21, {180_deg-90_deg, 5.810_m, 3.860_m, 5.810_m, 4.190_m, 30_deg}},
+    {22, {120_deg-90_deg, 5.010_m, 2.800_m, 5.290_m, 2.950_m, 30_deg}},
 
-    {6, {120_deg-90_deg, 13.410_m, 3.100_m, 13.700_m, 3.260_m}},
-    {7, {180_deg-90_deg, 14.060_m, 3.860_m, 14.060_m, 4.190_m}},
-    {8, {240_deg-90_deg, 13.700_m, 4.800_m, 13.420_m, 4.980_m}},
-    {9, {300_deg-90_deg, 12.710_m, 4.970_m, 12.430_m, 4.800_m}},
-    {10, {0_deg-90_deg, 4.190_m, 12.080_m, 3.860_m, 12.080_m}},
-    {11, {60_deg-90_deg, 12.430_m, 3.260_m, 12.720_m, 3.100_m}}
-  };
+    {6, {120_deg-90_deg, 13.410_m, 3.100_m, 13.700_m, 3.260_m, 30_deg}},
+    {7, {180_deg-90_deg, 14.060_m, 3.860_m, 14.060_m, 4.190_m, 30_deg}},
+    {8, {240_deg-90_deg, 13.700_m, 4.800_m, 13.420_m, 4.980_m, 30_deg}},
+    {9, {300_deg-90_deg, 12.710_m, 4.970_m, 12.430_m, 4.800_m, 30_deg}},
+    {10, {0_deg-90_deg, 4.190_m, 12.080_m, 3.860_m, 12.080_m, 30_deg}},
+    {11, {60_deg-90_deg, 12.430_m, 3.260_m, 12.720_m, 3.100_m, 30_deg}}
 
+};
   //+9.4418
   photon::PhotonTrackedTarget _lastReefTag;
   std::string _cameraName = "photonvision_5584";
@@ -98,7 +100,7 @@ std::map<int, ReefPositions> tagToReefPositions = {
   photon::PhotonCamera _camera{_cameraName};
   photon::PhotonCameraSim _cameraSim{&_camera}; // For simulation
 
-  frc::Transform3d _botToCam{{300_mm, 300_mm, 200_mm}, {0_deg, 0_deg, 117_deg}};
+  frc::Transform3d _botToCam{{-100_mm, 200_mm, 1000_mm}, {0_deg, 45_deg, 90_deg}};
   std::string _tagLayoutPath = frc::filesystem::GetDeployDirectory() + "/2025-reefscape.json";
   frc::AprilTagFieldLayout _tagLayout{_tagLayoutPath};
 
@@ -110,7 +112,5 @@ std::map<int, ReefPositions> tagToReefPositions = {
     photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
     _botToCam
   };
-
-  photon::PhotonTrackedTarget _latestTarget = photon::PhotonTrackedTarget();
 };
 
