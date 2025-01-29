@@ -74,77 +74,8 @@ frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
 }
 
 void RobotContainer::ConfigureBindings() {
-  //DRIVER
-  //Bumpers
-  _driverController.LeftBumper().WhileTrue(cmd::YAlignWithTarget(1, _driverController)); //temp
-  _driverController.RightBumper().WhileTrue(cmd::YAlignWithTarget(2, _driverController)); //temp
-
-  //Letters
-  _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
-  _driverController.X().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
-  /*_driverController.RightTrigger().WhileTrue(cmd::AlignToSource(_driverController));*/
-  _driverController.A().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
-  _driverController.B().WhileTrue(cmd::YAlignWithTarget(2, _driverController));
-    //POV / d-pad
-
-  //Triggers
-  _operatorController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
-  _operatorController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor().AlongWith(SubFunnel::GetInstance().StopFunnelMotor()));
-  _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromGround());
-  _operatorController.RightTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
-  _operatorController.POVRight().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
-  _operatorController.POVLeft().WhileTrue(cmd::RemoveAlgae());
-
-  //Bumpers
-
-
-  //Letters
-  _driverController.A().WhileTrue(SubDrivebase::GetInstance().WheelCharecterisationCmd()); //Wheel characterisation
-  _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
-  _driverController.X().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
-  // _driverController.B().ToggleOnTrue(frc2::cmd::StartEnd(
-  //   [this] { _cameraStream.SetPath("/dev/video1"); }, //Toggle to second camera (climb cam)
-  //   [this] { _cameraStream.SetPath("/dev/video0"); } //Toggle to first camera (drive cam)
-  // ));
-  
-
-  //Opperator
-
-  //Triggers
-  frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
-    return (_operatorController.GetLeftY() > 0.2);
-  }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
-
-  frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
-    return (_operatorController.GetLeftY() < -0.2);
-  }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
-
-
-  //Bumpers
-
-
-  //Letters
-   _operatorController.A().OnTrue(SubElevator::GetInstance().CmdSetL1());
-   _operatorController.X().OnTrue(SubElevator::GetInstance().CmdSetL2());
-   _operatorController.B().OnTrue(SubElevator::GetInstance().CmdSetL3());
-   _operatorController.Y().OnTrue(SubElevator::GetInstance().CmdSetL4());
-   _operatorController.LeftBumper().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
-  //  _operatorController.RightBumper().OnTrue(SubElevator::GetInstance().ZeroElevator().IgnoringDisable(true));
-   _operatorController.RightBumper().WhileTrue(SubElevator::GetInstance().Climb());
-  //POV
-  // _operatorController.POVUp().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
-  // _operatorController.POVDown().WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
-  _operatorController.POVDown().WhileTrue(SubElevator::GetInstance().CmdSetSource());
-
-  
-
-
-
-  // _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise camera object
-
-  //Rumble controller when end effector line break triggers
-  SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnFalse(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
-  SubEndEffector::GetInstance().CheckLineBreakTriggerLower().OnFalse(ControllerRumbleLeft(_driverController).WithTimeout(0.1_s));
+  _driverController.A().OnTrue(SubIntake::GetInstance().Stow());
+  _driverController.B().OnTrue(SubIntake::GetInstance().Deploy());
 }
 
 // Controller rumble functions
@@ -159,3 +90,4 @@ frc2::CommandPtr RobotContainer::ControllerRumbleRight(frc2::CommandXboxControll
       [this, &controller] { controller.SetRumble(frc::XboxController::RumbleType::kLeftRumble, 1.0); },
       [this, &controller] { controller.SetRumble(frc::XboxController::RumbleType::kLeftRumble, 0); });
 }
+
