@@ -105,8 +105,8 @@ std::map<int, ReefPositions> tagToReefPositions = {
 
   photon::PhotonPoseEstimator _robotPoseEstimater{
     _tagLayout,
-    photon::PoseStrategy::LOWEST_AMBIGUITY,
-    // Change to: photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
+    // photon::PoseStrategy::LOWEST_AMBIGUITY,
+    photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
     _botToCam
   };
 
