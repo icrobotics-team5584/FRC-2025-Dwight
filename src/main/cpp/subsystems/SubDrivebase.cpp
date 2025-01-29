@@ -182,47 +182,18 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
   return frc::ChassisSpeeds{forwardSpeed, sidewaysSpeed, rotationSpeed};
 }
 
-frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeedsEndEffectorForward(frc2::CommandXboxController& controller) {
-  std::string path = "Drivebase/Config/";
-  auto deadband = Logger::Tune(path + "Joystick Deadband", JOYSTICK_DEADBAND);
-  auto maxVelocity = Logger::Tune(path + "Max Velocity", MAX_VELOCITY);
-  auto maxAngularVelocity = Logger::Tune(path + "Max Angular Velocity", MAX_ANGULAR_VELOCITY);
-  auto maxJoystickAccel = Logger::Tune(path + "Max Joystick Accel", MAX_JOYSTICK_ACCEL);
-  auto maxAngularJoystickAccel =
-      Logger::Tune(path + "Max Joystick Angular Accel", MAX_ANGULAR_JOYSTICK_ACCEL);
-
-  // Recreate slew rate limiters if limits have changed
-  if (maxJoystickAccel != _tunedMaxJoystickAccel) {
-    _xStickLimiter = frc::SlewRateLimiter<units::scalar>{maxJoystickAccel / 1_s};
-    _yStickLimiter = frc::SlewRateLimiter<units::scalar>{maxJoystickAccel / 1_s};
-    _tunedMaxJoystickAccel = maxJoystickAccel;
-  }
-  if (maxAngularJoystickAccel != _tunedMaxAngularJoystickAccel) {
-    _rotStickLimiter = frc::SlewRateLimiter<units::scalar>{maxAngularJoystickAccel / 1_s};
-    _tunedMaxAngularJoystickAccel = maxAngularJoystickAccel;
-  }
-
-  
-
-  // Apply deadbands
-  double forwardStick = frc::ApplyDeadband(-controller.GetLeftY(), deadband);
-  double sidewaysStick = frc::ApplyDeadband(-controller.GetLeftX(), deadband);
-  double rotationStick = frc::ApplyDeadband(-controller.GetRightX(), deadband);
-
-  // Apply joystick rate limits
-  auto forwardSpeed = _yStickLimiter.Calculate(forwardStick) * maxVelocity;
-  auto sidewaysSpeed = _xStickLimiter.Calculate(sidewaysStick) * maxVelocity;
-  auto rotationSpeed = _rotStickLimiter.Calculate(rotationStick) * maxAngularVelocity;
-
-  return frc::ChassisSpeeds{-sidewaysSpeed, forwardSpeed, rotationSpeed};
-}
-
 frc2::CommandPtr SubDrivebase::JoystickDrive(frc2::CommandXboxController& controller) {
   return Drive([this, &controller] { return CalcJoystickSpeeds(controller); }, true);
 }
 
 frc2::CommandPtr SubDrivebase::RobotCentricDrive(frc2::CommandXboxController& controller) {
-  return {SubDrivebase::GetInstance().Drive([&controller] {return SubDrivebase::GetInstance().CalcJoystickSpeedsEndEffectorForward(controller);}, false)};
+  return {SubDrivebase::GetInstance().Drive([this, &controller] 
+  {
+    auto speeds = CalcJoystickSpeeds(controller);
+    std::swap(speeds.vx, speeds.vy);
+
+    return speeds;
+  }, false)};
 }
 
 frc2::CommandPtr SubDrivebase::Drive(std::function<frc::ChassisSpeeds()> speeds,
