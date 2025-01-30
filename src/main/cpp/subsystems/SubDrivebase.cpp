@@ -283,6 +283,8 @@ units::meters_per_second_t SubDrivebase::GetVelocity() {
   auto speeds = _kinematics.ToChassisSpeeds(_frontLeft.GetState(), _frontRight.GetState(),
                                             _backLeft.GetState(), _backRight.GetState());
   namespace m = units::math;
+  Logger::Log("Drivebase/speeds/vx", speeds.vx);
+  Logger::Log("Drivebase/speeds/vy", speeds.vy);
   return m::sqrt(m::pow<2>(speeds.vx) + m::pow<2>(speeds.vy));
 }
 
@@ -345,7 +347,7 @@ bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
   auto currentPose = _poseEstimator.GetEstimatedPosition();
   auto rotError = currentPose.Rotation() - pose.Rotation();
   auto posError = currentPose.Translation().Distance(pose.Translation());
-
+  auto velocity = GetVelocity();
   DisplayPose("current pose", currentPose);
   DisplayPose("target pose", pose);
   
@@ -354,7 +356,8 @@ bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
 
   frc::SmartDashboard::PutBoolean("Drivebase/IsAtPose", units::math::abs(rotError.Degrees()) < 1_deg && posError < 2_cm);
 
-  if (units::math::abs(rotError.Degrees()) < 1_deg && posError < 2_cm) {
+  if (units::math::abs(rotError.Degrees()) < 1_deg && posError < 2_cm && velocity < 0.0001_mps
+  ) {
     return true;
   } else {
     return false;
