@@ -46,8 +46,10 @@ frc2::CommandPtr AddVisionMeasurement() {
         frc::SmartDashboard::PutBoolean("Vision/has value", estimatedPose.has_value());
         if (estimatedPose.has_value() && frc::DriverStation::IsTeleop()) {
           auto estimatedPoseValue = estimatedPose.value();
+          double d = SubVision::GetInstance().GetLastDev();
+          wpi::array<double,3> dev = {d, d, 0.0};
           SubDrivebase::GetInstance().AddVisionMeasurement(
-              estimatedPoseValue.estimatedPose.ToPose2d(), 0, estimatedPoseValue.timestamp);
+              estimatedPoseValue.estimatedPose.ToPose2d(), estimatedPoseValue.timestamp, dev);
           SubDrivebase::GetInstance().DisplayPose("EstimatedPose",
                                                   estimatedPoseValue.estimatedPose.ToPose2d());
         } else {

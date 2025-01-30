@@ -13,6 +13,7 @@
 #include <photon/simulation/VisionSystemSim.h>
 #include <photon/PhotonPoseEstimator.h>
 #include <frc/Filesystem.h>
+#include <wpi/interpolating_map.h>
 
 class SubVision : public frc2::SubsystemBase {
 public:
@@ -38,8 +39,7 @@ public:
 
   frc::Pose2d GetSourcePose(int tagId);
 
-
-
+  double GetLastDev();
 
  private:
  /**
@@ -97,7 +97,7 @@ std::map<int, ReefPositions> tagToReefPositions = {
   photon::PhotonCamera _camera{_cameraName};
   photon::PhotonCameraSim _cameraSim{&_camera}; // For simulation
 
-  frc::Transform3d _botToCam{{300_mm, 300_mm, 200_mm}, {0_deg, 0_deg, 117_deg}};
+  frc::Transform3d _botToCam{{330_mm,250_mm,150_mm},{0_deg,0_deg,115_deg}};//{{300_mm, 300_mm, 200_mm}, {0_deg, 0_deg, 117_deg}};
   std::string _tagLayoutPath = frc::filesystem::GetDeployDirectory() + "/2025-reefscape.json";
   frc::AprilTagFieldLayout _tagLayout{_tagLayoutPath};
 
@@ -109,6 +109,10 @@ std::map<int, ReefPositions> tagToReefPositions = {
     photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
     _botToCam
   };
+
+  wpi::interpolating_map<units::meter_t, double> _devTable;
+
+  double lastDev = 0.0;
 
   photon::PhotonTrackedTarget _latestTarget = photon::PhotonTrackedTarget();
 };

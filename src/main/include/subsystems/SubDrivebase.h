@@ -30,7 +30,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   void SimulationPeriodic() override;
 
   // Instantaneous functions
-  void AddVisionMeasurement(frc::Pose2d pose, double ambiguity, units::second_t timeStamp);
+  void AddVisionMeasurement(frc::Pose2d pose, units::second_t timeStamp, wpi::array<double,3> dev);
   void ResetGyroHeading(units::degree_t startingAngle = 0_deg);
   void DisplayTrajectory(std::string name, frc::Trajectory trajectory);
   void SetNeutralMode(bool mode);

@@ -10,12 +10,25 @@
 #include <photon/estimation/CameraTargetRelation.h>
 
 SubVision::SubVision() {
+  // Pitch table set up
+  _devTable.insert(0_m, 0.03);
+  _devTable.insert(0.5_m, 0.05);
+  _devTable.insert(1_m, 0.1);
+  _devTable.insert(2_m, 0.2);
+  _devTable.insert(3_m, 0.3);
+  _devTable.insert(4_m, 0.4);
+  _devTable.insert(5_m, 0.5);
+
+  // Robot pose estimater
   _robotPoseEstimater.SetMultiTagFallbackStrategy(photon::PoseStrategy::LOWEST_AMBIGUITY);
 
-  _visionSim.AddAprilTags(_tagLayout);  // Configure vision sim
+
+  // Sim set up
+  _visionSim.AddAprilTags(_tagLayout);
   _visionSim.AddCamera(&_cameraSim, _botToCam);
 
-  for (auto target : _visionSim.GetVisionTargets()) {  // Add AprilTags to field visualization
+  // Display tags on field
+  for (auto target : _visionSim.GetVisionTargets()) {
     SubDrivebase::GetInstance().DisplayPose(
         fmt::format("tag{}", target.fiducialId),
         target.GetPose().ToPose2d());
@@ -28,7 +41,6 @@ SubVision::SubVision() {
 
 void SubVision::Periodic() {
   frc::SmartDashboard::PutNumber("Vision/LastReefTag", _lastReefTag.GetFiducialId());
-  auto result = _camera.GetLatestResult();
   auto results = _camera.GetAllUnreadResults();
   UpdatePoseEstimator(results);
   UpdateLatestTags(results);
@@ -46,6 +58,11 @@ void SubVision::UpdatePoseEstimator(std::vector<photon::PhotonPipelineResult> re
   }
   for (auto result : results) {
     _pose = _robotPoseEstimater.Update(result);  // Get estimate pose of robot by vision
+    auto distance = result.GetBestTarget().GetBestCameraToTarget().Translation().Distance(frc::Translation3d(0_m,0_m,0_m));
+    lastDev = _devTable[distance];
+    frc::SmartDashboard::PutNumber("Vision/distance to tag", distance.value());
+    frc::SmartDashboard::PutNumber("Vision/target", result.GetBestTarget().fiducialId);
+    frc::SmartDashboard::PutNumber("Vision/dev", lastDev);
   }
 }
 
@@ -139,4 +156,8 @@ bool SubVision::CheckValid(std::optional<photon::EstimatedRobotPose> pose) {
   }
 
   return true;
+}
+
+double SubVision::GetLastDev() {
+  return lastDev;
 }
