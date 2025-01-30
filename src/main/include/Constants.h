@@ -26,10 +26,16 @@ namespace canid {
     constexpr int elevatorMotor1 = 13;
     constexpr int elevatorMotor2 = 14;
 
+    constexpr int climberMotor = 18;
+
 
 }
 
 namespace dio {
     constexpr int EndEffectorLineBreakHigher = 3;  
     constexpr int EndEffectorLineBreakLower = 2;
+}
+
+namespace math {
+    constexpr double pi = 3.14159265358979323846;
 }

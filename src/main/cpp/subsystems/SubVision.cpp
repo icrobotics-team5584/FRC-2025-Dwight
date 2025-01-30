@@ -10,12 +10,15 @@
 #include <photon/estimation/CameraTargetRelation.h>
 
 SubVision::SubVision() {
+  _robotPoseEstimater.SetMultiTagFallbackStrategy(photon::PoseStrategy::LOWEST_AMBIGUITY);
+
   _visionSim.AddAprilTags(_tagLayout);  // Configure vision sim
   _visionSim.AddCamera(&_cameraSim, _botToCam);
 
   for (auto target : _visionSim.GetVisionTargets()) {  // Add AprilTags to field visualization
-    SubDrivebase::GetInstance().DisplayPose(fmt::format("tag{}", target.fiducialId),
-                                            target.GetPose().ToPose2d());
+    SubDrivebase::GetInstance().DisplayPose(
+        fmt::format("tag{}", target.fiducialId),
+        target.GetPose().ToPose2d());
   }
 
   // Call this once just to get rid of the warnings that it is unused.
@@ -46,6 +49,7 @@ void SubVision::UpdatePoseEstimator(std::vector<photon::PhotonPipelineResult> re
 }
 
 void SubVision::UpdateLatestTags(std::vector<photon::PhotonPipelineResult> results) {
+  if (results.size() == 0) {return;}
   for (auto result : results) {
     if (result.HasTargets()) {
       _latestTarget = result.GetBestTarget();
