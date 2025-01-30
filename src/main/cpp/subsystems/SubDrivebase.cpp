@@ -168,8 +168,6 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
     _tunedMaxAngularJoystickAccel = maxAngularJoystickAccel;
   }
 
-  
-
   // Apply deadbands
   double rawTranslationY = frc::ApplyDeadband(-controller.GetLeftY(), deadband);
   double rawTranslationX = frc::ApplyDeadband(-controller.GetLeftX(), deadband);
@@ -194,52 +192,17 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
   auto rotationSpeed = _rotStickLimiter.Calculate(scaledRotation) * maxAngularVelocity;
 
   // Dashboard things
-  frc::SmartDashboard::PutNumber("Drivebase/Scaling/rawTranslationY", rawTranslationY);
-  frc::SmartDashboard::PutNumber("Drivebase/Scaling/rawTranslationX", rawTranslationX);
-  frc::SmartDashboard::PutNumber("Drivebase/Scaling/rawTranslationR", rawTranslationR);
-  frc::SmartDashboard::PutNumber("Drivebase/Scaling/translationTheta", translationTheta*(180/3.141592653589793238463));
-  frc::SmartDashboard::PutNumber("Drivebase/Scaling/scaledTranslationR", scaledTranslationR);
-  frc::SmartDashboard::PutNumber("Drivebase/Scaling/scaledTranslationY", scaledTranslationY);
-  frc::SmartDashboard::PutNumber("Drivebase/Scaling/scaledTranslationX", scaledTranslationX);
-  frc::SmartDashboard::PutNumber("Drivebase/Scaling/rawRotation", rawRotation);
-  frc::SmartDashboard::PutNumber("Drivebase/Scaling/scaledRotation", scaledRotation);
+  frc::SmartDashboard::PutNumber("Drivebase/Joystick Scaling/rawTranslationY", rawTranslationY);
+  frc::SmartDashboard::PutNumber("Drivebase/Joystick Scaling/rawTranslationX", rawTranslationX);
+  frc::SmartDashboard::PutNumber("Drivebase/Joystick Scaling/rawTranslationR", rawTranslationR);
+  frc::SmartDashboard::PutNumber("Drivebase/Joystick Scaling/translationTheta (degrees)", translationTheta*(180/3.141592653589793238463)); //Multiply by 180/pi to convert radians to degrees
+  frc::SmartDashboard::PutNumber("Drivebase/Joystick Scaling/scaledTranslationR", scaledTranslationR);
+  frc::SmartDashboard::PutNumber("Drivebase/Joystick Scaling/scaledTranslationY", scaledTranslationY);
+  frc::SmartDashboard::PutNumber("Drivebase/Joystick Scaling/scaledTranslationX", scaledTranslationX);
+  frc::SmartDashboard::PutNumber("Drivebase/Joystick Scaling/rawRotation", rawRotation);
+  frc::SmartDashboard::PutNumber("Drivebase/Joystick Scaling/scaledRotation", scaledRotation);
 
   return frc::ChassisSpeeds{forwardSpeed, sidewaysSpeed, rotationSpeed};
-}
-
-frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeedsEndEffectorForward(frc2::CommandXboxController& controller) {
-  std::string path = "Drivebase/Config/";
-  auto deadband = Logger::Tune(path + "Joystick Deadband", JOYSTICK_DEADBAND);
-  auto maxVelocity = Logger::Tune(path + "Max Velocity", MAX_VELOCITY);
-  auto maxAngularVelocity = Logger::Tune(path + "Max Angular Velocity", MAX_ANGULAR_VELOCITY);
-  auto maxJoystickAccel = Logger::Tune(path + "Max Joystick Accel", MAX_JOYSTICK_ACCEL);
-  auto maxAngularJoystickAccel =
-      Logger::Tune(path + "Max Joystick Angular Accel", MAX_ANGULAR_JOYSTICK_ACCEL);
-
-  // Recreate slew rate limiters if limits have changed
-  if (maxJoystickAccel != _tunedMaxJoystickAccel) {
-    _xStickLimiter = frc::SlewRateLimiter<units::scalar>{maxJoystickAccel / 1_s};
-    _yStickLimiter = frc::SlewRateLimiter<units::scalar>{maxJoystickAccel / 1_s};
-    _tunedMaxJoystickAccel = maxJoystickAccel;
-  }
-  if (maxAngularJoystickAccel != _tunedMaxAngularJoystickAccel) {
-    _rotStickLimiter = frc::SlewRateLimiter<units::scalar>{maxAngularJoystickAccel / 1_s};
-    _tunedMaxAngularJoystickAccel = maxAngularJoystickAccel;
-  }
-
-  
-
-  // Apply deadbands
-  double forwardStick = frc::ApplyDeadband(-controller.GetLeftY(), deadband);
-  double sidewaysStick = frc::ApplyDeadband(-controller.GetLeftX(), deadband);
-  double rotationStick = frc::ApplyDeadband(-controller.GetRightX(), deadband);
-
-  // Apply joystick rate limits
-  auto forwardSpeed = _yStickLimiter.Calculate(forwardStick) * maxVelocity;
-  auto sidewaysSpeed = _xStickLimiter.Calculate(sidewaysStick) * maxVelocity;
-  auto rotationSpeed = _rotStickLimiter.Calculate(rotationStick) * maxAngularVelocity;
-
-  return frc::ChassisSpeeds{-sidewaysSpeed, forwardSpeed, rotationSpeed};
 }
 
 frc2::CommandPtr SubDrivebase::JoystickDrive(frc2::CommandXboxController& controller) {
