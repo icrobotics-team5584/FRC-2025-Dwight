@@ -33,6 +33,7 @@ public:
   void UpdateLatestTags(std::vector<photon::PhotonPipelineResult> results);
 
   units::degree_t GetReefTagAngle();
+  double GetReefArea();
   frc::Pose2d GetReefPose(int side);
 
   std::optional<photon::EstimatedRobotPose> GetPose();
@@ -94,6 +95,7 @@ std::map<int, ReefPositions> tagToReefPositions = {
 };
   //+9.4418
   photon::PhotonTrackedTarget _lastReefTag;
+  double _lastReefArea;
   std::string _cameraName = "photonvision_5584";
 
   photon::PhotonCamera _camera{_cameraName};
