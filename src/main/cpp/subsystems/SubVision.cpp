@@ -105,6 +105,16 @@ frc::Pose2d SubVision::GetReefPose(int side = 1) {
   return targPose;
 }
 
+units::degree_t SubVision::GetReefAlignAngle(int side = 1) {
+  int reefTagID = _lastReefTag.GetFiducialId();
+  if (side == 1) {
+    return tagToReefPositions[reefTagID].leftScoreAngle;
+  } else {
+    return tagToReefPositions[reefTagID].rightScoreAngle;
+  }
+  return 0_deg;
+}
+
 units::degree_t SubVision::GetReefTagAngle(){
   return _lastReefTag.GetYaw()*1_deg;
 }

@@ -44,7 +44,7 @@ frc2::CommandPtr ForceAlignWithTarget(int side, frc2::CommandXboxController& con
   return SubDrivebase::GetInstance().Drive(
       [side, &controller] {
         if (SubVision::GetInstance().GetReefArea() > 3.5) {
-        units::degree_t goalAngle = side == 1 ? Logger::Tune("Vision/Vision align left angle target",11.2_deg) : Logger::Tune("Vision/Vision align right angle target",-20_deg); // 16.45 for left reef face, 15.60_deg for front reef face (all left side so far) // 15.60,-20
+        units::degree_t goalAngle = side == 1 ? SubVision::GetInstance().GetReefAlignAngle(1) : SubVision::GetInstance().GetReefAlignAngle(2); // 16.45 for left reef face, 15.60_deg for front reef face (all left side so far) // 15.60,-20
         units::degree_t tagAngle = SubVision::GetInstance().GetReefTagAngle();
         units::degree_t error = tagAngle - goalAngle;
         units::meters_per_second_t overallVelocity = std::clamp(0.145_mps * error.value(),-0.3_mps,0.3_mps);
