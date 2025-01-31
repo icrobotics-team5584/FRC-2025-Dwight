@@ -30,14 +30,15 @@ RobotContainer::RobotContainer() {
 
   // registar named commands
 
-  //.AndThen(cmd::YAutonAlignWithTarget(1)).WithName("AlignWithTarget") vision is smucked (once fixed replace )
-  pathplanner::NamedCommands::registerCommand("Score-WithVision", SubElevator::GetInstance().CmdSetL4().WithName("CmdSetL4")
+  pathplanner::NamedCommands::registerCommand("Score-WithVision", frc2::cmd::Wait(2.0_s) //.AndThen(cmd::YAutonAlignWithTarget(1)) // vision is smucked (once fixed replace )
+    .AndThen(SubElevator::GetInstance().CmdSetL4().WithName("CmdSetL4"))
     .AndThen(SubElevator::GetInstance().CmdSetL4().WithName("CmdSetL4"))
     .AndThen(SubEndEffector::GetInstance().ScoreCoral().WithName("ScoreCoral"))
   );
 
   //.AndThen(cmd::ForceAlignWithTarget(1, _driverController).WithName("AutonAlignToSource"))
-  pathplanner::NamedCommands::registerCommand("IntakeSource-WithVision", SubElevator::GetInstance().CmdSetSource().WithName("CmdSetSource")
+  pathplanner::NamedCommands::registerCommand("IntakeSource-WithVision", frc2::cmd::Wait(2.0_s)
+    .AndThen(SubElevator::GetInstance().CmdSetSource().WithName("CmdSetSource"))
     .AndThen(SubEndEffector::GetInstance().IntakeFromSource().WithName("IntakeFromSource"))
 );
 
