@@ -85,7 +85,7 @@ frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   //return pathplanner::PathPlannerAuto("test auto").ToPtr();
   auto _autoSelected = _autoChooser.GetSelected();
   
-  return SubElevator::GetInstance().ElevatorAutoReset().AlongWith(pathplanner::PathPlannerAuto(_autoSelected).ToPtr());
+  return SubElevator::GetInstance().ElevatorAutoReset().AndThen(pathplanner::PathPlannerAuto(_autoSelected).ToPtr());
 }
 
 void RobotContainer::ConfigureBindings() {
