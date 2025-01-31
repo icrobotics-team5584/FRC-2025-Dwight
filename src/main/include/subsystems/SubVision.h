@@ -75,7 +75,7 @@ public:
   };
 
 std::map<int, ReefPositions> tagToReefPositions = {
-    {17, {60_deg-90_deg, 3.675_m, 2.965_m, 3.960_m, 2.800_m}},
+    {17, {60_deg-90_deg, 3.529_m, 2.805_m, 3.820_m, 2.671_m}}, //{17, {0_deg, 3.470_m, 2_m, 3.470_m, 2_m}},
     {18, {0_deg-90_deg, 3.150_m, 4.190_m, 3.150_m, 3.870_m}},
     {19, {300_deg-90_deg, 3.960_m, 5.250_m, 3.690_m, 5.090_m}},
     {20, {240_deg-90_deg, 5.290_m, 5.095_m, 5.020_m, 5.250_m}},
@@ -105,8 +105,8 @@ std::map<int, ReefPositions> tagToReefPositions = {
 
   photon::PhotonPoseEstimator _robotPoseEstimater{
     _tagLayout,
-    photon::PoseStrategy::LOWEST_AMBIGUITY,
-    // Change to: photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
+    // photon::PoseStrategy::LOWEST_AMBIGUITY,
+    photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
     _botToCam
   };
 

@@ -75,6 +75,7 @@ class SubDrivebase : public frc2::SubsystemBase {
 
   // Constants
   static constexpr units::meters_per_second_t MAX_VELOCITY = 5_mps;
+  static constexpr units::meters_per_second_t MAX_DRIVE_TO_POSE_VELOCITY = 1_mps;
   static constexpr units::turns_per_second_t MAX_ANGULAR_VELOCITY = 720_deg_per_s;
   static constexpr units::turns_per_second_squared_t MAX_ANG_ACCEL{std::numbers::pi};
   static constexpr double MAX_JOYSTICK_ACCEL = 3;
@@ -117,7 +118,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc::SwerveDriveKinematics<4> _kinematics{_frontLeftLocation, _frontRightLocation,
                                             _backLeftLocation, _backRightLocation};
 
-  frc::PIDController _teleopTranslationController{Logger::Tune("tuner/TeleopP", 5.0), Logger::Tune("tuner/TeleopI", 0.0), Logger::Tune("tuner/TeleopD", 50.0)};
+  frc::PIDController _teleopTranslationController{1.7,0.0,0.0};
   frc::ProfiledPIDController<units::radian> _teleopRotationController{
       3, 0, 0.2, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
   std::shared_ptr<pathplanner::PPHolonomicDriveController> _pathplannerController =

@@ -16,10 +16,6 @@ using namespace frc2::cmd;
  * @return A command that will align to the tag when executed.
  */
 
-//CHANGE WNEN VISION IS MERGED TO MAIN
-frc2::CommandPtr AlignToTarget(units::meter_t offset) {
-  return RunOnce([]{return 0;});
-}
 
 
 }
