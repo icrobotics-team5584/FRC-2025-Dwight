@@ -45,7 +45,6 @@ class SubDrivebase : public frc2::SubsystemBase {
   bool IsAtPose(frc::Pose2d pose);
   frc::ChassisSpeeds CalcDriveToPoseSpeeds(frc::Pose2d targetPose);
   frc::ChassisSpeeds CalcJoystickSpeeds(frc2::CommandXboxController& controller);
-  frc::ChassisSpeeds CalcJoystickSpeedsEndEffectorForward(frc2::CommandXboxController& controller);
   units::turns_per_second_t CalcRotateSpeed(units::turn_t rotationError);
   units::degree_t GetPitch();
   frc::Pose2d GetPose();
@@ -76,9 +75,12 @@ class SubDrivebase : public frc2::SubsystemBase {
   static constexpr units::meters_per_second_t MAX_DRIVE_TO_POSE_VELOCITY = 1_mps;
   static constexpr units::turns_per_second_t MAX_ANGULAR_VELOCITY = 720_deg_per_s;
   static constexpr units::turns_per_second_squared_t MAX_ANG_ACCEL{std::numbers::pi};
+  
   static constexpr double MAX_JOYSTICK_ACCEL = 3;
   static constexpr double MAX_ANGULAR_JOYSTICK_ACCEL = 3;
   static constexpr double JOYSTICK_DEADBAND = 0.08;
+  static constexpr double TRANSLATION_R_SCALING = 2; //Set to 1 for linear scaling
+  static constexpr double ROTATION_R_SCALING = 2; //Set to 1 for linear scaling
 
  private:
   void Drive(units::meters_per_second_t xSpeed, units::meters_per_second_t ySpeed,
