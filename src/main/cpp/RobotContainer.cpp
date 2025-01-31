@@ -28,15 +28,16 @@ RobotContainer::RobotContainer() {
   SubVision::GetInstance();
   SubIntake::GetInstance();
 
-  // registar named commands                                                                                                  // replace with L4 score command
-  pathplanner::NamedCommands::registerCommand("Score-WithVision", SubElevator::GetInstance().ElevatorAutoReset()
-    .AndThen(cmd::YAutonAlignWithTarget(1)).WithName("AlignWithTarget")
+  // registar named commands
+
+  //.AndThen(cmd::YAutonAlignWithTarget(1)).WithName("AlignWithTarget") vision is smucked (once fixed replace )
+  pathplanner::NamedCommands::registerCommand("Score-WithVision", SubElevator::GetInstance().CmdSetL4().WithName("CmdSetL4")
     .AndThen(SubElevator::GetInstance().CmdSetL4().WithName("CmdSetL4"))
     .AndThen(SubEndEffector::GetInstance().ScoreCoral().WithName("ScoreCoral"))
   );
-  pathplanner::NamedCommands::registerCommand("IntakeSource-WithVision", SubElevator::GetInstance().ElevatorAutoReset().WithName("ElevatorAutoReset")
-    .AndThen(cmd::ForceAlignWithTarget(1, _driverController).WithName("AutonAlignToSource"))
-    .AndThen(SubElevator::GetInstance().CmdSetSource().WithName("CmdSetSource"))
+
+  //.AndThen(cmd::ForceAlignWithTarget(1, _driverController).WithName("AutonAlignToSource"))
+  pathplanner::NamedCommands::registerCommand("IntakeSource-WithVision", SubElevator::GetInstance().CmdSetSource().WithName("CmdSetSource")
     .AndThen(SubEndEffector::GetInstance().IntakeFromSource().WithName("IntakeFromSource"))
 );
 
@@ -82,10 +83,8 @@ RobotContainer::RobotContainer() {
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   //return pathplanner::PathPlannerAuto("test auto").ToPtr();
   auto _autoSelected = _autoChooser.GetSelected();
-  units::second_t delay = 0.00_s;
   
-  return frc2::cmd::Wait(delay)
-    .AndThen(pathplanner::PathPlannerAuto(_autoSelected).ToPtr());
+  return SubElevator::GetInstance().ElevatorAutoReset().AlongWith(pathplanner::PathPlannerAuto(_autoSelected).ToPtr());
 }
 
 void RobotContainer::ConfigureBindings() {
