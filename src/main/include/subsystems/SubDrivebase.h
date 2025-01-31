@@ -91,7 +91,6 @@ class SubDrivebase : public frc2::SubsystemBase {
 
   ctre::phoenix6::configs::Pigeon2Configuration _gyroConfig;
   ctre::phoenix6::hardware::Pigeon2 _gyro{canid::pigeon2};
-  ctre::phoenix6::configs::MountPoseConfigs _mountPoseConfig;
 
   // Swerve modules
   frc::Translation2d _frontLeftLocation{+0.281_m, +0.281_m};

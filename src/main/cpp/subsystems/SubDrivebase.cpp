@@ -145,12 +145,9 @@ void SubDrivebase::ResetPathplannerRotationFeedbackSource() {
 }
 
 void SubDrivebase::ConfigPigeon2(){
-  _mountPoseConfig.WithMountPosePitch(0_deg)
-  .WithMountPoseRoll(0_deg)
-  .WithMountPoseYaw(0_deg);
-
-  _gyroConfig.WithMountPose(_mountPoseConfig);
-
+  _gyroConfig.MountPose.MountPosePitch = 0_deg;  
+  _gyroConfig.MountPose.MountPoseRoll = 0_deg;  
+  _gyroConfig.MountPose.MountPoseYaw = 0_deg;
   _gyro.GetConfigurator().Apply(_gyroConfig);
 }
 
@@ -414,7 +411,7 @@ void SubDrivebase::SetNeutralMode(bool mode) {
 }
 
 units::degree_t SubDrivebase::GetPitch() {
-  return (_gyro.GetPitch().GetValue().value() * 1_deg);
+  return (_gyro.GetPitch().GetValue());
 }
 
 frc2::CommandPtr SubDrivebase::WheelCharecterisationCmd() {
