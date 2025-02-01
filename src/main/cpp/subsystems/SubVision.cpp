@@ -47,26 +47,32 @@ void SubVision::UpdatePoseEstimator(std::vector<photon::PhotonPipelineResult> re
     _pose = _robotPoseEstimater.Update(result);  // Get estimate pose of robot by vision
   }
 }
-
 void SubVision::UpdateLatestTags(std::vector<photon::PhotonPipelineResult> results) {
-  if (results.size() == 0) {return;}
-  for (auto result : results) {
-    if (result.HasTargets()) {
-      _latestTarget = result.GetBestTarget();
-      frc::SmartDashboard::PutNumber("Vision/Target", _latestTarget.GetFiducialId());
-      if (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) {
-        if (std::find(std::begin(redReef), std::end(redReef), _latestTarget.GetFiducialId()) !=
-            std::end(redReef)) {
-          _lastReefTag = _latestTarget;
-        }
-      } else {
-        if (std::find(std::begin(blueReef), std::end(blueReef), _latestTarget.GetFiducialId()) !=
-            std::end(blueReef)) {
-          _lastReefTag = _latestTarget;
+  std::string currentlyVisibleTagIDs;
+  std::optional<photon::PhotonTrackedTarget> largestTarget;
+  double largestArea = 0.0;
+  const auto& myReef =
+      (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) ? redReef : blueReef;
+
+  for (const auto& result : results) {
+    for (const auto& target : result.targets) {
+      currentlyVisibleTagIDs += std::to_string(target.GetFiducialId()) + " ";
+      double targetArea = target.GetArea();
+
+      if (std::find(myReef.begin(), myReef.end(), target.GetFiducialId()) != myReef.end()) {
+        if (targetArea > largestArea) {
+          largestTarget = target;
+          largestArea = targetArea;
         }
       }
     }
   }
+
+  if (largestTarget) {
+    _lastReefTag = *largestTarget;
+  }
+
+  frc::SmartDashboard::PutString("Vision/Currently visible tags", currentlyVisibleTagIDs);
 }
 
 std::optional<photon::EstimatedRobotPose> SubVision::GetPose() {
@@ -110,6 +116,10 @@ frc::Pose2d SubVision::GetAutonReefPose(int side) {
                 tagToReefPositions[reefTagID].angle};
   }
   return targPose;
+}
+
+units::degree_t SubVision::GetReefTagAngle(){
+  return _lastReefTag.GetYaw()*1_deg;
 }
 
 bool SubVision::CheckValid(std::optional<photon::EstimatedRobotPose> pose) {

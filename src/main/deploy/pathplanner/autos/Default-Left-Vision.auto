@@ -23,6 +23,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "IntakeSource-WithVision"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "DL-CycleToReef-Vision.0"

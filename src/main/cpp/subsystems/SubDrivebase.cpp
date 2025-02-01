@@ -132,6 +132,7 @@ void SubDrivebase::SimulationPeriodic() {
   auto br = _backRight.GetPosition();
 
   _simPoseEstimator.Update(GetGyroAngle(), {fl, fr, bl, br});
+  _simPoseEstimator.ResetRotation(GetPose().Rotation());
   DisplayPose("Sim final pose v3 for real", _simPoseEstimator.GetEstimatedPosition());
 }
 
@@ -310,6 +311,8 @@ units::meters_per_second_t SubDrivebase::GetVelocity() {
   auto speeds = _kinematics.ToChassisSpeeds(_frontLeft.GetState(), _frontRight.GetState(),
                                             _backLeft.GetState(), _backRight.GetState());
   namespace m = units::math;
+  Logger::Log("Drivebase/speeds/vx", speeds.vx);
+  Logger::Log("Drivebase/speeds/vy", speeds.vy);
   return m::sqrt(m::pow<2>(speeds.vx) + m::pow<2>(speeds.vy));
 }
 
@@ -343,12 +346,20 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   auto xSpeed = _teleopTranslationController.Calculate(currentXMeters, targetXMeters) * 1_mps;
   auto ySpeed = _teleopTranslationController.Calculate(currentYMeters, targetYMeters) * 1_mps;
   auto rSpeed = CalcRotateSpeed(currentRotation - targetRotation);
+  
+  // frc::PIDController _driveToPoseTranslationController{1.7,0.5,0.0};
+  // frc::ProfiledPIDController<units::radian> _driveToPoseRotationController{3,0.5,0.2, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
+  // auto xSpeed = _driveToPoseTranslationController.Calculate(currentXMeters, targetXMeters) * 1_mps;
+  // auto ySpeed = _driveToPoseTranslationController.Calculate(currentYMeters, targetYMeters) * 1_mps;
+  // auto rSpeed = _driveToPoseRotationController.Calculate(currentRotation - targetRotation, 0_deg) * 1_rad_per_s; 
 
-  // Clamp to max velocity
+  // Clamp to max velocity & angular velocity
   xSpeed = units::math::min(xSpeed, MAX_DRIVE_TO_POSE_VELOCITY); //Max_Velocity
   xSpeed = units::math::max(xSpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
   ySpeed = units::math::min(ySpeed, MAX_DRIVE_TO_POSE_VELOCITY);
   ySpeed = units::math::max(ySpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
+  // rSpeed = units::math::min(rSpeed, MAX_ANGULAR_VELOCITY);
+  // rSpeed = units::math::max(rSpeed, -MAX_ANGULAR_VELOCITY);
 
   frc::SmartDashboard::PutNumber("CalcDriveLogs/xSpeed", -xSpeed.value());
   frc::SmartDashboard::PutNumber("CalcDriveLogs/ySpeed", ySpeed.value());
@@ -372,7 +383,7 @@ bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
   auto currentPose = _poseEstimator.GetEstimatedPosition();
   auto rotError = currentPose.Rotation() - pose.Rotation();
   auto posError = currentPose.Translation().Distance(pose.Translation());
-
+  auto velocity = GetVelocity();
   DisplayPose("current pose", currentPose);
   DisplayPose("target pose", pose);
   
@@ -381,7 +392,8 @@ bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
 
   frc::SmartDashboard::PutBoolean("Drivebase/IsAtPose", units::math::abs(rotError.Degrees()) < 1_deg && posError < 2_cm);
 
-  if (units::math::abs(rotError.Degrees()) < 1_deg && posError < 2_cm) {
+  if (units::math::abs(rotError.Degrees()) < 1_deg && posError < 2_cm && velocity < 0.0001_mps
+  ) {
     return true;
   } else {
     return false;
@@ -423,7 +435,6 @@ void SubDrivebase::DisplayTrajectory(std::string name, frc::Trajectory trajector
 
 void SubDrivebase::AddVisionMeasurement(frc::Pose2d pose, double ambiguity,
                                         units::second_t timeStamp) {
-  frc::SmartDashboard::PutNumber("Timestamp", timeStamp.value());
   _poseEstimator.AddVisionMeasurement(frc::Pose2d{pose.X(), pose.Y(), GetPose().Rotation()}, timeStamp);
 }
 

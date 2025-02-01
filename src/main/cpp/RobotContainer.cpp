@@ -28,14 +28,16 @@ RobotContainer::RobotContainer() {
   SubVision::GetInstance();
   SubIntake::GetInstance();
 
-  // registar named commands                                                                                                  // replace with L4 score command
-  pathplanner::NamedCommands::registerCommand("Score-WithVision", SubElevator::GetInstance().ElevatorAutoReset()
-    .AndThen(cmd::YAutonAlignWithTarget(1)).WithName("AlignWithTarget")
+  // registar named commands
+
+  pathplanner::NamedCommands::registerCommand("Score-WithVision", frc2::cmd::Wait(2.0_s) //.AndThen(cmd::YAutonAlignWithTarget(1)) // vision is smucked (once fixed replace )
+    .AndThen(SubElevator::GetInstance().CmdSetL4().WithName("CmdSetL4"))
     .AndThen(SubElevator::GetInstance().CmdSetL4().WithName("CmdSetL4"))
     .AndThen(SubEndEffector::GetInstance().ScoreCoral().WithName("ScoreCoral"))
   );
-  pathplanner::NamedCommands::registerCommand("IntakeSource-WithVision", SubElevator::GetInstance().ElevatorAutoReset().WithName("ElevatorAutoReset")
-    .AndThen(cmd::AutonAlignToSource().WithName("AutonAlignToSource"))
+
+  //.AndThen(cmd::ForceAlignWithTarget(1, _driverController).WithName("AutonAlignToSource"))
+  pathplanner::NamedCommands::registerCommand("IntakeSource-WithVision", frc2::cmd::Wait(2.0_s)
     .AndThen(SubElevator::GetInstance().CmdSetSource().WithName("CmdSetSource"))
     .AndThen(SubEndEffector::GetInstance().IntakeFromSource().WithName("IntakeFromSource"))
 );
@@ -82,10 +84,8 @@ RobotContainer::RobotContainer() {
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   //return pathplanner::PathPlannerAuto("test auto").ToPtr();
   auto _autoSelected = _autoChooser.GetSelected();
-  units::second_t delay = 0.00_s;
   
-  return frc2::cmd::Wait(delay)
-    .AndThen(pathplanner::PathPlannerAuto(_autoSelected).ToPtr());
+  return SubElevator::GetInstance().ElevatorAutoReset().AlongWith(pathplanner::PathPlannerAuto(_autoSelected).ToPtr());
 }
 
 void RobotContainer::ConfigureBindings() {
@@ -96,7 +96,9 @@ void RobotContainer::ConfigureBindings() {
   // ));
   _driverController.X().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
-  _driverController.RightTrigger().OnTrue(SubEndEffector::GetInstance().ScoreCoral());
+  _driverController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
+  _driverController.RightBumper().WhileTrue(SubEndEffector::GetInstance().IntakeFromSource());
+  _driverController.A().WhileTrue(cmd::ForceAlignWithTarget(1, _driverController));
 
 
   //Opperator
@@ -112,10 +114,10 @@ void RobotContainer::ConfigureBindings() {
   _operatorController.A().OnTrue(SubElevator::GetInstance().CmdSetL1());
   _operatorController.X().OnTrue(SubElevator::GetInstance().CmdSetL2());
   _operatorController.B().OnTrue(SubElevator::GetInstance().CmdSetL3());
-  _operatorController.Y().OnTrue(SubElevator::GetInstance().CmdSetL4());
+  _driverController.LeftBumper().OnTrue(SubElevator::GetInstance().CmdSetL4());
   
-  _operatorController.POVLeft().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
-  _operatorController.POVRight().OnTrue(SubElevator::GetInstance().CmdSetSource());
+  _driverController.POVLeft().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
+  _driverController.POVRight().OnTrue(SubElevator::GetInstance().CmdSetSource());
   // _operatorController.POVUp.OnTrue()
   // _operatorController.POVDown.OnTrue()
   
