@@ -1,7 +1,6 @@
 #pragma once
 
 #include <frc2/command/SubsystemBase.h>
-#include <studica/AHRS.h>
 #include <frc/geometry/Translation2d.h>
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <frc/kinematics/SwerveDriveOdometry.h>
@@ -18,6 +17,8 @@
 #include <frc2/command/sysid/SysIdRoutine.h>
 #include "utilities/BotVars.h"
 #include "utilities/RobotLogs.h"
+#include <ctre/phoenix6/core/CorePigeon2.hpp>
+#include <ctre/phoenix6/Pigeon2.hpp>
 
 class SubDrivebase : public frc2::SubsystemBase {
  public:
@@ -40,6 +41,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   void SyncSensors();
   void SetPathplannerRotationFeedbackSource(std::function<units::turns_per_second_t()> rotationFeedbackSource);
   void ResetPathplannerRotationFeedbackSource();
+  void ConfigPigeon2();
 
   // Getters
   bool IsAtPose(frc::Pose2d pose);
@@ -88,7 +90,9 @@ class SubDrivebase : public frc2::SubsystemBase {
              std::optional<std::array<units::newton_t, 4>> xForceFeedforwards = std::nullopt,
              std::optional<std::array<units::newton_t, 4>> yForceFeedforwards = std::nullopt);
 
-  studica::AHRS _gyro{studica::AHRS::NavXComType::kUSB1};
+
+  ctre::phoenix6::configs::Pigeon2Configuration _gyroConfig;
+  ctre::phoenix6::hardware::Pigeon2 _gyro{canid::pigeon2};
 
   // Swerve modules
   frc::Translation2d _frontLeftLocation{+0.281_m, +0.281_m};
