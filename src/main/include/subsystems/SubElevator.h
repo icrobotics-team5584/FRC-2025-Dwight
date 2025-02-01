@@ -65,7 +65,6 @@ class SubElevator : public frc2::SubsystemBase {
   //reset
   bool Reseting = false;
   bool Reseted = false;
-
   bool ResetM1 = false; 
 
 
@@ -100,7 +99,6 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr units::meters_per_second_t _CRUISE_VELOCITY = 1.75_mps; //0.82; //Adjust
   static constexpr units::meters_per_second_squared_t  _ACCELERATION = 6_mps_sq; //Adjust
   static constexpr units::ampere_t zeroingCurrentLimit = 15_A;
-
 
 
 
