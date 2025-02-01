@@ -9,6 +9,7 @@
 #include <frc2/command/button/CommandXboxController.h>
 
 
+
 namespace cmd {
   /**
    * Command to align to Apriltag with y offset (to match left or right of reef)
@@ -17,4 +18,5 @@ namespace cmd {
   frc2::CommandPtr AddVisionMeasurement();
   frc2::CommandPtr AlignToSource(frc2::CommandXboxController &controller);
   frc2::CommandPtr AutoShootIfAligned(int side);
+  frc2::CommandPtr ForceAlignWithTarget(int side, frc2::CommandXboxController &controller);
 }

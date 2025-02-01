@@ -132,6 +132,7 @@ void SubDrivebase::SimulationPeriodic() {
   auto br = _backRight.GetPosition();
 
   _simPoseEstimator.Update(GetGyroAngle(), {fl, fr, bl, br});
+  _simPoseEstimator.ResetRotation(GetPose().Rotation());
   DisplayPose("Sim final pose v3 for real", _simPoseEstimator.GetEstimatedPosition());
 }
 
@@ -310,6 +311,8 @@ units::meters_per_second_t SubDrivebase::GetVelocity() {
   auto speeds = _kinematics.ToChassisSpeeds(_frontLeft.GetState(), _frontRight.GetState(),
                                             _backLeft.GetState(), _backRight.GetState());
   namespace m = units::math;
+  Logger::Log("Drivebase/speeds/vx", speeds.vx);
+  Logger::Log("Drivebase/speeds/vy", speeds.vy);
   return m::sqrt(m::pow<2>(speeds.vx) + m::pow<2>(speeds.vy));
 }
 
@@ -372,7 +375,7 @@ bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
   auto currentPose = _poseEstimator.GetEstimatedPosition();
   auto rotError = currentPose.Rotation() - pose.Rotation();
   auto posError = currentPose.Translation().Distance(pose.Translation());
-
+  auto velocity = GetVelocity();
   DisplayPose("current pose", currentPose);
   DisplayPose("target pose", pose);
   
@@ -381,7 +384,8 @@ bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
 
   frc::SmartDashboard::PutBoolean("Drivebase/IsAtPose", units::math::abs(rotError.Degrees()) < 1_deg && posError < 2_cm);
 
-  if (units::math::abs(rotError.Degrees()) < 1_deg && posError < 2_cm) {
+  if (units::math::abs(rotError.Degrees()) < 1_deg && posError < 2_cm && velocity < 0.0001_mps
+  ) {
     return true;
   } else {
     return false;
@@ -422,8 +426,7 @@ void SubDrivebase::DisplayTrajectory(std::string name, frc::Trajectory trajector
 
 void SubDrivebase::AddVisionMeasurement(frc::Pose2d pose, double ambiguity,
                                         units::second_t timeStamp) {
-  frc::SmartDashboard::PutNumber("Timestamp", timeStamp.value());
-  _poseEstimator.AddVisionMeasurement(frc::Pose2d{pose.X(), pose.Y(), GetPose().Rotation()}, timeStamp);
+  _poseEstimator.AddVisionMeasurement(frc::Pose2d{pose.X(), pose.Y(), GetPose().Rotation()}, timeStamp, {0.9, 0.9, 10000000}); //large number prevents updating pose with camera angle, because it sucks.
 }
 
 void SubDrivebase::SetNeutralMode(bool mode) {
