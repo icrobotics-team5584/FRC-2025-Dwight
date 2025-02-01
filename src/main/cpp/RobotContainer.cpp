@@ -81,10 +81,9 @@ void RobotContainer::ConfigureBindings() {
   // ));
   _driverController.X().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
-  _driverController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
-  _driverController.RightBumper().WhileTrue(SubEndEffector::GetInstance().IntakeFromSource());
   _driverController.A().WhileTrue(cmd::ForceAlignWithTarget(1, _driverController));
   _driverController.B().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
+  _driverController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
 
 
   //Opperator
@@ -100,10 +99,10 @@ void RobotContainer::ConfigureBindings() {
   _operatorController.A().OnTrue(SubElevator::GetInstance().CmdSetL1());
   _operatorController.X().OnTrue(SubElevator::GetInstance().CmdSetL2());
   _operatorController.B().OnTrue(SubElevator::GetInstance().CmdSetL3());
-  _driverController.LeftBumper().OnTrue(SubElevator::GetInstance().CmdSetL4());
+  _operatorController.Y().OnTrue(SubElevator::GetInstance().CmdSetL4());
   
-  _driverController.POVLeft().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
-  _driverController.POVRight().OnTrue(SubElevator::GetInstance().CmdSetSource());
+  _operatorController.POVLeft().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
+  _operatorController.POVRight().OnTrue(SubElevator::GetInstance().CmdSetSource());
   // _operatorController.POVUp.OnTrue()
   // _operatorController.POVDown.OnTrue()
   
