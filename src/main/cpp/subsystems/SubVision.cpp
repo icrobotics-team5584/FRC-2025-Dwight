@@ -70,8 +70,7 @@ void SubVision::UpdateLatestTags(std::vector<photon::PhotonPipelineResult> resul
 
   if (largestTarget) {
     _lastReefTag = *largestTarget;
-    _lastReefArea = largestArea;
-  }
+      }
 
   frc::SmartDashboard::PutString("Vision/Currently visible tags", currentlyVisibleTagIDs);
 }
@@ -120,7 +119,7 @@ units::degree_t SubVision::GetReefTagAngle(){
 }
 
 double SubVision::GetReefArea() {
-  return _lastReefArea;
+  return  _lastReefTag.GetArea();
 }
 
 bool SubVision::CheckValid(std::optional<photon::EstimatedRobotPose> pose) {
