@@ -29,17 +29,20 @@ RobotContainer::RobotContainer() {
   SubIntake::GetInstance();
 
   // registar named commands
-
-  pathplanner::NamedCommands::registerCommand("Score-WithVision", frc2::cmd::Wait(2.0_s) //.AndThen(cmd::YAutonAlignWithTarget(1)) // vision is smucked (once fixed replace )
-    .AndThen(SubElevator::GetInstance().CmdSetL4().WithName("CmdSetL4"))
-    .AndThen(SubElevator::GetInstance().CmdSetL4().WithName("CmdSetL4"))
-    .AndThen(SubEndEffector::GetInstance().ScoreCoral().WithName("ScoreCoral"))
+  pathplanner::NamedCommands::registerCommand("Score-WithVision", frc2::cmd::Wait(1.0_s) //.AndThen(cmd::YAutonAlignWithTarget(1)) // vision is smucked (once fixed replace )
+    .AndThen(SubElevator::GetInstance().CmdSetL4().WithName("CmdSetL4").AndThen(frc2::cmd::WaitUntil([]{
+    return SubElevator::GetInstance().IsAtTarget() == true;})))
+    .AndThen(frc2::cmd::Wait(0.2_s))
+    .AndThen(SubEndEffector::GetInstance().ScoreCoral().WithName("ScoreCoral").WithTimeout(2_s))
+    .AndThen(SubElevator::GetInstance().CmdSetSource().WithName("CmdSetSource"))
+    .AndThen(frc2::cmd::Wait(0.2_s))
   );
 
   //.AndThen(cmd::ForceAlignWithTarget(1, _driverController).WithName("AutonAlignToSource"))
   pathplanner::NamedCommands::registerCommand("IntakeSource-WithVision", frc2::cmd::Wait(2.0_s)
     .AndThen(SubElevator::GetInstance().CmdSetSource().WithName("CmdSetSource"))
-    .AndThen(SubEndEffector::GetInstance().IntakeFromSource().WithName("IntakeFromSource"))
+    .Until([]{return SubElevator::GetInstance().IsAtTarget() == true;})
+    .AndThen(SubEndEffector::GetInstance().IntakeFromSource().WithName("IntakeFromSource").WithTimeout(1_s))
 );
 
   // Default Commands
@@ -85,7 +88,7 @@ frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   //return pathplanner::PathPlannerAuto("test auto").ToPtr();
   auto _autoSelected = _autoChooser.GetSelected();
   
-  return SubElevator::GetInstance().ElevatorAutoReset().AlongWith(pathplanner::PathPlannerAuto(_autoSelected).ToPtr());
+  return SubElevator::GetInstance().ElevatorAutoReset().AndThen(pathplanner::PathPlannerAuto(_autoSelected).ToPtr());
 }
 
 void RobotContainer::ConfigureBindings() {
