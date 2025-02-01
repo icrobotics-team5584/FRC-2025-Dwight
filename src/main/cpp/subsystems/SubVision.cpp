@@ -70,7 +70,7 @@ void SubVision::UpdateLatestTags(std::vector<photon::PhotonPipelineResult> resul
 
   if (largestTarget) {
     _lastReefTag = *largestTarget;
-      }
+  }
 
   frc::SmartDashboard::PutString("Vision/Currently visible tags", currentlyVisibleTagIDs);
 }
