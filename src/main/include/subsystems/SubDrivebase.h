@@ -75,7 +75,9 @@ class SubDrivebase : public frc2::SubsystemBase {
   // Constants
   static constexpr units::meters_per_second_t MAX_VELOCITY = 5_mps;
   static constexpr units::meters_per_second_t MAX_DRIVE_TO_POSE_VELOCITY = 1_mps;
-  static constexpr units::turns_per_second_t MAX_ANGULAR_VELOCITY = 720_deg_per_s;
+  static constexpr units::turns_per_second_t MAX_ANGULAR_VELOCITY = 360_deg_per_s; //CHANGE TO 720\[]
+
+
   static constexpr units::turns_per_second_squared_t MAX_ANG_ACCEL{std::numbers::pi};
   
   static constexpr double MAX_JOYSTICK_ACCEL = 3;

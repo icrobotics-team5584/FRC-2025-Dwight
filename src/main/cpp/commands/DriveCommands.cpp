@@ -15,7 +15,4 @@ using namespace frc2::cmd;
  * @param offset The y offset from the tag to align to, in meters.
  * @return A command that will align to the tag when executed.
  */
-
-
-
 }

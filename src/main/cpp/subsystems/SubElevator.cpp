@@ -31,6 +31,9 @@ SubElevator::SubElevator() {
     _motorConfig.Voltage.PeakForwardVoltage = 0_V;
     _motorConfig.Voltage.PeakReverseVoltage = -0_V;
 
+    //Brake Mode
+    _motorConfig.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+
     // invert motors
     _motorConfig.MotorOutput.Inverted = true;
 
