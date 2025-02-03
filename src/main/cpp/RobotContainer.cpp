@@ -87,7 +87,6 @@ void RobotContainer::ConfigureBindings() {
 
 
   //Opperator
-
   frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
     return (_operatorController.GetLeftY() > 0.2);
   }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
