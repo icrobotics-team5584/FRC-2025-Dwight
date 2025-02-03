@@ -28,8 +28,8 @@ SubElevator::SubElevator() {
     _motorConfig.Slot0.kG = _G;
 
     // Voltage Configuration
-    _motorConfig.Voltage.PeakForwardVoltage = 12_V;
-    _motorConfig.Voltage.PeakReverseVoltage = -12_V;
+    _motorConfig.Voltage.PeakForwardVoltage = 0_V;
+    _motorConfig.Voltage.PeakReverseVoltage = -0_V;
 
     //Brake Mode
     _motorConfig.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
@@ -153,6 +153,12 @@ void SubElevator::EnableSoftLimit(bool enabled) {
 
     
     
+    // Configure the forward soft limit for elevatorMotor1
+    _motorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    _elevatorMotor1.GetConfigurator().Apply(_motorConfig);
+      
+    // Configure the reverse soft limit for elevatorMotor2
+    _elevatorMotor1.GetConfigurator().Apply(_motorConfig);
 }
 
 frc2::CommandPtr SubElevator::ElevatorToClimbHeight() {
@@ -169,8 +175,14 @@ frc2::CommandPtr SubElevator::Climb() {
 }
 
 frc2::CommandPtr SubElevator::ManualElevatorMovementUP() {
-  return frc2::cmd::StartEnd(
-      [this] { _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(4_V)); },
+  return frc2::cmd::RunEnd(
+      [this] {
+        auto currentHeight = HeightFromRotations(_elevatorMotor1.GetPosition(true).GetValue());
+        if(currentHeight < _L4_HEIGHT){
+            _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(4_V));}
+        else{
+            _elevatorMotor1.StopMotor();
+        }},
       [this] {
         auto targHeight = HeightFromRotations(_elevatorMotor1.GetPosition(true).GetValue());
         _elevatorMotor1.SetControl(controls::PositionVoltage(RotationsFromHeight(targHeight)).WithEnableFOC(true));
@@ -178,8 +190,14 @@ frc2::CommandPtr SubElevator::ManualElevatorMovementUP() {
     }
 
 frc2::CommandPtr SubElevator::ManualElevatorMovementDOWN() {
-  return frc2::cmd::StartEnd(
-      [this] { _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-4_V)); },
+  return frc2::cmd::RunEnd(
+      [this] { 
+        auto currentHeight = HeightFromRotations(_elevatorMotor1.GetPosition(true).GetValue());
+        if(currentHeight > _MIN_HEIGHT + 0.1_m){
+            _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-4_V));}
+        else{
+            _elevatorMotor1.StopMotor();
+        }},
       [this] {
         auto targHeight = HeightFromRotations(_elevatorMotor1.GetPosition(true).GetValue());
         _elevatorMotor1.SetControl(controls::PositionVoltage(RotationsFromHeight(targHeight)).WithEnableFOC(true));
@@ -232,14 +250,30 @@ bool SubElevator::IsAtTarget() {
     }
 }
 
+void SubElevator::SetMotorVoltageLimits12V(){
+    _motorConfig.Voltage.PeakForwardVoltage = 12_V;
+    _motorConfig.Voltage.PeakReverseVoltage = 12_V;
+    _elevatorMotor1.GetConfigurator().Apply(_motorConfig);
+    _elevatorMotor2.GetConfigurator().Apply(_motorConfig);
+}
+
+void SubElevator::CheckAndChangeCurrentLimitIfReset(){
+    if (ResetM1 == false) {
+        _motorConfig.Voltage.PeakForwardVoltage = 0_V;
+        _motorConfig.Voltage.PeakReverseVoltage = 0_V;
+        _elevatorMotor1.GetConfigurator().Apply(_motorConfig);
+        _elevatorMotor2.GetConfigurator().Apply(_motorConfig);
+    }
+}
 //Auto elevator reset by bringing elevator to zero position then reset (can be used in tele-op)
 frc2::CommandPtr SubElevator::ElevatorAutoReset() {
     return frc2::cmd::RunOnce([this] { Reseting = true; EnableSoftLimit(false);})
+        .AndThen([this] {SetMotorVoltageLimits12V();})
         .AndThen(ManualElevatorMovementDOWNSLOW())
         .AndThen(ElevatorResetCheck())
         .AndThen(ZeroElevator())
         .AndThen([this] {Stop();})
-        .FinallyDo([this] {EnableSoftLimit(true);} );
+        .FinallyDo([this] {EnableSoftLimit(true); CheckAndChangeCurrentLimitIfReset();} );
         }
 
 //Stop motor
@@ -250,6 +284,7 @@ void SubElevator::Stop() {
 // This method will be called once per scheduler run
 void SubElevator::Periodic() {
     Logger::LogFalcon("Elevator/Motor1", _elevatorMotor1);
+
     Logger::LogFalcon("Elevator/Motor2", _elevatorMotor2);
     Logger::Log("Elevator/Motor1/Height", HeightFromRotations(_elevatorMotor1.GetPosition().GetValue()));
     Logger::Log("Elevator/Motor2/Height", HeightFromRotations(_elevatorMotor2.GetPosition().GetValue()));
