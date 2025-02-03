@@ -38,11 +38,11 @@ frc2::CommandPtr YAlignWithTarget(int side, frc2::CommandXboxController& control
           [] { return frc::ChassisSpeeds{0_mps, 0.15_mps, 0_deg_per_s}; }, false));
 }
 
-frc2::CommandPtr ForceAlignWithTarget(int side, frc2::CommandXboxController& controller) {
+frc2::CommandPtr ForceAlignWithTarget(int side) {
   // Strafe until the tag is at a known scoring angle, with a small velocity component towards the
   // reef so you stay aligned rotationally and at the right distance.
   return SubDrivebase::GetInstance().Drive(
-      [side, &controller] {
+      [side] {
         if (SubVision::GetInstance().GetReefArea() > 3.5) {
           units::degree_t goalAngle;
           if (Logger::Tune("Vision/use dashbaord target", false)) {
@@ -110,9 +110,23 @@ frc2::CommandPtr AlignToSource(frc2::CommandXboxController& controller) {
       true);
 }
 
+frc2::CommandPtr AlignAndShoot(int side){
+ return ForceAlignWithTarget(side).AlongWith(AutoShootIfAligned(side));
+}
 frc2::CommandPtr AutoShootIfAligned(int side) {
   return Sequence(
-    WaitUntil([side] {return SubDrivebase::GetInstance().IsAtPose(SubVision::GetInstance().GetReefPose(side));}),
+    WaitUntil([side] {
+     units::degree_t goalAngle = SubVision::GetInstance().GetReefAlignAngle(side);
+     units::degree_t tagAngle = SubVision::GetInstance().GetReefTagAngle();
+     if (tagAngle < goalAngle + 0.2_deg && tagAngle > goalAngle - 0.2_deg) {
+       return true;
+     }
+     
+     else {
+     return false;
+     }
+      }),
+    SubElevator::GetInstance().CmdSetL4(),
     WaitUntil([] {return SubElevator::GetInstance().IsAtTarget();}),
     SubEndEffector::GetInstance().ScoreCoral()
   );

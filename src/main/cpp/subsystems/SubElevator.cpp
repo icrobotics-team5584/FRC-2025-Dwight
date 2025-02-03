@@ -220,10 +220,11 @@ frc2::CommandPtr SubElevator::ElevatorStop() {
 }
 
 bool SubElevator::IsAtTarget() {
-    units::meter_t TargetHeight = HeightFromRotations(_elevatorMotor1.GetClosedLoopReference().GetValue()*1_tr);
+    // units::meter_t TargetHeight = HeightFromRotations(_elevatorMotor1.GetClosedLoopReference().GetValue()*1_tr);
     units::meter_t CurrentHeight = HeightFromRotations(_elevatorMotor1.GetPosition().GetValue());
+    units::meter_t TargetHeight = _L4_HEIGHT;
     units::meter_t Tolerance = 0.05_m;
-    if( CurrentHeight > TargetHeight - Tolerance || CurrentHeight < TargetHeight + Tolerance) {
+    if( CurrentHeight > TargetHeight - Tolerance && CurrentHeight < TargetHeight + Tolerance) {
         return true;
     }
 
