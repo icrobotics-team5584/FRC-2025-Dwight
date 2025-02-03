@@ -4,7 +4,8 @@
 
 #include "Robot.h"
 #include "subsystems/SubElevator.h"
-#include "frc/DataLogManager.h"
+#include <frc/DataLogManager.h>
+#include <frc/DriverStation.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/CommandScheduler.h>
 
@@ -14,6 +15,7 @@
 
 Robot::Robot() {
   frc::DataLogManager::Start();
+  frc::DriverStation::StartDataLog(frc::DataLogManager::GetLog());
 }
 
 void Robot::RobotPeriodic() {

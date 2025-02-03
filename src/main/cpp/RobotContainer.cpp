@@ -10,6 +10,7 @@
 
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 #include "subsystems/SubDrivebase.h"
+#include "subsystems/SubClimber.h"
 
 #include "subsystems/SubVision.h"
 #include "commands/VisionCommand.h"

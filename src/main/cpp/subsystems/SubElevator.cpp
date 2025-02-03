@@ -31,6 +31,9 @@ SubElevator::SubElevator() {
     _motorConfig.Voltage.PeakForwardVoltage = 12_V;
     _motorConfig.Voltage.PeakReverseVoltage = -12_V;
 
+    //Brake Mode
+    _motorConfig.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+
     // invert motors
     _motorConfig.MotorOutput.Inverted = true;
 
@@ -113,7 +116,7 @@ units::turn_t SubElevator::RotationsFromHeight(units::meter_t height){
 
 units::meter_t SubElevator::HeightFromRotations(units::turn_t turns) {
     return turns.value() * _DRUM_CIRCUMFERENCE.value() * 1_m;
-}
+};
 
 units::turns_per_second_t SubElevator::RotationsFromMetersPerSecond(units::meters_per_second_t meterspersec){
     return meterspersec.value() / _DRUM_CIRCUMFERENCE.value() * 1_tps;
@@ -214,6 +217,19 @@ frc2::CommandPtr SubElevator::ElevatorResetCheck() {
 //Ptr cmd of Stop()
 frc2::CommandPtr SubElevator::ElevatorStop() {
     return frc2::cmd::RunOnce([this] {SubElevator::GetInstance().Stop();});
+}
+
+bool SubElevator::IsAtTarget() {
+    units::meter_t TargetHeight = HeightFromRotations(_elevatorMotor1.GetClosedLoopReference().GetValue()*1_tr);
+    units::meter_t CurrentHeight = HeightFromRotations(_elevatorMotor1.GetPosition().GetValue());
+    units::meter_t Tolerance = 0.05_m;
+    if( CurrentHeight > TargetHeight - Tolerance || CurrentHeight < TargetHeight + Tolerance) {
+        return true;
+    }
+
+    else {
+        return false;
+    }
 }
 
 //Auto elevator reset by bringing elevator to zero position then reset (can be used in tele-op)

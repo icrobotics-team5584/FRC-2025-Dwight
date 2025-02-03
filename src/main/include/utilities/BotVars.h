@@ -2,7 +2,7 @@
 
 #include <filesystem>
 #include <fstream>
-#include <frc/smartdashboard/smartdashboard.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 #include <string>
 
 namespace BotVars {
