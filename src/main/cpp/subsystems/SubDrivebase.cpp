@@ -243,7 +243,7 @@ void SubDrivebase::Drive(
 ) {
   // Optionally convert speeds to field relative
   auto speeds = fieldRelative
-                    ? frc::ChassisSpeeds::FromFieldRelativeSpeeds(xSpeed, ySpeed, rot, GetHeading())
+                    ? frc::ChassisSpeeds::FromFieldRelativeSpeeds(xSpeed, ySpeed, rot, GetGyroAngle())
                     : frc::ChassisSpeeds{xSpeed, ySpeed, rot};
 
   // Discretize to get rid of translational drift while rotating
@@ -327,8 +327,16 @@ void SubDrivebase::UpdateOdometry() {
   auto bl = _backLeft.GetPosition();
   auto br = _backRight.GetPosition();
 
-  _poseEstimator.Update(GetGyroAngle(), {fl, fr, bl, br});
+  auto alliance = frc::DriverStation::GetAlliance();
+  if (alliance.value_or(frc::DriverStation::Alliance::kBlue) ==
+      frc::DriverStation::Alliance::kBlue) {
+    _poseEstimator.Update(GetGyroAngle(), {fl, fr, bl, br});
+  } else {
+    _poseEstimator.Update(GetGyroAngle() - 180_deg, {fl, fr, bl, br});
+  }
+
   _fieldDisplay.SetRobotPose(_poseEstimator.GetEstimatedPosition());
+
 }
 
 frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
@@ -393,12 +401,11 @@ bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
 }
 
 void SubDrivebase::ResetGyroHeading(units::degree_t startingAngle) {
-  _gyro.Reset();
   _gyro.SetYaw(startingAngle);
 }
 
 frc2::CommandPtr SubDrivebase::ResetGyroCmd() {
-  return RunOnce([this] { _poseEstimator.ResetRotation(0_deg); });
+  return RunOnce([this] { ResetGyroHeading(0_deg); });
 }
 
 frc::Pose2d SubDrivebase::GetPose() {
@@ -413,7 +420,15 @@ void SubDrivebase::SetPose(frc::Pose2d pose) {
   auto fr = _frontRight.GetPosition();
   auto bl = _backLeft.GetPosition();
   auto br = _backRight.GetPosition();
-  _poseEstimator.ResetPosition(GetGyroAngle(), {fl, fr, bl, br}, pose);
+
+  auto alliance = frc::DriverStation::GetAlliance();
+  if (alliance.value_or(frc::DriverStation::Alliance::kBlue) == frc::DriverStation::Alliance::kBlue) {
+    ResetGyroHeading(pose.Rotation().Degrees()); 
+  }
+  else {
+    ResetGyroHeading(pose.Rotation().Degrees() - 180_deg); 
+  }
+  _poseEstimator.ResetPosition(pose.Rotation().Degrees(), {fl, fr, bl, br}, pose);
 }
 
 void SubDrivebase::DisplayPose(std::string label, frc::Pose2d pose) {
@@ -426,7 +441,7 @@ void SubDrivebase::DisplayTrajectory(std::string name, frc::Trajectory trajector
 
 void SubDrivebase::AddVisionMeasurement(frc::Pose2d pose, double ambiguity,
                                         units::second_t timeStamp) {
-  _poseEstimator.AddVisionMeasurement(frc::Pose2d{pose.X(), pose.Y(), GetPose().Rotation()}, timeStamp, {0.9, 0.9, 10000000.0}); //large number prevents updating pose with camera angle, because it sucks.
+  _poseEstimator.AddVisionMeasurement(frc::Pose2d{pose.X(), pose.Y(), GetPose().Rotation()}, timeStamp);
 }
 
 void SubDrivebase::SetNeutralMode(bool mode) {
