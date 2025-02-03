@@ -441,7 +441,7 @@ void SubDrivebase::DisplayTrajectory(std::string name, frc::Trajectory trajector
 
 void SubDrivebase::AddVisionMeasurement(frc::Pose2d pose, double ambiguity,
                                         units::second_t timeStamp) {
-  _poseEstimator.AddVisionMeasurement(frc::Pose2d{pose.X(), pose.Y(), GetPose().Rotation()}, timeStamp, {0.9, 0.9, 10000000.0}); //large number prevents updating pose with camera angle, because it sucks.
+  _poseEstimator.AddVisionMeasurement(frc::Pose2d{pose.X(), pose.Y(), GetPose().Rotation()}, timeStamp);
 }
 
 void SubDrivebase::SetNeutralMode(bool mode) {
