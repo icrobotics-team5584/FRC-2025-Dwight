@@ -20,17 +20,8 @@ using namespace frc2::cmd;
  * @return A command that will align to the tag when executed.
  */
 
-/*
-frc2::CommandPtr AlignToTarget(units::meter_t offset) {
-  return Run([] {
-    SubDrivebase::GetInstance().DriveToPose(
-        frc::Pose2d(frc::Translation2d(0_m, 0_m), frc::Rotation2d(0_deg)));
-  });
-}
 
-*/
-
-frc2::CommandPtr toggleBrakeCoast() {
+frc2::CommandPtr ToggleBrakeCoast() {
   return StartEnd(
              [] {
                SubDrivebase::GetInstance().SetNeutralMode(false);
