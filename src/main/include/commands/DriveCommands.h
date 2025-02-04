@@ -9,10 +9,9 @@
 #include <frc2/command/button/CommandXboxController.h>
 
 namespace cmd {
-  /**
-   * Command to align to Apriltag with y offset (to match left or right of reef)
-   */
-  frc2::CommandPtr AlignToTarget(units::meter_t offset);
-  frc2::CommandPtr toggleBrakeCoast();
+/**
+ * Toggles brake and coast for the drivebase and the climber motor.
+ */
+frc2::CommandPtr ToggleBrakeCoast();
 
-}
+}  // namespace cmd
