@@ -9,8 +9,6 @@
 #include "subsystems/SubClimber.h"
 #include <frc/DriverStation.h>
 
-
-
 namespace cmd {
 using namespace frc2::cmd;
 /**
@@ -19,7 +17,6 @@ using namespace frc2::cmd;
  * @param offset The y offset from the tag to align to, in meters.
  * @return A command that will align to the tag when executed.
  */
-
 
 frc2::CommandPtr ToggleBrakeCoast() {
   return StartEnd(
