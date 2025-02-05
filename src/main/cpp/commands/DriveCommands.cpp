@@ -7,6 +7,7 @@
 #include "subsystems/SubDrivebase.h"
 #include "subsystems/SubVision.h"
 #include "subsystems/SubClimber.h"
+#include "subsystems/SubElevator.h"
 #include <frc/DriverStation.h>
 
 namespace cmd {
@@ -23,10 +24,12 @@ frc2::CommandPtr ToggleBrakeCoast() {
              [] {
                SubDrivebase::GetInstance().SetNeutralMode(false);
                SubClimber::GetInstance().SetBrakeMode(false);
+               SubElevator::GetInstance().SetBrakeMode(false);
              },
              [] {
                SubDrivebase::GetInstance().SetNeutralMode(true);
                SubClimber::GetInstance().SetBrakeMode(true);
+               SubElevator::GetInstance().SetBrakeMode(true);
              })
       .IgnoringDisable(true)
       .Until([] { return frc::DriverStation::IsEnabled(); });
