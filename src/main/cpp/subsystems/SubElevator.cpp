@@ -13,6 +13,7 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/MathUtil.h>
 #include <utilities/RobotLogs.h>
+#include <ctre/phoenix6/configs/Configs.hpp>
 
 using namespace ctre::phoenix6;
 
@@ -279,6 +280,17 @@ frc2::CommandPtr SubElevator::ElevatorAutoReset() {
 //Stop motor
 void SubElevator::Stop() {
   _elevatorMotor1.StopMotor();
+}
+
+void SubElevator::SetBrakeMode(bool mode){
+    if (mode == true) {
+        _elevatorMotor1.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Brake);
+        _elevatorMotor2.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Brake);
+    } else if (mode == false) {
+        _elevatorMotor1.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Coast);
+        _elevatorMotor2.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Coast);
+    }
+
 }
 
 // This method will be called once per scheduler run

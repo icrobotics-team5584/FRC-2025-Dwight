@@ -7,10 +7,11 @@
 #include <units/voltage.h>
 #include "frc/smartdashboard/SmartDashboard.h"
 
+
 SubClimber::SubClimber() {
 
     frc::SmartDashboard::PutData("Climber/Motor", &_climberMotor);
-    rev::spark::SparkBaseConfig _climberMotorConfig;
+    
 
     _climberMotorConfig.encoder.PositionConversionFactor(1/GEAR_RATIO); // change to just GEAR_RATIO instead of 1/GEAR_RATIO for simulation
     _climberMotorConfig.encoder.VelocityConversionFactor(GEAR_RATIO/60.0);
@@ -34,6 +35,17 @@ void SubClimber::Periodic() {
     frc::SmartDashboard::PutNumber("Climber/PositionMotor", (_climberMotor.GetPosition().value()));
     frc::SmartDashboard::PutNumber("Climber/PositionArm", ((_climberMotor.GetPosition().value())/GEAR_RATIO));
     frc::SmartDashboard::PutNumber("Climber/M1Current", GetM1Current().value());
+}
+
+void SubClimber::SetBrakeMode(bool mode){
+    if (mode == true) {
+        _climberMotorConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
+        _climberMotor.AdjustConfigNoPersist(_climberMotorConfig);
+    } else if (mode == false) {
+        _climberMotorConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
+        _climberMotor.AdjustConfigNoPersist(_climberMotorConfig);
+    }
+
 }
 
 //Auto climber reset by bringing Climber to zero position then reset
