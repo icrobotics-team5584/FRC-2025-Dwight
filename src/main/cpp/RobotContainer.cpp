@@ -16,6 +16,8 @@
 #include "subsystems/SubVision.h"
 #include "commands/VisionCommand.h"
 #include "commands/DriveCommands.h"
+#include "commands/AutonCommands.h"
+
 #include <frc/smartdashboard/SmartDashboard.h>
 #include "subsystems/SubEndEffector.h"
 #include "subsystems/SubIntake.h"
@@ -29,21 +31,11 @@ RobotContainer::RobotContainer() {
   SubIntake::GetInstance();
 
   // registar named commands
-  pathplanner::NamedCommands::registerCommand("Score-WithVision", frc2::cmd::Wait(1.0_s) //.AndThen(cmd::YAutonAlignWithTarget(1)) // vision is smucked (once fixed replace )
-    .AndThen(SubElevator::GetInstance().CmdSetL4().WithName("CmdSetL4").AndThen(frc2::cmd::WaitUntil([]{
-    return SubElevator::GetInstance().IsAtTarget() == true;})))
-    .AndThen(frc2::cmd::Wait(0.2_s))
-    .AndThen(SubEndEffector::GetInstance().ScoreCoral().WithName("ScoreCoral").WithTimeout(2_s))
-    .AndThen(SubElevator::GetInstance().CmdSetSource().WithName("CmdSetSource"))
-    .AndThen(frc2::cmd::Wait(0.2_s))
-  );
-
+  pathplanner::NamedCommands::registerCommand("Score-WithVision", cmd::ScoreWithVision());
+  
   //.AndThen(cmd::ForceAlignWithTarget(1, _driverController).WithName("AutonAlignToSource"))
-  pathplanner::NamedCommands::registerCommand("IntakeSource-WithVision", frc2::cmd::Wait(2.0_s)
-    .AndThen(SubElevator::GetInstance().CmdSetSource().WithName("CmdSetSource"))
-    .Until([]{return SubElevator::GetInstance().IsAtTarget() == true;})
-    .AndThen(SubEndEffector::GetInstance().IntakeFromSource().WithName("IntakeFromSource").WithTimeout(1_s))
-);
+  pathplanner::NamedCommands::registerCommand("IntakeSource-WithVision", cmd::IntakeSourceWithVision());
+  
 
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(SubDrivebase::GetInstance().JoystickDrive(_driverController));
