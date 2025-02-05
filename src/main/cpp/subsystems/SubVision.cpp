@@ -22,16 +22,14 @@ SubVision::SubVision() {
   // Robot pose estimater
   _robotPoseEstimater.SetMultiTagFallbackStrategy(photon::PoseStrategy::LOWEST_AMBIGUITY);
 
-
   // Sim set up
   _visionSim.AddAprilTags(_tagLayout);
   _visionSim.AddCamera(&_cameraSim, _botToCam);
 
   // Display tags on field
   for (auto target : _visionSim.GetVisionTargets()) {
-    SubDrivebase::GetInstance().DisplayPose(
-        fmt::format("tag{}", target.fiducialId),
-        target.GetPose().ToPose2d());
+    SubDrivebase::GetInstance().DisplayPose(fmt::format("tag{}", target.fiducialId),
+                                            target.GetPose().ToPose2d());
   }
 
   // Call this once just to get rid of the warnings that it is unused.
@@ -42,8 +40,8 @@ SubVision::SubVision() {
 void SubVision::Periodic() {
   frc::SmartDashboard::PutNumber("Vision/LastReefTag", _lastReefTag.GetFiducialId());
   auto results = _camera.GetAllUnreadResults();
-  UpdatePoseEstimator(results);
   UpdateLatestTags(results);
+  UpdatePoseEstimator(results);
 }
 
 void SubVision::SimulationPeriodic() {
@@ -58,7 +56,8 @@ void SubVision::UpdatePoseEstimator(std::vector<photon::PhotonPipelineResult> re
   }
   for (auto result : results) {
     _pose = _robotPoseEstimater.Update(result);  // Get estimate pose of robot by vision
-    auto distance = result.GetBestTarget().GetBestCameraToTarget().Translation().Distance(frc::Translation3d(0_m,0_m,0_m));
+    auto distance = result.GetBestTarget().GetBestCameraToTarget().Translation().Distance(
+        frc::Translation3d(0_m, 0_m, 0_m));
     lastDev = _devTable[distance];
     frc::SmartDashboard::PutNumber("Vision/distance to tag", distance.value());
     frc::SmartDashboard::PutNumber("Vision/target", result.GetBestTarget().fiducialId);
@@ -68,20 +67,25 @@ void SubVision::UpdatePoseEstimator(std::vector<photon::PhotonPipelineResult> re
 void SubVision::UpdateLatestTags(std::vector<photon::PhotonPipelineResult> results) {
   std::string currentlyVisibleTagIDs;
   std::optional<photon::PhotonTrackedTarget> bestTarget;
-  double largestArea = 0.0;
-  double smallestAngle = 360;
+  double largestArea = 0;
   const auto& myReef =
       (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) ? redReef : blueReef;
 
   for (const auto& result : results) {
     for (const auto& target : result.targets) {
       currentlyVisibleTagIDs += std::to_string(target.GetFiducialId()) + " ";
-      double targetAngle = target.GetYaw();
+      double targetArea = target.GetArea();
+      units::degree_t errorAngle = SubDrivebase::GetInstance().GetPose().Rotation().Degrees() -
+                                   GetReefPose(target.GetFiducialId()).Rotation().Degrees();
+
+      if ((errorAngle > 30_deg || errorAngle < -30_deg) && targetArea < 2) {
+        continue;
+      }
 
       if (std::find(myReef.begin(), myReef.end(), target.GetFiducialId()) != myReef.end()) {
-        if (targetAngle < smallestAngle) {
+        if (targetArea > largestArea) {
           bestTarget = target;
-          smallestAngle = targetAngle;
+          largestArea = targetArea;
         }
       }
     }
@@ -133,12 +137,12 @@ units::degree_t SubVision::GetReefAlignAngle(int side = 1) {
   return 0_deg;
 }
 
-units::degree_t SubVision::GetReefTagAngle(){
-  return _lastReefTag.GetYaw()*1_deg;
+units::degree_t SubVision::GetLastReefTagAngle() {
+  return _lastReefTag.GetYaw() * 1_deg;
 }
 
-double SubVision::GetReefArea() {
-  return  _lastReefTag.GetArea();
+double SubVision::GetLastReefTagArea() {
+  return _lastReefTag.GetArea();
 }
 
 bool SubVision::CheckValid(std::optional<photon::EstimatedRobotPose> pose) {

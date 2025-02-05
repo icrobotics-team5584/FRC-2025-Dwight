@@ -33,8 +33,8 @@ public:
   void UpdatePoseEstimator(std::vector<photon::PhotonPipelineResult> results);
   void UpdateLatestTags(std::vector<photon::PhotonPipelineResult> results);
 
-  units::degree_t GetReefTagAngle();
-  double GetReefArea();
+  units::degree_t GetLastReefTagAngle();
+  double GetLastReefTagArea();
   frc::Pose2d GetReefPose(int side);
   units::degree_t GetReefAlignAngle(int side);
 

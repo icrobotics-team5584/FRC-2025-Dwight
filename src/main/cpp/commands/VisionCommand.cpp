@@ -43,14 +43,14 @@ frc2::CommandPtr ForceAlignWithTarget(int side, frc2::CommandXboxController& con
   // reef so you stay aligned rotationally and at the right distance.
   return SubDrivebase::GetInstance().Drive(
       [side, &controller] {
-        if (SubVision::GetInstance().GetReefArea() > 3.5) {
+        if (SubVision::GetInstance().GetLastReefTagArea() > 3.5) {
           units::degree_t goalAngle;
           if (Logger::Tune("Vision/use dashbaord target", false)) {
             goalAngle = Logger::Tune("Vision/Goal Angle", SubVision::GetInstance().GetReefAlignAngle(1));
           } else {
             goalAngle = SubVision::GetInstance().GetReefAlignAngle(side); // 16.45 for left reef face, 15.60_deg for front reef face (all left side so far) // 15.60,-20
           }
-          units::degree_t tagAngle = SubVision::GetInstance().GetReefTagAngle();
+          units::degree_t tagAngle = SubVision::GetInstance().GetLastReefTagAngle();
           units::degree_t error = tagAngle - goalAngle;
           units::meters_per_second_t overallVelocity = std::clamp(0.12_mps * error.value(),-0.3_mps,0.3_mps);
           units::degree_t driveAngle = units::math::copysign(8_deg, error);
