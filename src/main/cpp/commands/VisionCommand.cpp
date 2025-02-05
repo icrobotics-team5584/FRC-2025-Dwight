@@ -113,6 +113,7 @@ frc2::CommandPtr AlignToSource(frc2::CommandXboxController& controller) {
 frc2::CommandPtr AlignAndShoot(int side){
  return ForceAlignWithTarget(side).AlongWith(AutoShootIfAligned(side));
 }
+
 frc2::CommandPtr AutoShootIfAligned(int side) {
   return Sequence(
     WaitUntil([side] {

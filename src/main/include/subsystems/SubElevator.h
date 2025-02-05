@@ -58,7 +58,7 @@ class SubElevator : public frc2::SubsystemBase {
   void Periodic() override;
   void SimulationPeriodic() override;
 
-
+  int TargetLevel = 1;
 
   //reset
   bool Reseting = false;
