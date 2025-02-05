@@ -284,11 +284,11 @@ void SubElevator::Stop() {
 
 void SubElevator::SetBrakeMode(bool mode){
     if (mode == true) {
-        _elevatorMotor1.SetNeutralMode(1);
-        _elevatorMotor2.SetNeutralMode(1);
+        _elevatorMotor1.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Brake);
+        _elevatorMotor2.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Brake);
     } else if (mode == false) {
-        _elevatorMotor1.SetNeutralMode(0);
-        _elevatorMotor2.SetNeutralMode(0);
+        _elevatorMotor1.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Coast);
+        _elevatorMotor2.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Coast);
     }
 
 }

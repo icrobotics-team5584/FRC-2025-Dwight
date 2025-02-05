@@ -10,8 +10,7 @@
 
 namespace cmd {
 /**
- * Toggles brake and coast for the drivebase and the climber motor.
+ * Toggles brake and coast for the drivebase, climber motor and elevator motors.
  */
 frc2::CommandPtr ToggleBrakeCoast();
-
 }  // namespace cmd
