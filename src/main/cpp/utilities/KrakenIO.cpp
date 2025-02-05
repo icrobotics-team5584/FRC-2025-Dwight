@@ -53,8 +53,6 @@ void KrakenIO::SendSensorsToDash() {
     frc::SmartDashboard::PutNumber(turnMotorName + "voltage", _canTurnMotor.GetMotorVoltage().GetValueAsDouble());
     frc::SmartDashboard::PutNumber(turnMotorName + "target", _canTurnMotor.GetClosedLoopReference().GetValue());
     frc::SmartDashboard::PutNumber(turnMotorName + "error", _canTurnMotor.GetClosedLoopError().GetValue());
-    std::string driveMotorName = "swerve/drive motor/" + std::to_string(_canDriveMotor.GetDeviceID());
-    std::string turnMotorName = "swerve/turn motor/" + std::to_string(_canTurnMotor.GetDeviceID());
 }
 
 void KrakenIO::SetDesiredVelocity(units::meters_per_second_t velocity, units::newton_t forceFF) {
