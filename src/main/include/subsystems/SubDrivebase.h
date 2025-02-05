@@ -35,7 +35,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   void AddVisionMeasurement(frc::Pose2d pose, double ambiguity, units::second_t timeStamp);
   void ResetGyroHeading(units::degree_t startingAngle = 0_deg);
   void DisplayTrajectory(std::string name, frc::Trajectory trajectory);
-  void SetNeutralMode(bool mode);
+  void SetBrakeMode(bool mode);
   void SetPose(frc::Pose2d pose);
   void DisplayPose(std::string label, frc::Pose2d pose);
   void UpdateOdometry();

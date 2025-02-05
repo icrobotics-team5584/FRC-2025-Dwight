@@ -472,7 +472,7 @@ void SubDrivebase::AddVisionMeasurement(frc::Pose2d pose, double ambiguity,
 
 }
 
-void SubDrivebase::SetNeutralMode(bool mode) {
+void SubDrivebase::SetBrakeMode(bool mode) {
   _frontLeft.SetBreakMode(mode);
   _frontRight.SetBreakMode(mode);
   _backLeft.SetBreakMode(mode);

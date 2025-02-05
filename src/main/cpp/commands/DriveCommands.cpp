@@ -22,12 +22,12 @@ using namespace frc2::cmd;
 frc2::CommandPtr ToggleBrakeCoast() {
   return StartEnd(
              [] {
-               SubDrivebase::GetInstance().SetNeutralMode(false);
+               SubDrivebase::GetInstance().SetBrakeMode(false);
                SubClimber::GetInstance().SetBrakeMode(false);
                SubElevator::GetInstance().SetBrakeMode(false);
              },
              [] {
-               SubDrivebase::GetInstance().SetNeutralMode(true);
+               SubDrivebase::GetInstance().SetBrakeMode(true);
                SubClimber::GetInstance().SetBrakeMode(true);
                SubElevator::GetInstance().SetBrakeMode(true);
              })
