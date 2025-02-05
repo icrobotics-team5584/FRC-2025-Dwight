@@ -214,6 +214,11 @@ void SubDrivebase::Drive(
   std::optional<std::array<units::newton_t, 4>> xForceFeedforwards,
   std::optional<std::array<units::newton_t, 4>> yForceFeedforwards
 ) {
+
+  Logger::Log("Drivebase/xSpeedRequest", xSpeed);
+  Logger::Log("Drivebase/ySpeedRequest", ySpeed);
+  Logger::Log("Drivebase/rotSpeedRequest", rot);
+
   // Optionally convert speeds to field relative
   auto speeds = fieldRelative
                     ? frc::ChassisSpeeds::FromFieldRelativeSpeeds(xSpeed, ySpeed, rot, GetHeading())

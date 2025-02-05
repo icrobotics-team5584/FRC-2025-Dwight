@@ -32,7 +32,6 @@ RobotContainer::RobotContainer() {
 
   pathplanner::NamedCommands::registerCommand("Score-WithVision", frc2::cmd::Wait(2.0_s) //.AndThen(cmd::YAutonAlignWithTarget(1)) // vision is smucked (once fixed replace )
     .AndThen(SubElevator::GetInstance().CmdSetL4().WithName("CmdSetL4"))
-    .AndThen(SubElevator::GetInstance().CmdSetL4().WithName("CmdSetL4"))
     .AndThen(SubEndEffector::GetInstance().ScoreCoral().WithName("ScoreCoral"))
   );
 
