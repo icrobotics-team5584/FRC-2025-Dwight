@@ -48,7 +48,7 @@ frc2::CommandPtr YAutonAlignWithTarget(int side) {
   return SubDrivebase::GetInstance()
       .Drive(
           [side] {
-            frc::Pose2d targetPose = SubVision::GetInstance().GetAutonReefPose(side);
+            frc::Pose2d targetPose = SubVision::GetInstance().GetReefPose(side);
             frc::ChassisSpeeds speeds =
                 SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose);
                 //printf("SPEEDS\nvelx:%f_m/s\nvely:%f_m/s\nomega:%f_rad/s\n\n",speeds.vx.value(), speeds.vy.value(), speeds.omega.value());
