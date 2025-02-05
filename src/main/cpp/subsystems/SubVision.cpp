@@ -76,7 +76,7 @@ void SubVision::UpdateLatestTags(std::vector<photon::PhotonPipelineResult> resul
       currentlyVisibleTagIDs += std::to_string(target.GetFiducialId()) + " ";
       double targetArea = target.GetArea();
       units::degree_t errorAngle = SubDrivebase::GetInstance().GetPose().Rotation().Degrees() -
-                                   GetReefPose(target.GetFiducialId()).Rotation().Degrees();
+                                   GetReefPose(target.GetFiducialId()).Rotation().Degrees() - 180_deg;
 
       if ((errorAngle > 30_deg || errorAngle < -30_deg) && targetArea < 2) {
         continue;
