@@ -70,15 +70,27 @@ frc2::CommandPtr ForceAlignWithTarget(int side, frc2::CommandXboxController& con
   return SubDrivebase::GetInstance()
     .Drive(
       [side, &controller] {
-        units::degree_t goalAngle = side == 1 ? 15.60_deg : -20_deg; // 16.45 for left reef face, 15.60_deg for front reef face (all left side so far)
-        units::degree_t tagAngle = SubVision::GetInstance().GetReefTagAngle();
-        units::degree_t error = tagAngle - goalAngle;
-        units::meters_per_second_t overallVelocity = 0.05_mps * error.value();
-        units::degree_t driveAngle = units::math::copysign(3_deg, error);
-        // Calc x and y from known angle and hypotenuse length
-        units::meters_per_second_t xVel = overallVelocity * units::math::cos(driveAngle);
-        units::meters_per_second_t yVel = overallVelocity * units::math::sin(driveAngle);
-        return frc::ChassisSpeeds{xVel, yVel, 0_deg_per_s};
+        if (SubVision::GetInstance().GetReefArea() > 3.5) {
+          units::degree_t goalAngle;
+          if (Logger::Tune("Vision/use dashbaord target", false)) {
+            goalAngle = Logger::Tune("Vision/Goal Angle", SubVision::GetInstance().GetReefAlignAngle(1));
+          } else {
+            goalAngle = SubVision::GetInstance().GetReefAlignAngle(side); // 16.45 for left reef face, 15.60_deg for front reef face (all left side so far) // 15.60,-20
+          }
+          units::degree_t tagAngle = SubVision::GetInstance().GetReefTagAngle();
+          units::degree_t error = tagAngle - goalAngle;
+          units::meters_per_second_t overallVelocity = std::clamp(0.12_mps * error.value(),-0.3_mps,0.3_mps);
+          units::degree_t driveAngle = units::math::copysign(8_deg, error);
+          // Calc x and y from known angle and hypotenuse length
+          units::meters_per_second_t xVel = overallVelocity * units::math::cos(driveAngle);
+          units::meters_per_second_t yVel = overallVelocity * units::math::sin(driveAngle);
+          return frc::ChassisSpeeds{xVel, yVel, 0_deg_per_s};
+        } else {
+          frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(side).Rotation();
+          units::angle::turn_t roterror = SubDrivebase::GetInstance().GetPose().Rotation().Degrees() - targetRotation.Degrees();
+          auto rotationSpeed = SubDrivebase::GetInstance().CalcRotateSpeed(roterror) / 5;
+          return frc::ChassisSpeeds{0_mps, 0.5_mps, rotationSpeed};
+        }
       },
       false);
 }

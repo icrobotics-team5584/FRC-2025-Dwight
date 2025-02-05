@@ -104,22 +104,22 @@ frc::Pose2d SubVision::GetReefPose(int side = 1) {
   return targPose;
 }
 
-frc::Pose2d SubVision::GetAutonReefPose(int side) {
-
+units::degree_t SubVision::GetReefAlignAngle(int side = 1) {
   int reefTagID = _lastReefTag.GetFiducialId();
-  frc::Pose2d targPose;
   if (side == 1) {
-    targPose = {tagToReefPositions[reefTagID].leftX, tagToReefPositions[reefTagID].leftY,
-                tagToReefPositions[reefTagID].angle};
+    return tagToReefPositions[reefTagID].leftScoreAngle;
   } else {
-    targPose = {tagToReefPositions[reefTagID].rightX, tagToReefPositions[reefTagID].rightY,
-                tagToReefPositions[reefTagID].angle};
+    return tagToReefPositions[reefTagID].rightScoreAngle;
   }
-  return targPose;
+  return 0_deg;
 }
 
 units::degree_t SubVision::GetReefTagAngle(){
   return _lastReefTag.GetYaw()*1_deg;
+}
+
+double SubVision::GetReefArea() {
+  return  _lastReefTag.GetArea();
 }
 
 bool SubVision::CheckValid(std::optional<photon::EstimatedRobotPose> pose) {
