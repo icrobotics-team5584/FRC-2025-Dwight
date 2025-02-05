@@ -35,15 +35,33 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Score-WithVision"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "DL-CycleToSource-Vision.0"
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "IntakeSource-WithVision"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "DL-CycleToReef-Vision.0"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score-WithVision"
           }
         }
       ]
