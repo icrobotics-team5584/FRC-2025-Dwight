@@ -69,9 +69,11 @@ class SubElevator : public frc2::SubsystemBase {
   ctre::phoenix6::hardware::TalonFX _elevatorMotor1{canid::elevatorMotor1};
   ctre::phoenix6::hardware::TalonFX _elevatorMotor2{canid::elevatorMotor2};
 
+  // real world PID 30, 0, 0.2
   static constexpr double _P = 30;  // 134.04;
   static constexpr double _I = 0;
   static constexpr double _D = 0.2;
+
   static constexpr double _V = 0;
   static constexpr double _A = 0;
   static constexpr double _G = 0.15;  // 8.6704096794128409086;
@@ -98,7 +100,7 @@ class SubElevator : public frc2::SubsystemBase {
   frc::sim::ElevatorSim _motorSim{frc::DCMotor::Falcon500(2),
                                   _GEAR_RATIO,
                                   _CARRIAGE_MASS,
-                                  _DRUM_RADIUS,
+                                  _DRUM_RADIUS, // sim elevator isnt 2 stage 
                                   _MIN_HEIGHT,
                                   _MAX_HEIGHT,
                                   true,
