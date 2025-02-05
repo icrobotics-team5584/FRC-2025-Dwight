@@ -94,17 +94,17 @@ void RobotContainer::ConfigureBindings() {
   // ));
   _driverController.X().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
-  _driverController.RightTrigger().OnTrue(SubEndEffector::GetInstance().ScoreCoral());
+  _driverController.A().WhileTrue(cmd::ForceAlignWithTarget(1, _driverController));
+  _driverController.B().WhileTrue(cmd::YAlignWithTarget(1, _driverController));
+  _driverController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
 
 
   //Opperator
 
   //Triggers
-  SubDrivebase::GetInstance().CheckCoastButton().ToggleOnTrue(cmd::toggleBrakeCoast());
   frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
     return (_operatorController.GetLeftY() > 0.2);
   }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
-
   // frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
   //   return (_operatorController.GetLeftY() < -0.2);
   // }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
@@ -127,6 +127,7 @@ void RobotContainer::ConfigureBindings() {
   //Rumble controller when end effector line break triggers
   // SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnFalse(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
   SubEndEffector::GetInstance().CheckLineBreakTriggerLower().OnFalse(ControllerRumbleLeft(_driverController).WithTimeout(0.1_s));
+  SubDrivebase::GetInstance().CheckCoastButton().ToggleOnTrue(cmd::toggleBrakeCoast());
 }
 
 // Controller rumble functions

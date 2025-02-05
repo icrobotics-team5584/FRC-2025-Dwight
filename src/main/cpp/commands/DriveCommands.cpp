@@ -27,10 +27,9 @@ frc2::CommandPtr AlignToTarget(units::meter_t offset) {
 }
 
 */
-
-frc2::CommandPtr toggleBrakeCoast() {
-  return StartEnd([] { SubDrivebase::GetInstance().SetNeutralMode(false); },
-                  [] { SubDrivebase::GetInstance().SetNeutralMode(true); })
-      .IgnoringDisable(true);
-}
+  frc2::CommandPtr toggleBrakeCoast() {
+    return StartEnd([] { SubDrivebase::GetInstance().SetNeutralMode(false); },
+                    [] { SubDrivebase::GetInstance().SetNeutralMode(true); })
+        .IgnoringDisable(true);
+  } 
 }  // namespace cmd
