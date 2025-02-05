@@ -67,27 +67,28 @@ void SubVision::UpdatePoseEstimator(std::vector<photon::PhotonPipelineResult> re
 }
 void SubVision::UpdateLatestTags(std::vector<photon::PhotonPipelineResult> results) {
   std::string currentlyVisibleTagIDs;
-  std::optional<photon::PhotonTrackedTarget> largestTarget;
+  std::optional<photon::PhotonTrackedTarget> bestTarget;
   double largestArea = 0.0;
+  double smallestAngle = 360;
   const auto& myReef =
       (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) ? redReef : blueReef;
 
   for (const auto& result : results) {
     for (const auto& target : result.targets) {
       currentlyVisibleTagIDs += std::to_string(target.GetFiducialId()) + " ";
-      double targetArea = target.GetArea();
+      double targetAngle = target.GetYaw();
 
       if (std::find(myReef.begin(), myReef.end(), target.GetFiducialId()) != myReef.end()) {
-        if (targetArea > largestArea) {
-          largestTarget = target;
-          largestArea = targetArea;
+        if (targetAngle < smallestAngle) {
+          bestTarget = target;
+          smallestAngle = targetAngle;
         }
       }
     }
   }
 
-  if (largestTarget) {
-    _lastReefTag = *largestTarget;
+  if (bestTarget) {
+    _lastReefTag = *bestTarget;
   }
 
   frc::SmartDashboard::PutString("Vision/Currently visible tags", currentlyVisibleTagIDs);
