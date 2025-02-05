@@ -84,6 +84,11 @@ rev::REVLibError ICSpark::AdjustConfig(rev::spark::SparkBaseConfig &config) {
                             rev::spark::SparkBase::PersistMode::kPersistParameters);
 };
 
+rev::REVLibError ICSpark::AdjustConfigNoPersist(rev::spark::SparkBaseConfig &config) {
+  return Configure(config, rev::spark::SparkBase::ResetMode::kNoResetSafeParameters,
+                            rev::spark::SparkBase::PersistMode::kNoPersistParameters);
+};
+
 rev::REVLibError ICSpark::OverwriteConfig(rev::spark::SparkBaseConfig &config) {
   return Configure(config, rev::spark::SparkBase::ResetMode::kResetSafeParameters,
                             rev::spark::SparkBase::PersistMode::kPersistParameters);

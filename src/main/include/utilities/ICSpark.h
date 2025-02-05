@@ -362,6 +362,12 @@ class ICSpark : public wpi::Sendable {
 
   /**  
    * Convenience method for calling 
+   * Configure(config, ResetMode::kNoResetSafeParameters, PersistMode::kNoPersistParameters)
+   */
+  rev::REVLibError AdjustConfigNoPersist(rev::spark::SparkBaseConfig &config);
+
+  /**  
+   * Convenience method for calling 
    * Configure(config, ResetMode::kResetSafeParameters, PersistMode::kPersistParameters)
    */
   rev::REVLibError OverwriteConfig(rev::spark::SparkBaseConfig &config);
