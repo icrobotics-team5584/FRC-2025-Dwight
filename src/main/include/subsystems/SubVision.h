@@ -33,7 +33,10 @@ public:
   void UpdatePoseEstimator(std::vector<photon::PhotonPipelineResult> results);
   void UpdateLatestTags(std::vector<photon::PhotonPipelineResult> results);
 
+  units::degree_t GetReefTagAngle();
+  double GetReefArea();
   frc::Pose2d GetReefPose(int side);
+  units::degree_t GetReefAlignAngle(int side);
 
   std::optional<photon::EstimatedRobotPose> GetPose();
 
@@ -72,24 +75,26 @@ public:
     units::meter_t leftY;
     units::meter_t rightX;
     units::meter_t rightY;
+    units::degree_t leftScoreAngle = 11.2_deg;
+    units::degree_t rightScoreAngle = -20_deg;
   };
 
 std::map<int, ReefPositions> tagToReefPositions = {
-    {17, {60_deg-90_deg, 3.529_m, 2.805_m, 3.820_m, 2.671_m}}, //{17, {0_deg, 3.470_m, 2_m, 3.470_m, 2_m}},
-    {18, {0_deg-90_deg, 3.150_m, 4.190_m, 3.150_m, 3.870_m}},
-    {19, {300_deg-90_deg, 3.960_m, 5.250_m, 3.690_m, 5.090_m}},
-    {20, {240_deg-90_deg, 5.290_m, 5.095_m, 5.020_m, 5.250_m}},
-    {21, {180_deg-90_deg, 5.810_m, 3.860_m, 5.810_m, 4.190_m}},
-    {22, {120_deg-90_deg, 5.010_m, 2.800_m, 5.290_m, 2.950_m}},
+    {17, {60_deg-90_deg, 3.529_m, 2.805_m, 3.820_m, 2.671_m, 11.2_deg, -20_deg}},
+    {18, {0_deg-90_deg, 3.150_m, 4.190_m, 3.150_m, 3.870_m, 11.2_deg, -20_deg}},
+    {19, {300_deg-90_deg, 3.960_m, 5.250_m, 3.690_m, 5.090_m, 11.2_deg, -20_deg}},
+    {20, {240_deg-90_deg, 5.290_m, 5.095_m, 5.020_m, 5.250_m, 11.2_deg, -20_deg}},
+    {21, {180_deg-90_deg, 5.810_m, 3.860_m, 5.810_m, 4.190_m, 11.2_deg, -20_deg}},
+    {22, {120_deg-90_deg, 5.010_m, 2.800_m, 5.290_m, 2.950_m, 11.2_deg, -20_deg}},
 
-    {6, {120_deg-90_deg, 13.410_m, 3.100_m, 13.700_m, 3.260_m}},
-    {7, {180_deg-90_deg, 14.060_m, 3.860_m, 14.060_m, 4.190_m}},
-    {8, {240_deg-90_deg, 13.700_m, 4.800_m, 13.420_m, 4.980_m}},
-    {9, {300_deg-90_deg, 12.710_m, 4.970_m, 12.430_m, 4.800_m}},
-    {10, {0_deg-90_deg, 4.190_m, 12.080_m, 3.860_m, 12.080_m}},
-    {11, {60_deg-90_deg, 12.430_m, 3.260_m, 12.720_m, 3.100_m}}
-  };
+    {6, {120_deg-90_deg, 13.410_m, 3.100_m, 13.700_m, 3.260_m, 11.2_deg, -20_deg}},
+    {7, {180_deg-90_deg, 14.060_m, 3.860_m, 14.060_m, 4.190_m, 11.2_deg, -20_deg}},
+    {8, {240_deg-90_deg, 13.700_m, 4.800_m, 13.420_m, 4.980_m, 11.2_deg, -20_deg}},
+    {9, {300_deg-90_deg, 12.710_m, 4.970_m, 12.430_m, 4.800_m, 11.2_deg, -20_deg}},
+    {10, {0_deg-90_deg, 4.190_m, 12.080_m, 3.860_m, 12.080_m, 11.2_deg, -20_deg}},
+    {11, {60_deg-90_deg, 12.430_m, 3.260_m, 12.720_m, 3.100_m, 11.2_deg, -20_deg}}
 
+};
   //+9.4418
   photon::PhotonTrackedTarget _lastReefTag;
   std::string _cameraName = "photonvision_5584";
