@@ -46,7 +46,7 @@ frc2::CommandPtr ForceAlignWithTarget(int side) {
         if (SubVision::GetInstance().GetReefArea() > 3.5) {
           units::degree_t goalAngle;
           if (Logger::Tune("Vision/use dashbaord target", false)) {
-            goalAngle = Logger::Tune("Vision/Goal Angle", SubVision::GetInstance().GetReefAlignAngle(1));
+            goalAngle = Logger::Tune("Vision/Goal Angle", SubVision::GetInstance().GetReefAlignAngle(side));
           } else {
             goalAngle = SubVision::GetInstance().GetReefAlignAngle(side); // 16.45 for left reef face, 15.60_deg for front reef face (all left side so far) // 15.60,-20
           }
@@ -119,7 +119,9 @@ frc2::CommandPtr AutoShootIfAligned(int side) {
     WaitUntil([side] {
      units::degree_t goalAngle = SubVision::GetInstance().GetReefAlignAngle(side);
      units::degree_t tagAngle = SubVision::GetInstance().GetReefTagAngle();
-     if (tagAngle < goalAngle + 0.2_deg && tagAngle > goalAngle - 0.2_deg) {
+     Logger::Log("tuner/errorangle", (goalAngle-tagAngle).value());
+     double tolarance = 0.2; //Logger::Tune("tuner/autoshoottolarance", 0.2)
+     if (tagAngle < goalAngle + tolarance*1_deg && tagAngle > goalAngle - tolarance*1_deg) {
        return true;
      }
      
