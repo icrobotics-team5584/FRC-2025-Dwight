@@ -40,6 +40,8 @@ class SubElevator : public frc2::SubsystemBase {
   frc2::CommandPtr Climb();
   frc2::CommandPtr ManualElevatorMovementAlgae();
 
+  
+
   frc2::CommandPtr CmdElevatorToPosition(units::meter_t height);
   // frc2::CommandPtr ElevatorJoystickDrive(frc2::CommandXboxController& _controller);
   units::turn_t RotationsFromHeight(units::meter_t height);
@@ -51,6 +53,7 @@ class SubElevator : public frc2::SubsystemBase {
 
   void SetMotorVoltageLimits12V();
   void CheckAndChangeCurrentLimitIfReset();
+  void SetBrakeMode(bool mode);
 
   void Stop();
   void EnableSoftLimit(bool enabled);

@@ -42,6 +42,8 @@ class SubClimber : public frc2::SubsystemBase {
   frc2::CommandPtr Climb();
   frc2::CommandPtr set12V();
 
+  void SetBrakeMode(bool mode);
+
   /**
    * Will be called periodically whenever the CommandScheduler runs.
    */
@@ -68,6 +70,8 @@ class SubClimber : public frc2::SubsystemBase {
   ICSparkFlex _climberMotor{canid::climberMotor, 60_A}; // _A is amps; 20 amps may be too low for the climber to function
 
   frc::sim::SingleJointedArmSim _climberSim{frc::DCMotor::NEO(1), GEAR_RATIO, frc::sim::SingleJointedArmSim::EstimateMOI(ARM_LENGTH, ARM_MASS), ARM_LENGTH, ARM_MIN_ANGLE, ARM_MAX_ANGLE, false, ARM_HOME_ANGLE};
+
+  rev::spark::SparkBaseConfig _climberMotorConfig;
   
   frc::Mechanism2d _singleJointedArmMech{3, 3};  // canvas width and height
   frc::MechanismRoot2d* _armRoot = _singleJointedArmMech.GetRoot("armRoot", 1, 1);  // root x and y
