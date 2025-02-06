@@ -17,8 +17,6 @@
 using namespace ctre::phoenix6;
 
 SubElevator::SubElevator() {
-    
-    
     // PID Gains for Motion Magic
     _motorConfig.Slot0.kP = _P;
     _motorConfig.Slot0.kI = _I;
@@ -62,8 +60,6 @@ SubElevator::SubElevator() {
     // Set motor 2 to follow motor 1
     _elevatorMotor2.SetControl(controls::Follower(_elevatorMotor1.GetDeviceID(), false));
     _elevatorMotor1.GetClosedLoopReference().SetUpdateFrequency(100_Hz);
-
-    ResetM1 = true;
 }
 
 frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height){
@@ -77,7 +73,8 @@ frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height){
     }
 
     else {
-         _elevatorMotor1.SetControl(controls::MotionMagicVoltage(RotationsFromHeight(height)).WithEnableFOC(true));
+        frc::SmartDashboard::PutNumber("Elevator/Requested Height", height.value());
+        _elevatorMotor1.SetControl(controls::MotionMagicVoltage(RotationsFromHeight(height)).WithEnableFOC(true));
     }
     });}
 
@@ -213,25 +210,6 @@ frc2::CommandPtr SubElevator::ManualElevatorMovementAlgae() {
       });
     }
 
-frc2::CommandPtr SubElevator::ManualElevatorMovementDOWNSLOW() {
-  return frc2::cmd::RunOnce([this] {_elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-1_V));});
-    }
-
-//Check if elevator has touched the bottom
-frc2::CommandPtr SubElevator::ElevatorResetCheck() {
-    return frc2::cmd::RunOnce ([this] {ResetM1 = false;})
-    .AndThen(
-    frc2::cmd::Run([this] {
-        
-        if (GetM1Current() > zeroingCurrentLimit) {
-            ResetM1 = true;
-        }
-        else {
-            Reseting = false;
-        }
-    }).Until([this] { return ResetM1; }));
-}
-
 //Ptr cmd of Stop()
 frc2::CommandPtr SubElevator::ElevatorStop() {
     return frc2::cmd::RunOnce([this] {SubElevator::GetInstance().Stop();});
@@ -255,6 +233,8 @@ void SubElevator::SetMotorVoltageLimits12V(){
     _motorConfig.Voltage.PeakReverseVoltage = 12_V;
     _elevatorMotor1.GetConfigurator().Apply(_motorConfig);
     _elevatorMotor2.GetConfigurator().Apply(_motorConfig);
+    frc::SmartDashboard::PutNumber("Elevator/Soft Voltage Limit", 12);
+
 }
 
 void SubElevator::CheckAndChangeCurrentLimitIfReset(){
@@ -263,18 +243,26 @@ void SubElevator::CheckAndChangeCurrentLimitIfReset(){
         _motorConfig.Voltage.PeakReverseVoltage = 0_V;
         _elevatorMotor1.GetConfigurator().Apply(_motorConfig);
         _elevatorMotor2.GetConfigurator().Apply(_motorConfig);
+        frc::SmartDashboard::PutNumber("Elevator/Soft Voltage Limit", 0);
     }
 }
+
 //Auto elevator reset by bringing elevator to zero position then reset (can be used in tele-op)
 frc2::CommandPtr SubElevator::ElevatorAutoReset() {
-    return frc2::cmd::RunOnce([this] { Reseting = true; EnableSoftLimit(false);})
-        .AndThen([this] {SetMotorVoltageLimits12V();})
-        .AndThen(ManualElevatorMovementDOWNSLOW())
-        .AndThen(ElevatorResetCheck())
-        .AndThen(ZeroElevator())
-        .AndThen([this] {Stop();})
-        .FinallyDo([this] {EnableSoftLimit(true); CheckAndChangeCurrentLimitIfReset();} );
-        }
+    return frc2::cmd::RunOnce([this] {
+        EnableSoftLimit(false); //disable soft limit (here be dragons!!)
+        SetMotorVoltageLimits12V(); //set voltage limits
+        _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-1_V)); //start moving down slowly
+        ResetM1 = false;
+        }).AndThen(frc2::cmd::WaitUntil([this] { return GetM1Current() > zeroingCurrentLimit; })) //stop moving down when current limit reached
+        .AndThen(ZeroElevator()) //set zero
+        .AndThen([this] { Stop(); }) //stop motors
+        .FinallyDo([this] {
+            ResetM1 = true;
+            EnableSoftLimit(true); //re-enable soft limit
+            CheckAndChangeCurrentLimitIfReset();
+        });
+    }
 
 //Stop motor
 void SubElevator::Stop() {
@@ -296,6 +284,7 @@ void SubElevator::Periodic() {
 
 void SubElevator::SimulationPeriodic() {
     auto& motorState = _elevatorMotor1.GetSimState();
+    frc::SmartDashboard::PutNumber("Elevator/Sim/Motor voltage", motorState.GetMotorVoltage().value());
     _motorSim.SetInputVoltage(motorState.GetMotorVoltage());
     _motorSim.Update(20_ms);
     _motorSim.GetVelocity();

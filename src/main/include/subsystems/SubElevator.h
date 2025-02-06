@@ -21,13 +21,13 @@ class SubElevator : public frc2::SubsystemBase {
 
   SubElevator();
 
+  frc2::CommandPtr CmdSetSource();
   frc2::CommandPtr CmdSetL1();
   frc2::CommandPtr CmdSetL2();
   frc2::CommandPtr CmdSetL3();
   frc2::CommandPtr CmdSetL4();
   frc2::CommandPtr CmdSetClearHighAlgea();
   frc2::CommandPtr CmdSetClearLowAlgea();
-  frc2::CommandPtr CmdSetSource();
   frc2::CommandPtr AlgaeLow();
   frc2::CommandPtr AlgaeHigh();
   frc2::CommandPtr ZeroElevator();
@@ -36,7 +36,6 @@ class SubElevator : public frc2::SubsystemBase {
   frc2::CommandPtr ElevatorStop();
   frc2::CommandPtr ManualElevatorMovementUP();
   frc2::CommandPtr ManualElevatorMovementDOWN();
-  frc2::CommandPtr ManualElevatorMovementDOWNSLOW();
   frc2::CommandPtr ElevatorToClimbHeight();
   frc2::CommandPtr Climb();
   frc2::CommandPtr ManualElevatorMovementAlgae();
@@ -59,9 +58,6 @@ class SubElevator : public frc2::SubsystemBase {
   void Periodic() override;
   void SimulationPeriodic() override;
 
-  // reset
-  bool Reseting = false;
-  bool Reseted = false;
   bool ResetM1 = false;
 
  private:
