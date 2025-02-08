@@ -69,6 +69,7 @@ SubElevator::SubElevator() {
 
 frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height){
     return RunOnce([this, height]{
+    _targetHeight = height;
     if(height < _MIN_HEIGHT){
        _elevatorMotor1.SetControl(controls::MotionMagicVoltage(RotationsFromHeight(_MIN_HEIGHT)).WithEnableFOC(true));
         }
@@ -83,22 +84,18 @@ frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height){
     });}
 
 frc2::CommandPtr SubElevator::CmdSetL1(){
-    TargetLevel = 1;
     return CmdElevatorToPosition(_L1_HEIGHT);
     }
 
 frc2::CommandPtr SubElevator::CmdSetL2(){
-    TargetLevel = 2;
     return CmdElevatorToPosition(_L2_HEIGHT);
     }
 
 frc2::CommandPtr SubElevator::CmdSetL3(){
-    TargetLevel = 3;
     return CmdElevatorToPosition(_L3_HEIGHT);
     }
 
 frc2::CommandPtr SubElevator::CmdSetL4(){
-    TargetLevel = 4;
     return CmdElevatorToPosition(_L4_HEIGHT);
     }
 
@@ -140,6 +137,9 @@ units::ampere_t SubElevator::GetM1Current() {
     return _elevatorMotor1.GetStatorCurrent().GetValue();
 }
 
+units::meter_t SubElevator::GetTargetHeight(){
+    return _targetHeight;
+}
 
 void SubElevator::EnableSoftLimit(bool enabled) {
     // Configure the forward soft limit for elevatorMotor1
@@ -245,22 +245,8 @@ frc2::CommandPtr SubElevator::ElevatorStop() {
 bool SubElevator::IsAtTarget() {
     // units::meter_t TargetHeight = HeightFromRotations(_elevatorMotor1.GetClosedLoopReference().GetValue()*1_tr);
     units::meter_t CurrentHeight = HeightFromRotations(_elevatorMotor1.GetPosition().GetValue());
-    units::meter_t TargetHeight = _L1_HEIGHT;
-    if(TargetLevel == 1) {
-        TargetHeight = _L1_HEIGHT;
-    }
-    if(TargetLevel == 2) {
-        TargetHeight = _L2_HEIGHT;
-    }
-    if(TargetLevel == 3) {
-        TargetHeight = _L3_HEIGHT;
-    }
-    else {
-        TargetHeight = _L4_HEIGHT;
-    }
-
     units::meter_t Tolerance = 0.05_m;
-    if( CurrentHeight > TargetHeight - Tolerance && CurrentHeight < TargetHeight + Tolerance) {
+    if( CurrentHeight > _targetHeight - Tolerance && CurrentHeight < _targetHeight + Tolerance) {
         return true;
     }
 
