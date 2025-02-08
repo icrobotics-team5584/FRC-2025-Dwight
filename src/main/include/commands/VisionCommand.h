@@ -21,4 +21,5 @@ namespace cmd {
   frc2::CommandPtr AutonAlignToSource();
   frc2::CommandPtr AutoShootIfAligned(int side);
   frc2::CommandPtr ForceAlignWithTarget(int side);
+  frc2::CommandPtr AlignAndShoot(int side);
 }
