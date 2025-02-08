@@ -121,7 +121,7 @@ frc2::CommandPtr AutoShootIfAligned(int side) {
      units::degree_t tagAngle = SubVision::GetInstance().GetReefTagAngle();
      Logger::Log("tuner/errorangle", (goalAngle-tagAngle).value());
      double tolarance = 0.2; //Logger::Tune("tuner/autoshoottolarance", 0.2)
-     if (tagAngle < goalAngle + tolarance*1_deg && ta[\]gAngle > goalAngle - tolarance*1_deg) {
+     if (tagAngle < goalAngle + tolarance*1_deg && tagAngle > goalAngle - tolarance*1_deg) {
        return true;
      }
      
