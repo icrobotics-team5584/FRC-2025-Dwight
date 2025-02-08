@@ -257,26 +257,10 @@ frc2::CommandPtr SubDrivebase::Drive(std::function<frc::ChassisSpeeds()> speeds,
       .FinallyDo([this] { Drive(0_mps, 0_mps, 0_deg_per_s, false); });
 }
 
-<<<<<<< HEAD
-void SubDrivebase::Drive(
-  units::meters_per_second_t xSpeed, 
-  units::meters_per_second_t ySpeed,
-  units::turns_per_second_t rot, 
-  bool fieldRelative,
-  std::optional<std::array<units::newton_t, 4>> xForceFeedforwards,
-  std::optional<std::array<units::newton_t, 4>> yForceFeedforwards
-) {
-
-  Logger::Log("Drivebase/xSpeedRequest", xSpeed);
-  Logger::Log("Drivebase/ySpeedRequest", ySpeed);
-  Logger::Log("Drivebase/rotSpeedRequest", rot);
-
-=======
 void SubDrivebase::Drive(units::meters_per_second_t xSpeed, units::meters_per_second_t ySpeed,
                          units::turns_per_second_t rot, bool fieldRelative,
                          std::optional<std::array<units::newton_t, 4>> xForceFeedforwards,
                          std::optional<std::array<units::newton_t, 4>> yForceFeedforwards) {
->>>>>>> main
   // Optionally convert speeds to field relative
   auto speeds = fieldRelative
                     ? frc::ChassisSpeeds::FromFieldRelativeSpeeds(xSpeed, ySpeed, rot, GetGyroAngle())
@@ -398,13 +382,8 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   // auto ySpeed = _driveToPoseTranslationController.Calculate(currentYMeters, targetYMeters) * 1_mps;
   // auto rSpeed = _driveToPoseRotationController.Calculate(currentRotation - targetRotation, 0_deg) * 1_rad_per_s; 
 
-<<<<<<< HEAD
-  // Clamp to max velocity & angular velocity
-  xSpeed = units::math::min(xSpeed, MAX_DRIVE_TO_POSE_VELOCITY); //Max_Velocity
-=======
   // Clamp to max velocity
   xSpeed = units::math::min(xSpeed, MAX_DRIVE_TO_POSE_VELOCITY);  // Max_Velocity
->>>>>>> main
   xSpeed = units::math::max(xSpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
   ySpeed = units::math::min(ySpeed, MAX_DRIVE_TO_POSE_VELOCITY);
   ySpeed = units::math::max(ySpeed, -MAX_DRIVE_TO_POSE_VELOCITY);

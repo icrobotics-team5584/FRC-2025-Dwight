@@ -39,43 +39,10 @@ frc2::CommandPtr YAlignWithTarget(int side, frc2::CommandXboxController& control
           [] { return frc::ChassisSpeeds{0_mps, 0.15_mps, 0_deg_per_s}; }, false));
 }
 
-<<<<<<< HEAD
-frc2::CommandPtr YAutonAlignWithTarget(int side) {
-  
-  static frc::Pose2d targetPose; //= SubVision::GetInstance().GetReefPose(side);
-  // printf("\nhello-\nTargetPose-GetReefPose-ROTATION%f deg\n", targetPose.Rotation().Degrees().value());
-  // printf("\nhello-\nTargetPose-GetReefPose-TRANS-X%f m\n", targetPose.Translation().X().value());
-  // printf("\nhello-\nTargetPose-GetReefPose-TRANS-X%f m\n", targetPose.Translation().X().value());
-  return SubDrivebase::GetInstance()
-      .Drive(
-          [side] {
-            frc::Pose2d targetPose = SubVision::GetInstance().GetReefPose(side);
-            frc::ChassisSpeeds speeds =
-                SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose);
-                //printf("SPEEDS\nvelx:%f_m/s\nvely:%f_m/s\nomega:%f_rad/s\n\n",speeds.vx.value(), speeds.vy.value(), speeds.omega.value());
-            return speeds;
-          }, 
-          true)
-      .Until([] {
-        return SubDrivebase::GetInstance().IsAtPose(frc::Pose2d{
-            targetPose.X(), targetPose.Y(), SubDrivebase::GetInstance().GetPose().Rotation()});
-            printf("I AM AT TARGET POSE");
-      })
-      .AndThen(SubDrivebase::GetInstance().Drive(
-          [] { return frc::ChassisSpeeds{0_mps, 0.5_mps, 0_deg_per_s}; }, false));
-}
-  
-frc2::CommandPtr ForceAlignWithTarget(int side) {
-  // Strafe until the tag is at a known scoring angle, with a small velocity component towards the
-  // reef so you stay aligned rotationally and at the right distance.
-  return SubDrivebase::GetInstance()
-    .Drive(
-=======
 frc2::CommandPtr ForceAlignWithTarget(int side) {
   // Strafe until the tag is at a known scoring angle, with a small velocity component towards the
   // reef so you stay aligned rotationally and at the right distance.
   return SubDrivebase::GetInstance().Drive(
->>>>>>> main
       [side] {
         if (SubVision::GetInstance().GetReefArea() > 3.5) {
           printf("shimmying");

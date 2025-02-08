@@ -45,7 +45,6 @@ RobotContainer::RobotContainer() {
   // Trigger Bindings
   ConfigureBindings();
 
-<<<<<<< HEAD
   //Initialise camera object(s)
   _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); 
 
@@ -59,18 +58,6 @@ RobotContainer::RobotContainer() {
   _autoChooser.AddOption("Default-Right", "Default-Right"); 
   _autoChooser.AddOption("TeammateHelper-Left", "placeholder-THL"); // placeholder
   _autoChooser.AddOption("TeammateHelper-Right", "placeholder-THR"); // placeholder
-=======
-  // Initialise camera object(s)
-  _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0);
-
-  // AutoChooser options
-  _autoChooser.AddOption("Default-Left-Slowed", "Default-Left-SlowTest");  // auton testing
-  _autoChooser.AddOption("Default-Left", "Default-Left");
-  _autoChooser.AddOption("Default-Middle", "placeholder-DM");  // placeholder
-  _autoChooser.AddOption("Default-Right", "Default-Right");
-  _autoChooser.AddOption("TeammateHelper-Left", "placeholder-THL");   // placeholder
-  _autoChooser.AddOption("TeammateHelper-Right", "placeholder-THR");  // placeholder
->>>>>>> main
   _autoChooser.AddOption("L-Shape", "L-Shape");
   _autoChooser.AddOption("L-Shape-Slow", "L-Shape-Slow");
   _autoChooser.AddOption("L-Shape-Spinning", "L-Shape-Spinning");
@@ -93,14 +80,8 @@ RobotContainer::RobotContainer() {
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   // return pathplanner::PathPlannerAuto("test auto").ToPtr();
   auto _autoSelected = _autoChooser.GetSelected();
-<<<<<<< HEAD
-  
-  return SubElevator::GetInstance().ElevatorAutoReset().AndThen(pathplanner::PathPlannerAuto(_autoSelected).ToPtr());
-=======
   units::second_t delay = 0.00_s;
-
   return frc2::cmd::Wait(delay).AndThen(pathplanner::PathPlannerAuto(_autoSelected).ToPtr());
->>>>>>> main
 }
 
 void RobotContainer::ConfigureBindings() {
@@ -125,13 +106,6 @@ void RobotContainer::ConfigureBindings() {
     return (_operatorController.GetLeftY() > 0.2);
   }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
 
-<<<<<<< HEAD
-  frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
-    return (_operatorController.GetLeftY() < -0.2);
-  }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
-
-=======
->>>>>>> main
   _operatorController.A().OnTrue(SubElevator::GetInstance().CmdSetL1());
   _operatorController.X().OnTrue(SubElevator::GetInstance().CmdSetL2());
   _operatorController.B().OnTrue(SubElevator::GetInstance().CmdSetL3());
