@@ -99,6 +99,10 @@ frc2::CommandPtr SubElevator::CmdSetL4(){
     return CmdElevatorToPosition(_L4_HEIGHT);
     }
 
+frc2::CommandPtr SubElevator::CmdSetClimb(){
+    return CmdElevatorToPosition(_CLIMB_HEIGHT);
+    }
+
 frc2::CommandPtr SubElevator::CmdSetSource(){
     return CmdElevatorToPosition(_SOURCE_HEIGHT);
     }
