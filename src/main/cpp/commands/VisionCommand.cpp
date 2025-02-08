@@ -38,15 +38,15 @@ frc2::CommandPtr YAlignWithTarget(int side, frc2::CommandXboxController& control
           [] { return frc::ChassisSpeeds{0_mps, 0.15_mps, 0_deg_per_s}; }, false));
 }
 
-frc2::CommandPtr ForceAlignWithTarget(int side, frc2::CommandXboxController& controller) {
+frc2::CommandPtr ForceAlignWithTarget(int side) {
   // Strafe until the tag is at a known scoring angle, with a small velocity component towards the
   // reef so you stay aligned rotationally and at the right distance.
   return SubDrivebase::GetInstance().Drive(
-      [side, &controller] {
+      [side] {
         if (SubVision::GetInstance().GetReefArea() > 3.5) {
           units::degree_t goalAngle;
           if (Logger::Tune("Vision/use dashbaord target", false)) {
-            goalAngle = Logger::Tune("Vision/Goal Angle", SubVision::GetInstance().GetReefAlignAngle(1));
+            goalAngle = Logger::Tune("Vision/Goal Angle", SubVision::GetInstance().GetReefAlignAngle(side));
           } else {
             goalAngle = SubVision::GetInstance().GetReefAlignAngle(side); // 16.45 for left reef face, 15.60_deg for front reef face (all left side so far) // 15.60,-20
           }
@@ -110,10 +110,31 @@ frc2::CommandPtr AlignToSource(frc2::CommandXboxController& controller) {
       true);
 }
 
+frc2::CommandPtr AlignAndShoot(int side){
+ return ForceAlignWithTarget(side).AlongWith(AutoShootIfAligned(side));
+}
+
 frc2::CommandPtr AutoShootIfAligned(int side) {
   return Sequence(
-    WaitUntil([side] {return SubDrivebase::GetInstance().IsAtPose(SubVision::GetInstance().GetReefPose(side));}),
-    WaitUntil([] {return SubElevator::GetInstance().IsAtTarget();}),
+    WaitUntil([side] {
+     units::degree_t goalAngle = SubVision::GetInstance().GetReefAlignAngle(side);
+     units::degree_t tagAngle = SubVision::GetInstance().GetReefTagAngle();
+     Logger::Log("AutoShoot/errorangle", (goalAngle-tagAngle).value());
+     double tolerance = Logger::Tune("AutoShoot/autoshootTolerance", 0.2);
+     if (tagAngle < goalAngle + tolerance*1_deg && tagAngle > goalAngle - tolerance*1_deg) {
+       return true;
+     }
+     
+     else {
+     return false;
+     }
+      }),
+    WaitUntil([] { 
+      if (SubElevator::GetInstance().GetTargetHeight() != SubElevator::_SOURCE_HEIGHT){
+       return SubElevator::GetInstance().IsAtTarget();
+      }
+      return false;
+    }),
     SubEndEffector::GetInstance().ScoreCoral()
   );
 }

@@ -51,7 +51,7 @@ public:
  * @param pose Pose of the target
  */
   bool CheckValid(std::optional<photon::EstimatedRobotPose> pose);
-
+  
   std::optional<photon::EstimatedRobotPose> _pose;
 
   std::map<int, frc::Pose2d> tagToSourcePose = {
