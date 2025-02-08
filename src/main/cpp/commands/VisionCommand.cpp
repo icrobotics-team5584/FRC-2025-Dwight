@@ -114,10 +114,31 @@ frc2::CommandPtr AlignToSource(frc2::CommandXboxController& controller) {
       true);
 }
 
+frc2::CommandPtr AlignAndShoot(int side){
+ return ForceAlignWithTarget(side).AlongWith(AutoShootIfAligned(side));
+}
+
 frc2::CommandPtr AutoShootIfAligned(int side) {
   return Sequence(
-    WaitUntil([side] {return SubDrivebase::GetInstance().IsAtPose(SubVision::GetInstance().GetReefPose(side));}),
-    WaitUntil([] {return SubElevator::GetInstance().IsAtTarget();}),
+    WaitUntil([side] {
+     units::degree_t goalAngle = SubVision::GetInstance().GetReefAlignAngle(side);
+     units::degree_t tagAngle = SubVision::GetInstance().GetReefTagAngle();
+     Logger::Log("AutoShoot/errorangle", (goalAngle-tagAngle).value());
+     double tolerance = Logger::Tune("AutoShoot/autoshootTolerance", 0.2);
+     if (tagAngle < goalAngle + tolerance*1_deg && tagAngle > goalAngle - tolerance*1_deg) {
+       return true;
+     }
+     
+     else {
+     return false;
+     }
+      }),
+    WaitUntil([] { 
+      if (SubElevator::GetInstance().GetTargetHeight() != SubElevator::_SOURCE_HEIGHT){
+       return SubElevator::GetInstance().IsAtTarget();
+      }
+      return false;
+    }),
     SubEndEffector::GetInstance().ScoreCoral()
   );
 }
