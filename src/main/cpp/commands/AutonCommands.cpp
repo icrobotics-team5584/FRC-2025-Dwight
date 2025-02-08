@@ -4,16 +4,20 @@
 
 #include <frc2/command/Command.h>
 #include <frc2/command/Commands.h>
+#include <RobotContainer.h>
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 #include <pathplanner/lib/auto/NamedCommands.h>
-
 
 #include "subsystems/SubEndEffector.h"
 #include "subsystems/SubElevator.h"
 
+#include "commands/VisionCommand.h"
+
 namespace cmd {
     frc2::CommandPtr ScoreWithVision() {
         return frc2::cmd::Wait(1.0_s) //.AndThen(cmd::YAutonAlignWithTarget(1)) // vision is smucked (once fixed replace )
+            .AndThen(SubElevator::GetInstance().CmdSetL2())
+            .AndThen(cmd::ForceAlignWithTarget(1).WithTimeout(6_s))
             .AndThen(SubElevator::GetInstance().CmdSetL4().WithName("CmdSetL4")
             .AndThen(frc2::cmd::WaitUntil([]{ return SubElevator::GetInstance().IsAtTarget() == true; })))
             .AndThen(frc2::cmd::Wait(0.2_s))

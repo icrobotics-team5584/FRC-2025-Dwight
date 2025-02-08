@@ -64,13 +64,14 @@ frc2::CommandPtr YAutonAlignWithTarget(int side) {
           [] { return frc::ChassisSpeeds{0_mps, 0.5_mps, 0_deg_per_s}; }, false));
 }
   
-frc2::CommandPtr ForceAlignWithTarget(int side, frc2::CommandXboxController& controller) {
+frc2::CommandPtr ForceAlignWithTarget(int side) {
   // Strafe until the tag is at a known scoring angle, with a small velocity component towards the
   // reef so you stay aligned rotationally and at the right distance.
   return SubDrivebase::GetInstance()
     .Drive(
-      [side, &controller] {
+      [side] {
         if (SubVision::GetInstance().GetReefArea() > 3.5) {
+          printf("shimmying");
           units::degree_t goalAngle;
           if (Logger::Tune("Vision/use dashbaord target", false)) {
             goalAngle = Logger::Tune("Vision/Goal Angle", SubVision::GetInstance().GetReefAlignAngle(1));
@@ -86,6 +87,7 @@ frc2::CommandPtr ForceAlignWithTarget(int side, frc2::CommandXboxController& con
           units::meters_per_second_t yVel = overallVelocity * units::math::sin(driveAngle);
           return frc::ChassisSpeeds{xVel, yVel, 0_deg_per_s};
         } else {
+          printf("i am not having enough april tag");
           frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(side).Rotation();
           units::angle::turn_t roterror = SubDrivebase::GetInstance().GetPose().Rotation().Degrees() - targetRotation.Degrees();
           auto rotationSpeed = SubDrivebase::GetInstance().CalcRotateSpeed(roterror) / 5;
