@@ -28,7 +28,7 @@
 RobotContainer::RobotContainer() {
   wpi::WebServer::GetInstance().Start(5800, frc::filesystem::GetDeployDirectory());
   SubVision::GetInstance();
-  SubIntake::GetInstance();
+  // SubIntake::GetInstance(); -- dont get instance since the electronics dont exist on the bot yet, and we dont want warnings about it
 
   // registar named commands
   pathplanner::NamedCommands::registerCommand("ScoreLeft-WithVision", cmd::ScoreWithVision(1));
