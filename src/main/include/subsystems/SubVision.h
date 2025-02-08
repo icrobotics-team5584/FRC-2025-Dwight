@@ -13,7 +13,6 @@
 #include <photon/simulation/VisionSystemSim.h>
 #include <photon/PhotonPoseEstimator.h>
 #include <frc/Filesystem.h>
-#include "utilities/RobotLogs.h"
 
 class SubVision : public frc2::SubsystemBase {
 public:
