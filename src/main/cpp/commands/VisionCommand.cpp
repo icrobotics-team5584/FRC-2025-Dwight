@@ -18,8 +18,7 @@ using namespace frc2::cmd;
  * @param side align to left: 1, align to right: 2
  * @return A command that will align to the tag when executed.* 3.500_m, 3.870
  */
-frc2::CommandPtr YAlignWithTarget(int side, frc2::CommandXboxController& controller) 
-{
+frc2::CommandPtr YAlignWithTarget(int side, frc2::CommandXboxController& controller) {
   static frc::Pose2d targetPose;
   return SubDrivebase::GetInstance()
       .Drive(
@@ -31,10 +30,9 @@ frc2::CommandPtr YAlignWithTarget(int side, frc2::CommandXboxController& control
             return speeds;
           },
           true)
-      .AlongWith(Run([]{ frc::SmartDashboard::PutNumber("Drivebase/targetpose", targetPose.X().value()); }))
-      .Until([] {
-        return SubDrivebase::GetInstance().IsAtPose(targetPose);
-      })
+      .AlongWith(Run(
+          [] { frc::SmartDashboard::PutNumber("Drivebase/targetpose", targetPose.X().value()); }))
+      .Until([] { return SubDrivebase::GetInstance().IsAtPose(targetPose); })
       .AndThen(SubDrivebase::GetInstance().Drive(
           [] { return frc::ChassisSpeeds{0_mps, 0.15_mps, 0_deg_per_s}; }, false));
 }
@@ -48,13 +46,17 @@ frc2::CommandPtr ForceAlignWithTarget(int side) {
           printf("shimmying");
           units::degree_t goalAngle;
           if (Logger::Tune("Vision/use dashbaord target", false)) {
-            goalAngle = Logger::Tune("Vision/Goal Angle", SubVision::GetInstance().GetReefAlignAngle(side));
+            goalAngle =
+                Logger::Tune("Vision/Goal Angle", SubVision::GetInstance().GetReefAlignAngle(side));
           } else {
-            goalAngle = SubVision::GetInstance().GetReefAlignAngle(side); // 16.45 for left reef face, 15.60_deg for front reef face (all left side so far) // 15.60,-20
+            goalAngle = SubVision::GetInstance().GetReefAlignAngle(
+                side);  // 16.45 for left reef face, 15.60_deg for front reef face (all left side so
+                        // far) // 15.60,-20
           }
           units::degree_t tagAngle = SubVision::GetInstance().GetReefTagAngle();
           units::degree_t error = tagAngle - goalAngle;
-          units::meters_per_second_t overallVelocity = std::clamp(0.12_mps * error.value(),-0.3_mps,0.3_mps);
+          units::meters_per_second_t overallVelocity =
+              std::clamp(0.12_mps * error.value(), -0.3_mps, 0.3_mps);
           units::degree_t driveAngle = units::math::copysign(8_deg, error);
           // Calc x and y from known angle and hypotenuse length
           units::meters_per_second_t xVel = overallVelocity * units::math::cos(driveAngle);
@@ -63,7 +65,8 @@ frc2::CommandPtr ForceAlignWithTarget(int side) {
         } else {
           printf("i am not having enough april tag");
           frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(side).Rotation();
-          units::angle::turn_t roterror = SubDrivebase::GetInstance().GetPose().Rotation().Degrees() - targetRotation.Degrees();
+          units::angle::turn_t roterror =
+              SubDrivebase::GetInstance().GetPose().Rotation().Degrees() - targetRotation.Degrees();
           auto rotationSpeed = SubDrivebase::GetInstance().CalcRotateSpeed(roterror) / 5;
           return frc::ChassisSpeeds{0_mps, 0.5_mps, rotationSpeed};
         }
@@ -135,32 +138,34 @@ frc2::CommandPtr AutonAlignToSource() {
       true);
 }
 
-frc2::CommandPtr AlignAndShoot(int side){
- return ForceAlignWithTarget(side).AlongWith(AutoShootIfAligned(side));
+frc2::CommandPtr AlignAndShoot(int side, std::optional<units::meter_t> target_height) {
+  return ForceAlignWithTarget(side).AlongWith(AutoShootIfAligned(side, target_height));
 }
 
-frc2::CommandPtr AutoShootIfAligned(int side) {
+frc2::CommandPtr AutoShootIfAligned(int side, std::optional<units::meter_t> target_height) {
   return Sequence(
-    WaitUntil([side] {
-     units::degree_t goalAngle = SubVision::GetInstance().GetReefAlignAngle(side);
-     units::degree_t tagAngle = SubVision::GetInstance().GetReefTagAngle();
-     Logger::Log("AutoShoot/errorangle", (goalAngle-tagAngle).value());
-     double tolerance = Logger::Tune("AutoShoot/autoshootTolerance", 0.2);
-     if (tagAngle < goalAngle + tolerance*1_deg && tagAngle > goalAngle - tolerance*1_deg) {
-       return true;
-     }
-     
-     else {
-     return false;
-     }
+      WaitUntil([side] {
+        units::degree_t goalAngle = SubVision::GetInstance().GetReefAlignAngle(side);
+        units::degree_t tagAngle = SubVision::GetInstance().GetReefTagAngle();
+        Logger::Log("AutoShoot/errorangle", (goalAngle - tagAngle).value());
+        double tolerance = Logger::Tune("AutoShoot/autoshootTolerance", 0.2);
+        if (tagAngle < goalAngle + tolerance * 1_deg && tagAngle > goalAngle - tolerance * 1_deg) {
+          return true;
+        }
+
+        else {
+          return false;
+        }
       }),
-    WaitUntil([] { 
-      if (SubElevator::GetInstance().GetTargetHeight() != SubElevator::_SOURCE_HEIGHT){
-       return SubElevator::GetInstance().IsAtTarget();
-      }
-      return false;
-    }),
-    SubEndEffector::GetInstance().ScoreCoral()
-  );
+      SubElevator::GetInstance()
+          .CmdElevatorToPosition(target_height.value())
+          .OnlyIf([target_height] { return target_height.has_value(); }),
+      WaitUntil([] {
+        if (SubElevator::GetInstance().GetTargetHeight() != SubElevator::_SOURCE_HEIGHT) {
+          return SubElevator::GetInstance().IsAtTarget();
+        }
+        return false;
+      }),
+      SubEndEffector::GetInstance().ScoreCoral());
 }
 }  // namespace cmd
