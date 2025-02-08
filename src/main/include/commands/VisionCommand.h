@@ -19,7 +19,7 @@ namespace cmd {
   frc2::CommandPtr AddVisionMeasurement();
   frc2::CommandPtr AlignToSource(frc2::CommandXboxController &controller);
   frc2::CommandPtr AutonAlignToSource();
-  frc2::CommandPtr AutoShootIfAligned(int side, std::optional<units::meter_t> target_height);
+  frc2::CommandPtr AutoShootIfAligned(int side, std::optional<units::meter_t> target_height = std::nullopt);
   frc2::CommandPtr ForceAlignWithTarget(int side);
-  frc2::CommandPtr AlignAndShoot(int side, std::optional<units::meter_t> target_height);
+  frc2::CommandPtr AlignAndShoot(int side, std::optional<units::meter_t> target_height = std::nullopt);
 }

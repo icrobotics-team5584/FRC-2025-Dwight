@@ -17,7 +17,7 @@ namespace cmd {
     frc2::CommandPtr ScoreWithVision(int side) {
         return frc2::cmd::Wait(1.0_s) //.AndThen(cmd::YAutonAlignWithTarget(1)) // vision is smucked (once fixed replace )
             .AndThen(SubElevator::GetInstance().CmdSetL2())
-            .AndThen(cmd::AlignAndShoot(side, 3))
+            .AndThen(cmd::AlignAndShoot(side, SubElevator::_L4_HEIGHT))
             // .AndThen(cmd::ForceAlignWithTarget(side).WithTimeout(6_s))
             // .AndThen(SubElevator::GetInstance().CmdSetL4().WithName("CmdSetL4")
             // .AndThen(frc2::cmd::WaitUntil([]{ return SubElevator::GetInstance().IsAtTarget() == true; })))

@@ -153,12 +153,13 @@ frc2::CommandPtr AutoShootIfAligned(int side, std::optional<units::meter_t> targ
           return true;
         }
 
+
         else {
           return false;
         }
       }),
       SubElevator::GetInstance()
-          .CmdElevatorToPosition(target_height.value())
+          .CmdElevatorToPosition(target_height.value_or(0_m))
           .OnlyIf([target_height] { return target_height.has_value(); }),
       WaitUntil([] {
         if (SubElevator::GetInstance().GetTargetHeight() != SubElevator::_SOURCE_HEIGHT) {
