@@ -13,6 +13,6 @@
 #include "subsystems/SubElevator.h"
 
 namespace cmd {
-    frc2::CommandPtr ScoreWithVision();
+    frc2::CommandPtr ScoreWithVision(int side);
     frc2::CommandPtr IntakeSourceWithVision();
 }

@@ -31,8 +31,10 @@ RobotContainer::RobotContainer() {
   SubIntake::GetInstance();
 
   // registar named commands
-  pathplanner::NamedCommands::registerCommand("Score-WithVision", cmd::ScoreWithVision());
+  pathplanner::NamedCommands::registerCommand("ScoreLeft-WithVision", cmd::ScoreWithVision(1));
+  pathplanner::NamedCommands::registerCommand("ScoreRight-WithVision", cmd::ScoreWithVision(2));
   
+
   //.AndThen(cmd::ForceAlignWithTarget(1, _driverController).WithName("AutonAlignToSource"))
   pathplanner::NamedCommands::registerCommand("IntakeSource-WithVision", cmd::IntakeSourceWithVision());
   
