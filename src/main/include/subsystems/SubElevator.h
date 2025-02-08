@@ -42,8 +42,6 @@ class SubElevator : public frc2::SubsystemBase {
   frc2::CommandPtr Climb();
   frc2::CommandPtr ManualElevatorMovementAlgae();
 
-  
-
   frc2::CommandPtr CmdElevatorToPosition(units::meter_t height);
   // frc2::CommandPtr ElevatorJoystickDrive(frc2::CommandXboxController& _controller);
   units::turn_t RotationsFromHeight(units::meter_t height);
@@ -66,17 +64,17 @@ class SubElevator : public frc2::SubsystemBase {
 
   units::meter_t _targetHeight = 0_m;
 
-  //reset
+  // reset
   bool Reseting = false;
   bool Reseted = false;
   bool ResetM1 = false;
 
-  //Elevator target heights
+  // Elevator target heights
   static constexpr units::meter_t _L1_HEIGHT = 100_mm;
   static constexpr units::meter_t _L2_HEIGHT = 505_mm;      // 0.42
   static constexpr units::meter_t _L3_HEIGHT = 875_mm;      // 0.82
-  static constexpr units::meter_t _L4_HEIGHT = 1476_mm;      // 1.5
-  static constexpr units::meter_t _CLIMB_HEIGHT = 429_mm;      // 1.5
+  static constexpr units::meter_t _L4_HEIGHT = 1476_mm;     // 1.5
+  static constexpr units::meter_t _CLIMB_HEIGHT = 429_mm;   // 1.5
   static constexpr units::meter_t _ALGAE_LOW_HEIGHT = 0_m;  // get numbers later
   static constexpr units::meter_t _ALGAE_HIGH_HEIGHT = 0_m;
   static constexpr units::meter_t _SOURCE_HEIGHT = 0.0_m;
