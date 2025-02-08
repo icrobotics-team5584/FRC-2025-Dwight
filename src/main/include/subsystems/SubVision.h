@@ -76,8 +76,8 @@ public:
     units::meter_t leftY;
     units::meter_t rightX;
     units::meter_t rightY;
-    units::degree_t leftScoreAngle = 14.5_deg;
-    units::degree_t rightScoreAngle = -14.5_deg;
+    units::degree_t leftScoreAngle = 11.2_deg;
+    units::degree_t rightScoreAngle = -20_deg;
   };
 
 std::map<int, ReefPositions> tagToReefPositions = {
