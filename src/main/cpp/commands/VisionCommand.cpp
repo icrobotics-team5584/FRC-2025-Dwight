@@ -38,15 +38,15 @@ frc2::CommandPtr YAlignWithTarget(int side, frc2::CommandXboxController& control
           [] { return frc::ChassisSpeeds{0_mps, 0.15_mps, 0_deg_per_s}; }, false));
 }
 
-frc2::CommandPtr ForceAlignWithTarget(int side, frc2::CommandXboxController& controller) {
+frc2::CommandPtr ForceAlignWithTarget(int side) {
   // Strafe until the tag is at a known scoring angle, with a small velocity component towards the
   // reef so you stay aligned rotationally and at the right distance.
   return SubDrivebase::GetInstance().Drive(
-      [side, &controller] {
+      [side] {
         if (SubVision::GetInstance().GetReefArea() > 3.5) {
           units::degree_t goalAngle;
           if (Logger::Tune("Vision/use dashbaord target", false)) {
-            goalAngle = Logger::Tune("Vision/Goal Angle", SubVision::GetInstance().GetReefAlignAngle(1));
+            goalAngle = Logger::Tune("Vision/Goal Angle", SubVision::GetInstance().GetReefAlignAngle(side));
           } else {
             goalAngle = SubVision::GetInstance().GetReefAlignAngle(side); // 16.45 for left reef face, 15.60_deg for front reef face (all left side so far) // 15.60,-20
           }
@@ -60,7 +60,7 @@ frc2::CommandPtr ForceAlignWithTarget(int side, frc2::CommandXboxController& con
           return frc::ChassisSpeeds{xVel, yVel, 0_deg_per_s};
         } else {
           frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(side).Rotation();
-          units::angle::turn_t roterror = SubDrivebase::GetInstance().GetPose().Rotation().Degrees() - targetRotation.Degrees();
+          units::angle::turn_t roterror = SubDrivebase::GetInstance().GetGyroAngle().Degrees() - targetRotation.Degrees();
           auto rotationSpeed = SubDrivebase::GetInstance().CalcRotateSpeed(roterror) / 5;
           return frc::ChassisSpeeds{0_mps, 0.5_mps, rotationSpeed};
         }
