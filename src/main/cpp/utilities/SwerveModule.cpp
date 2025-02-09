@@ -82,7 +82,7 @@ frc::SwerveModulePosition SwerveModule::GetPosition() {
 
 void SwerveModule::SendSensorsToDash() {
   _io->SendSensorsToDash();
-  std::string turnEncoderName = "swerve/turn encoder/" + std::to_string(_cancoderID);
+  std::string turnEncoderName = "swerve/turn encoder/" + std::to_string(_cancoder.GetDeviceID());
   frc::SmartDashboard::PutNumber(turnEncoderName + "Abs position", _cancoder.GetAbsolutePosition().GetValue().value());
   frc::SmartDashboard::PutNumber(turnEncoderName + "Supply Voltage", _cancoder.GetSupplyVoltage().GetValue().value());
   frc::SmartDashboard::PutString(turnEncoderName + "Magnet Health", _cancoder.GetMagnetHealth().GetValue().ToString());
