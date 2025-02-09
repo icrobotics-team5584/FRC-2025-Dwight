@@ -17,7 +17,6 @@
 #include "commands/DriveCommands.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 #include "subsystems/SubEndEffector.h"
-#include "subsystems/SubIntake.h"
 #include "commands/VisionCommand.h"
 #include <frc/Filesystem.h>
 #include <wpinet/WebServer.h>
@@ -26,7 +25,6 @@
 RobotContainer::RobotContainer() {
   wpi::WebServer::GetInstance().Start(5800, frc::filesystem::GetDeployDirectory());
   SubVision::GetInstance();
-  SubIntake::GetInstance();
 
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(
@@ -82,7 +80,8 @@ void RobotContainer::ConfigureBindings() {
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
   _driverController.RightTrigger().WhileTrue(cmd::ForceAlignWithTarget(2));
   _driverController.LeftTrigger().WhileTrue(cmd::ForceAlignWithTarget(1));
-  _driverController.LeftBumper().WhileTrue(SubEndEffector::GetInstance().IntakeFromSource());
+  _driverController.LeftBumper().WhileTrue(cmd::IntakeFromSource());
+  _driverController.LeftBumper().OnFalse(SubEndEffector::GetInstance().StopMotor().AlongWith(SubFunnel::GetInstance().StopFunnelMotor()));
   
 
   // Opperator
