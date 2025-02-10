@@ -1,6 +1,7 @@
 #include "subsystems/SubIntake.h"
 #include "subsystems/SubEndEffector.h"
 #include "subsystems/SubElevator.h"
+#include "subsystems/SubClimber.h"
 #include "commands/GamePieceCommands.h"
 
 namespace cmd {
@@ -13,9 +14,18 @@ namespace cmd {
         );
     }
 
-    frc2::CommandPtr ClimbFullSequence() {
-        return SubElevator::GetInstance().cmd
+    frc2::CommandPtr ClimbEngageSequence() {
+        return SubElevator::GetInstance().CmdSetClimb()
+            .AndThen(SubClimber::GetInstance().ReadyClimber())
+            .AndThen(SubClimber::GetInstance().Climb());
     }
+
+    frc2::CommandPtr ClimbDisengageSequence() {
+        return SubClimber::GetInstance().StowClimber()
+            .AndThen(SubElevator::GetInstance().CmdElevatorToPosition(0_m)) // 0_m is the start height
+            .AndThen(SubClimber::GetInstance().StowClimber());
+    }
+
 
     frc2::CommandPtr RemoveAlgae() {
         return SubEndEffector::GetInstance().FeedDown().AlongWith(SubElevator::GetInstance().ManualElevatorMovementAlgae());

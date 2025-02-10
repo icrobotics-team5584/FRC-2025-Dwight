@@ -55,8 +55,8 @@ class SubClimber : public frc2::SubsystemBase {
   bool ResetM1 = false; 
   static constexpr units::ampere_t zeroingCurrentLimit = 20_A;
   static constexpr units::turn_t PREPARE_TURNS = -75_deg;//get numbers later 
-  static constexpr units::turn_t CLIMB_TURNS = 20_deg; 
-  static constexpr units::turn_t STOW_TURNS = 90_deg; 
+  static constexpr units::turn_t CLIMB_TURNS = 8_deg; 
+  static constexpr units::turn_t STOW_TURNS = 7.4_deg; 
 
   //sim
   const units::length::meter_t ARM_LENGTH = 0.59_m; //0.59m
@@ -68,7 +68,7 @@ class SubClimber : public frc2::SubsystemBase {
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
-  ICSparkFlex _climberMotor{canid::climberMotor, 60_A}; // _A is amps; 20 amps may be too low for the climber to function
+  ICSparkFlex _climberMotor{canid::climberMotor, 30_A}; // _A is amps; 20 amps may be too low for the climber to function
 
   frc::sim::SingleJointedArmSim _climberSim{frc::DCMotor::NEO(1), GEAR_RATIO, frc::sim::SingleJointedArmSim::EstimateMOI(ARM_LENGTH, ARM_MASS), ARM_LENGTH, ARM_MIN_ANGLE, ARM_MAX_ANGLE, false, ARM_HOME_ANGLE};
 
