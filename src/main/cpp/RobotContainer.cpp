@@ -105,7 +105,6 @@ void RobotContainer::ConfigureBindings() {
   // _operatorController.POVDown.OnTrue()
 
   _operatorController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
-  _operatorController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor().AlongWith(SubFunnel::GetInstance().StopFunnelMotor()));
   _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
   _operatorController.RightBumper().WhileTrue(SubEndEffector::GetInstance().FeedUpSLOW());
 
