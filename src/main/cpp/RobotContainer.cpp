@@ -81,7 +81,6 @@ void RobotContainer::ConfigureBindings() {
   _driverController.RightTrigger().WhileTrue(cmd::ForceAlignWithTarget(2));
   _driverController.LeftTrigger().WhileTrue(cmd::ForceAlignWithTarget(1));
   _driverController.LeftBumper().WhileTrue(cmd::IntakeFromSource());
-  _driverController.LeftBumper().OnFalse(SubEndEffector::GetInstance().StopMotor().AlongWith(SubFunnel::GetInstance().StopFunnelMotor()));
   
 
   // Opperator

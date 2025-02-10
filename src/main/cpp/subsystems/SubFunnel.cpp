@@ -25,7 +25,7 @@ frc2::CommandPtr SubFunnel::IntakeFromSource() {
 }
 
 frc2::CommandPtr SubFunnel::StopFunnelMotor(){
-    return RunOnce([this] {_funnelMotor.Set(0);});
+    return RunOnce([this] {_funnelMotor.Set(0);}).AndThen(StopFunnelMotor());
 }
 
 
