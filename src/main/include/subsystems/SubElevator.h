@@ -29,8 +29,6 @@ class SubElevator : public frc2::SubsystemBase {
   frc2::CommandPtr CmdSetClearHighAlgea();
   frc2::CommandPtr CmdSetClearLowAlgea();
   frc2::CommandPtr CmdSetSource();
-  frc2::CommandPtr AlgaeLow();
-  frc2::CommandPtr AlgaeHigh();
   frc2::CommandPtr ZeroElevator();
   frc2::CommandPtr ElevatorResetCheck();
   frc2::CommandPtr ElevatorAutoReset();

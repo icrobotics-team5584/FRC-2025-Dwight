@@ -110,14 +110,14 @@ frc2::CommandPtr SubElevator::CmdSetClimb() {
 
 frc2::CommandPtr SubElevator::CmdSetClearLowAlgea(){
     return CmdElevatorToPosition(_ALGAE_LOW_HEIGHT);
-    }
+}
 
 frc2::CommandPtr SubElevator::CmdSetClearHighAlgea(){
     return CmdElevatorToPosition(_ALGAE_HIGH_HEIGHT);
-    }
+}
 
-frc2::CommandPtr SubElevator::AlgaeHigh() {
-  return CmdElevatorToPosition(_ALGAE_HIGH_HEIGHT);
+frc2::CommandPtr SubElevator::CmdSetSource(){
+    return CmdElevatorToPosition(_SOURCE_HEIGHT);
 }
 
 units::turn_t SubElevator::RotationsFromHeight(units::meter_t height) {
