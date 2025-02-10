@@ -19,13 +19,8 @@ frc2::CommandPtr SubFunnel::FeedDownFunnel() {
     return StartEnd([this] {_funnelMotor.Set(-0.8);}, [this] {_funnelMotor.Set(0);});
 }
 
-frc2::CommandPtr SubFunnel::IntakeFromSource() {
-    return SubFunnel::GetInstance().FeedDownFunnel().AlongWith(SubEndEffector::GetInstance().FeedDown()).Until([this] {return SubEndEffector::GetInstance().CheckLineBreakHigher();})
-    .AndThen(SubEndEffector::GetInstance().FeedDownSLOW().Until([this] {return SubEndEffector::GetInstance().CheckLineBreakLower();}));
-}
-
 frc2::CommandPtr SubFunnel::StopFunnelMotor(){
-    return RunOnce([this] {_funnelMotor.Set(0);}).AndThen(StopFunnelMotor());
+    return RunOnce([this] {_funnelMotor.Set(0);});
 }
 
 

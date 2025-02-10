@@ -26,7 +26,6 @@ class SubFunnel : public frc2::SubsystemBase {
   frc2::CommandPtr FeedDownFunnel();
   frc2::CommandPtr StopFunnelMotor();
   frc2::CommandPtr FeedUpFunnel();
-  frc2::CommandPtr IntakeFromSource();
 
  private:
   // Components (e.g. motor controllers and sensors) should generally be
