@@ -16,8 +16,10 @@ frc2::CommandPtr RemoveAlgaeHigh() {
 }
 
 frc2::CommandPtr IntakeFromSource() {
-  return SubFunnel::GetInstance()
-      .FeedDownFunnel()
+  return SubElevator::GetInstance()
+      .CmdSetSource()
+      .Until([] { return SubElevator::GetInstance().IsAtTarget();})
+      .AndThen(SubFunnel::GetInstance().FeedDownFunnel())
       .AlongWith(SubEndEffector::GetInstance().FeedDown())
       .Until([] { return SubEndEffector::GetInstance().CheckLineBreakHigher(); })
       .AndThen(SubEndEffector::GetInstance().FeedDownSLOW().Until(
