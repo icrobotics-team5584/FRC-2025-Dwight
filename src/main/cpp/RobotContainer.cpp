@@ -101,8 +101,8 @@ void RobotContainer::ConfigureBindings() {
 
   _operatorController.POVLeft().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
   _operatorController.POVRight().OnTrue(SubElevator::GetInstance().CmdSetSource());
-  // _operatorController.POVUp.OnTrue()
-  // _operatorController.POVDown.OnTrue()
+  _operatorController.POVUp().OnTrue(cmd::ClimbEngageSequence());
+  _operatorController.POVDown().OnTrue(cmd::ClimbDisengageSequence());
 
   _operatorController.LeftTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromSource());
   _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
