@@ -5,9 +5,14 @@
 
 namespace cmd {
 
-frc2::CommandPtr RemoveAlgae() {
+frc2::CommandPtr RemoveAlgaeLow() {
   return SubEndEffector::GetInstance().FeedDown().AlongWith(
-      SubElevator::GetInstance().ManualElevatorMovementAlgae());
+      SubElevator::GetInstance().CmdSetClearLowAlgea());
+}
+
+frc2::CommandPtr RemoveAlgaeHigh() {
+  return SubEndEffector::GetInstance().FeedDown().AlongWith(
+      SubElevator::GetInstance().CmdSetClearHighAlgea());
 }
 
 frc2::CommandPtr IntakeFromSource() {
