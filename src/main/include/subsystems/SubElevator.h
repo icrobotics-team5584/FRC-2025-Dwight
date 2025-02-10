@@ -28,6 +28,7 @@ class SubElevator : public frc2::SubsystemBase {
   frc2::CommandPtr CmdSetClearHighAlgea();
   frc2::CommandPtr CmdSetClearLowAlgea();
   frc2::CommandPtr CmdSetSource();
+  frc2::CommandPtr CmdSetClimb();
   frc2::CommandPtr AlgaeLow();
   frc2::CommandPtr AlgaeHigh();
   frc2::CommandPtr ZeroElevator();
@@ -78,6 +79,7 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr units::meter_t _ALGAE_LOW_HEIGHT = 0_m;  // get numbers later
   static constexpr units::meter_t _ALGAE_HIGH_HEIGHT = 0_m;
   static constexpr units::meter_t _SOURCE_HEIGHT = 0.20_m;
+  static constexpr units::meter_t _CLIMB_HEIGHT = 0.73_m; // arbitrary value replace to real value later
 
  private:
   ctre::phoenix6::configs::TalonFXConfiguration _motorConfig{};

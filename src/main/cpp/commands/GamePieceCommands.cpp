@@ -13,6 +13,10 @@ namespace cmd {
         );
     }
 
+    frc2::CommandPtr ClimbFullSequence() {
+        return SubElevator::GetInstance().cmd
+    }
+
     frc2::CommandPtr RemoveAlgae() {
         return SubEndEffector::GetInstance().FeedDown().AlongWith(SubElevator::GetInstance().ManualElevatorMovementAlgae());
     }

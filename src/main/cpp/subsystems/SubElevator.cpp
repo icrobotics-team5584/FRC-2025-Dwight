@@ -102,6 +102,9 @@ frc2::CommandPtr SubElevator::CmdSetL4(){
 frc2::CommandPtr SubElevator::CmdSetSource(){
     return CmdElevatorToPosition(_SOURCE_HEIGHT);
     }
+frc2::CommandPtr SubElevator::CmdSetClimb(){
+    return CmdElevatorToPosition(_CLIMB_HEIGHT);
+    }
 
 frc2::CommandPtr SubElevator::AlgaeLow(){
     return CmdElevatorToPosition(_ALGAE_LOW_HEIGHT);
