@@ -27,4 +27,4 @@ frc2::CommandPtr IntakeFromSource() {
           .AndThen([] {SubEndEffector::GetInstance().HasCoral = true;});
 }
 
-}  // namespace cmd
+}  // namespace cmd //
