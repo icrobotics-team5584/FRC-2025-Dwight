@@ -55,7 +55,7 @@ frc2::CommandPtr SubClimber::ClimberAutoReset() {
         .AndThen(ClimberResetCheck())
         .AndThen([this] {_climberMotor.SetPosition(0_deg);})
         .FinallyDo([this] {_climberMotor.StopMotor();});
-        }
+}
 
 frc2::CommandPtr SubClimber::ClimberResetCheck() {
     return frc2::cmd::RunOnce ([this] {ResetM1 = false;})
@@ -78,7 +78,7 @@ frc2::CommandPtr SubClimber::ManualClimberMovementUP() {
         auto targRot = _climberMotor.GetPosition();
         _climberMotor.SetMaxMotionTarget(targRot);
       });
-    }
+}
 
 frc2::CommandPtr SubClimber::ManualClimberMovementDOWN() {
   return frc2::cmd::StartEnd(
@@ -87,12 +87,12 @@ frc2::CommandPtr SubClimber::ManualClimberMovementDOWN() {
         auto targRot = _climberMotor.GetPosition();
         _climberMotor.SetMaxMotionTarget(targRot);
       });
-    }
+}
 
 frc2::CommandPtr SubClimber::ManualClimberMovementDOWNSLOW() {
   return frc2::cmd::RunOnce(
       [this] { _climberMotor.SetVoltage(-1_V); });
-    }
+}
 
     
 

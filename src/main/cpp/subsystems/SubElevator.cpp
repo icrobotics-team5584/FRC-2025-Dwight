@@ -81,39 +81,40 @@ frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height){
     else {
          _elevatorMotor1.SetControl(controls::MotionMagicVoltage(RotationsFromHeight(height)).WithEnableFOC(true));
     }
-    });}
+    });
+}
 
 frc2::CommandPtr SubElevator::CmdSetL1(){
     return CmdElevatorToPosition(_L1_HEIGHT);
-    }
+}
 
 frc2::CommandPtr SubElevator::CmdSetL2(){
     return CmdElevatorToPosition(_L2_HEIGHT);
-    }
+}
 
 frc2::CommandPtr SubElevator::CmdSetL3(){
     return CmdElevatorToPosition(_L3_HEIGHT);
-    }
+}
 
 frc2::CommandPtr SubElevator::CmdSetL4(){
     return CmdElevatorToPosition(_L4_HEIGHT);
-    }
+}
 
 frc2::CommandPtr SubElevator::CmdSetSource(){
     return CmdElevatorToPosition(_SOURCE_HEIGHT);
-    }
+}
 
 frc2::CommandPtr SubElevator::CmdSetClimb(){
     return CmdElevatorToPosition(_CLIMB_HEIGHT);
-    }
+}
 
 frc2::CommandPtr SubElevator::AlgaeLow(){
     return CmdElevatorToPosition(_ALGAE_LOW_HEIGHT);
-    }
+}
 
 frc2::CommandPtr SubElevator::AlgaeHigh(){
     return CmdElevatorToPosition(_ALGAE_HIGH_HEIGHT);
-    }
+}
 
 
 units::turn_t SubElevator::RotationsFromHeight(units::meter_t height){
