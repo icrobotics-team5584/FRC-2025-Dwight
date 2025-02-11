@@ -38,19 +38,18 @@ SubElevator::SubElevator() {
 
   // Current Limits
   _motorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-  _motorConfig.CurrentLimits.SupplyCurrentLowerLimit = 20.0_A;  // 40
-  _motorConfig.CurrentLimits.SupplyCurrentLimit = 60.0_A;       // 80
+  _motorConfig.CurrentLimits.SupplyCurrentLowerLimit = 20.0_A; //40
+  _motorConfig.CurrentLimits.SupplyCurrentLimit = 60.0_A; //80
   _motorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.5_s;
   _motorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-  _motorConfig.CurrentLimits.StatorCurrentLimit = 30.0_A;  // 30
+  _motorConfig.CurrentLimits.StatorCurrentLimit = 80.0_A;//30
   _motorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
   _motorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-  _motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-      (_MAX_HEIGHT / _DRUM_CIRCUMFERENCE).value() * 1_tr;
+  _motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = (_MAX_HEIGHT/_DRUM_CIRCUMFERENCE).value() * 1_tr;
   _motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0_tr;
 
   // Feedback Sensor Ratio
-  _motorConfig.Feedback.SensorToMechanismRatio = 14;
+  _motorConfig.Feedback.SensorToMechanismRatio = 4;
 
   // Motion Magic ConfigurationS
   _motorConfig.MotionMagic.MotionMagicCruiseVelocity =
