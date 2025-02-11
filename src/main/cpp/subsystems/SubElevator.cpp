@@ -14,6 +14,7 @@
 #include <frc/MathUtil.h>
 #include <utilities/RobotLogs.h>
 #include <ctre/phoenix6/configs/Configs.hpp>
+#include "utilities/BotVars.h"
 
 using namespace ctre::phoenix6;
 
@@ -48,8 +49,8 @@ SubElevator::SubElevator() {
   _motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = (_MAX_HEIGHT/_DRUM_CIRCUMFERENCE).value() * 1_tr;
   _motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0_tr;
 
-  // Feedback Sensor Ratio
-  _motorConfig.Feedback.SensorToMechanismRatio = 4;
+    // Feedback Sensor Ratio
+    _motorConfig.Feedback.SensorToMechanismRatio = BotVars::Choose(14, 4);
 
   // Motion Magic ConfigurationS
   _motorConfig.MotionMagic.MotionMagicCruiseVelocity =
