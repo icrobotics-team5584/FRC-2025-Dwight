@@ -9,13 +9,14 @@
 
 
 SubEndEffector::SubEndEffector() {
+    if(HasCoral = true) {SubEndEffector::GetInstance().KeepCoralInEndEffector();};
 }
 
 // This method will be called once per scheduler run
 void SubEndEffector::Periodic() {
     frc::SmartDashboard::PutBoolean("EndEffector/Linebreak/1", SubEndEffector::GetInstance().CheckLineBreakHigher());
     frc::SmartDashboard::PutBoolean("EndEffector/Linebreak/2", SubEndEffector::GetInstance().CheckLineBreakLower());
-    frc::SmartDashboard::PutNumber("EndEffector/Motor", _endEffectorMotor.GetAppliedOutput());
+    frc::SmartDashboard::PutNumber("EndEffector/Motor", _endEffectorMotor.Get());
 }
 
 frc2::CommandPtr SubEndEffector::FeedUp() {
@@ -35,22 +36,22 @@ frc2::CommandPtr SubEndEffector::FeedDownSLOW() {
 }
 
 frc2::CommandPtr SubEndEffector::Shoot() {
-    return StartEnd([this] {_endEffectorMotor.Set(-0.8);}, [this] {_endEffectorMotor.Set(0);});
+    return StartEnd([this] {_endEffectorMotor.Set(-0.8);}, [this] {_endEffectorMotor.Set(0);}).AndThen([this]{HasCoral = false;});
 }
 
 frc2::CommandPtr SubEndEffector::StopMotor() {
-    return RunOnce([this] {_endEffectorMotor.Set(0);});
+    return RunOnce([this] {
+        _endEffectorMotor.Set(0);
+        });
 }
 
-frc2::CommandPtr SubEndEffector::IntakeFromSource() {
-    return FeedDown().Until([this] {return CheckLineBreakHigher();})
-    .AndThen(FeedDownSLOW().Until([this] {return CheckLineBreakLower();}));
-}
+
 
 frc2::CommandPtr SubEndEffector::IntakeFromGround() {
     return FeedUp().Until([this] {return CheckLineBreakHigher();})
     .AndThen(FeedUpSLOW().Until([this] {return !CheckLineBreakLower();}))
-    .AndThen(FeedDownSLOW().Until([this] {return CheckLineBreakLower();}));
+    .AndThen(FeedDownSLOW().Until([this] {return CheckLineBreakLower();}))
+    .AndThen([this] {HasCoral = true;});
 }
 
 frc2::CommandPtr SubEndEffector::ScoreCoral() {
@@ -62,11 +63,11 @@ frc2::CommandPtr SubEndEffector::ScoreCoralSLOW() {
 }
 
 bool SubEndEffector::CheckLineBreakHigher() {
-    return !_endEffectorLineBreakHigher.Get();
+    return _endEffectorLineBreakHigher.Get();
 }
 
 bool SubEndEffector::CheckLineBreakLower() {
-    return !_endEffectorLineBreakLower.Get();
+    return _endEffectorLineBreakLower.Get();
 }
 
 frc2::Trigger SubEndEffector::CheckLineBreakTriggerHigher() {
@@ -75,4 +76,9 @@ frc2::Trigger SubEndEffector::CheckLineBreakTriggerHigher() {
 
 frc2::Trigger SubEndEffector::CheckLineBreakTriggerLower() {
     return frc2::Trigger {[this] {return this->CheckLineBreakLower();}};
+}
+
+frc2::CommandPtr SubEndEffector::KeepCoralInEndEffector() {
+return Run([this] {SubEndEffector::GetInstance().FeedUpSLOW();})
+        .Until([this] {return !CheckLineBreakLower();});
 }

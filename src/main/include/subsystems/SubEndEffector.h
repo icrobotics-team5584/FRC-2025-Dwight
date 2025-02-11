@@ -30,13 +30,14 @@ class SubEndEffector : public frc2::SubsystemBase {
   frc2::CommandPtr ScoreCoral();
   frc2::CommandPtr Shoot();
   frc2::CommandPtr ScoreCoralSLOW();
+  frc2::CommandPtr KeepCoralInEndEffector();
   bool CheckLineBreakHigher();
   bool CheckLineBreakLower();
   bool LineBreakDownSignal();
   frc2::Trigger CheckLineBreakTriggerHigher();
   frc2::Trigger CheckLineBreakTriggerLower();
 
-
+  bool HasCoral = false;
   /**
    * Will be called periodically whenever the CommandScheduler runs.
    */
