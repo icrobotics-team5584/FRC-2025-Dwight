@@ -9,6 +9,7 @@
 
 
 SubEndEffector::SubEndEffector() {
+    if(HasCoral = true) {SubEndEffector::GetInstance().KeepCoralInEndEffector();};
 }
 
 // This method will be called once per scheduler run
@@ -35,7 +36,7 @@ frc2::CommandPtr SubEndEffector::FeedDownSLOW() {
 }
 
 frc2::CommandPtr SubEndEffector::Shoot() {
-    return StartEnd([this] {_endEffectorMotor.Set(-0.8);}, [this] {_endEffectorMotor.Set(0);});
+    return StartEnd([this] {_endEffectorMotor.Set(-0.8);}, [this] {_endEffectorMotor.Set(0);}).AndThen([this]{HasCoral = false;});
 }
 
 frc2::CommandPtr SubEndEffector::StopMotor() {
@@ -49,7 +50,8 @@ frc2::CommandPtr SubEndEffector::StopMotor() {
 frc2::CommandPtr SubEndEffector::IntakeFromGround() {
     return FeedUp().Until([this] {return CheckLineBreakHigher();})
     .AndThen(FeedUpSLOW().Until([this] {return !CheckLineBreakLower();}))
-    .AndThen(FeedDownSLOW().Until([this] {return CheckLineBreakLower();}));
+    .AndThen(FeedDownSLOW().Until([this] {return CheckLineBreakLower();}))
+    .AndThen([this] {HasCoral = true;});
 }
 
 frc2::CommandPtr SubEndEffector::ScoreCoral() {
@@ -74,4 +76,9 @@ frc2::Trigger SubEndEffector::CheckLineBreakTriggerHigher() {
 
 frc2::Trigger SubEndEffector::CheckLineBreakTriggerLower() {
     return frc2::Trigger {[this] {return this->CheckLineBreakLower();}};
+}
+
+frc2::CommandPtr SubEndEffector::KeepCoralInEndEffector() {
+return Run([this] {SubEndEffector::GetInstance().FeedUpSLOW();})
+        .Until([this] {return !CheckLineBreakLower();});
 }
