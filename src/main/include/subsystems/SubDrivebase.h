@@ -107,14 +107,14 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc::Translation2d _backLeftLocation{-0.281_m, +0.281_m};
   frc::Translation2d _backRightLocation{-0.281_m, -0.281_m};
 
-  const units::turn_t FRONT_RIGHT_MAG_OFFSET =
-      BotVars::Choose(-0.876953125 + 0.5, -0.515380859375) * 1_tr;
-  const units::turn_t FRONT_LEFT_MAG_OFFSET =
-      BotVars::Choose(-0.443603515625 + 0.5, -0.172607421875) * 1_tr;
-  const units::turn_t BACK_RIGHT_MAG_OFFSET =
-      BotVars::Choose(-0.962158203125 + 0.5, -0.395263671875) * 1_tr;
+  const units::turn_t FRONT_RIGHT_MAG_OFFSET = //
+      BotVars::Choose(-0.37451171875, -0.515380859375) * 1_tr;
+  const units::turn_t FRONT_LEFT_MAG_OFFSET = //
+      BotVars::Choose(-0.94091796875, -0.172607421875) * 1_tr;
+  const units::turn_t BACK_RIGHT_MAG_OFFSET = //
+      BotVars::Choose(-0.46435546875, -0.395263671875) * 1_tr;
   const units::turn_t BACK_LEFT_MAG_OFFSET =
-      BotVars::Choose(-0.840087890625 + 0.5, -0.94921875) * 1_tr;
+      BotVars::Choose(-0.353515625, -0.94921875) * 1_tr;
 
   frc::DigitalInput _toggleBrakeCoast{dio::brakeCoastButton};
 
