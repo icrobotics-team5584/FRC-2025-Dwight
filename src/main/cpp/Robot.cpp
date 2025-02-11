@@ -9,9 +9,14 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/CommandScheduler.h>
 
+// UCRL
+#include "URCL.h"
+
 Robot::Robot() {
   frc::DataLogManager::Start();
   frc::DriverStation::StartDataLog(frc::DataLogManager::GetLog());
+  URCL::Start(std::map<int, std::string_view>{{canid::climberMotor, "Climber"},
+  {canid::EndEffectorMotor, "EndEffector"}}); //,{canid::funnelMotor, "Funnel"},{canid::funnelMotor, "AlgaeArm},{canid::funnelMotor, "AlgaeRoller"}
 }
 
 void Robot::RobotPeriodic() {
