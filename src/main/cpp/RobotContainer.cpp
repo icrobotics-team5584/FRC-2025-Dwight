@@ -25,7 +25,7 @@
 RobotContainer::RobotContainer() {
   wpi::WebServer::GetInstance().Start(5800, frc::filesystem::GetDeployDirectory());
   SubVision::GetInstance();
-
+  SubEndEffector::GetInstance();
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(
       SubDrivebase::GetInstance().JoystickDrive(_driverController));
@@ -107,6 +107,7 @@ void RobotContainer::ConfigureBindings() {
   _operatorController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
   _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
   _operatorController.RightBumper().WhileTrue(SubEndEffector::GetInstance().FeedUpSLOW());
+  _operatorController.LeftBumper().WhileTrue(SubEndEffector::GetInstance().IntakeFromGround());
 
   //  _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise
   //  camera object

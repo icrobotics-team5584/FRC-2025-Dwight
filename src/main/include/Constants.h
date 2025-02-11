@@ -23,8 +23,8 @@ namespace canid {
 
     constexpr int funnelMotor = 18;
 
-    constexpr int elevatorMotor1 = 13;
-    constexpr int elevatorMotor2 = 14;
+    constexpr int elevatorMotor1 = 99;
+    constexpr int elevatorMotor2 = 98;
 
     constexpr int climberMotor = 18;
     
@@ -32,8 +32,8 @@ namespace canid {
 }
 
 namespace dio {
-    constexpr int EndEffectorLineBreakHigher = 3;  
-    constexpr int EndEffectorLineBreakLower = 2;
+    constexpr int EndEffectorLineBreakHigher = 9;  
+    constexpr int EndEffectorLineBreakLower = 8;
     constexpr int brakeCoastButton = 4;
 }
 
