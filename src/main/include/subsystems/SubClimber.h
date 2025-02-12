@@ -29,7 +29,7 @@ class SubClimber : public frc2::SubsystemBase {
   const double P = 10;
   const double I = 0;
   const double D = 0;
-  const double GEAR_RATIO = 600; //assuming 480 means reduction and not 1/480
+  const double GEAR_RATIO = 600; // 600:1
 
   frc2::CommandPtr ClimberAutoReset();
   frc2::CommandPtr ManualClimberMovementUP();
