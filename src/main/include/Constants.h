@@ -30,8 +30,8 @@ namespace canid {
 }
 
 namespace dio {
-    constexpr int EndEffectorLineBreakHigher = 3;  
-    constexpr int EndEffectorLineBreakLower = 2;
+    constexpr int EndEffectorLineBreakHigher = 8;  
+    constexpr int EndEffectorLineBreakLower = 9;
     constexpr int brakeCoastButton = 4;
 }
 
