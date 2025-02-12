@@ -23,8 +23,7 @@ frc2::CommandPtr IntakeFromSource() {
       .AlongWith(SubEndEffector::GetInstance().FeedDown())
       .Until([] { return SubEndEffector::GetInstance().CheckLineBreakHigher(); })
       .AndThen(SubEndEffector::GetInstance().FeedDownSLOW().Until(
-          [] { return SubEndEffector::GetInstance().CheckLineBreakLower(); }))
-          .AndThen([] {SubEndEffector::GetInstance().HasCoral = true;});
+          [] { return SubEndEffector::GetInstance().CheckLineBreakLower(); }));
 }
 
 }  // namespace cmd //
