@@ -13,6 +13,8 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/MathUtil.h>
 #include <utilities/RobotLogs.h>
+#include <ctre/phoenix6/configs/Configs.hpp>
+#include "utilities/BotVars.h"
 
 using namespace ctre::phoenix6;
 
@@ -43,14 +45,14 @@ SubElevator::SubElevator() {
     _motorConfig.CurrentLimits.SupplyCurrentLimit = 60.0_A; //80
     _motorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.5_s;
     _motorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    _motorConfig.CurrentLimits.StatorCurrentLimit = 30.0_A;//30
+    _motorConfig.CurrentLimits.StatorCurrentLimit = 80.0_A;//30
     _motorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     _motorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     _motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = (_MAX_HEIGHT/_DRUM_CIRCUMFERENCE).value() * 1_tr;
     _motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0_tr;
 
     // Feedback Sensor Ratio
-    _motorConfig.Feedback.SensorToMechanismRatio = 14;
+    _motorConfig.Feedback.SensorToMechanismRatio = BotVars::Choose(14, 4);
 
     // Motion Magic ConfigurationS
     _motorConfig.MotionMagic.MotionMagicCruiseVelocity = _CRUISE_VELOCITY.value() / _DRUM_CIRCUMFERENCE.value() * 1_tr / 1_s; // Adjust
@@ -68,6 +70,7 @@ SubElevator::SubElevator() {
 
 frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height){
     return RunOnce([this, height]{
+    _targetHeight = height;
     if(height < _MIN_HEIGHT){
        _elevatorMotor1.SetControl(controls::MotionMagicVoltage(RotationsFromHeight(_MIN_HEIGHT)).WithEnableFOC(true));
         }
@@ -135,6 +138,9 @@ units::ampere_t SubElevator::GetM1Current() {
     return _elevatorMotor1.GetStatorCurrent().GetValue();
 }
 
+units::meter_t SubElevator::GetTargetHeight(){
+    return _targetHeight;
+}
 
 void SubElevator::EnableSoftLimit(bool enabled) {
     // Configure the forward soft limit for elevatorMotor1
@@ -238,10 +244,9 @@ frc2::CommandPtr SubElevator::ElevatorStop() {
 }
 
 bool SubElevator::IsAtTarget() {
-    units::meter_t TargetHeight = HeightFromRotations(_elevatorMotor1.GetClosedLoopReference().GetValue()*1_tr);
-    units::meter_t CurrentHeight = HeightFromRotations(_elevatorMotor1.GetPosition().GetValue());
-    units::meter_t Tolerance = 0.05_m;
-    if( CurrentHeight > TargetHeight - Tolerance || CurrentHeight < TargetHeight + Tolerance) {
+    units::meter_t currentHeight = HeightFromRotations(_elevatorMotor1.GetPosition().GetValue());
+    units::meter_t tolerance = 0.05_m;
+    if( currentHeight > _targetHeight - tolerance && currentHeight < _targetHeight + tolerance) {
         return true;
     }
 
@@ -279,6 +284,17 @@ frc2::CommandPtr SubElevator::ElevatorAutoReset() {
 //Stop motor
 void SubElevator::Stop() {
   _elevatorMotor1.StopMotor();
+}
+
+void SubElevator::SetBrakeMode(bool mode){
+    if (mode == true) {
+        _elevatorMotor1.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Brake);
+        _elevatorMotor2.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Brake);
+    } else if (mode == false) {
+        _elevatorMotor1.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Coast);
+        _elevatorMotor2.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Coast);
+    }
+
 }
 
 // This method will be called once per scheduler run
