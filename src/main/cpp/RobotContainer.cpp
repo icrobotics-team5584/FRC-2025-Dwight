@@ -90,9 +90,11 @@ void RobotContainer::ConfigureBindings() {
   SubDrivebase::GetInstance().CheckCoastButton().ToggleOnTrue(cmd::ToggleBrakeCoast());
 
   //Opperator
-  frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
-    return (_operatorController.GetLeftY() > 0.2);
-  }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
+  _operatorController.AxisGreaterThan(frc::XboxController::Axis::kLeftY, 0.2)
+    .WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
+
+  _operatorController.AxisLessThan(frc::XboxController::Axis::kLeftY, -0.2)
+    .WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
 
   _operatorController.A().OnTrue(SubElevator::GetInstance().CmdSetL1());
   _operatorController.X().OnTrue(SubElevator::GetInstance().CmdSetL2());

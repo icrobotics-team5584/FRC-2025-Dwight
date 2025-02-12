@@ -42,7 +42,7 @@ SubElevator::SubElevator() {
     _motorConfig.CurrentLimits.SupplyCurrentLimit = 60.0_A; //80
     _motorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.5_s;
     _motorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    _motorConfig.CurrentLimits.StatorCurrentLimit = 30.0_A;//30
+    _motorConfig.CurrentLimits.StatorCurrentLimit = 80.0_A;//30
     _motorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     _motorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     _motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = (_MAX_HEIGHT/_DRUM_CIRCUMFERENCE).value() * 1_tr;
@@ -297,10 +297,10 @@ void SubElevator::Periodic() {
 void SubElevator::SimulationPeriodic() {
     auto& motorState = _elevatorMotor1.GetSimState();
     frc::SmartDashboard::PutNumber("Elevator/Sim/Motor voltage", motorState.GetMotorVoltage().value());
-    _motorSim.SetInputVoltage(motorState.GetMotorVoltage());
+    _motorSim.SetInputVoltage(-motorState.GetMotorVoltage());
     _motorSim.Update(20_ms);
     _motorSim.GetVelocity();
-    motorState.SetRawRotorPosition(_GEAR_RATIO * RotationsFromHeight(_motorSim.GetPosition()));
-    motorState.SetRotorVelocity(_GEAR_RATIO * RotationsFromMetersPerSecond(_motorSim.GetVelocity()));
+    motorState.SetRawRotorPosition(-_GEAR_RATIO * RotationsFromHeight(_motorSim.GetPosition()));
+    motorState.SetRotorVelocity(-_GEAR_RATIO * RotationsFromMetersPerSecond(_motorSim.GetVelocity()));
     _motorSim.GetCurrentDraw();
 };
