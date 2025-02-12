@@ -5,15 +5,19 @@
 #include "Robot.h"
 #include "subsystems/SubElevator.h"
 #include "frc/DataLogManager.h"
+#include <frc/DriverStation.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/CommandScheduler.h>
 #include "grpl/CanBridge.h"
 
 Robot::Robot() {
   frc::DataLogManager::Start();
-  grpl::start_can_bridge();
-  
-  lc = new grpl::LaserCan(canid::LaserCAN);
+    lc = new grpl::LaserCan(0);
+    // Optionally initialise the settings of the LaserCAN, if you haven't already done so in GrappleHook
+  lc->set_ranging_mode(grpl::LaserCanRangingMode::Long);
+  lc->set_timing_budget(grpl::LaserCanTimingBudget::TB100ms);
+  lc->set_roi(grpl::LaserCanROI{ 8, 8, 16, 16 });
+  frc::DriverStation::StartDataLog(frc::DataLogManager::GetLog());
 }
 
 void Robot::RobotPeriodic() {

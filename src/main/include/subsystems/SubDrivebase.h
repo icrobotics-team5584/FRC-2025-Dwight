@@ -1,7 +1,6 @@
 #pragma once
 
 #include <frc2/command/SubsystemBase.h>
-#include <studica/AHRS.h>
 #include <frc/geometry/Translation2d.h>
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <frc/kinematics/SwerveDriveOdometry.h>
@@ -16,13 +15,16 @@
 #include "utilities/SwerveModule.h"
 #include <frc2/command/button/CommandXboxController.h>
 #include <frc2/command/sysid/SysIdRoutine.h>
+#include <frc/DigitalInput.h>
 #include "utilities/BotVars.h"
 #include "utilities/RobotLogs.h"
+#include <ctre/phoenix6/core/CorePigeon2.hpp>
+#include <ctre/phoenix6/Pigeon2.hpp>
 
 class SubDrivebase : public frc2::SubsystemBase {
  public:
   SubDrivebase();
-  static SubDrivebase &GetInstance() {
+  static SubDrivebase& GetInstance() {
     static SubDrivebase inst;
     return inst;
   }
@@ -33,25 +35,30 @@ class SubDrivebase : public frc2::SubsystemBase {
   void AddVisionMeasurement(frc::Pose2d pose, double ambiguity, units::second_t timeStamp);
   void ResetGyroHeading(units::degree_t startingAngle = 0_deg);
   void DisplayTrajectory(std::string name, frc::Trajectory trajectory);
-  void SetNeutralMode(bool mode);
+  void SetBrakeMode(bool mode);
   void SetPose(frc::Pose2d pose);
   void DisplayPose(std::string label, frc::Pose2d pose);
   void UpdateOdometry();
   void SyncSensors();
-  void SetPathplannerRotationFeedbackSource(std::function<units::turns_per_second_t()> rotationFeedbackSource);
+  void SetPathplannerRotationFeedbackSource(
+      std::function<units::turns_per_second_t()> rotationFeedbackSource);
   void ResetPathplannerRotationFeedbackSource();
+  void ConfigPigeon2();
 
   // Getters
   bool IsAtPose(frc::Pose2d pose);
+  frc2::Trigger CheckCoastButton();
+
   frc::ChassisSpeeds CalcDriveToPoseSpeeds(frc::Pose2d targetPose);
   frc::ChassisSpeeds CalcJoystickSpeeds(frc2::CommandXboxController& controller);
-  frc::ChassisSpeeds CalcJoystickSpeedsEndEffectorForward(frc2::CommandXboxController& controller);
   units::turns_per_second_t CalcRotateSpeed(units::turn_t rotationError);
   units::degree_t GetPitch();
   frc::Pose2d GetPose();
   frc::Pose2d GetSimPose();
-  frc::Rotation2d GetHeading(); // Heading as recorded by the pose estimator (matches field orientation)
-  frc::Rotation2d GetGyroAngle(); // Heading as recorded by the gyro (zero is direction when switched on)
+  frc::Rotation2d
+  GetHeading();  // Heading as recorded by the pose estimator (matches field orientation)
+  frc::Rotation2d
+  GetGyroAngle();  // Heading as recorded by the gyro (zero is direction when switched on)
   units::meters_per_second_t GetVelocity();
   frc::SwerveDriveKinematics<4> GetKinematics();
   frc::ChassisSpeeds GetRobotRelativeSpeeds();
@@ -74,11 +81,16 @@ class SubDrivebase : public frc2::SubsystemBase {
   // Constants
   static constexpr units::meters_per_second_t MAX_VELOCITY = 5_mps;
   static constexpr units::meters_per_second_t MAX_DRIVE_TO_POSE_VELOCITY = 1_mps;
-  static constexpr units::turns_per_second_t MAX_ANGULAR_VELOCITY = 720_deg_per_s;
+  static constexpr units::turns_per_second_t MAX_ANGULAR_VELOCITY =
+      360_deg_per_s;  // CHANGE TO 720\[]
+
   static constexpr units::turns_per_second_squared_t MAX_ANG_ACCEL{std::numbers::pi};
+
   static constexpr double MAX_JOYSTICK_ACCEL = 3;
   static constexpr double MAX_ANGULAR_JOYSTICK_ACCEL = 3;
   static constexpr double JOYSTICK_DEADBAND = 0.08;
+  static constexpr double TRANSLATION_R_SCALING = 2;  // Set to 1 for linear scaling
+  static constexpr double ROTATION_R_SCALING = 2;     // Set to 1 for linear scaling
 
  private:
   void Drive(units::meters_per_second_t xSpeed, units::meters_per_second_t ySpeed,
@@ -86,7 +98,8 @@ class SubDrivebase : public frc2::SubsystemBase {
              std::optional<std::array<units::newton_t, 4>> xForceFeedforwards = std::nullopt,
              std::optional<std::array<units::newton_t, 4>> yForceFeedforwards = std::nullopt);
 
-  studica::AHRS _gyro{studica::AHRS::NavXComType::kUSB1};
+  ctre::phoenix6::configs::Pigeon2Configuration _gyroConfig;
+  ctre::phoenix6::hardware::Pigeon2 _gyro{canid::pigeon2};
 
   // Swerve modules
   frc::Translation2d _frontLeftLocation{+0.281_m, +0.281_m};
@@ -94,31 +107,36 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc::Translation2d _backLeftLocation{-0.281_m, +0.281_m};
   frc::Translation2d _backRightLocation{-0.281_m, -0.281_m};
 
+  const units::turn_t FRONT_RIGHT_MAG_OFFSET =
+      BotVars::Choose(-0.876953125 + 0.5, -0.515380859375) * 1_tr;
+  const units::turn_t FRONT_LEFT_MAG_OFFSET =
+      BotVars::Choose(-0.443603515625 + 0.5, -0.172607421875) * 1_tr;
+  const units::turn_t BACK_RIGHT_MAG_OFFSET =
+      BotVars::Choose(-0.962158203125 + 0.5, -0.395263671875) * 1_tr;
+  const units::turn_t BACK_LEFT_MAG_OFFSET =
+      BotVars::Choose(-0.840087890625 + 0.5, -0.94921875) * 1_tr;
 
-  const units::turn_t FRONT_RIGHT_MAG_OFFSET = BotVars::Choose(-0.876953125 + 0.5, -0.515380859375) * 1_tr;
-  const units::turn_t FRONT_LEFT_MAG_OFFSET = BotVars::Choose(-0.443603515625+ 0.5, -0.172607421875) * 1_tr;
-  const units::turn_t BACK_RIGHT_MAG_OFFSET = BotVars::Choose(-0.962158203125+ 0.5, -0.395263671875) * 1_tr;
-  const units::turn_t BACK_LEFT_MAG_OFFSET = BotVars::Choose(-0.840087890625+ 0.5, -0.94921875) * 1_tr;
+  frc::DigitalInput _toggleBrakeCoast{dio::brakeCoastButton};
 
   SwerveModule _frontLeft{canid::DriveBaseFrontLeftDrive, canid::DriveBaseFrontLeftTurn,
-                          canid::DriveBaseFrontLeftEncoder, (FRONT_LEFT_MAG_OFFSET) };
+                          canid::DriveBaseFrontLeftEncoder, (FRONT_LEFT_MAG_OFFSET)};
   SwerveModule _frontRight{canid::DriveBaseFrontRightDrive, canid::DriveBaseFrontRightTurn,
-                           canid::DriveBaseFrontRightEncoder, (FRONT_RIGHT_MAG_OFFSET) };
+                           canid::DriveBaseFrontRightEncoder, (FRONT_RIGHT_MAG_OFFSET)};
   SwerveModule _backLeft{canid::DriveBaseBackLeftDrive, canid::DriveBaseBackLeftTurn,
-                         canid::DriveBaseBackLeftEncoder, (BACK_LEFT_MAG_OFFSET) };
+                         canid::DriveBaseBackLeftEncoder, (BACK_LEFT_MAG_OFFSET)};
   SwerveModule _backRight{canid::DriveBaseBackRightDrive, canid::DriveBaseBackRightTurn,
-                          canid::DriveBaseBackRightEncoder, (BACK_RIGHT_MAG_OFFSET) };
+                          canid::DriveBaseBackRightEncoder, (BACK_RIGHT_MAG_OFFSET)};
 
   // Control objects
   frc::SwerveDriveKinematics<4> _kinematics{_frontLeftLocation, _frontRightLocation,
                                             _backLeftLocation, _backRightLocation};
 
-  frc::PIDController _teleopTranslationController{1.7,0.0,0.0};
+  frc::PIDController _teleopTranslationController{1.7, 0.0, 0.0};
   frc::ProfiledPIDController<units::radian> _teleopRotationController{
       3, 0, 0.2, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
   std::shared_ptr<pathplanner::PPHolonomicDriveController> _pathplannerController =
       std::make_shared<pathplanner::PPHolonomicDriveController>(
-        // translation needs tuning and such
+          // translation needs tuning and such
           pathplanner::PIDConstants{3.2, 0.0, 0.3},  // Translation PID constants
           pathplanner::PIDConstants{1.0, 0.0, 0.0}   // Rotation PID constants
       );
@@ -155,21 +173,22 @@ class SubDrivebase : public frc2::SubsystemBase {
   // Sysid
   frc2::sysid::SysIdRoutine _sysIdRoutine{
       frc2::sysid::Config{std::nullopt, std::nullopt, std::nullopt, nullptr},
-      frc2::sysid::Mechanism{[this](units::volt_t driveVoltage) {
-                               _frontLeft.DriveStraightVolts(driveVoltage);
-                               _backLeft.DriveStraightVolts(driveVoltage);
-                               _frontRight.DriveStraightVolts(driveVoltage);
-                               _backRight.DriveStraightVolts(driveVoltage);
-                             },
-                             [this](frc::sysid::SysIdRoutineLog* log) {
-                               log->Motor("drive-left")
-                                   .voltage(_frontLeft.GetDriveVoltage())
-                                   .position(_frontLeft.GetDrivenRotations().convert<units::turns>())
-                                   .velocity(_frontLeft.GetSpeed());
-                               log->Motor("drive-right")
-                                   .voltage(_frontRight.GetDriveVoltage())
-                                   .position(_frontRight.GetDrivenRotations().convert<units::turns>())
-                                   .velocity(_frontRight.GetSpeed());
-                             },
-                             this}};
+      frc2::sysid::Mechanism{
+          [this](units::volt_t driveVoltage) {
+            _frontLeft.DriveStraightVolts(driveVoltage);
+            _backLeft.DriveStraightVolts(driveVoltage);
+            _frontRight.DriveStraightVolts(driveVoltage);
+            _backRight.DriveStraightVolts(driveVoltage);
+          },
+          [this](frc::sysid::SysIdRoutineLog* log) {
+            log->Motor("drive-left")
+                .voltage(_frontLeft.GetDriveVoltage())
+                .position(_frontLeft.GetDrivenRotations().convert<units::turns>())
+                .velocity(_frontLeft.GetSpeed());
+            log->Motor("drive-right")
+                .voltage(_frontRight.GetDriveVoltage())
+                .position(_frontRight.GetDrivenRotations().convert<units::turns>())
+                .velocity(_frontRight.GetSpeed());
+          },
+          this}};
 };
