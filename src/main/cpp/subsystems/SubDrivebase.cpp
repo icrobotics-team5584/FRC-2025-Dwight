@@ -6,7 +6,6 @@
 #include <frc2/command/Commands.h>
 #include <frc/geometry/Pose2d.h>
 #include <frc/kinematics/ChassisSpeeds.h>
-#include <frc/DriverStation.h>
 #include <units/time.h>
 #include <pathplanner/lib/auto/AutoBuilder.h>
 #include <pathplanner/lib/config/RobotConfig.h>

@@ -4,21 +4,19 @@
 
 #include "RobotContainer.h"
 #include "subsystems/SubElevator.h"
-#include "commands/GamePieceCommands.h"
-#include <frc2/command/Commands.h>
-#include "subsystems/SubDrivebase.h"
-
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
-#include "subsystems/SubDrivebase.h"
 #include "subsystems/SubClimber.h"
-
 #include "subsystems/SubVision.h"
-#include "commands/VisionCommand.h"
-#include "commands/DriveCommands.h"
-#include <frc/smartdashboard/SmartDashboard.h>
+#include "subsystems/SubDrivebase.h"
 #include "subsystems/SubEndEffector.h"
 #include "subsystems/SubIntake.h"
+
+#include <frc2/command/Commands.h>
 #include "commands/VisionCommand.h"
+#include "commands/DriveCommands.h"
+#include "commands/GamePieceCommands.h"
+
+#include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/Filesystem.h>
 #include <wpinet/WebServer.h>
 

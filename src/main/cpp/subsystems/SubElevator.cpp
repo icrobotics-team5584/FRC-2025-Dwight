@@ -9,10 +9,8 @@
 #include <math.h>
 #include "utilities/RobotLogs.h"
 #include <units/angular_velocity.h>
-#include <ctre/phoenix6/configs/Configs.hpp>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/MathUtil.h>
-#include <utilities/RobotLogs.h>
 #include <ctre/phoenix6/configs/Configs.hpp>
 #include "utilities/BotVars.h"
 
