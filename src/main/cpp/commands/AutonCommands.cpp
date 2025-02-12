@@ -33,4 +33,11 @@ namespace cmd {
             .Until([]{return SubElevator::GetInstance().IsAtTarget() == true;})
             .AndThen(SubEndEffector::GetInstance().IntakeFromSource().WithName("IntakeFromSource").WithTimeout(1_s));
     }
+
+    // tmp command, never use this in comp
+    frc2::CommandPtr IntakeUntilLineBreak() {
+        return frc2::cmd::Wait(999.0_s)
+            .Until([]{return SubEndEffector::GetInstance().CheckLineBreakLower() == true;})
+            .AndThen(frc2::cmd::Wait(10.0_s));
+    }
 }
