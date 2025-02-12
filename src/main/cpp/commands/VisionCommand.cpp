@@ -17,12 +17,12 @@ using namespace frc2::cmd;
  * @param side align to left: 1, align to right: 2
  * @return A command that will align to the tag when executed.* 3.500_m, 3.870
  */
-frc2::CommandPtr YAlignWithTarget(int side, frc2::CommandXboxController& controller) 
+frc2::CommandPtr YAlignWithTarget(int side) 
 {
   static frc::Pose2d targetPose;
   return SubDrivebase::GetInstance()
       .Drive(
-          [side, &controller] {
+          [side] {
             targetPose = SubVision::GetInstance().GetReefPose(side);
             frc::ChassisSpeeds speeds =
                 SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose);
@@ -43,7 +43,7 @@ frc2::CommandPtr ForceAlignWithTarget(int side) {
   // reef so you stay aligned rotationally and at the right distance.
   return SubDrivebase::GetInstance().Drive(
       [side] {
-        if (SubVision::GetInstance().GetReefArea() > 3.5) {
+        if (SubVision::GetInstance().GetLastReefTagArea() > 3.5) {
           units::degree_t goalAngle;
           if (Logger::Tune("Vision/use dashbaord target", false)) {
             goalAngle = Logger::Tune("Vision/Goal Angle", SubVision::GetInstance().GetReefAlignAngle(side));
@@ -93,9 +93,9 @@ frc2::CommandPtr AddVisionMeasurement() {
       {&SubVision::GetInstance()});
 }  // namespace cmd
 // check pose -> decide which source is closer -> drive there
-frc2::CommandPtr AlignToSource(frc2::CommandXboxController& controller) {
+frc2::CommandPtr AlignToSource() {
   return SubDrivebase::GetInstance().Drive(
-      [&controller] {
+      [] {
         frc::Pose2d sourcePose = {0_m, 0_m, 0_deg};
         units::meter_t poseY = SubDrivebase::GetInstance().GetPose().Y();
         if (poseY > 4.025_m) {
@@ -124,7 +124,7 @@ frc2::CommandPtr AutoShootIfAligned(int side) {
   return Sequence(
     WaitUntil([side] {
      units::degree_t goalAngle = SubVision::GetInstance().GetReefAlignAngle(side);
-     units::degree_t tagAngle = SubVision::GetInstance().GetReefTagAngle();
+     units::degree_t tagAngle = SubVision::GetInstance().GetLastReefTagAngle();
      Logger::Log("AutoShoot/errorangle", (goalAngle-tagAngle).value());
      double tolerance = Logger::Tune("AutoShoot/autoshootTolerance", 0.2);
      if (tagAngle < goalAngle + tolerance*1_deg && tagAngle > goalAngle - tolerance*1_deg) {
