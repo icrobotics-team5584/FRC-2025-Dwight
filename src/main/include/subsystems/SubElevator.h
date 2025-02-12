@@ -71,6 +71,7 @@ class SubElevator : public frc2::SubsystemBase {
   bool ResetM1 = false;
 
   //Elevator target heights
+  //APLHA BOT ONLY
   static constexpr units::meter_t _L1_HEIGHT = 0.733325_m;
   static constexpr units::meter_t _L2_HEIGHT = 0.52_m;      // 0.42
   static constexpr units::meter_t _L3_HEIGHT = 0.92_m;      // 0.82
@@ -100,8 +101,8 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr units::meter_t _MIN_HEIGHT = 0.0_m;  // reset setpoint
   static constexpr units::meter_t _START_HEIGHT = 0_m;
   static constexpr units::kilogram_t _CARRIAGE_MASS = 6_kg;
-  static constexpr units::meters_per_second_t _CRUISE_VELOCITY = 1.75_mps;       // 0.82; //Adjust
-  static constexpr units::meters_per_second_squared_t _ACCELERATION = 6_mps_sq;  // Adjust
+  static constexpr units::meters_per_second_t _CRUISE_VELOCITY = 3.2_mps;       // 0.82; //Adjust
+  static constexpr units::meters_per_second_squared_t _ACCELERATION = 15_mps_sq;  // Adjust
   static constexpr units::ampere_t zeroingCurrentLimit = 15_A;
 
   //   //Simulation stuff

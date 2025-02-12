@@ -65,8 +65,11 @@ frc2::CommandPtr ForceAlignWithTarget(int side) {
         } else {
           printf("i am not having enough april tag");
           frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(side).Rotation();
-          units::angle::turn_t roterror =
-              SubDrivebase::GetInstance().GetPose().Rotation().Degrees() - targetRotation.Degrees();
+          using ds = frc::DriverStation;
+          if (ds::GetAlliance().value_or(ds::Alliance::kBlue) == ds::kRed) {
+            targetRotation = +180_deg;
+          };
+          units::angle::turn_t roterror = SubDrivebase::GetInstance().GetGyroAngle().Degrees() - targetRotation.Degrees();
           auto rotationSpeed = SubDrivebase::GetInstance().CalcRotateSpeed(roterror) / 5;
           return frc::ChassisSpeeds{0_mps, 0.5_mps, rotationSpeed};
         }
