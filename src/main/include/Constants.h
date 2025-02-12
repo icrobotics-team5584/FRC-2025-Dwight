@@ -1,40 +1,40 @@
 #pragma once
 
 namespace canid {
-    constexpr int DriveBaseFrontRightDrive = 1; 
-    constexpr int DriveBaseFrontRightTurn = 2;
-    constexpr int DriveBaseFrontRightEncoder = 3; 
+    constexpr int DRIVEBASE_FRONT_RIGHT_DRIVE = 1; 
+    constexpr int DRIVEBASE_FRONT_RIGHT_TURN = 2;
+    constexpr int DRIVEBASE_FRONT_RIGHT_ENCODER = 3; 
 
-    constexpr int DriveBaseFrontLeftDrive = 4;
-    constexpr int DriveBaseFrontLeftTurn = 5;
-    constexpr int DriveBaseFrontLeftEncoder = 6;
+    constexpr int DRIVEBASE_FRONT_LEFT_DRIVE = 4;
+    constexpr int DRIVEBASE_FRONT_LEFT_TURN = 5;
+    constexpr int DRIVEBASE_FRONT_LEFT_ENCODER = 6;
         
-    constexpr int DriveBaseBackRightDrive = 7; 
-    constexpr int DriveBaseBackRightTurn = 8;
-    constexpr int DriveBaseBackRightEncoder = 9; 
+    constexpr int DRIVEBASE_BACK_RIGHT_DRIVE = 7; 
+    constexpr int DRIVEBASE_BACK_RIGHT_TURN = 8;
+    constexpr int DRIVEBASE_BACK_RIGHT_ENCODER = 9; 
 
-    constexpr int DriveBaseBackLeftDrive = 10; 
-    constexpr int DriveBaseBackLeftTurn = 11;
-    constexpr int DriveBaseBackLeftEncoder = 12; 
+    constexpr int DRIVEBASE_BACK_LEFT_DRIVE = 10; 
+    constexpr int DRIVEBASE_BACK_LEFT_TURN = 11;
+    constexpr int DRIVEBASE_BACK_LEFT_ENCODER = 12; 
 
-    constexpr int IntakeMotor = 15;
-    constexpr int EndEffectorMotor = 16; 
-    constexpr int IntakePivotMotor = 17;
+    constexpr int INTAKE_MOTOR = 15;
+    constexpr int ENDEFFECTOR_MOTOR = 16; 
+    constexpr int INTAKE_PIVOT_MOTOR = 17;
 
-    constexpr int elevatorMotor1 = 13;
-    constexpr int elevatorMotor2 = 14;
+    constexpr int ELEVATOR_MOTOR_1 = 13;
+    constexpr int ELEVATOR_MOTOR_2 = 14;
 
-    constexpr int climberMotor = 18;
+    constexpr int CLIMBER_MOTOR = 18;
 
-    constexpr int pigeon2 = 19; 
+    constexpr int PIGEON_2 = 19; 
 
-    constexpr int funnelMotor = 20;
+    constexpr int FUNNEL_MOTOR = 20;
 }
 
 namespace dio {
-    constexpr int EndEffectorLineBreakHigher = 9;  
-    constexpr int EndEffectorLineBreakLower = 8;
-    constexpr int brakeCoastButton = 4;
+    constexpr int ENDEFFECTOR_LINEBREAK_HIGHER = 9;  
+    constexpr int ENDEFFECTOR_LINEBREAK_LOWER = 8;
+    constexpr int BRAKE_COAST_BUTTON = 4;
 }
 
 namespace math {

@@ -55,9 +55,9 @@ class SubIntake : public frc2::SubsystemBase {
   void SimulationPeriodic() override;
 
  private:
-  ICSparkMax _intakeMotor{canid::IntakeMotor, 30_A};
+  ICSparkMax _intakeMotor{canid::INTAKE_MOTOR, 30_A};
   ctre::phoenix6::configs::TalonFXConfiguration _configIntakePivotMotor{};
-  ctre::phoenix6::hardware::TalonFX _intakePivotMotor{canid::IntakePivotMotor};
+  ctre::phoenix6::hardware::TalonFX _intakePivotMotor{canid::INTAKE_PIVOT_MOTOR};
 
   //Intake arm mechanism sim and mechanism2d
   frc::sim::SingleJointedArmSim _intakeSim{frc::DCMotor::Falcon500(1), ARM_GEARING, frc::sim::SingleJointedArmSim::EstimateMOI(ARM_LENGTH, ARM_MASS), ARM_LENGTH, ARM_MIN_ANGLE, ARM_MAX_ANGLE, false, ARM_HOME_ANGLE};

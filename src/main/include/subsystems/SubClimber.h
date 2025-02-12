@@ -68,7 +68,7 @@ class SubClimber : public frc2::SubsystemBase {
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
-  ICSparkFlex _climberMotor{canid::climberMotor, 60_A}; // _A is amps; 20 amps may be too low for the climber to function
+  ICSparkFlex _climberMotor{canid::CLIMBER_MOTOR, 60_A}; // _A is amps; 20 amps may be too low for the climber to function
 
   frc::sim::SingleJointedArmSim _climberSim{frc::DCMotor::NEO(1), GEAR_RATIO, frc::sim::SingleJointedArmSim::EstimateMOI(ARM_LENGTH, ARM_MASS), ARM_LENGTH, ARM_MIN_ANGLE, ARM_MAX_ANGLE, false, ARM_HOME_ANGLE};
 
