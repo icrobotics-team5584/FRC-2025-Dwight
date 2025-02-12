@@ -107,6 +107,7 @@ void RobotContainer::ConfigureBindings() {
   _operatorController.LeftTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromSource());
   _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
   _operatorController.RightBumper().WhileTrue(SubEndEffector::GetInstance().FeedUpSLOW());
+  _operatorController.Start().OnTrue(SubClimber::GetInstance().ClimberAutoReset());
 
   //  _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise
   //  camera object
