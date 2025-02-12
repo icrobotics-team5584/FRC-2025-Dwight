@@ -16,14 +16,13 @@ namespace cmd {
 
     frc2::CommandPtr ClimbEngageSequence() {
         return SubElevator::GetInstance().CmdSetClimb()
-            .AndThen(SubClimber::GetInstance().ReadyClimber())
-            .AndThen(SubClimber::GetInstance().Climb());
+            .AndThen(SubClimber::GetInstance().ReadyClimber());
     }
 
     frc2::CommandPtr ClimbDisengageSequence() {
-        return SubClimber::GetInstance().StowClimber()
-            .AndThen(SubElevator::GetInstance().CmdElevatorToPosition(0_m)) // 0_m is the start height
-            .AndThen(SubClimber::GetInstance().StowClimber());
+        return SubClimber::GetInstance().StowClimber();
+            //.AndThen(SubElevator::GetInstance().CmdElevatorToPosition(0_m)) // 0_m is the start height
+            //.AndThen(SubClimber::GetInstance().StowClimber());
     }
 
 
