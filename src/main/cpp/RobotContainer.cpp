@@ -9,16 +9,14 @@
 #include "subsystems/SubDrivebase.h"
 
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
-#include "subsystems/SubDrivebase.h"
 #include "subsystems/SubClimber.h"
-
+#include "subsystems/SubLaserCAN.h"
 #include "subsystems/SubVision.h"
 #include "commands/VisionCommand.h"
 #include "commands/DriveCommands.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 #include "subsystems/SubEndEffector.h"
 #include "subsystems/SubIntake.h"
-#include "commands/VisionCommand.h"
 #include <frc/Filesystem.h>
 #include <wpinet/WebServer.h>
 
@@ -26,6 +24,7 @@ RobotContainer::RobotContainer() {
   wpi::WebServer::GetInstance().Start(5800, frc::filesystem::GetDeployDirectory());
   SubVision::GetInstance();
   SubIntake::GetInstance();
+  SubLaserCAN::GetInstance();
 
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(
