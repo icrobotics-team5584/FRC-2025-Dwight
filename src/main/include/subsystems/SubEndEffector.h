@@ -21,7 +21,6 @@ class SubEndEffector : public frc2::SubsystemBase {
   }
 
   frc2::CommandPtr IntakeFromSource();
-  frc2::CommandPtr IntakeFromGround();
   frc2::CommandPtr FeedUp();
   frc2::CommandPtr FeedUpSLOW();
   frc2::CommandPtr FeedDown();
@@ -36,6 +35,7 @@ class SubEndEffector : public frc2::SubsystemBase {
   bool LineBreakDownSignal();
   frc2::Trigger CheckLineBreakTriggerHigher();
   frc2::Trigger CheckLineBreakTriggerLower();
+  frc2::Trigger HasCoralTrigger();
 
   bool HasCoral = false;
   /**
