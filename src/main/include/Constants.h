@@ -27,8 +27,10 @@ namespace canid {
     constexpr int elevatorMotor2 = 98;
 
     constexpr int climberMotor = 18;
-    
+
     constexpr int pigeon2 = 19; 
+
+    constexpr int funnelMotor = 20;
 }
 
 namespace dio {
