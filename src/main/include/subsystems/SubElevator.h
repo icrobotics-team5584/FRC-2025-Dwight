@@ -48,6 +48,7 @@ class SubElevator : public frc2::SubsystemBase {
   units::meter_t HeightFromRotations(units::turn_t turns);
   units::turns_per_second_t RotationsFromMetersPerSecond(units::meters_per_second_t meterspersec);
   units::ampere_t GetM1Current();
+  units::meter_t GetTargetHeight();
 
   bool IsAtTarget();
 
@@ -62,6 +63,15 @@ class SubElevator : public frc2::SubsystemBase {
   void SimulationPeriodic() override;
 
   bool ResetM1 = false;
+
+  //Elevator target heights
+  static constexpr units::meter_t _L1_HEIGHT = 0.20_m;
+  static constexpr units::meter_t _L2_HEIGHT = 0.506_m;      // 0.42
+  static constexpr units::meter_t _L3_HEIGHT = 0.890_m;      // 0.82
+  static constexpr units::meter_t _L4_HEIGHT = 1.468_m;      // 1.5
+  static constexpr units::meter_t _ALGAE_LOW_HEIGHT = 745_m;  // get numbers later
+  static constexpr units::meter_t _ALGAE_HIGH_HEIGHT = 1.133_m;
+  static constexpr units::meter_t _SOURCE_HEIGHT = 0.01_m;
 
  private:
   ctre::phoenix6::configs::TalonFXConfiguration _motorConfig{};
@@ -82,15 +92,8 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr units::meter_t _MIN_HEIGHT = 0.0_m;  // reset setpoint
   static constexpr units::meter_t _START_HEIGHT = 0_m;
   static constexpr units::kilogram_t _CARRIAGE_MASS = 6_kg;
-  static constexpr units::meter_t _L1_HEIGHT = 0.733325_m;
-  static constexpr units::meter_t _L2_HEIGHT = 0.52_m;      // 0.42
-  static constexpr units::meter_t _L3_HEIGHT = 0.92_m;      // 0.82
-  static constexpr units::meter_t _L4_HEIGHT = 1.60_m;      // 1.5
-  static constexpr units::meter_t _ALGAE_LOW_HEIGHT = 0_m;  // get numbers later
-  static constexpr units::meter_t _ALGAE_HIGH_HEIGHT = 0_m;
-  static constexpr units::meter_t _SOURCE_HEIGHT = 0.20_m;
-  static constexpr units::meters_per_second_t _CRUISE_VELOCITY = 1.75_mps;       // 0.82; //Adjust
-  static constexpr units::meters_per_second_squared_t _ACCELERATION = 6_mps_sq;  // Adjust
+  static constexpr units::meters_per_second_t _CRUISE_VELOCITY = 3.2_mps;       // 0.82; //Adjust
+  static constexpr units::meters_per_second_squared_t _ACCELERATION = 15_mps_sq;  // Adjust
   static constexpr units::ampere_t zeroingCurrentLimit = 15_A;
 
   //   //Simulation stuff
