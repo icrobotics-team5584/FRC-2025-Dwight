@@ -21,8 +21,6 @@ namespace canid {
     constexpr int EndEffectorMotor = 16; 
     constexpr int IntakePivotMotor = 17;
 
-    constexpr int funnelMotor = 18;
-
     constexpr int elevatorMotor1 = 99;
     constexpr int elevatorMotor2 = 98;
 
