@@ -466,7 +466,6 @@ void SubDrivebase::DisplayTrajectory(std::string name, frc::Trajectory trajector
 }
 
 void SubDrivebase::AddVisionMeasurement(frc::Pose2d pose, units::second_t timeStamp, wpi::array<double,3> dev) {
-  frc::SmartDashboard::PutNumber("Timestamp", timeStamp.value());
   _poseEstimator.AddVisionMeasurement(frc::Pose2d{pose.X(), pose.Y(), GetPose().Rotation()}, timeStamp, dev);
 }
 

@@ -78,10 +78,10 @@ frc2::CommandPtr AddVisionMeasurement() {
         auto estimatedPose = SubVision::GetInstance().GetPose();
         frc::SmartDashboard::PutBoolean("Vision/is teleop", frc::DriverStation::IsTeleop());
         frc::SmartDashboard::PutBoolean("Vision/has value", estimatedPose.has_value());
-        if (estimatedPose.has_value() && frc::DriverStation::IsTeleop()) {
+        if (estimatedPose.has_value()) {
           auto estimatedPoseValue = estimatedPose.value();
           double d = SubVision::GetInstance().GetLastDev();
-          wpi::array<double,3> dev = {d, d, 0.0};
+          wpi::array<double,3> dev = {d, d, 0.9};
           SubDrivebase::GetInstance().AddVisionMeasurement(
               estimatedPoseValue.estimatedPose.ToPose2d(), estimatedPoseValue.timestamp, dev);
           SubDrivebase::GetInstance().DisplayPose("EstimatedPose",
@@ -90,7 +90,7 @@ frc2::CommandPtr AddVisionMeasurement() {
           SubDrivebase::GetInstance().DisplayPose("EstimatedPose", {});
         }
       },
-      {&SubVision::GetInstance()});
+      {&SubVision::GetInstance()}).IgnoringDisable(true);
 }  // namespace cmd
 // check pose -> decide which source is closer -> drive there
 frc2::CommandPtr AlignToSource() {

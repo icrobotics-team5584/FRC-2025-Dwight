@@ -10,14 +10,13 @@
 #include <photon/estimation/CameraTargetRelation.h>
 
 SubVision::SubVision() {
-  // Pitch table set up
-  _devTable.insert(0_m, 0.03);
-  _devTable.insert(0.5_m, 0.05);
-  _devTable.insert(1_m, 0.1);
-  _devTable.insert(2_m, 0.2);
-  _devTable.insert(3_m, 0.3);
-  _devTable.insert(4_m, 0.4);
-  _devTable.insert(5_m, 0.5);
+  // Set up dev table
+  _devTable.insert(0_m, 0);
+  _devTable.insert(0.71_m, 0.002);
+  _devTable.insert(1_m, 0.006);
+  _devTable.insert(1.5_m, 0.02);
+  _devTable.insert(2_m, 0.068);
+  _devTable.insert(3_m, 0.230);
 
   // Robot pose estimater
   _robotPoseEstimater.SetMultiTagFallbackStrategy(photon::PoseStrategy::LOWEST_AMBIGUITY);
