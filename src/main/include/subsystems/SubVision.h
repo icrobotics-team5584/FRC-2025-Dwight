@@ -43,7 +43,7 @@ public:
 
   frc::Pose2d GetSourcePose(int tagId);
 
-  double GetLastDev();
+  double GetDev(photon::EstimatedRobotPose pose);
 
  private:
  /**

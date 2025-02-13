@@ -80,7 +80,7 @@ frc2::CommandPtr AddVisionMeasurement() {
         frc::SmartDashboard::PutBoolean("Vision/has value", estimatedPose.has_value());
         if (estimatedPose.has_value()) {
           auto estimatedPoseValue = estimatedPose.value();
-          double d = SubVision::GetInstance().GetLastDev();
+          double d = SubVision::GetInstance().GetDev(estimatedPoseValue);
           wpi::array<double,3> dev = {d, d, 0.9};
           SubDrivebase::GetInstance().AddVisionMeasurement(
               estimatedPoseValue.estimatedPose.ToPose2d(), estimatedPoseValue.timestamp, dev);

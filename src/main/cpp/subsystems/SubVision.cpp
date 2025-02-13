@@ -57,7 +57,6 @@ void SubVision::UpdatePoseEstimator(std::vector<photon::PhotonPipelineResult> re
     _pose = _robotPoseEstimater.Update(result);  // Get estimate pose of robot by vision
     auto distance = result.GetBestTarget().GetBestCameraToTarget().Translation().Distance(
         frc::Translation3d(0_m, 0_m, 0_m));
-    lastDev = _devTable[distance];
     frc::SmartDashboard::PutNumber("Vision/distance to tag", distance.value());
     frc::SmartDashboard::PutNumber("Vision/target", result.GetBestTarget().fiducialId);
     frc::SmartDashboard::PutNumber("Vision/dev", lastDev);
@@ -186,6 +185,12 @@ bool SubVision::CheckValid(std::optional<photon::EstimatedRobotPose> pose) {
   return true;
 }
 
-double SubVision::GetLastDev() {
-  return lastDev;
+double SubVision::GetDev(photon::EstimatedRobotPose pose) {
+  units::meter_t distance = 0_m;
+  if (pose.targetsUsed.size() == 0) {return 0;}
+  for (auto target : pose.targetsUsed) {
+    distance += target.GetBestCameraToTarget().Translation().Norm();
+  }
+  distance /= pose.targetsUsed.size();
+  return _devTable[distance];
 }
