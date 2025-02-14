@@ -99,7 +99,7 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr units::kilogram_t _CARRIAGE_MASS = 6_kg;
   static constexpr units::meters_per_second_t _CRUISE_VELOCITY = 3.2_mps;
   static constexpr units::meters_per_second_squared_t _ACCELERATION = 15_mps_sq;
-  static constexpr units::ampere_t zeroingCurrentLimit = 15_A;
+  static constexpr units::ampere_t zeroingCurrentLimit = 40_A;
   //   //Simulation stuff
   frc::sim::ElevatorSim _motorSim{frc::DCMotor::Falcon500(2),
                                   _GEAR_RATIO,
