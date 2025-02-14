@@ -73,8 +73,8 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr units::meter_t _L2_HEIGHT = 0.506_m;      // 0.42
   static constexpr units::meter_t _L3_HEIGHT = 0.890_m;      // 0.82
   static constexpr units::meter_t _L4_HEIGHT = 1.468_m;      // 1.5
-  static constexpr units::meter_t _ALGAE_LOW_HEIGHT = 745_m;  // get numbers later
-  static constexpr units::meter_t _ALGAE_HIGH_HEIGHT = 1.133_m;
+  static constexpr units::meter_t _ALGAE_LOW_HEIGHT = 0.78_m;  // get numbers later
+  static constexpr units::meter_t _ALGAE_HIGH_HEIGHT = 1.242_m;
   static constexpr units::meter_t _SOURCE_HEIGHT = 0.01_m;
   static constexpr units::meter_t _CLIMB_HEIGHT = 0.01_m;
 
@@ -100,7 +100,6 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr units::meters_per_second_t _CRUISE_VELOCITY = 3.2_mps;
   static constexpr units::meters_per_second_squared_t _ACCELERATION = 15_mps_sq;
   static constexpr units::ampere_t zeroingCurrentLimit = 15_A;
-
   //   //Simulation stuff
   frc::sim::ElevatorSim _motorSim{frc::DCMotor::Falcon500(2),
                                   _GEAR_RATIO,
