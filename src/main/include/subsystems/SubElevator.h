@@ -11,6 +11,7 @@
 #include <frc/simulation/ElevatorSim.h>
 #include <frc2/command/button/CommandXboxController.h>
 #include "Constants.h"
+#include "utilities/BotVars.h"
 
 class SubElevator : public frc2::SubsystemBase {
  public:
@@ -35,7 +36,7 @@ class SubElevator : public frc2::SubsystemBase {
   frc2::CommandPtr ElevatorStop();
   frc2::CommandPtr ManualElevatorMovementUP();
   frc2::CommandPtr ManualElevatorMovementDOWN();
-  frc2::CommandPtr ManualElevatorMovementDOWNSLOW();
+  frc2::CommandPtr DriveDownToReset();
   frc2::CommandPtr ElevatorToClimbHeight();
   frc2::CommandPtr Climb();
   frc2::CommandPtr ManualElevatorMovementAlgae();
@@ -88,7 +89,7 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr double _V = 0;
   static constexpr double _A = 0;
   static constexpr double _G = 0.15;  // 8.6704096794128409086;
-  static constexpr double _GEAR_RATIO = 14;
+  const double _GEAR_RATIO = BotVars::Choose(4,14);
   static constexpr units::meter_t _DRUM_RADIUS =
       1.84_cm * 2;  // effective radius - doubled as 2 stage elevator
   static constexpr units::meter_t _DRUM_CIRCUMFERENCE = _DRUM_RADIUS * 2 * math::pi;
@@ -96,8 +97,8 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr units::meter_t _MIN_HEIGHT = 0.0_m;  // reset setpoint
   static constexpr units::meter_t _START_HEIGHT = 0_m;
   static constexpr units::kilogram_t _CARRIAGE_MASS = 6_kg;
-  static constexpr units::meters_per_second_t _CRUISE_VELOCITY = 3.2_mps;       // 0.82; //Adjust
-  static constexpr units::meters_per_second_squared_t _ACCELERATION = 15_mps_sq;  // Adjust
+  static constexpr units::meters_per_second_t _CRUISE_VELOCITY = 3.2_mps;
+  static constexpr units::meters_per_second_squared_t _ACCELERATION = 15_mps_sq;
   static constexpr units::ampere_t zeroingCurrentLimit = 15_A;
 
   //   //Simulation stuff

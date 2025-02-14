@@ -14,7 +14,6 @@
 #include <frc/MathUtil.h>
 #include <utilities/RobotLogs.h>
 #include <ctre/phoenix6/configs/Configs.hpp>
-#include "utilities/BotVars.h"
 
 using namespace ctre::phoenix6;
 
@@ -37,20 +36,20 @@ SubElevator::SubElevator() {
   // invert motors
   _motorConfig.MotorOutput.Inverted = true;
 
-  // Current Limits
-  _motorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-  _motorConfig.CurrentLimits.SupplyCurrentLowerLimit = 20.0_A; //40
-  _motorConfig.CurrentLimits.SupplyCurrentLimit = 60.0_A; //80
-  _motorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.5_s;
-  _motorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-  _motorConfig.CurrentLimits.StatorCurrentLimit = 80.0_A;//30
-  _motorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-  _motorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-  _motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = (_MAX_HEIGHT/_DRUM_CIRCUMFERENCE).value() * 1_tr;
-  _motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0_tr;
+    // Current Limits
+    _motorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    _motorConfig.CurrentLimits.SupplyCurrentLowerLimit = 20.0_A;
+    _motorConfig.CurrentLimits.SupplyCurrentLimit = 60.0_A;
+    _motorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.5_s;
+    _motorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    _motorConfig.CurrentLimits.StatorCurrentLimit = 80.0_A;
+    _motorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    _motorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    _motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = (_MAX_HEIGHT/_DRUM_CIRCUMFERENCE).value() * 1_tr;
+    _motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0_tr;
 
     // Feedback Sensor Ratio
-    _motorConfig.Feedback.SensorToMechanismRatio = BotVars::Choose(14, 4);
+    _motorConfig.Feedback.SensorToMechanismRatio = _GEAR_RATIO;
 
   // Motion Magic ConfigurationS
   _motorConfig.MotionMagic.MotionMagicCruiseVelocity =
@@ -195,12 +194,11 @@ frc2::CommandPtr SubElevator::ManualElevatorMovementUP() {
   return frc2::cmd::RunEnd(
       [this] {
         auto currentHeight = HeightFromRotations(_elevatorMotor1.GetPosition(true).GetValue());
-        if (currentHeight < _L4_HEIGHT) {
-          _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(4_V));
-        } else {
-          _elevatorMotor1.StopMotor();
-        }
-      },
+        if(currentHeight < _L4_HEIGHT){
+            _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(1_V));}
+        else{
+            _elevatorMotor1.StopMotor();
+        }},
       [this] {
         auto targHeight = HeightFromRotations(_elevatorMotor1.GetPosition(true).GetValue());
         _elevatorMotor1.SetControl(
@@ -212,12 +210,11 @@ frc2::CommandPtr SubElevator::ManualElevatorMovementDOWN() {
   return frc2::cmd::RunEnd(
       [this] {
         auto currentHeight = HeightFromRotations(_elevatorMotor1.GetPosition(true).GetValue());
-        if (currentHeight > _MIN_HEIGHT + 0.1_m) {
-          _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-4_V));
-        } else {
-          _elevatorMotor1.StopMotor();
-        }
-      },
+        if(currentHeight > _MIN_HEIGHT + 0.1_m){
+            _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-0.3_V));}
+        else{
+            _elevatorMotor1.StopMotor();
+        }},
       [this] {
         auto targHeight = HeightFromRotations(_elevatorMotor1.GetPosition(true).GetValue());
         _elevatorMotor1.SetControl(
@@ -227,31 +224,31 @@ frc2::CommandPtr SubElevator::ManualElevatorMovementDOWN() {
 
 frc2::CommandPtr SubElevator::ManualElevatorMovementAlgae() {
   return frc2::cmd::StartEnd(
-      [this] { _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-1_V)); },
+      [this] { _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-0.3_V)); },
       [this] {
         auto targHeight = HeightFromRotations(_elevatorMotor1.GetPosition(true).GetValue());
         _elevatorMotor1.SetControl(
             controls::PositionVoltage(RotationsFromHeight(targHeight)).WithEnableFOC(true));
       });
-}
+    }
 
-frc2::CommandPtr SubElevator::ManualElevatorMovementDOWNSLOW() {
-  return frc2::cmd::RunOnce(
-      [this] { _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-1_V)); });
-}
+frc2::CommandPtr SubElevator::DriveDownToReset() {
+  return frc2::cmd::RunOnce([this] {_elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-1_V));});
+    }
 
-// Check if elevator has touched the bottom
+//Check if elevator has touched the bottom
 frc2::CommandPtr SubElevator::ElevatorResetCheck() {
-  return frc2::cmd::RunOnce([this] { ResetM1 = false; }).AndThen(frc2::cmd::Run([this] {
-                                                                   if (GetM1Current() >
-                                                                       zeroingCurrentLimit) {
-                                                                     ResetM1 = true;
-                                                                   } else {
-                                                                     Reseting = false;
-                                                                   }
-                                                                 }).Until([this] {
-    return ResetM1;
-  }));
+    return frc2::cmd::RunOnce ([this] {ResetM1 = false;})
+    .AndThen(
+    frc2::cmd::Run([this] {
+        
+        if (GetM1Current() > zeroingCurrentLimit) {
+            ResetM1 = true;
+        }
+        else {
+            Reseting = false;
+        }
+    }).Until([this] { return ResetM1; }));
 }
 
 // Ptr cmd of Stop()
@@ -288,20 +285,14 @@ void SubElevator::CheckAndChangeCurrentLimitIfReset() {
 }
 // Auto elevator reset by bringing elevator to zero position then reset (can be used in tele-op)
 frc2::CommandPtr SubElevator::ElevatorAutoReset() {
-  return frc2::cmd::RunOnce([this] {
-           Reseting = true;
-           EnableSoftLimit(false);
-         })
-      .AndThen([this] { SetMotorVoltageLimits12V(); })
-      .AndThen(ManualElevatorMovementDOWNSLOW())
-      .AndThen(ElevatorResetCheck())
-      .AndThen(ZeroElevator())
-      .AndThen([this] { Stop(); })
-      .FinallyDo([this] {
-        EnableSoftLimit(true);
-        CheckAndChangeCurrentLimitIfReset();
-      });
-}
+    return frc2::cmd::RunOnce([this] { Reseting = true; EnableSoftLimit(false);})
+        .AndThen([this] {SetMotorVoltageLimits12V();})
+        .AndThen(DriveDownToReset())
+        .AndThen(ElevatorResetCheck())
+        .AndThen(ZeroElevator())
+        .AndThen([this] {Stop();})
+        .FinallyDo([this] {EnableSoftLimit(true); CheckAndChangeCurrentLimitIfReset();} );
+        }
 
 // Stop motor
 void SubElevator::Stop() {
