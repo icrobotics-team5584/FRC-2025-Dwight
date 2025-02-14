@@ -5,10 +5,14 @@
 #include "subsystems/SubEndEffector.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 #include "utilities/ICSpark.h"
+#include "utilities/BotVars.h"
 
 
 
 SubEndEffector::SubEndEffector() {
+    rev::spark::SparkBaseConfig config;
+    config.Inverted(BotVars::Choose(true, false));
+    _endEffectorMotor.AdjustConfig(config);
 }
 
 // This method will be called once per scheduler run
@@ -19,23 +23,23 @@ void SubEndEffector::Periodic() {
 }
 
 frc2::CommandPtr SubEndEffector::FeedUp() {
-    return StartEnd([this] {_endEffectorMotor.Set(0.8);}, [this] {_endEffectorMotor.Set(0);});
+    return StartEnd([this] {_endEffectorMotor.Set(0.3);}, [this] {_endEffectorMotor.Set(0);});
 }
 
 frc2::CommandPtr SubEndEffector::FeedUpSLOW() {
-    return StartEnd([this] {_endEffectorMotor.Set(0.1);}, [this] {_endEffectorMotor.Set(0);});
+    return StartEnd([this] {_endEffectorMotor.Set(0.05);}, [this] {_endEffectorMotor.Set(0);});
 }
 
 frc2::CommandPtr SubEndEffector::FeedDown() {
-    return StartEnd([this] {_endEffectorMotor.Set(-0.8);}, [this] {_endEffectorMotor.Set(0);});
+    return StartEnd([this] {_endEffectorMotor.Set(-0.3);}, [this] {_endEffectorMotor.Set(0);});
 }
 
 frc2::CommandPtr SubEndEffector::FeedDownSLOW() {
-    return StartEnd([this] {_endEffectorMotor.Set(-0.1);}, [this] {_endEffectorMotor.Set(0);});
+    return StartEnd([this] {_endEffectorMotor.Set(-0.05);}, [this] {_endEffectorMotor.Set(0);});
 }
 
 frc2::CommandPtr SubEndEffector::Shoot() {
-    return StartEnd([this] {_endEffectorMotor.Set(-0.8);}, [this] {_endEffectorMotor.Set(0);});
+    return StartEnd([this] {_endEffectorMotor.Set(-0.3);}, [this] {_endEffectorMotor.Set(0);});
 }
 
 frc2::CommandPtr SubEndEffector::StopMotor() {
