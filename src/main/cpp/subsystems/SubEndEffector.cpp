@@ -50,14 +50,6 @@ frc2::CommandPtr SubEndEffector::StopMotor() {
         });
 }
 
-
-
-frc2::CommandPtr SubEndEffector::IntakeFromGround() {
-    return FeedUp().Until([this] {return CheckLineBreakHigher();})
-    .AndThen(FeedUpSLOW().Until([this] {return !CheckLineBreakLower();}))
-    .AndThen(FeedDownSLOW().Until([this] {return CheckLineBreakLower();}));
-}
-
 frc2::CommandPtr SubEndEffector::ScoreCoral() {
     return Shoot();
 }

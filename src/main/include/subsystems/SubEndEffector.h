@@ -19,8 +19,7 @@ class SubEndEffector : public frc2::SubsystemBase {
     static SubEndEffector inst;
     return inst;
   }
-
-  frc2::CommandPtr IntakeFromGround();
+  
   frc2::CommandPtr FeedUp();
   frc2::CommandPtr FeedUpSLOW();
   frc2::CommandPtr FeedDown();
