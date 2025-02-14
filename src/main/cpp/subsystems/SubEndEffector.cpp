@@ -13,6 +13,7 @@ SubEndEffector::SubEndEffector() {
     rev::spark::SparkBaseConfig config;
     config.Inverted(BotVars::Choose(true, false));
     _endEffectorMotor.AdjustConfig(config);
+    frc::SmartDashboard::PutData("EndEffector/motorData", &_endEffectorMotor);
 }
 
 // This method will be called once per scheduler run
@@ -20,6 +21,7 @@ void SubEndEffector::Periodic() {
     frc::SmartDashboard::PutBoolean("EndEffector/LinebreakHigher", SubEndEffector::GetInstance().CheckLineBreakHigher());
     frc::SmartDashboard::PutBoolean("EndEffector/LinebreakLower", SubEndEffector::GetInstance().CheckLineBreakLower());
     frc::SmartDashboard::PutNumber("EndEffector/endEffectorMotor", _endEffectorMotor.Get());
+    frc::SmartDashboard::PutNumber("EndEffector/MotorCurrent", _endEffectorMotor.GetOutputCurrent());
 }
 
 frc2::CommandPtr SubEndEffector::FeedUp() {
@@ -65,11 +67,11 @@ frc2::CommandPtr SubEndEffector::ScoreCoralSLOW() {
 }
 
 bool SubEndEffector::CheckLineBreakHigher() {
-    return _endEffectorLineBreakHigher.Get();
+    return !_endEffectorLineBreakHigher.Get();
 }
 
 bool SubEndEffector::CheckLineBreakLower() {
-    return _endEffectorLineBreakLower.Get();
+    return !_endEffectorLineBreakLower.Get();
 }
 
 frc2::Trigger SubEndEffector::CheckLineBreakTriggerHigher() {

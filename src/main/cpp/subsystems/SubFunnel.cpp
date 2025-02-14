@@ -7,11 +7,14 @@
 #include "utilities/ICSpark.h"
 #include "subsystems/SubEndEffector.h"
 
-SubFunnel::SubFunnel() = default;
+SubFunnel::SubFunnel(){
+    frc::SmartDashboard::PutData("SubFunnel/motorData", &_funnelMotor);
+}
 
 // This method will be called once per scheduler run
 void SubFunnel::Periodic() {
     frc::SmartDashboard::PutNumber("SubFunnel/Motor1st", _funnelMotor.Get());
+    frc::SmartDashboard::PutNumber("SubFunnel/MotorCurrent", _funnelMotor.GetOutputCurrent());
 }
 
 
