@@ -64,7 +64,6 @@ SubElevator::SubElevator() {
   _elevatorMotor2.SetControl(controls::Follower(_elevatorMotor1.GetDeviceID(), false));
   _elevatorMotor1.GetClosedLoopReference().SetUpdateFrequency(100_Hz);
 
-  ResetM1 = true;
 }
 
 frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height) {
