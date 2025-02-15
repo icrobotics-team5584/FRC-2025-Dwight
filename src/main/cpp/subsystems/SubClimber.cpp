@@ -48,6 +48,18 @@ void SubClimber::SetBrakeMode(bool mode){
 
 }
 
+bool SubClimber::IsAtTarget() {
+    units::turn_t currentRotation = _climberMotor.GetPosition();
+    units::turn_t targetRotation = _climberMotor.GetPositionTarget();
+    units::turn_t tolerance = 0.05_deg;
+    if (currentRotation > targetRotation - tolerance && currentRotation < targetRotation + tolerance) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 //Auto climber reset by bringing Climber to zero position then reset
 frc2::CommandPtr SubClimber::ClimberAutoReset() {
     return frc2::cmd::RunOnce([this] {Reseting = true;})

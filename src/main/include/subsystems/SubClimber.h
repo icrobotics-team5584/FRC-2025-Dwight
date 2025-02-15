@@ -36,11 +36,13 @@ class SubClimber : public frc2::SubsystemBase {
   frc2::CommandPtr ManualClimberMovementDOWN();
   frc2::CommandPtr ManualClimberMovementDOWNSLOW();
   frc2::CommandPtr ClimberResetCheck();
-  units::ampere_t  GetM1Current();
   frc2::CommandPtr StowClimber();
   frc2::CommandPtr ReadyClimber();
   frc2::CommandPtr Climb();
   frc2::CommandPtr set12V();
+
+  units::ampere_t  GetM1Current();
+  bool IsAtTarget();
 
   void SetBrakeMode(bool mode);
 
