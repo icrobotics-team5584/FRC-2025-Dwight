@@ -79,16 +79,15 @@ void KrakenIO::StopMotors() {
 }
 
 void KrakenIO::SetNeutralMode(bool brakeModeToggle) {
+    ctre::phoenix6::configs::TalonFXConfiguration _neutralModeConfig;
     if (brakeModeToggle == true) {
-        _configTurnMotor.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
-        _configDriveMotor.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+        _neutralModeConfig.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
     } else if (brakeModeToggle == false) {
-        _configTurnMotor.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
-        _configDriveMotor.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
+        _neutralModeConfig.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
     }
 
-    _canTurnMotor.GetConfigurator().Apply(_configTurnMotor);
-    _canDriveMotor.GetConfigurator().Apply(_configDriveMotor);
+    _canTurnMotor.GetConfigurator().Apply(_neutralModeConfig);
+    _canDriveMotor.GetConfigurator().Apply(_neutralModeConfig);
 }
 
 void KrakenIO::ConfigDriveMotor() {
