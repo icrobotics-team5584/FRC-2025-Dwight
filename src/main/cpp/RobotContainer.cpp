@@ -51,9 +51,9 @@ RobotContainer::RobotContainer() {
   _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); 
 
   // sidechooser options 
-  _sideChooser.SetDefaultOption("red", "Red alliance");
-  _sideChooser.AddOption("red", "Red alliance");
-  _sideChooser.AddOption("blue", "Blue alliance");
+  _sideChooser.SetDefaultOption("left", "Left side");
+  _sideChooser.AddOption("right", "Right side");
+  _sideChooser.AddOption("left", "Left Side");
 
   // AutoChooser options
   _autoChooser.SetDefaultOption("Default-Move-Forward-4m-0.1ms", "MoveForward-4M-0.1ms"); // default
@@ -87,7 +87,7 @@ frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   // return pathplanner::PathPlannerAuto("test auto").ToPtr();
   auto _autoSelected = _autoChooser.GetSelected();
   bool _sideSelected;
-  if (_sideChooser.GetSelected() == "blue") { _sideSelected = false; } else { _sideSelected = true; }
+  if (_sideChooser.GetSelected() == "left") { _sideSelected = false; } else { _sideSelected = true; }
   return SubElevator::GetInstance().ElevatorAutoReset().AndThen(pathplanner::PathPlannerAuto(_autoSelected, _sideSelected).ToPtr());
 }
 
