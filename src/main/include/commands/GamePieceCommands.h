@@ -7,4 +7,5 @@ namespace cmd {
     frc2::CommandPtr RemoveAlgaeLow();
     frc2::CommandPtr RemoveAlgaeHigh();
     frc2::CommandPtr IntakeFromSource();
+    frc2::CommandPtr Outtake();
 }

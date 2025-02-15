@@ -78,9 +78,12 @@ void RobotContainer::ConfigureBindings() {
   // ));
   _driverController.X().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
+  _driverController.A().WhileTrue(cmd::RemoveAlgaeLow());
+  _driverController.B().WhileTrue(cmd::RemoveAlgaeHigh());
   _driverController.RightTrigger().WhileTrue(cmd::ForceAlignWithTarget(2));
   _driverController.LeftTrigger().WhileTrue(cmd::ForceAlignWithTarget(1));
   _driverController.LeftBumper().WhileTrue(cmd::IntakeFromSource());
+  _driverController.RightBumper().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
   
 
   // Opperator
@@ -110,7 +113,7 @@ void RobotContainer::ConfigureBindings() {
 
   _operatorController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
   _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
-  _operatorController.RightBumper().WhileTrue(SubEndEffector::GetInstance().FeedUpSLOW());
+  _operatorController.RightBumper().WhileTrue(cmd::Outtake());
 
   //  _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise
   //  camera object

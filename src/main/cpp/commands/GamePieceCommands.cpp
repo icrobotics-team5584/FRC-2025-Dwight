@@ -28,4 +28,8 @@ frc2::CommandPtr IntakeFromSource() {
           [] { return SubEndEffector::GetInstance().CheckLineBreakLower(); }));
 }
 
+frc2::CommandPtr Outtake(){
+  return SubEndEffector::GetInstance().FeedUpSLOW().AlongWith(SubFunnel::GetInstance().FeedUpFunnel());
+}
+
 }  // namespace cmd //
