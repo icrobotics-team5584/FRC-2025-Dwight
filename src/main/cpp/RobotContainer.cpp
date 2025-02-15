@@ -51,9 +51,9 @@ RobotContainer::RobotContainer() {
   _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); 
 
   // sidechooser options 
-  _sideChooser.SetDefaultOption("left", "Left side");
-  _sideChooser.AddOption("right", "Right side");
-  _sideChooser.AddOption("left", "Left Side");
+  _sideChooser.SetDefaultOption("Left Side", false);
+  _sideChooser.AddOption("Left Side", false);
+  _sideChooser.AddOption("Right Side", true);
 
   // AutoChooser options
   _autoChooser.SetDefaultOption("Default-Move-Forward-4m-0.1ms", "MoveForward-4M-0.1ms"); // default
@@ -81,13 +81,13 @@ RobotContainer::RobotContainer() {
   _autoChooser.AddOption("SpinInSpot-360-Slow", "SpinInSpot360-Slow");
 
   frc::SmartDashboard::PutData("Chosen Auton", &_autoChooser);
+  frc::SmartDashboard::PutData("Chosen Side", &_sideChooser);
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   // return pathplanner::PathPlannerAuto("test auto").ToPtr();
   auto _autoSelected = _autoChooser.GetSelected();
-  bool _sideSelected;
-  if (_sideChooser.GetSelected() == "left") { _sideSelected = false; } else { _sideSelected = true; }
+  bool _sideSelected = _sideChooser.GetSelected();
   return SubElevator::GetInstance().ElevatorAutoReset().AndThen(pathplanner::PathPlannerAuto(_autoSelected, _sideSelected).ToPtr());
 }
 
