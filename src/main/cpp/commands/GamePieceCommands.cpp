@@ -16,6 +16,7 @@ namespace cmd {
 
     frc2::CommandPtr ClimbEngageSequence() {
         return SubElevator::GetInstance().CmdSetClimb()
+                .OnlyIf(SubElevator::GetInstance().IsAtTarget())
             .AndThen(SubClimber::GetInstance().ReadyClimber());
     }
 
