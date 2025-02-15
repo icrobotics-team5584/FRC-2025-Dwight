@@ -14,18 +14,19 @@ namespace cmd {
         );
     }
 
-    frc2::CommandPtr ClimbEngageSequence() {
+    frc2::CommandPtr ClimbUpSequence() {
         return SubElevator::GetInstance().CmdSetClimb()
-                .OnlyIf(SubElevator::GetInstance().IsAtTarget())
+                .AndThen(frc2::cmd::WaitUntil([]{return SubElevator::GetInstance().IsAtTarget();}))
             .AndThen(SubClimber::GetInstance().ReadyClimber());
     }
 
-    frc2::CommandPtr ClimbDisengageSequence() {
-        return SubClimber::GetInstance().StowClimber();
+    frc2::CommandPtr ClimbDownSequence() {
+        return SubElevator::GetInstance().CmdSetClimb()
+                .AndThen(frc2::cmd::WaitUntil([]{return SubElevator::GetInstance().IsAtTarget();}))
+            .AndThen(SubClimber::GetInstance().Climb());
             //.AndThen(SubElevator::GetInstance().CmdElevatorToPosition(0_m)) // 0_m is the start height
             //.AndThen(SubClimber::GetInstance().StowClimber());
     }
-
 
     frc2::CommandPtr RemoveAlgae() {
         return SubEndEffector::GetInstance().FeedDown().AlongWith(SubElevator::GetInstance().ManualElevatorMovementAlgae());
