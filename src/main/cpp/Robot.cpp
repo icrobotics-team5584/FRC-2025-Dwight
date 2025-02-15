@@ -16,7 +16,8 @@ Robot::Robot() {
   frc::DataLogManager::Start();
   frc::DriverStation::StartDataLog(frc::DataLogManager::GetLog());
   URCL::Start(std::map<int, std::string_view>{{canid::climberMotor, "Climber"},
-  {canid::EndEffectorMotor, "EndEffector"}}); //,{canid::funnelMotor, "Funnel"},{canid::funnelMotor, "AlgaeArm},{canid::funnelMotor, "AlgaeRoller"}
+                                              {canid::EndEffectorMotor, "EndEffector"},
+                                              {canid::funnelMotor, "Funnel"}});
 }
 
 void Robot::RobotPeriodic() {
