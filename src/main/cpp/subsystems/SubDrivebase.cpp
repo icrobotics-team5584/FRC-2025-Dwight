@@ -27,7 +27,12 @@ SubDrivebase::SubDrivebase() {
       [this]() { return GetPose(); },
 
       // Method to reset odometry (will be called if your auto has a starting pose)
-      [this](frc::Pose2d pose) { SetPose(pose); },
+      [this](frc::Pose2d pose) { 
+        Logger::Tune("DriveBase/ResetAutoStartingPose", true); 
+        if (frc::SmartDashboard::GetBoolean("DriveBase/ResetAutoStartingPose", true)) {
+          return SetPose(pose);
+        }
+      }, 
 
       // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
       [this]() { return GetRobotRelativeSpeeds(); },
