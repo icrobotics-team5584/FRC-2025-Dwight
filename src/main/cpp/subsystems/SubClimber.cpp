@@ -38,12 +38,13 @@ void SubClimber::Periodic() {
 }
 
 void SubClimber::SetBrakeMode(bool mode){
+    rev::spark::SparkBaseConfig _neutralModeConfig;
     if (mode == true) {
-        _climberMotorConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
-        _climberMotor.AdjustConfigNoPersist(_climberMotorConfig);
+        _neutralModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
+        _climberMotor.AdjustConfigNoPersist(_neutralModeConfig);
     } else if (mode == false) {
-        _climberMotorConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
-        _climberMotor.AdjustConfigNoPersist(_climberMotorConfig);
+        _neutralModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
+        _climberMotor.AdjustConfigNoPersist(_neutralModeConfig);
     }
 
 }
