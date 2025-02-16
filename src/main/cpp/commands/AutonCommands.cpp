@@ -14,6 +14,7 @@
 #include "commands/VisionCommand.h"
 
 namespace cmd {
+    // vison based
     frc2::CommandPtr ScoreWithVision(int side) {
         return frc2::cmd::Wait(1.0_s) //.AndThen(cmd::YAutonAlignWithTarget(1)) // vision is smucked (once fixed replace )
             .AndThen(SubElevator::GetInstance().CmdSetL2())
@@ -32,6 +33,20 @@ namespace cmd {
             .AndThen(SubElevator::GetInstance().CmdSetSource().WithName("CmdSetSource"))
             .Until([]{return SubElevator::GetInstance().IsAtTarget() == true;})
             .AndThen(SubEndEffector::GetInstance().IntakeFromSource().WithName("IntakeFromSource").WithTimeout(1_s));
+    }
+    
+    //  no vision
+    frc2::CommandPtr IntakeSource() {
+        return SubElevator::GetInstance().CmdSetSource()
+            .Until([]{ return SubElevator::GetInstance().IsAtTarget(); })
+            .AndThen(SubEndEffector::GetInstance().IntakeFromSource().WithTimeout(1_s));
+    }
+
+    frc2::CommandPtr Score(int side) {
+        return frc2::cmd::Wait(1.0_s) 
+            .AndThen(SubElevator::GetInstance().CmdSetL4())
+            .Until([]{ return SubElevator::GetInstance().IsAtTarget(); })
+            .AndThen(SubEndEffector::GetInstance().FeedDown().WithTimeout(0.5_s));
     }
 
     // tmp command, never use this in comp

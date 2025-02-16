@@ -14,5 +14,7 @@
 
 namespace cmd {
     frc2::CommandPtr ScoreWithVision(int side);
+    frc2::CommandPtr Score(int side);
     frc2::CommandPtr IntakeSourceWithVision();
+    frc2::CommandPtr IntakeSource();
 }
