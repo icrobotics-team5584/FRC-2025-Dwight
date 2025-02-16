@@ -14,7 +14,7 @@ class RobotContainer {
  public:
   RobotContainer();
 
-  frc2::CommandPtr GetAutonomousCommand();
+  pathplanner::PathPlannerAuto GetAutonomousCommand();
   frc2::CommandPtr ControllerRumbleLeft(frc2::CommandXboxController& controller);
   frc2::CommandPtr ControllerRumbleRight(frc2::CommandXboxController& controller);
   frc2::CommandPtr ControllerRumble(frc2::CommandXboxController& controller);
