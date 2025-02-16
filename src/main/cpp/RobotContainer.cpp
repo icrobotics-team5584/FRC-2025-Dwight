@@ -91,16 +91,15 @@ RobotContainer::RobotContainer() {
   frc::SmartDashboard::PutData("Chosen Side", &_sideChooser);
 }
 
-std::shared_ptr<pathplanner::PathPlannerAuto> RobotContainer::GetAutonomousCommand() {
+pathplanner::PathPlannerAuto RobotContainer::GetAutonomousCommand() {
   // return pathplanner::PathPlannerAuto("test auto").ToPtr();
   auto _autoSelected = _autoChooser.GetSelected();
   bool _sideSelected = _sideChooser.GetSelected();
 
+  auto auton_command = pathplanner::PathPlannerAuto(_autoSelected, _sideSelected);
+  auton_command.isRunning().OnTrue(frc2::cmd::Print("ELLO!"));
 
-  _auto = std::make_shared<pathplanner::PathPlannerAuto>(_autoSelected, _sideSelected);
-  _auto->isRunning().OnTrue(cmd::AutonSubSystemsZeroSequence());
-
-  return _auto;
+  return auton_command;
 }
 
 void RobotContainer::ConfigureBindings() {

@@ -30,7 +30,7 @@ class Robot : public frc::TimedRobot {
   void TestExit() override;
 
  private:
-  std::shared_ptr<pathplanner::PathPlannerAuto> m_autonomousCommand;
+  std::optional<pathplanner::PathPlannerAuto> m_autonomousCommand;
 
   RobotContainer m_container;
 };
