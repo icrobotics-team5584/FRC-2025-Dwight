@@ -19,7 +19,7 @@ SubClimber::SubClimber() {
     // _climberMotorConfig.closedLoop.PositionWrappingEnabled(true)
     //     .PositionWrappingMinInput(-10000000)
     //     .PositionWrappingMaxInput(10000000);
-    _climberMotorConfig.Inverted(false)
+    _climberMotorConfig.Inverted(true)
         .SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
     auto err = _climberMotor.AdjustConfig(_climberMotorConfig);
     frc::SmartDashboard::PutNumber("Climber/config set err", (int)err);

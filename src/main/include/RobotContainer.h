@@ -9,12 +9,13 @@
 #include <frc2/command/button/CommandXboxController.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <cameraserver/CameraServer.h>
+#include <pathplanner/lib/commands/PathPlannerAuto.h>
 
 class RobotContainer {
  public:
   RobotContainer();
 
-  pathplanner::PathPlannerAuto GetAutonomousCommand();
+  std::shared_ptr<pathplanner::PathPlannerAuto> GetAutonomousCommand();
   frc2::CommandPtr ControllerRumbleLeft(frc2::CommandXboxController& controller);
   frc2::CommandPtr ControllerRumbleRight(frc2::CommandXboxController& controller);
   frc2::CommandPtr ControllerRumble(frc2::CommandXboxController& controller);
@@ -22,7 +23,9 @@ class RobotContainer {
 
  private:
   void ConfigureBindings();
-  
+
+  std::shared_ptr<pathplanner::PathPlannerAuto> _auto;
+
   //controllers
   frc2::CommandXboxController _driverController{0};
   frc2::CommandXboxController _operatorController{1};

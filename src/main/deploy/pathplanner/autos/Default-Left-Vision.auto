@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "DL-StartToReef-Vision.0"
+            "pathName": "DL-StartToReef-LeftReefSide"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "DL-CycleToReef-Vision.0"
+            "pathName": "DL-CycleToReef-LeftReefSide"
           }
         },
         {
@@ -55,7 +55,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "DL-CycleToReef-Vision.0"
+            "pathName": "DL-CycleToReef-RightReefSide"
           }
         },
         {
