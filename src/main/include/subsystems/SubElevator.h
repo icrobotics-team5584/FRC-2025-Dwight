@@ -26,11 +26,10 @@ class SubElevator : public frc2::SubsystemBase {
   frc2::CommandPtr CmdSetL2();
   frc2::CommandPtr CmdSetL3();
   frc2::CommandPtr CmdSetL4();
+  frc2::CommandPtr CmdSetClimb();
   frc2::CommandPtr CmdSetClearHighAlgea();
   frc2::CommandPtr CmdSetClearLowAlgea();
   frc2::CommandPtr CmdSetSource();
-  frc2::CommandPtr AlgaeLow();
-  frc2::CommandPtr AlgaeHigh();
   frc2::CommandPtr ZeroElevator();
   frc2::CommandPtr ElevatorResetCheck();
   frc2::CommandPtr ElevatorAutoReset();
@@ -41,8 +40,6 @@ class SubElevator : public frc2::SubsystemBase {
   frc2::CommandPtr ElevatorToClimbHeight();
   frc2::CommandPtr Climb();
   frc2::CommandPtr ManualElevatorMovementAlgae();
-
-  
 
   frc2::CommandPtr CmdElevatorToPosition(units::meter_t height);
   // frc2::CommandPtr ElevatorJoystickDrive(frc2::CommandXboxController& _controller);
@@ -66,7 +63,7 @@ class SubElevator : public frc2::SubsystemBase {
 
   units::meter_t _targetHeight = 0_m;
 
-  //reset
+  // reset
   bool Reseting = false;
   bool Reseted = false;
   bool ResetM1 = false;
@@ -76,9 +73,10 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr units::meter_t _L2_HEIGHT = 0.506_m;      // 0.42
   static constexpr units::meter_t _L3_HEIGHT = 0.890_m;      // 0.82
   static constexpr units::meter_t _L4_HEIGHT = 1.468_m;      // 1.5
-  static constexpr units::meter_t _ALGAE_LOW_HEIGHT = 745_m;  // get numbers later
-  static constexpr units::meter_t _ALGAE_HIGH_HEIGHT = 1.133_m;
+  static constexpr units::meter_t _ALGAE_LOW_HEIGHT = 0.78_m;  // get numbers later
+  static constexpr units::meter_t _ALGAE_HIGH_HEIGHT = 1.242_m;
   static constexpr units::meter_t _SOURCE_HEIGHT = 0.01_m;
+  static constexpr units::meter_t _CLIMB_HEIGHT = 0.01_m;
 
  private:
   ctre::phoenix6::configs::TalonFXConfiguration _motorConfig{};
@@ -101,8 +99,7 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr units::kilogram_t _CARRIAGE_MASS = 6_kg;
   static constexpr units::meters_per_second_t _CRUISE_VELOCITY = 3.2_mps;
   static constexpr units::meters_per_second_squared_t _ACCELERATION = 15_mps_sq;
-  static constexpr units::ampere_t zeroingCurrentLimit = 15_A;
-
+  static constexpr units::ampere_t zeroingCurrentLimit = 40_A;
   //   //Simulation stuff
   frc::sim::ElevatorSim _motorSim{frc::DCMotor::Falcon500(2),
                                   _GEAR_RATIO,
