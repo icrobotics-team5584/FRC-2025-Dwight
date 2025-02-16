@@ -31,7 +31,6 @@ RobotContainer::RobotContainer() {
   // SubIntake::GetInstance(); -- dont get instance since the electronics dont exist on the bot yet, and we dont want warnings about it
   SubEndEffector::GetInstance();
 
-
   // registar named commands
   pathplanner::NamedCommands::registerCommand("ScoreLeft-WithVision", cmd::ScoreWithVision(1));
   pathplanner::NamedCommands::registerCommand("ScoreRight-WithVision", cmd::ScoreWithVision(2));
@@ -91,15 +90,11 @@ RobotContainer::RobotContainer() {
   frc::SmartDashboard::PutData("Chosen Side", &_sideChooser);
 }
 
-pathplanner::PathPlannerAuto RobotContainer::GetAutonomousCommand() {
+frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   // return pathplanner::PathPlannerAuto("test auto").ToPtr();
   auto _autoSelected = _autoChooser.GetSelected();
   bool _sideSelected = _sideChooser.GetSelected();
-
-  auto auton_command = pathplanner::PathPlannerAuto(_autoSelected, _sideSelected);
-  auton_command.isRunning().OnTrue(frc2::cmd::Print("ELLO!"));
-
-  return auton_command;
+  return SubElevator::GetInstance().ElevatorAutoReset().AndThen(pathplanner::PathPlannerAuto(_autoSelected, _sideSelected).ToPtr());
 }
 
 void RobotContainer::ConfigureBindings() {
@@ -139,8 +134,8 @@ void RobotContainer::ConfigureBindings() {
 
   _operatorController.POVLeft().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
   _operatorController.POVRight().OnTrue(SubElevator::GetInstance().CmdSetSource());
-  //_operatorController.POVUp.OnTrue(cmd::IntakeFromSource());
-  //_operatorController.POVDown.OnTrue(//)
+  // _operatorController.POVUp.OnTrue()
+  // _operatorController.POVDown.OnTrue()
 
   _operatorController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
   _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());

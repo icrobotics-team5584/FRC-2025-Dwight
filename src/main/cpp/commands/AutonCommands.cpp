@@ -11,22 +11,11 @@
 #include "subsystems/SubEndEffector.h"
 #include "subsystems/SubElevator.h"
 #include "subsystems/SubFunnel.h"
-#include "subsystems/SubClimber.h"
 
 #include "commands/VisionCommand.h"
 #include "commands/GamePieceCommands.h"
 
 namespace cmd {
-
-    frc2::CommandPtr AutonSubSystemsZeroSequence() {
-        return SubElevator::GetInstance().ElevatorAutoReset()
-            .AndThen(SubElevator::GetInstance().CmdSetL1())
-            .AndThen(frc2::cmd::WaitUntil([]{ return SubElevator::GetInstance().IsAtTarget(); }))
-            .AndThen(SubClimber::GetInstance().ClimberAutoReset())
-            .AndThen(SubElevator::GetInstance().CmdSetSource());
-
-    }
-
     // vison based
     frc2::CommandPtr ScoreWithVision(int side) {
         return frc2::cmd::Wait(1.0_s) //.AndThen(cmd::YAutonAlignWithTarget(1)) // vision is smucked (once fixed replace )
@@ -52,10 +41,8 @@ namespace cmd {
     frc2::CommandPtr Score(int side) {
         return frc2::cmd::Wait(1.0_s) 
             .AndThen(SubElevator::GetInstance().CmdSetL4())
-            .AndThen(frc2::cmd::WaitUntil([]{ return SubElevator::GetInstance().IsAtTarget(); }))
-            .AndThen(SubEndEffector::GetInstance().FeedDown().WithTimeout(0.5_s))
-            .AndThen(SubElevator::GetInstance().CmdSetSource())
-            .AndThen(frc2::cmd::WaitUntil([]{ return SubElevator::GetInstance().IsAtTarget(); }));
+            .Until([]{ return SubElevator::GetInstance().IsAtTarget(); })
+            .AndThen(SubEndEffector::GetInstance().FeedDown().WithTimeout(0.5_s));
     }
 
     // tmp command, never use this in comp

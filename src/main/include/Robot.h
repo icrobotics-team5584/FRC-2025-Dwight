@@ -10,7 +10,6 @@
 #include <frc2/command/CommandPtr.h>
 
 #include "RobotContainer.h"
-#include <pathplanner/lib/commands/PathPlannerAuto.h>
 
 class Robot : public frc::TimedRobot {
  public:
@@ -30,7 +29,7 @@ class Robot : public frc::TimedRobot {
   void TestExit() override;
 
  private:
-  std::optional<pathplanner::PathPlannerAuto> m_autonomousCommand;
+  std::optional<frc2::CommandPtr> m_autonomousCommand;
 
   RobotContainer m_container;
 };
