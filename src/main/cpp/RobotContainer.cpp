@@ -40,6 +40,7 @@ RobotContainer::RobotContainer() {
   //.AndThen(cmd::ForceAlignWithTarget(1, _driverController).WithName("AutonAlignToSource"))
   pathplanner::NamedCommands::registerCommand("IntakeSource-WithVision", cmd::IntakeSourceWithVision());
   pathplanner::NamedCommands::registerCommand("IntakeSource", cmd::IntakeFromSource());
+  pathplanner::NamedCommands::registerCommand("AutonSubSystemsZeroSequence", cmd::AutonSubSystemsZeroSequence());
   
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(
