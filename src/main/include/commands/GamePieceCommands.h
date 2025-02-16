@@ -3,7 +3,6 @@
 #include <frc2/command/button/CommandXboxController.h>
 
 namespace cmd {
-    frc2::CommandPtr IntakeFullSequence();
     frc2::CommandPtr RemoveAlgaeLow();
     frc2::CommandPtr RemoveAlgaeHigh();
     frc2::CommandPtr IntakeFromSource();

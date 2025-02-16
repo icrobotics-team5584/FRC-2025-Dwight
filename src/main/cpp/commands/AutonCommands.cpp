@@ -10,8 +10,10 @@
 
 #include "subsystems/SubEndEffector.h"
 #include "subsystems/SubElevator.h"
+#include "subsystems/SubFunnel.h"
 
 #include "commands/VisionCommand.h"
+#include "commands/GamePieceCommands.h"
 
 namespace cmd {
     // vison based
@@ -31,17 +33,11 @@ namespace cmd {
     frc2::CommandPtr IntakeSourceWithVision() {
         return frc2::cmd::Wait(2.0_s)
             .AndThen(SubElevator::GetInstance().CmdSetSource().WithName("CmdSetSource"))
-            .Until([]{return SubElevator::GetInstance().IsAtTarget() == true;})
-            .AndThen(SubEndEffector::GetInstance().IntakeFromSource().WithName("IntakeFromSource").WithTimeout(1_s));
+            .Until([]{return SubElevator::GetInstance().IsAtTarget() == true;});
+            //.AndThen(SubEndEffector::GetInstance().IntakeFromSource().WithName("IntakeFromSource").WithTimeout(1_s));
     }
     
     //  no vision
-    frc2::CommandPtr IntakeSource() {
-        return SubElevator::GetInstance().CmdSetSource()
-            .Until([]{ return SubElevator::GetInstance().IsAtTarget(); })
-            .AndThen(SubEndEffector::GetInstance().IntakeFromSource().WithTimeout(1_s));
-    }
-
     frc2::CommandPtr Score(int side) {
         return frc2::cmd::Wait(1.0_s) 
             .AndThen(SubElevator::GetInstance().CmdSetL4())
