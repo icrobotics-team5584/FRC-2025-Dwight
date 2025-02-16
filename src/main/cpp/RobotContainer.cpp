@@ -95,7 +95,7 @@ frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   // return pathplanner::PathPlannerAuto("test auto").ToPtr();
   auto _autoSelected = _autoChooser.GetSelected();
   bool _sideSelected = _sideChooser.GetSelected();
-  return SubElevator::GetInstance().ElevatorAutoReset().AndThen(pathplanner::PathPlannerAuto(_autoSelected, _sideSelected).ToPtr());
+  return pathplanner::PathPlannerAuto(_autoSelected, _sideSelected).ToPtr();
 }
 
 void RobotContainer::ConfigureBindings() {
@@ -135,7 +135,6 @@ void RobotContainer::ConfigureBindings() {
 
   _operatorController.POVLeft().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
   _operatorController.POVRight().OnTrue(SubElevator::GetInstance().CmdSetSource());
-  // _operatorController.POVUp.OnTrue()
   // _operatorController.POVDown.OnTrue()
 
   _operatorController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());

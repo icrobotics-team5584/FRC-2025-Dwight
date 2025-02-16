@@ -5,9 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "SpinInSpot-360-Slow.0"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SpinInSpot-360-Slow"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonSubSystemsZeroSequence"
+                }
+              }
+            ]
           }
         }
       ]

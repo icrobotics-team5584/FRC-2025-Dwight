@@ -53,7 +53,7 @@ class SubClimber : public frc2::SubsystemBase {
   bool Reseting = false;
   bool Reseted = false;
   bool ResetM1 = false; 
-  static constexpr units::ampere_t zeroingCurrentLimit = 20_A;
+  static constexpr units::ampere_t zeroingCurrentLimit = 30_A;
   static constexpr units::turn_t PREPARE_TURNS = -75_deg;//get numbers later 
   static constexpr units::turn_t CLIMB_TURNS = 20_deg; 
   static constexpr units::turn_t STOW_TURNS = 90_deg; 

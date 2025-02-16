@@ -53,7 +53,7 @@ frc2::CommandPtr SubClimber::ClimberAutoReset() {
     return frc2::cmd::RunOnce([this] {Reseting = true;})
         .AndThen(ManualClimberMovementDOWNSLOW())
         .AndThen(ClimberResetCheck())
-        .AndThen([this] {_climberMotor.SetPosition(-25_deg);})
+        .AndThen([this] {_climberMotor.SetPosition(0_deg);})
         .FinallyDo([this] {_climberMotor.StopMotor();});
         }
 

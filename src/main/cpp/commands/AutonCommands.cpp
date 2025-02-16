@@ -51,8 +51,9 @@ namespace cmd {
     frc2::CommandPtr Score(int side) {
         return frc2::cmd::Wait(1.0_s) 
             .AndThen(SubElevator::GetInstance().CmdSetL4())
-            .Until([]{ return SubElevator::GetInstance().IsAtTarget(); })
-            .AndThen(SubEndEffector::GetInstance().FeedDown().WithTimeout(0.5_s));
+            .AndThen(frc2::cmd::WaitUntil([]{ return SubElevator::GetInstance().IsAtTarget(); }))
+            .AndThen(SubEndEffector::GetInstance().FeedDown().WithTimeout(0.5_s))
+            .AndThen(SubElevator::GetInstance().CmdSetSource());
     }
 
     // tmp command, never use this in comp

@@ -5,9 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "DL-StartToReef-Vision.0"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "DL-StartToReef-Vision.0"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonSubSystemsZeroSequence"
+                }
+              }
+            ]
           }
         },
         {
@@ -55,7 +68,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "DL-CycleToReef-Vision.0"
+            "pathName": "DL-CycleToReef-Vision2"
           }
         },
         {
