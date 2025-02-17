@@ -32,4 +32,32 @@ frc2::CommandPtr Outtake(){
   return SubEndEffector::GetInstance().FeedUpSLOW().AlongWith(SubFunnel::GetInstance().FeedUpFunnel());
 }
 
+frc2::CommandPtr SetL1() {
+  return SubElevator::GetInstance().CmdSetL1().OnlyIf([] {
+    return SubEndEffector::GetInstance().CheckLineBreakLower() ==
+           SubEndEffector::GetInstance().CheckLineBreakHigher();
+  });
+}
+
+frc2::CommandPtr SetL2(){
+  return SubElevator::GetInstance().CmdSetL2().OnlyIf([] {
+    return SubEndEffector::GetInstance().CheckLineBreakLower() ==
+           SubEndEffector::GetInstance().CheckLineBreakHigher();
+  });
+}
+
+frc2::CommandPtr SetL3(){
+  return SubElevator::GetInstance().CmdSetL3().OnlyIf([] {
+    return SubEndEffector::GetInstance().CheckLineBreakLower() ==
+           SubEndEffector::GetInstance().CheckLineBreakHigher();
+  });
+}
+
+frc2::CommandPtr SetL4(){
+  return SubElevator::GetInstance().CmdSetL4().OnlyIf([] {
+    return SubEndEffector::GetInstance().CheckLineBreakLower() ==
+           SubEndEffector::GetInstance().CheckLineBreakHigher();
+  });
+}
+
 }  // namespace cmd //
