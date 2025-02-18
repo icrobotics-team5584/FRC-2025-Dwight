@@ -256,7 +256,7 @@ void SubElevator::SetMotorVoltageLimits12V() {
 }
 
 void SubElevator::CheckAndChangeCurrentLimitIfReset() {
-  if (ResetM1 == false) {
+  if (_hasReset == false) {
     _motorConfig.Voltage.PeakForwardVoltage = 0_V;
     _motorConfig.Voltage.PeakReverseVoltage = 0_V;
     _elevatorMotor1.GetConfigurator().Apply(_motorConfig);
@@ -270,12 +270,12 @@ frc2::CommandPtr SubElevator::ElevatorAutoReset() {
         EnableSoftLimit(false); //disable soft limit (here be dragons!!)
         SetMotorVoltageLimits12V(); //set voltage limits
         _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(-1_V)); //start moving down slowly
-        ResetM1 = false;
+        _hasReset = false;
         }).AndThen(frc2::cmd::WaitUntil([this] { return GetM1Current() > zeroingCurrentLimit; })) //stop moving down when current limit reached
         .AndThen(ZeroElevator()) //set zero
         .AndThen([this] { Stop(); }) //stop motors
         .FinallyDo([this] {
-            ResetM1 = true;
+            _hasReset = true;
             EnableSoftLimit(true); //re-enable soft limit
             CheckAndChangeCurrentLimitIfReset();
         });
@@ -310,7 +310,7 @@ void SubElevator::Periodic() {
   Logger::Log("Elevator/Motor2/Target",
               HeightFromRotations(_elevatorMotor2.GetClosedLoopReference().GetValue() * 1_tr));
   Logger::Log("Elevator/M1Current", GetM1Current().value());
-  Logger::Log("Elevator/ResetM1", ResetM1);
+  Logger::Log("Elevator/_hasReset", _hasReset);
 }
 
 void SubElevator::SimulationPeriodic() {

@@ -64,7 +64,7 @@ class SubElevator : public frc2::SubsystemBase {
   units::meter_t _targetHeight = 0_m;
 
   // reset
-  bool ResetM1 = false;
+  bool _hasReset = false;
 
   //Elevator target heights
   static constexpr units::meter_t _L1_HEIGHT = 0.20_m;
