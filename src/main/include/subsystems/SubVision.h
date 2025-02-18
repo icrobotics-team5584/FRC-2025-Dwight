@@ -1,4 +1,3 @@
-
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
@@ -52,7 +51,7 @@ public:
  * @param pose Pose of the target
  */
   bool CheckValid(std::optional<photon::EstimatedRobotPose> pose);
-  
+
   std::optional<photon::EstimatedRobotPose> _pose;
 
   std::map<int, frc::Pose2d> tagToSourcePose = {
@@ -76,24 +75,24 @@ public:
     units::meter_t leftY;
     units::meter_t rightX;
     units::meter_t rightY;
-    units::degree_t leftScoreAngle = 11.4_deg;
-    units::degree_t rightScoreAngle = -8.3_deg;
+    units::degree_t leftScoreAngle = 11.2_deg;
+    units::degree_t rightScoreAngle = -20_deg;
   };
 
 std::map<int, ReefPositions> tagToReefPositions = {
-    {17, {60_deg-90_deg, 3.529_m, 2.805_m, 3.820_m, 2.671_m, 11.4_deg, -8.3_deg}},
-    {18, {0_deg-90_deg, 3.150_m, 4.190_m, 3.150_m, 3.870_m, 11.4_deg, -8.3_deg}},
-    {19, {300_deg-90_deg, 3.960_m, 5.250_m, 3.690_m, 5.090_m, 11.4_deg, -8.3_deg}},
-    {20, {240_deg-90_deg, 5.290_m, 5.095_m, 5.020_m, 5.250_m, 11.4_deg, -8.3_deg}},
-    {21, {180_deg-90_deg, 5.810_m, 3.860_m, 5.810_m, 4.190_m, 11.4_deg, -8.3_deg}},
-    {22, {120_deg-90_deg, 5.010_m, 2.800_m, 5.290_m, 2.950_m, 11.4_deg, -8.3_deg}},
+    {17, {60_deg-90_deg, 3.529_m, 2.805_m, 3.820_m, 2.671_m, 11.2_deg, -20_deg}},
+    {18, {0_deg-90_deg, 3.150_m, 4.190_m, 3.150_m, 3.870_m, 11.2_deg, -20_deg}},
+    {19, {300_deg-90_deg, 3.960_m, 5.250_m, 3.690_m, 5.090_m, 11.2_deg, -20_deg}},
+    {20, {240_deg-90_deg, 5.290_m, 5.095_m, 5.020_m, 5.250_m, 11.2_deg, -20_deg}},
+    {21, {180_deg-90_deg, 5.810_m, 3.860_m, 5.810_m, 4.190_m, 11.2_deg, -20_deg}},
+    {22, {120_deg-90_deg, 5.010_m, 2.800_m, 5.290_m, 2.950_m, 11.2_deg, -20_deg}},
 
-    {6, {120_deg-90_deg, 13.410_m, 3.100_m, 13.700_m, 3.260_m, 11.4_deg, -8.3_deg}},
-    {7, {180_deg-90_deg, 14.060_m, 3.860_m, 14.060_m, 4.190_m, 11.4_deg, -8.3_deg}},
-    {8, {240_deg-90_deg, 13.700_m, 4.800_m, 13.420_m, 4.980_m, 11.4_deg, -8.3_deg}},
-    {9, {300_deg-90_deg, 12.710_m, 4.970_m, 12.430_m, 4.800_m, 11.4_deg, -8.3_deg}},
-    {10, {0_deg-90_deg, 4.190_m, 12.080_m, 3.860_m, 12.080_m, 11.4_deg, -8.3_deg}},
-    {11, {60_deg-90_deg, 12.430_m, 3.260_m, 12.720_m, 3.100_m, 11.4_deg, -8.3_deg}}
+    {6, {120_deg-90_deg, 13.410_m, 3.100_m, 13.700_m, 3.260_m, 11.2_deg, -20_deg}},
+    {7, {180_deg-90_deg, 14.060_m, 3.860_m, 14.060_m, 4.190_m, 11.2_deg, -20_deg}},
+    {8, {240_deg-90_deg, 13.700_m, 4.800_m, 13.420_m, 4.980_m, 11.2_deg, -20_deg}},
+    {9, {300_deg-90_deg, 12.710_m, 4.970_m, 12.430_m, 4.800_m, 11.2_deg, -20_deg}},
+    {10, {0_deg-90_deg, 4.190_m, 12.080_m, 3.860_m, 12.080_m, 11.2_deg, -20_deg}},
+    {11, {60_deg-90_deg, 12.430_m, 3.260_m, 12.720_m, 3.100_m, 11.2_deg, -20_deg}}
 
 };
   //+9.4418

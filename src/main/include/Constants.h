@@ -25,15 +25,13 @@ namespace canid {
     constexpr int elevatorMotor2 = 14;
 
     constexpr int climberMotor = 18;
-
+    
     constexpr int pigeon2 = 19; 
-
-    constexpr int funnelMotor = 20;
 }
 
 namespace dio {
-    constexpr int EndEffectorLineBreakHigher = 9;  
-    constexpr int EndEffectorLineBreakLower = 8;
+    constexpr int EndEffectorLineBreakHigher = 3;  
+    constexpr int EndEffectorLineBreakLower = 2;
     constexpr int brakeCoastButton = 4;
 }
 
