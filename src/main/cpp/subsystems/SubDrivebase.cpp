@@ -126,7 +126,6 @@ void SubDrivebase::Periodic() {
 }
 
 void SubDrivebase::SimulationPeriodic() {
-  
   _frontLeft.UpdateSim(20_ms);
   _frontRight.UpdateSim(20_ms);
   _backLeft.UpdateSim(20_ms);
@@ -232,8 +231,6 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
                                  scaledTranslationX);
   frc::SmartDashboard::PutNumber("Drivebase/Joystick Scaling/rawRotation", rawRotation);
   frc::SmartDashboard::PutNumber("Drivebase/Joystick Scaling/scaledRotation", scaledRotation);
-
-  
 
   return frc::ChassisSpeeds{forwardSpeed, sidewaysSpeed, rotationSpeed};
 }
@@ -501,12 +498,9 @@ units::degree_t SubDrivebase::GetPitch() {
   return (_gyro.GetPitch().GetValue());
 }
 
-
 units::degree_t SubDrivebase::GetRoll() {
   return (_gyro.GetRoll().GetValue());
 }
-
-
 
 frc2::CommandPtr SubDrivebase::WheelCharecterisationCmd() {
   static units::radian_t prevGyroAngle = 0_rad;
