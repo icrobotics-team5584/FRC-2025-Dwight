@@ -48,8 +48,7 @@ namespace cmd {
     
     //  no vision
     frc2::CommandPtr Score(int side) {
-        return frc2::cmd::Wait(1.0_s) 
-            .AndThen(SubElevator::GetInstance().CmdSetL4()).OnlyIf([] { return !SubElevator::GetInstance().IsAtTarget(); })
+        return SubElevator::GetInstance().CmdSetL4()//.OnlyIf([] { return !SubElevator::GetInstance().IsAtTarget(); })
             .AndThen(frc2::cmd::WaitUntil([]{ return SubElevator::GetInstance().IsAtTarget(); }))
             .AndThen(SubEndEffector::GetInstance().FeedDown().WithTimeout(0.5_s))
             .AndThen(SubElevator::GetInstance().CmdSetSource());

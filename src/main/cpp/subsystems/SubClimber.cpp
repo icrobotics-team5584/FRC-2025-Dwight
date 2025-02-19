@@ -6,6 +6,7 @@
 
 #include <units/voltage.h>
 #include "frc/smartdashboard/SmartDashboard.h"
+#include "frc/RobotBase.h"
 
 
 SubClimber::SubClimber() {
@@ -61,12 +62,14 @@ frc2::CommandPtr SubClimber::ClimberResetCheck() {
     return frc2::cmd::RunOnce ([this] {ResetM1 = false;})
     .AndThen(
     frc2::cmd::Run([this] {
-        
         if (GetM1Current() > zeroingCurrentLimit) {
             ResetM1 = true;
         }
         else {
             Reseting = false;
+        }
+        if (frc::RobotBase::IsSimulation() == true) {
+            ResetM1 = true;
         }
     }).Until([this] { return ResetM1; }));
 }

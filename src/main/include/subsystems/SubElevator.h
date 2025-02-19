@@ -100,7 +100,7 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr units::meters_per_second_squared_t _ACCELERATION = 15_mps_sq;
   static constexpr units::ampere_t zeroingCurrentLimit = 40_A;
   //   //Simulation stuff
-  frc::sim::ElevatorSim _motorSim{frc::DCMotor::Falcon500(2),
+  frc::sim::ElevatorSim _motorSim{frc::DCMotor::Falcon500FOC(2),
                                   _GEAR_RATIO,
                                   _CARRIAGE_MASS,
                                   _DRUM_RADIUS, // sim elevator isnt 2 stage 
