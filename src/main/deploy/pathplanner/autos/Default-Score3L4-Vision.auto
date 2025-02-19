@@ -5,63 +5,76 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "DL-StartToReef-SlowTest.0"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LeftStartToReefPoleI.0"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonSubSystemsZeroSequence"
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ScoreLeft-WithVision"
+            "name": "ScoreLeft"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "DL-ReefToSource-SlowTest.0"
+            "pathName": "ReefPoleIToLeftSource.0"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "IntakeSource-WithVision"
+            "name": "IntakeSource"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "DL-CycleToReef-SlowTest.0"
+            "pathName": "LeftSourceToReefPoleL.0"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ScoreLeft-WithVision"
+            "name": "ScoreLeft"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "DL-CycleToSource-SlowTest.0"
+            "pathName": "ReefPoleLToLeftSource"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "IntakeSource-WithVision"
+            "name": "IntakeSource"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "DL-CycleToReef-SlowTest"
+            "pathName": "LeftSourceToReefPoleK.0"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ScoreRight-WithVision"
+            "name": "ScoreRight"
           }
         }
       ]
