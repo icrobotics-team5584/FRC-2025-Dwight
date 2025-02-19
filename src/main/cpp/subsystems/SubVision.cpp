@@ -46,10 +46,8 @@ void SubVision::SimulationPeriodic() {
 }
 
 void SubVision::UpdateVision() {
-  const auto& myReef =
-      (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) ? redReef : blueReef;
   std::optional<photon::PhotonTrackedTarget> bestTarget;
-  double largestArea = 0;
+  double largestArea = 2;
 
   // Left camera
   std::vector<photon::PhotonPipelineResult> results = _leftCamera.GetAllUnreadResults();
@@ -57,24 +55,14 @@ void SubVision::UpdateVision() {
   if (resultCount > 0) {
     for (auto result : results) {
       _leftEstPose = _leftPoseEstimater.Update(result);
-      auto distance = result.GetBestTarget().GetBestCameraToTarget().Translation().Distance(
-          frc::Translation3d(0_m, 0_m, 0_m));
-      frc::SmartDashboard::PutNumber("Vision/Left/distance to tag", distance.value());
       frc::SmartDashboard::PutNumber("Vision/Left/target", result.GetBestTarget().fiducialId);
 
       for (const auto& target : result.targets) {
+        if (!CheckReef(target)) {continue;}
         double targetArea = target.GetArea();
-        units::degree_t errorAngle = SubDrivebase::GetInstance().GetPose().Rotation().Degrees() -
-                                     GetReefPose(target.GetFiducialId()).Rotation().Degrees() -
-                                     180_deg;
-        if ((errorAngle > 30_deg || errorAngle < -30_deg) && targetArea < 2) {
-          continue;
-        }
-        if (std::find(myReef.begin(), myReef.end(), target.GetFiducialId()) != myReef.end()) {
-          if (targetArea > largestArea) {
-            bestTarget = target;
-            largestArea = targetArea;
-          }
+        if (targetArea > largestArea ) {
+          bestTarget = target;
+          largestArea = targetArea;
         }
       }
     }
@@ -85,24 +73,14 @@ void SubVision::UpdateVision() {
   if (resultCount > 0) {
     for (auto result : results) {
       _rightEstPose = _rightPoseEstimater.Update(result);
-      auto distance = result.GetBestTarget().GetBestCameraToTarget().Translation().Distance(
-          frc::Translation3d(0_m, 0_m, 0_m));
-      frc::SmartDashboard::PutNumber("Vision/Right/distance to tag", distance.value());
       frc::SmartDashboard::PutNumber("Vision/Right/target", result.GetBestTarget().fiducialId);
 
       for (const auto& target : result.targets) {
+        if (CheckReef(target)) {continue;}
         double targetArea = target.GetArea();
-        units::degree_t errorAngle = SubDrivebase::GetInstance().GetPose().Rotation().Degrees() -
-                                     GetReefPose(target.GetFiducialId()).Rotation().Degrees() -
-                                     180_deg;
-        if ((errorAngle > 30_deg || errorAngle < -30_deg) && targetArea < 2) {
-          continue;
-        }
-        if (std::find(myReef.begin(), myReef.end(), target.GetFiducialId()) != myReef.end()) {
-          if (targetArea > largestArea) {
-            bestTarget = target;
-            largestArea = targetArea;
-          }
+        if (targetArea > largestArea) {
+          bestTarget = target;
+          largestArea = targetArea;
         }
       }
     }
@@ -129,10 +107,10 @@ frc::Pose2d SubVision::GetSourcePose(int tagId) {
  *
  * @returns The pose of the reef in the field coordinate system.
  */
-frc::Pose2d SubVision::GetReefPose(int side = 1) {
-  int reefTagID = _lastReefTag.GetFiducialId();
+frc::Pose2d SubVision::GetReefPose(Side side = Left, int pose = -1) {
+  int reefTagID = (pose == -1)? _lastReefTag.GetFiducialId() : pose;
   frc::Pose2d targPose;
-  if (side == 1) {
+  if (side == Left) {
     targPose = {tagToReefPositions[reefTagID].leftX, tagToReefPositions[reefTagID].leftY,
                 tagToReefPositions[reefTagID].angle};
   } else {
@@ -142,9 +120,9 @@ frc::Pose2d SubVision::GetReefPose(int side = 1) {
   return targPose;
 }
 
-units::degree_t SubVision::GetReefAlignAngle(int side = 1) {
+units::degree_t SubVision::GetReefAlignAngle(Side side = Left) {
   int reefTagID = _lastReefTag.GetFiducialId();
-  if (side == 1) {
+  if (side == Left) {
     return tagToReefPositions[reefTagID].leftScoreAngle;
   } else {
     return tagToReefPositions[reefTagID].rightScoreAngle;
@@ -160,45 +138,17 @@ double SubVision::GetLastReefTagArea() {
   return _lastReefTag.GetArea();
 }
 
-bool SubVision::CheckValid(std::optional<photon::EstimatedRobotPose> pose) {
-  const double minArea = 20;
-  const double maxArea = 80;
-  const double minAmbiguity = 0.2;
-  const double maxAmbiguity = 0.8;
-  const int desiredTargetLimit = 3;
-
-  auto data = pose.value();
-
-  frc::SmartDashboard::PutNumber("Vision/Target detected",
-                                 data.targetsUsed.size());  // Display number of target detected
-
-  // Check number of target
-  if (data.targetsUsed.size() > desiredTargetLimit) {
+bool SubVision::CheckReef(const photon::PhotonTrackedTarget& reef) {
+  const auto& myReef =
+      (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) ? redReef : blueReef;
+  if (std::find(myReef.begin(), myReef.end(), reef.GetFiducialId()) != myReef.end()) {
     return false;
   }
-
-  // Get average area and ambiguity
-  double area = 0.00;
-  double ambiguity = 0.00;
-  for (auto target : data.targetsUsed) {
-    area += target.GetArea();
-    ambiguity += target.GetPoseAmbiguity();
-  }
-  area /= data.targetsUsed.size();
-  ambiguity /= data.targetsUsed.size();
-  frc::SmartDashboard::PutNumber("Vision/Target avg area", area);
-  frc::SmartDashboard::PutNumber("Vision/Target avg ambiguity", ambiguity);
-
-  // Check area
-  if (area < minArea || area > maxArea) {
+  units::degree_t errorAngle = SubDrivebase::GetInstance().GetPose().Rotation().Degrees() -
+                               GetReefPose(Left,reef.GetFiducialId()).Rotation().Degrees() - 180_deg;
+  if ((errorAngle > 30_deg || errorAngle < -30_deg)) {
     return false;
   }
-
-  // Check ambiguity
-  if ((ambiguity < minAmbiguity || ambiguity > maxAmbiguity) && !frc::RobotBase::IsSimulation()) {
-    return false;
-  }
-
   return true;
 }
 

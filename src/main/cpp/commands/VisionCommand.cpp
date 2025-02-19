@@ -17,13 +17,13 @@ using namespace frc2::cmd;
  * @param side align to left: 1, align to right: 2
  * @return A command that will align to the tag when executed.* 3.500_m, 3.870
  */
-frc2::CommandPtr YAlignWithTarget(int side) 
+frc2::CommandPtr YAlignWithTarget(SubVision::Side side) 
 {
   static frc::Pose2d targetPose;
   return SubDrivebase::GetInstance()
       .Drive(
           [side] {
-            targetPose = SubVision::GetInstance().GetReefPose(side);
+            targetPose = SubVision::GetInstance().GetReefPose(side,-1);
             frc::ChassisSpeeds speeds =
                 SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose);
 
@@ -38,7 +38,7 @@ frc2::CommandPtr YAlignWithTarget(int side)
           [] { return frc::ChassisSpeeds{0_mps, 0.15_mps, 0_deg_per_s}; }, false));
 }
 
-frc2::CommandPtr ForceAlignWithTarget(int side) {
+frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
   // Strafe until the tag is at a known scoring angle, with a small velocity component towards the
   // reef so you stay aligned rotationally and at the right distance.
   return SubDrivebase::GetInstance().Drive(
@@ -59,7 +59,7 @@ frc2::CommandPtr ForceAlignWithTarget(int side) {
           units::meters_per_second_t yVel = overallVelocity * units::math::sin(driveAngle);
           return frc::ChassisSpeeds{xVel, yVel, 0_deg_per_s};
         } else {
-          frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(side).Rotation();
+          frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(side,-1).Rotation();
           using ds = frc::DriverStation;
           if (ds::GetAlliance().value_or(ds::Alliance::kBlue) == ds::kRed) {
             targetRotation = +180_deg;
@@ -125,11 +125,11 @@ frc2::CommandPtr AlignToSource() {
       true);
 }
 
-frc2::CommandPtr AlignAndShoot(int side){
+frc2::CommandPtr AlignAndShoot(SubVision::Side side){
  return ForceAlignWithTarget(side).AlongWith(AutoShootIfAligned(side));
 }
 
-frc2::CommandPtr AutoShootIfAligned(int side) {
+frc2::CommandPtr AutoShootIfAligned(SubVision::Side side) {
   return Sequence(
     WaitUntil([side] {
      units::degree_t goalAngle = SubVision::GetInstance().GetReefAlignAngle(side);

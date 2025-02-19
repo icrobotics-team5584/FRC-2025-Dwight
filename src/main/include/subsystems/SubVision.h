@@ -40,8 +40,8 @@ public:
 
   units::degree_t GetLastReefTagAngle();
   double GetLastReefTagArea();
-  frc::Pose2d GetReefPose(int side);
-  units::degree_t GetReefAlignAngle(int side);
+  frc::Pose2d GetReefPose(Side side, int pose);
+  units::degree_t GetReefAlignAngle(Side side);
 
   std::map<Side, std::optional<photon::EstimatedRobotPose>> GetPose();
 
@@ -55,7 +55,7 @@ public:
  * 
  * @param pose Pose of the target
  */
-  bool CheckValid(std::optional<photon::EstimatedRobotPose> pose);
+  bool CheckReef(const photon::PhotonTrackedTarget& reef);
 
   std::string _tagLayoutPath = frc::filesystem::GetDeployDirectory() + "/2025-reefscape.json";
   frc::AprilTagFieldLayout _tagLayout{_tagLayoutPath};
@@ -130,7 +130,7 @@ std::map<int, ReefPositions> tagToReefPositions = {
   photon::PhotonCameraSim _rightCamSim{&_rightCamera};
   photon::VisionSystemSim _rightVisionSim{_rightCamName};
 
-  frc::Transform3d _rightBotToCam{{270_mm,-230_mm,220_mm},{0_deg,0_deg,40_deg}}; //Need to find out
+  frc::Transform3d _rightBotToCam{{270_mm,-230_mm,220_mm},{0_deg,0_deg,40_deg}};
 
   photon::PhotonPoseEstimator _rightPoseEstimater{
     _tagLayout,
