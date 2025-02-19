@@ -28,7 +28,7 @@ SubDrivebase::SubDrivebase() {
 
       // Method to reset odometry (will be called if your auto has a starting pose)
       [this](frc::Pose2d pose) { 
-        Logger::Tune("DriveBase/ResetAutoStartingPose", true); 
+        Logger::Tune("Drivebase/ResetAutoStartingPose", true); 
         if (frc::SmartDashboard::GetBoolean("DriveBase/ResetAutoStartingPose", true)) {
           return SetPose(pose);
         }
