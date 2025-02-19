@@ -79,15 +79,13 @@ frc2::Trigger SubEndEffector::HasCoralTrigger() {
 
 frc2::CommandPtr SubEndEffector::KeepCoralInEndEffector() {
   return Run([this] {
-    if (SubEndEffector::GetInstance().CheckLineBreakHigher() &&
-        !SubEndEffector::GetInstance().CheckLineBreakLower()) {
-      SubEndEffector::GetInstance().FeedDownSLOW();
+    if (CheckLineBreakHigher() && !CheckLineBreakLower()) {
+      _endEffectorMotor.Set(-0.8);
     }
-    if (SubEndEffector::GetInstance().CheckLineBreakLower() &&
-        !SubEndEffector::GetInstance().CheckLineBreakHigher()) {
-      SubEndEffector::GetInstance().FeedUpSLOW();
+    if (CheckLineBreakLower() && !CheckLineBreakHigher()) {
+      _endEffectorMotor.Set(0.8);
     } else {
-      SubEndEffector::GetInstance().StopMotor();
+      _endEffectorMotor.Set(0);
     }
   });
 }
