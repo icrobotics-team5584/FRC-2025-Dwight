@@ -174,21 +174,6 @@ frc2::CommandPtr SubElevator::ElevatorToClimbHeight() {
   return CmdElevatorToPosition(0.14_m);
 }
 
-frc2::CommandPtr SubElevator::Climb() {
-  return frc2::cmd::Run([this] {
-           _elevatorMotor1.SetControl(
-               ctre::phoenix6::controls::VoltageOut(Logger::Tune("ElevatorClimbVoltage", 0_V)));
-         })
-      .Until([this] {
-        return HeightFromRotations(_elevatorMotor1.GetPosition(true).GetValue()) < 0.02_m;
-      })
-      .FinallyDo([this] {
-        auto targHeight = HeightFromRotations(_elevatorMotor1.GetPosition(true).GetValue());
-        _elevatorMotor1.SetControl(
-            controls::PositionVoltage(RotationsFromHeight(targHeight)).WithEnableFOC(true));
-      });
-}
-
 frc2::CommandPtr SubElevator::ManualElevatorMovementUP() {
   return frc2::cmd::RunEnd(
       [this] {

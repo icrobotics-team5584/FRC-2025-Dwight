@@ -38,7 +38,6 @@ class SubElevator : public frc2::SubsystemBase {
   frc2::CommandPtr ManualElevatorMovementUP();
   frc2::CommandPtr ManualElevatorMovementDOWN();
   frc2::CommandPtr ElevatorToClimbHeight();
-  frc2::CommandPtr Climb();
   frc2::CommandPtr ManualElevatorMovementAlgae();
 
   frc2::CommandPtr CmdElevatorToPosition(units::meter_t height);
