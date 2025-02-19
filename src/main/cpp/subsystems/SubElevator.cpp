@@ -165,9 +165,6 @@ void SubElevator::EnableSoftLimit(bool enabled) {
   // Configure the forward soft limit for elevatorMotor1
   _motorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
   _elevatorMotor1.GetConfigurator().Apply(_motorConfig);
-
-  // Configure the reverse soft limit for elevatorMotor2
-  _elevatorMotor1.GetConfigurator().Apply(_motorConfig);
 }
 
 frc2::CommandPtr SubElevator::ElevatorToClimbHeight() {
