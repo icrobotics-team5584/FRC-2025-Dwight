@@ -80,6 +80,8 @@ SubDrivebase::SubDrivebase() {
 
 void SubDrivebase::Periodic() {
   auto loopStart = frc::GetTime();
+  frc::SmartDashboard::PutNumber("Drivebase/GyroAngle/Roll", SubDrivebase::GetInstance().GetRoll().value());
+  frc::SmartDashboard::PutNumber("Drivebase/GyroAngle/Pitch", SubDrivebase::GetInstance().GetPitch().value());
   frc::SmartDashboard::PutBoolean("Drivebase/Check button", CheckCoastButton().Get());
 
   Logger::Log("Drivebase/heading", GetHeading());
@@ -124,6 +126,7 @@ void SubDrivebase::Periodic() {
 }
 
 void SubDrivebase::SimulationPeriodic() {
+  
   _frontLeft.UpdateSim(20_ms);
   _frontRight.UpdateSim(20_ms);
   _backLeft.UpdateSim(20_ms);
@@ -229,6 +232,8 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
                                  scaledTranslationX);
   frc::SmartDashboard::PutNumber("Drivebase/Joystick Scaling/rawRotation", rawRotation);
   frc::SmartDashboard::PutNumber("Drivebase/Joystick Scaling/scaledRotation", scaledRotation);
+
+  
 
   return frc::ChassisSpeeds{forwardSpeed, sidewaysSpeed, rotationSpeed};
 }
