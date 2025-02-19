@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "utilities/ICSparkMax.h"
+#include "utilities/ICSparkFlex.h"
 #include <frc2/command/SubsystemBase.h>
-#include <frc2/command/CommandPtr.h>
+#include <frc2/command/CommandPtr.h> 
 #include <frc2/command/Commands.h>
 #include "Constants.h"
 #include <frc/DigitalInput.h>
@@ -19,9 +19,7 @@ class SubEndEffector : public frc2::SubsystemBase {
     static SubEndEffector inst;
     return inst;
   }
-
-  frc2::CommandPtr IntakeFromSource();
-  frc2::CommandPtr IntakeFromGround();
+  
   frc2::CommandPtr FeedUp();
   frc2::CommandPtr FeedUpSLOW();
   frc2::CommandPtr FeedDown();
@@ -30,6 +28,7 @@ class SubEndEffector : public frc2::SubsystemBase {
   frc2::CommandPtr ScoreCoral();
   frc2::CommandPtr Shoot();
   frc2::CommandPtr ScoreCoralSLOW();
+  
   bool CheckLineBreakHigher();
   bool CheckLineBreakLower();
   bool LineBreakDownSignal();
