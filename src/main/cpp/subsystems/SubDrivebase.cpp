@@ -461,6 +461,18 @@ frc2::Trigger SubDrivebase::CheckCoastButton() {
   return frc2::Trigger{[this] { return !_toggleBrakeCoast.Get(); }};
 }
 
+
+frc2::Trigger SubDrivebase::IsTipping(){
+  return frc2::Trigger{[this] {
+    if ((SubDrivebase::GetInstance().GetRoll() > 5_deg || SubDrivebase::GetInstance().GetRoll() < -5_deg) || (SubDrivebase::GetInstance().GetPitch() > 5_deg || SubDrivebase::GetInstance().GetPitch() < -5_deg)){
+            return true;         
+    } else{
+      return false;
+    }
+
+  }
+  };
+}
 void SubDrivebase::DisplayTrajectory(std::string name, frc::Trajectory trajectory) {
   _fieldDisplay.GetObject(name)->SetTrajectory(trajectory);
 }
@@ -482,6 +494,13 @@ void SubDrivebase::SetBrakeMode(bool mode) {
 units::degree_t SubDrivebase::GetPitch() {
   return (_gyro.GetPitch().GetValue());
 }
+
+
+units::degree_t SubDrivebase::GetRoll() {
+  return (_gyro.GetRoll().GetValue());
+}
+
+
 
 frc2::CommandPtr SubDrivebase::WheelCharecterisationCmd() {
   static units::radian_t prevGyroAngle = 0_rad;
