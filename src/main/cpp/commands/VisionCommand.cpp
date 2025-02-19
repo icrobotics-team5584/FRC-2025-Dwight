@@ -75,19 +75,28 @@ frc2::CommandPtr ForceAlignWithTarget(int side) {
 frc2::CommandPtr AddVisionMeasurement() {
   return Run(
       [] {
-        auto estimatedPose = SubVision::GetInstance().GetPose();
-        frc::SmartDashboard::PutBoolean("Vision/is teleop", frc::DriverStation::IsTeleop());
-        frc::SmartDashboard::PutBoolean("Vision/has value", estimatedPose.has_value());
-        if (estimatedPose.has_value()) {
-          auto estimatedPoseValue = estimatedPose.value();
-          double d = SubVision::GetInstance().GetDev(estimatedPoseValue);
+        auto estimatePoses = SubVision::GetInstance().GetPose();
+
+        auto leftPose = estimatePoses[SubVision::Left];
+        if (leftPose.has_value()) {
+          auto estimatedPose = leftPose.value();
+          double d = SubVision::GetInstance().GetDev(estimatedPose);
           wpi::array<double,3> dev = {d, d, 0.9};
           SubDrivebase::GetInstance().AddVisionMeasurement(
-              estimatedPoseValue.estimatedPose.ToPose2d(), estimatedPoseValue.timestamp, dev);
-          SubDrivebase::GetInstance().DisplayPose("EstimatedPose",
-                                                  estimatedPoseValue.estimatedPose.ToPose2d());
-        } else {
-          SubDrivebase::GetInstance().DisplayPose("EstimatedPose", {});
+              estimatedPose.estimatedPose.ToPose2d(), estimatedPose.timestamp, dev);
+          SubDrivebase::GetInstance().DisplayPose("LeftEstimatedPose",
+                                                  estimatedPose.estimatedPose.ToPose2d());
+        }
+
+        auto rightPose = estimatePoses[SubVision::Right];
+        if (rightPose.has_value()) {
+          auto estimatedPose = rightPose.value();
+          double d = SubVision::GetInstance().GetDev(estimatedPose);
+          wpi::array<double,3> dev = {d, d, 0.9};
+          SubDrivebase::GetInstance().AddVisionMeasurement(
+              estimatedPose.estimatedPose.ToPose2d(), estimatedPose.timestamp, dev);
+          SubDrivebase::GetInstance().DisplayPose("RightEstimatedPose",
+                                                  estimatedPose.estimatedPose.ToPose2d());
         }
       },
       {&SubVision::GetInstance()}).IgnoringDisable(true);

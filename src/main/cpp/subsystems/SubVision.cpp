@@ -19,14 +19,14 @@ SubVision::SubVision() {
   _devTable.insert(3_m, 0.230);
 
   // Robot pose estimater
-  _robotPoseEstimater.SetMultiTagFallbackStrategy(photon::PoseStrategy::LOWEST_AMBIGUITY);
+  _leftPoseEstimater.SetMultiTagFallbackStrategy(photon::PoseStrategy::LOWEST_AMBIGUITY);
 
   // Sim set up
-  _visionSim.AddAprilTags(_tagLayout);
-  _visionSim.AddCamera(&_cameraSim, _botToCam);
+  _leftVisionSim.AddAprilTags(_tagLayout);
+  _leftVisionSim.AddCamera(&_leftCamSim, _leftBotToCam);
 
   // Display tags on field
-  for (auto target : _visionSim.GetVisionTargets()) {
+  for (auto target : _leftVisionSim.GetVisionTargets()) {
     SubDrivebase::GetInstance().DisplayPose(fmt::format("tag{}", target.fiducialId),
                                             target.GetPose().ToPose2d());
   }
@@ -38,52 +38,71 @@ SubVision::SubVision() {
 
 void SubVision::Periodic() {
   frc::SmartDashboard::PutNumber("Vision/LastReefTag", _lastReefTag.GetFiducialId());
-  auto results = _camera.GetAllUnreadResults();
-  UpdateLatestTags(results);
-  UpdatePoseEstimator(results);
+  UpdateVision();
 }
 
 void SubVision::SimulationPeriodic() {
-  _visionSim.Update(SubDrivebase::GetInstance().GetSimPose());
+  _leftVisionSim.Update(SubDrivebase::GetInstance().GetSimPose());
 }
 
-void SubVision::UpdatePoseEstimator(std::vector<photon::PhotonPipelineResult> results) {
-  auto resultCount = results.size();
-  frc::SmartDashboard::PutNumber("Vision/Reuslt count", resultCount);
-  if (resultCount == 0) {
-    return;  // Return if no result, prevent null error later
-  }
-  for (auto result : results) {
-    _pose = _robotPoseEstimater.Update(result);  // Get estimate pose of robot by vision
-    auto distance = result.GetBestTarget().GetBestCameraToTarget().Translation().Distance(
-        frc::Translation3d(0_m, 0_m, 0_m));
-    frc::SmartDashboard::PutNumber("Vision/distance to tag", distance.value());
-    frc::SmartDashboard::PutNumber("Vision/target", result.GetBestTarget().fiducialId);
-    frc::SmartDashboard::PutNumber("Vision/dev", lastDev);
-  }
-}
-void SubVision::UpdateLatestTags(std::vector<photon::PhotonPipelineResult> results) {
-  std::string currentlyVisibleTagIDs;
-  std::optional<photon::PhotonTrackedTarget> bestTarget;
-  double largestArea = 0;
+void SubVision::UpdateVision() {
   const auto& myReef =
       (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) ? redReef : blueReef;
+  std::optional<photon::PhotonTrackedTarget> bestTarget;
+  double largestArea = 0;
 
-  for (const auto& result : results) {
-    for (const auto& target : result.targets) {
-      currentlyVisibleTagIDs += std::to_string(target.GetFiducialId()) + " ";
-      double targetArea = target.GetArea();
-      units::degree_t errorAngle = SubDrivebase::GetInstance().GetPose().Rotation().Degrees() -
-                                   GetReefPose(target.GetFiducialId()).Rotation().Degrees() - 180_deg;
+  // Left camera
+  std::vector<photon::PhotonPipelineResult> results = _leftCamera.GetAllUnreadResults();
+  auto resultCount = results.size();
+  if (resultCount > 0) {
+    for (auto result : results) {
+      _leftEstPose = _leftPoseEstimater.Update(result);
+      auto distance = result.GetBestTarget().GetBestCameraToTarget().Translation().Distance(
+          frc::Translation3d(0_m, 0_m, 0_m));
+      frc::SmartDashboard::PutNumber("Vision/Left/distance to tag", distance.value());
+      frc::SmartDashboard::PutNumber("Vision/Left/target", result.GetBestTarget().fiducialId);
 
-      if ((errorAngle > 30_deg || errorAngle < -30_deg) && targetArea < 2) {
-        continue;
+      for (const auto& target : result.targets) {
+        double targetArea = target.GetArea();
+        units::degree_t errorAngle = SubDrivebase::GetInstance().GetPose().Rotation().Degrees() -
+                                     GetReefPose(target.GetFiducialId()).Rotation().Degrees() -
+                                     180_deg;
+        if ((errorAngle > 30_deg || errorAngle < -30_deg) && targetArea < 2) {
+          continue;
+        }
+        if (std::find(myReef.begin(), myReef.end(), target.GetFiducialId()) != myReef.end()) {
+          if (targetArea > largestArea) {
+            bestTarget = target;
+            largestArea = targetArea;
+          }
+        }
       }
+    }
+  }
+  // Right camera
+  results = _rightCamera.GetAllUnreadResults();
+  resultCount = results.size();
+  if (resultCount > 0) {
+    for (auto result : results) {
+      _rightEstPose = _rightPoseEstimater.Update(result);
+      auto distance = result.GetBestTarget().GetBestCameraToTarget().Translation().Distance(
+          frc::Translation3d(0_m, 0_m, 0_m));
+      frc::SmartDashboard::PutNumber("Vision/Right/distance to tag", distance.value());
+      frc::SmartDashboard::PutNumber("Vision/Right/target", result.GetBestTarget().fiducialId);
 
-      if (std::find(myReef.begin(), myReef.end(), target.GetFiducialId()) != myReef.end()) {
-        if (targetArea > largestArea) {
-          bestTarget = target;
-          largestArea = targetArea;
+      for (const auto& target : result.targets) {
+        double targetArea = target.GetArea();
+        units::degree_t errorAngle = SubDrivebase::GetInstance().GetPose().Rotation().Degrees() -
+                                     GetReefPose(target.GetFiducialId()).Rotation().Degrees() -
+                                     180_deg;
+        if ((errorAngle > 30_deg || errorAngle < -30_deg) && targetArea < 2) {
+          continue;
+        }
+        if (std::find(myReef.begin(), myReef.end(), target.GetFiducialId()) != myReef.end()) {
+          if (targetArea > largestArea) {
+            bestTarget = target;
+            largestArea = targetArea;
+          }
         }
       }
     }
@@ -92,12 +111,10 @@ void SubVision::UpdateLatestTags(std::vector<photon::PhotonPipelineResult> resul
   if (bestTarget) {
     _lastReefTag = *bestTarget;
   }
-
-  frc::SmartDashboard::PutString("Vision/Currently visible tags", currentlyVisibleTagIDs);
 }
 
-std::optional<photon::EstimatedRobotPose> SubVision::GetPose() {
-  return _pose;
+std::map<SubVision::Side, std::optional<photon::EstimatedRobotPose>> SubVision::GetPose() {
+  return {{Left, _leftEstPose}, {Right, _rightEstPose}};
 }
 
 frc::Pose2d SubVision::GetSourcePose(int tagId) {
@@ -187,7 +204,9 @@ bool SubVision::CheckValid(std::optional<photon::EstimatedRobotPose> pose) {
 
 double SubVision::GetDev(photon::EstimatedRobotPose pose) {
   units::meter_t distance = 0_m;
-  if (pose.targetsUsed.size() == 0) {return 0;}
+  if (pose.targetsUsed.size() == 0) {
+    return 0;
+  }
   for (auto target : pose.targetsUsed) {
     distance += target.GetBestCameraToTarget().Translation().Norm();
   }

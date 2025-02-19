@@ -28,18 +28,22 @@ public:
 
   void SimulationPeriodic() override;
 
+  enum Side {
+    Left = 1,
+    Right = 2
+  };
+
   /**
    * Update pose estimater with vision, should be called every frame
    */
-  void UpdatePoseEstimator(std::vector<photon::PhotonPipelineResult> results);
-  void UpdateLatestTags(std::vector<photon::PhotonPipelineResult> results);
+  void UpdateVision();
 
   units::degree_t GetLastReefTagAngle();
   double GetLastReefTagArea();
   frc::Pose2d GetReefPose(int side);
   units::degree_t GetReefAlignAngle(int side);
 
-  std::optional<photon::EstimatedRobotPose> GetPose();
+  std::map<Side, std::optional<photon::EstimatedRobotPose>> GetPose();
 
   frc::Pose2d GetSourcePose(int tagId);
 
@@ -52,8 +56,9 @@ public:
  * @param pose Pose of the target
  */
   bool CheckValid(std::optional<photon::EstimatedRobotPose> pose);
-  
-  std::optional<photon::EstimatedRobotPose> _pose;
+
+  std::string _tagLayoutPath = frc::filesystem::GetDeployDirectory() + "/2025-reefscape.json";
+  frc::AprilTagFieldLayout _tagLayout{_tagLayoutPath};
 
   std::map<int, frc::Pose2d> tagToSourcePose = {
     {13, {1.621_m, 7.378_m, 324_deg}},
@@ -98,28 +103,43 @@ std::map<int, ReefPositions> tagToReefPositions = {
 };
   //+9.4418
   photon::PhotonTrackedTarget _lastReefTag;
-  std::string _cameraName = "photonvision_5584";
 
-  photon::PhotonCamera _camera{_cameraName};
-  photon::PhotonCameraSim _cameraSim{&_camera}; // For simulation
+  //Left camera config
+  std::string _leftCamName = "photonvision_5584";
 
-  frc::Transform3d _botToCam{{330_mm,250_mm,150_mm},{0_deg,0_deg,115_deg}};//{{300_mm, 300_mm, 200_mm}, {0_deg, 0_deg, 117_deg}};
-  std::string _tagLayoutPath = frc::filesystem::GetDeployDirectory() + "/2025-reefscape.json";
-  frc::AprilTagFieldLayout _tagLayout{_tagLayoutPath};
+  photon::PhotonCamera _leftCamera{_leftCamName};
 
-  photon::VisionSystemSim _visionSim{_cameraName};
+  photon::PhotonCameraSim _leftCamSim{&_leftCamera};
+  photon::VisionSystemSim _leftVisionSim{_leftCamName};
 
-  photon::PhotonPoseEstimator _robotPoseEstimater{
+  frc::Transform3d _leftBotToCam{{270_mm,305_mm,220_mm},{0_deg,0_deg,320_deg}};
+
+  photon::PhotonPoseEstimator _leftPoseEstimater{
     _tagLayout,
-    // photon::PoseStrategy::LOWEST_AMBIGUITY,
     photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
-    _botToCam
+    _leftBotToCam
   };
 
+  std::optional<photon::EstimatedRobotPose> _leftEstPose;
+
+  //Right camera config
+  std::string _rightCamName = "placeholder"; // Need to find out
+
+  photon::PhotonCamera _rightCamera{_rightCamName};
+
+  photon::PhotonCameraSim _rightCamSim{&_rightCamera};
+  photon::VisionSystemSim _rightVisionSim{_rightCamName};
+
+  frc::Transform3d _rightBotToCam{{270_mm,-230_mm,220_mm},{0_deg,0_deg,40_deg}}; //Need to find out
+
+  photon::PhotonPoseEstimator _rightPoseEstimater{
+    _tagLayout,
+    photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
+    _rightBotToCam
+  };
+
+  std::optional<photon::EstimatedRobotPose> _rightEstPose;
+
   wpi::interpolating_map<units::meter_t, double> _devTable;
-
-  double lastDev = 0.0;
-
-  photon::PhotonTrackedTarget _latestTarget = photon::PhotonTrackedTarget();
 };
 
