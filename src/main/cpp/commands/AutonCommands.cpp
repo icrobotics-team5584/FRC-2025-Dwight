@@ -23,7 +23,6 @@ namespace cmd {
             .AndThen(frc2::cmd::WaitUntil([]{ return SubElevator::GetInstance().IsAtTarget(); }))
             .AndThen(SubClimber::GetInstance().ClimberAutoReset())
             .AndThen(SubElevator::GetInstance().CmdSetSource());
-
     }
 
     // vison based
@@ -50,16 +49,9 @@ namespace cmd {
     //  no vision
     frc2::CommandPtr Score(int side) {
         return frc2::cmd::Wait(1.0_s) 
-            .AndThen(SubElevator::GetInstance().CmdSetL4())
+            .AndThen(SubElevator::GetInstance().CmdSetL4()).OnlyIf([] { return !SubElevator::GetInstance().IsAtTarget(); })
             .AndThen(frc2::cmd::WaitUntil([]{ return SubElevator::GetInstance().IsAtTarget(); }))
             .AndThen(SubEndEffector::GetInstance().FeedDown().WithTimeout(0.5_s))
             .AndThen(SubElevator::GetInstance().CmdSetSource());
-    }
-
-    // tmp command, never use this in comp
-    frc2::CommandPtr IntakeUntilLineBreak() {
-        return frc2::cmd::Wait(999.0_s)
-            .Until([]{return SubEndEffector::GetInstance().CheckLineBreakLower() == true;})
-            .AndThen(frc2::cmd::Wait(10.0_s));
     }
 }
