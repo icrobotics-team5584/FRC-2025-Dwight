@@ -31,7 +31,6 @@ RobotContainer::RobotContainer() {
       SubDrivebase::GetInstance().JoystickDrive(_driverController));
   SubVision::GetInstance().SetDefaultCommand(cmd::AddVisionMeasurement());
   
-
   // Trigger Bindings
   ConfigureBindings();
 
@@ -86,10 +85,6 @@ void RobotContainer::ConfigureBindings() {
   _driverController.LeftBumper().WhileTrue(cmd::IntakeFromSource());
   _driverController.RightBumper().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
   
-
-  // Opperator
-
-
   // Triggers
   SubDrivebase::GetInstance().CheckCoastButton().ToggleOnTrue(cmd::ToggleBrakeCoast());
   SubDrivebase::GetInstance().IsTipping().OnTrue(SubElevator::GetInstance().CmdSetSource());
