@@ -67,6 +67,7 @@ class SubDrivebase : public frc2::SubsystemBase {
 
   // Commands
   frc2::CommandPtr JoystickDrive(frc2::CommandXboxController& controller);
+  frc2::CommandPtr JoystickDriveSlow(frc2::CommandXboxController& controller);
   frc2::CommandPtr WheelCharecterisationCmd();
   frc2::CommandPtr Drive(std::function<frc::ChassisSpeeds()> speeds, bool fieldOriented);
   frc2::CommandPtr RobotCentricDrive(frc2::CommandXboxController& controller);
