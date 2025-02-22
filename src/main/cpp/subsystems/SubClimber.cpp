@@ -9,22 +9,15 @@
 
 
 SubClimber::SubClimber() {
-
     frc::SmartDashboard::PutData("Climber/Motor", &_climberMotor);
-    
 
-    _climberMotorConfig.encoder.PositionConversionFactor(1/GEAR_RATIO); // change to just GEAR_RATIO instead of 1/GEAR_RATIO for simulation
-    _climberMotorConfig.encoder.VelocityConversionFactor(GEAR_RATIO/60.0);
+    _climberMotorConfig.encoder.PositionConversionFactor(1 / GEAR_RATIO);
+    _climberMotorConfig.encoder.VelocityConversionFactor(GEAR_RATIO / 60.0);
     _climberMotorConfig.closedLoop.Pid(P, I, D, rev::spark::ClosedLoopSlot::kSlot0);
-   // _climberMotorConfig.SecondaryCurrentLimit(0, 100);
-    // _climberMotorConfig.closedLoop.PositionWrappingEnabled(true)
-    //     .PositionWrappingMinInput(-10000000)
-    //     .PositionWrappingMaxInput(10000000);
-    _climberMotorConfig.Inverted(true)
-        .SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
+    _climberMotorConfig.closedLoop.MinOutput(-0.5);  // limits climb speed
+    _climberMotorConfig.Inverted(true).SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
     auto err = _climberMotor.AdjustConfig(_climberMotorConfig);
     frc::SmartDashboard::PutNumber("Climber/config set err", (int)err);
-
 }
 
 // This method will be called once per scheduler run
@@ -36,13 +29,12 @@ void SubClimber::Periodic() {
     frc::SmartDashboard::PutNumber("Climber/PositionMotor", (_climberMotor.GetPosition().value()));
     frc::SmartDashboard::PutNumber("Climber/PositionArm", ((_climberMotor.GetPosition().value())/GEAR_RATIO));
     frc::SmartDashboard::PutNumber("Climber/M1Current", GetM1Current().value());
-    frc::SmartDashboard::PutNumber("Climber/M1Reset", ResetM1);
-    frc::SmartDashboard::PutNumber("Climber/M1Reseting", Reseting);
+    frc::SmartDashboard::PutNumber("Climber/hasReset", _hasReset);
+    frc::SmartDashboard::PutNumber("Climber/resetting", _resetting);
 
-    if (ResetM1 == false && Reseting == false) {
+    if (_hasReset == false && _resetting == false) {
         _climberMotor.Set(0);
     }
-
 }
 
 void SubClimber::SetBrakeMode(bool mode){
@@ -70,24 +62,24 @@ bool SubClimber::IsAtTarget() {
 
 // Auto climber reset by bringing Climber to zero position then reset
 frc2::CommandPtr SubClimber::ClimberAutoReset() {
-  return frc2::cmd::RunOnce([this] { Reseting = true; })
+  return frc2::cmd::RunOnce([this] { _resetting = true; })
       .AndThen(ManualClimberMovementDOWNSLOW())
       .AndThen(ClimberResetCheck())
       .AndThen([this] { _climberMotor.SetPosition(0_deg); })
       .FinallyDo([this] {
         _climberMotor.StopMotor();
-        Reseting = false;
+        _resetting = false;
       });
 }
 
 frc2::CommandPtr SubClimber::ClimberResetCheck() {
-    return frc2::cmd::RunOnce ([this] {ResetM1 = false;})
+    return frc2::cmd::RunOnce ([this] {_hasReset = false;})
     .AndThen(
     frc2::cmd::Run([this] {
         if (GetM1Current() > zeroingCurrentLimit) {
-            ResetM1 = true;
+            _hasReset = true;
         }
-    }).Until([this] { return ResetM1; }));
+    }).Until([this] { return _hasReset; }));
 }
 
 frc2::CommandPtr SubClimber::ManualClimberMovementUP() {

@@ -52,8 +52,8 @@ class SubClimber : public frc2::SubsystemBase {
   void Periodic() override;
   void SimulationPeriodic() override;
 
-  bool Reseting = false;
-  bool ResetM1 = false; 
+  bool _resetting = false;
+  bool _hasReset = false; 
   static constexpr units::ampere_t zeroingCurrentLimit = 30_A;
   static constexpr units::turn_t PREPARE_TURNS = 180_deg;//get numbers later 
   static constexpr units::turn_t CLIMB_TURNS = 0.28_tr; // 0.217_tr for climbing all the way in
