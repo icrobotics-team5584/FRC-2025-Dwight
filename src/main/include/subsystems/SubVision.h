@@ -172,4 +172,3 @@ std::map<int, ReefPositions> tagToReefPositions = {
 
   wpi::interpolating_map<units::meter_t, double> _devTable;
 };
-
