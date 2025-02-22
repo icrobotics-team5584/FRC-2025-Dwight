@@ -62,7 +62,7 @@ bool SubClimber::IsAtTarget() {
 
 // Auto climber reset by bringing Climber to zero position then reset
 frc2::CommandPtr SubClimber::ClimberAutoReset() {
-  return frc2::cmd::RunOnce([this] { _resetting = true; })
+  return RunOnce([this] { _resetting = true; })
       .AndThen(ManualClimberMovementDOWNSLOW())
       .AndThen(ClimberResetCheck())
       .AndThen([this] { _climberMotor.SetPosition(0_deg); })
@@ -84,7 +84,7 @@ frc2::CommandPtr SubClimber::ClimberResetCheck() {
 }
 
 frc2::CommandPtr SubClimber::ManualClimberMovementUP() {
-  return frc2::cmd::StartEnd([this] { _climberMotor.SetVoltage(4_V); },
+  return StartEnd([this] { _climberMotor.SetVoltage(4_V); },
                              [this] {
                                auto targRot = _climberMotor.GetPosition();
                                _climberMotor.SetMaxMotionTarget(targRot);
@@ -92,7 +92,7 @@ frc2::CommandPtr SubClimber::ManualClimberMovementUP() {
 }
 
 frc2::CommandPtr SubClimber::ManualClimberMovementDOWN() {
-  return frc2::cmd::StartEnd([this] { _climberMotor.SetVoltage(-4_V); },
+  return StartEnd([this] { _climberMotor.SetVoltage(-4_V); },
                              [this] {
                                auto targRot = _climberMotor.GetPosition();
                                _climberMotor.SetMaxMotionTarget(targRot);
@@ -100,7 +100,7 @@ frc2::CommandPtr SubClimber::ManualClimberMovementDOWN() {
 }
 
 frc2::CommandPtr SubClimber::ManualClimberMovementDOWNSLOW() {
-  return frc2::cmd::RunOnce([this] { _climberMotor.SetVoltage(-1_V); });
+  return RunOnce([this] { _climberMotor.SetVoltage(-1_V); });
 }
 
 units::ampere_t SubClimber::GetM1Current() {
@@ -112,19 +112,19 @@ frc2::Trigger SubClimber::IsClimbing() {
 }
 
 frc2::CommandPtr SubClimber::StowClimber() {
-  return frc2::cmd::RunOnce([this] { _climberMotor.SetPositionTarget(STOW_TURNS); });
+  return RunOnce([this] { _climberMotor.SetPositionTarget(STOW_TURNS); });
 }
 
 frc2::CommandPtr SubClimber::ReadyClimber() {
-  return frc2::cmd::RunOnce([this] { _climberMotor.SetPositionTarget(PREPARE_TURNS); });
+  return RunOnce([this] { _climberMotor.SetPositionTarget(PREPARE_TURNS); });
 }
 
 frc2::CommandPtr SubClimber::Climb() {
-  return frc2::cmd::RunOnce([this] { _climberMotor.SetPositionTarget(CLIMB_TURNS); });
+  return RunOnce([this] { _climberMotor.SetPositionTarget(CLIMB_TURNS); });
 }
 
 frc2::CommandPtr SubClimber::set12V() {
-  return frc2::cmd::RunOnce([this] { _climberMotor.SetVoltage(12_V); });
+  return RunOnce([this] { _climberMotor.SetVoltage(12_V); });
 }
 
 void SubClimber::SimulationPeriodic() {
