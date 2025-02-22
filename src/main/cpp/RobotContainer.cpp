@@ -47,7 +47,7 @@ RobotContainer::RobotContainer() {
   SubDrivebase::GetInstance().SetDefaultCommand(
       SubDrivebase::GetInstance().JoystickDrive(_driverController));
   SubVision::GetInstance().SetDefaultCommand(cmd::AddVisionMeasurement());
-
+  
   // Trigger Bindings
   ConfigureBindings();
 
@@ -106,12 +106,9 @@ void RobotContainer::ConfigureBindings() {
   _driverController.LeftBumper().WhileTrue(cmd::IntakeFromSource());
   _driverController.RightBumper().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
   
-
-  // Opperator
-
-
   // Triggers
   SubDrivebase::GetInstance().CheckCoastButton().ToggleOnTrue(cmd::ToggleBrakeCoast());
+  SubDrivebase::GetInstance().IsTipping().OnTrue(SubElevator::GetInstance().CmdSetSource());
 
   //Opperator
   _operatorController.AxisGreaterThan(frc::XboxController::Axis::kLeftY, 0.2)
@@ -123,7 +120,7 @@ void RobotContainer::ConfigureBindings() {
   frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
     return (_operatorController.GetLeftY() < -0.2);
   }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
-
+ 
   _operatorController.A().OnTrue(SubElevator::GetInstance().CmdSetL1());
   _operatorController.X().OnTrue(SubElevator::GetInstance().CmdSetL2());
   _operatorController.B().OnTrue(SubElevator::GetInstance().CmdSetL3());
