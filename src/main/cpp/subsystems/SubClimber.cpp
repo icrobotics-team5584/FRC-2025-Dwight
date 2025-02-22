@@ -16,7 +16,7 @@ SubClimber::SubClimber() {
     _climberMotorConfig.encoder.PositionConversionFactor(1/GEAR_RATIO); // change to just GEAR_RATIO instead of 1/GEAR_RATIO for simulation
     _climberMotorConfig.encoder.VelocityConversionFactor(GEAR_RATIO/60.0);
     _climberMotorConfig.closedLoop.Pid(P, I, D, rev::spark::ClosedLoopSlot::kSlot0);
-    _climberMotorConfig.SecondaryCurrentLimit(0, 100);
+   // _climberMotorConfig.SecondaryCurrentLimit(0, 100);
     // _climberMotorConfig.closedLoop.PositionWrappingEnabled(true)
     //     .PositionWrappingMinInput(-10000000)
     //     .PositionWrappingMaxInput(10000000);
@@ -36,6 +36,13 @@ void SubClimber::Periodic() {
     frc::SmartDashboard::PutNumber("Climber/PositionMotor", (_climberMotor.GetPosition().value()));
     frc::SmartDashboard::PutNumber("Climber/PositionArm", ((_climberMotor.GetPosition().value())/GEAR_RATIO));
     frc::SmartDashboard::PutNumber("Climber/M1Current", GetM1Current().value());
+    frc::SmartDashboard::PutNumber("Climber/M1Reset", ResetM1);
+    frc::SmartDashboard::PutNumber("Climber/M1Reseting", Reseting);
+
+    if (ResetM1 == false && Reseting == false) {
+        _climberMotor.Set(0);
+    }
+
 }
 
 void SubClimber::SetBrakeMode(bool mode){
@@ -66,8 +73,9 @@ frc2::CommandPtr SubClimber::ClimberAutoReset() {
     return frc2::cmd::RunOnce([this] {
         Reseting = true; 
         rev::spark::SparkBaseConfig config;
-        config.SecondaryCurrentLimit(80, 0);
-        _climberMotor.AdjustConfig(config); })
+        //config.SecondaryCurrentLimit(80, 0);
+        config.SmartCurrentLimit(60);
+        _climberMotor.AdjustConfigNoPersist(config); })
 
         .AndThen(ManualClimberMovementDOWNSLOW())
         .AndThen(ClimberResetCheck())
@@ -76,9 +84,11 @@ frc2::CommandPtr SubClimber::ClimberAutoReset() {
             _climberMotor.StopMotor();
             if (ResetM1 == false) {
                 rev::spark::SparkBaseConfig config;
-                config.SecondaryCurrentLimit(0, 100);
-                _climberMotor.AdjustConfig(config); 
+                config.SmartCurrentLimit(0);
+            //    config.SecondaryCurrentLimit(0, 100);
+                _climberMotor.AdjustConfigNoPersist(config); 
             }
+            Reseting = false;
         });
 }
 
