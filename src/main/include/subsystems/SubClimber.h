@@ -6,9 +6,6 @@
 
 #include <frc2/command/SubsystemBase.h> 
 #include <frc2/command/Commands.h>
-
-
-// utilities
 #include "utilities/ICSpark.h"
 #include "utilities/ICSparkFlex.h"
 #include "utilities/ICSparkMax.h"
