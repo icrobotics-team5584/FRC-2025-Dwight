@@ -15,6 +15,7 @@
 #include <frc/smartdashboard/Mechanism2d.h>
 #include <frc/simulation/SingleJointedArmSim.h>
 #include <frc/smartdashboard/MechanismLigament2d.h>
+#include <frc2/command/button/Trigger.h>
 #include <units/angular_velocity.h>
 #include "utilities/RobotLogs.h"
 
@@ -39,6 +40,7 @@ class SubClimber : public frc2::SubsystemBase {
   frc2::CommandPtr set12V();
 
   units::ampere_t  GetM1Current();
+  frc2::Trigger IsClimbing();
   bool IsAtTarget();
 
   void SetBrakeMode(bool mode);

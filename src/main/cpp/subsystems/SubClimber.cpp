@@ -107,6 +107,10 @@ units::ampere_t SubClimber::GetM1Current() {
   return _climberMotor.GetOutputCurrent() * 1_A;
 }
 
+frc2::Trigger SubClimber::IsClimbing() {
+  return frc2::Trigger([this] { return _climberMotor.GetPosition() > STOW_TURNS + 5_deg; });
+}
+
 frc2::CommandPtr SubClimber::StowClimber() {
   return frc2::cmd::RunOnce([this] { _climberMotor.SetPositionTarget(STOW_TURNS); });
 }
