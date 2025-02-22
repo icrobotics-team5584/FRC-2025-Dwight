@@ -128,8 +128,8 @@ units::degree_t SubVision::GetReefAlignAngle(Side reefSide = Left) {
   }
   else // CameraSide == Right
   {
-    if (reefSide == Left) { return tagToReefAngles[reefTagID].LeftCameraLeftScoreAngle; } //left pole
-    else { return tagToReefAngles[reefTagID].LeftCameraRightScoreAngle; } //right pole
+    if (reefSide == Left) { return tagToReefAngles[reefTagID].RightCameraLeftScoreAngle; } //left pole
+    else { return tagToReefAngles[reefTagID].RightCameraLeftScoreAngle; } //right pole
   }
 
   return 0_deg;
