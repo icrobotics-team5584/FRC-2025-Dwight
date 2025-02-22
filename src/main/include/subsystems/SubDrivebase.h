@@ -57,10 +57,9 @@ class SubDrivebase : public frc2::SubsystemBase {
   units::degree_t GetRoll();
   frc::Pose2d GetPose();
   frc::Pose2d GetSimPose();
-  frc::Rotation2d
-  GetHeading();  // Heading as recorded by the pose estimator (matches field orientation)
-  frc::Rotation2d
-  GetGyroAngle();  // Heading as recorded by the gyro (zero is direction when switched on)
+  frc::Rotation2d GetHeading();  // Heading as recorded by the pose estimator (matches field orientation)
+  frc::Rotation2d GetGyroAngle();  // Heading as recorded by the gyro (zero is direction when switched on)
+  frc::Rotation2d GetAllianceRelativeGyroAngle();
   units::meters_per_second_t GetVelocity();
   frc::SwerveDriveKinematics<4> GetKinematics();
   frc::ChassisSpeeds GetRobotRelativeSpeeds();

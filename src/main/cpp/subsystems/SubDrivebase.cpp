@@ -329,6 +329,16 @@ frc::Rotation2d SubDrivebase::GetGyroAngle() {
   return _gyro.GetRotation2d();
 }
 
+frc::Rotation2d SubDrivebase::GetAllianceRelativeGyroAngle(){
+  auto alliance = frc::DriverStation::GetAlliance();
+  if (alliance.value_or(frc::DriverStation::Alliance::kBlue) ==
+      frc::DriverStation::Alliance::kBlue) {
+    return _gyro.GetRotation2d();
+  } else {
+    return _gyro.GetRotation2d() - 180_deg;
+  }
+}
+
 units::meters_per_second_t SubDrivebase::GetVelocity() {
   // Use pythag to find velocity from x and y components
   auto speeds = _kinematics.ToChassisSpeeds(_frontLeft.GetState(), _frontRight.GetState(),
