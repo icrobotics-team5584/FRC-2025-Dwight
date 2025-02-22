@@ -163,10 +163,6 @@ void SubElevator::EnableSoftLimit(bool enabled) {
   }
 }
 
-frc2::CommandPtr SubElevator::ElevatorToClimbHeight() {
-  return CmdElevatorToPosition(0.14_m);
-}
-
 frc2::CommandPtr SubElevator::ManualElevatorMovementUP() {
   return frc2::cmd::RunEnd(
       [this] {

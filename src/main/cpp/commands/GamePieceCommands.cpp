@@ -22,10 +22,6 @@ frc2::CommandPtr ClimbDownSequence() {
         //.AndThen(SubClimber::GetInstance().StowClimber());
 }
 
-frc2::CommandPtr RemoveAlgae() {
-    return SubEndEffector::GetInstance().FeedDown().AlongWith(SubElevator::GetInstance().ManualElevatorMovementAlgae());
-}
-
 frc2::CommandPtr RemoveAlgaeLow() {
   return SubEndEffector::GetInstance().FeedDown().AlongWith(
       SubElevator::GetInstance().CmdSetClearLowAlgea());
