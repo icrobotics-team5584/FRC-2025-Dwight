@@ -68,40 +68,24 @@ bool SubClimber::IsAtTarget() {
     }
 }
 
-//Auto climber reset by bringing Climber to zero position then reset
+// Auto climber reset by bringing Climber to zero position then reset
 frc2::CommandPtr SubClimber::ClimberAutoReset() {
-    return frc2::cmd::RunOnce([this] {
-        Reseting = true; 
-        rev::spark::SparkBaseConfig config;
-        //config.SecondaryCurrentLimit(80, 0);
-        config.SmartCurrentLimit(60);
-        _climberMotor.AdjustConfigNoPersist(config); })
-
-        .AndThen(ManualClimberMovementDOWNSLOW())
-        .AndThen(ClimberResetCheck())
-        .AndThen([this] {_climberMotor.SetPosition(0_deg);})
-        .FinallyDo([this] {
-            _climberMotor.StopMotor();
-            if (ResetM1 == false) {
-                rev::spark::SparkBaseConfig config;
-                config.SmartCurrentLimit(0);
-            //    config.SecondaryCurrentLimit(0, 100);
-                _climberMotor.AdjustConfigNoPersist(config); 
-            }
-            Reseting = false;
-        });
+  return frc2::cmd::RunOnce([this] { Reseting = true; })
+      .AndThen(ManualClimberMovementDOWNSLOW())
+      .AndThen(ClimberResetCheck())
+      .AndThen([this] { _climberMotor.SetPosition(0_deg); })
+      .FinallyDo([this] {
+        _climberMotor.StopMotor();
+        Reseting = false;
+      });
 }
 
 frc2::CommandPtr SubClimber::ClimberResetCheck() {
     return frc2::cmd::RunOnce ([this] {ResetM1 = false;})
     .AndThen(
     frc2::cmd::Run([this] {
-        
         if (GetM1Current() > zeroingCurrentLimit) {
             ResetM1 = true;
-        }
-        else {
-            Reseting = false;
         }
     }).Until([this] { return ResetM1; }));
 }
