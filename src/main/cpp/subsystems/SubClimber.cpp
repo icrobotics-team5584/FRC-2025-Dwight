@@ -16,6 +16,7 @@ SubClimber::SubClimber() {
     _climberMotorConfig.encoder.PositionConversionFactor(1/GEAR_RATIO); // change to just GEAR_RATIO instead of 1/GEAR_RATIO for simulation
     _climberMotorConfig.encoder.VelocityConversionFactor(GEAR_RATIO/60.0);
     _climberMotorConfig.closedLoop.Pid(P, I, D, rev::spark::ClosedLoopSlot::kSlot0);
+    _climberMotorConfig.SecondaryCurrentLimit(0, 100);
     // _climberMotorConfig.closedLoop.PositionWrappingEnabled(true)
     //     .PositionWrappingMinInput(-10000000)
     //     .PositionWrappingMaxInput(10000000);
@@ -62,11 +63,23 @@ bool SubClimber::IsAtTarget() {
 
 //Auto climber reset by bringing Climber to zero position then reset
 frc2::CommandPtr SubClimber::ClimberAutoReset() {
-    return frc2::cmd::RunOnce([this] {Reseting = true;})
+    return frc2::cmd::RunOnce([this] {
+        Reseting = true; 
+        rev::spark::SparkBaseConfig config;
+        config.SecondaryCurrentLimit(80, 0);
+        _climberMotor.AdjustConfig(config); })
+
         .AndThen(ManualClimberMovementDOWNSLOW())
         .AndThen(ClimberResetCheck())
         .AndThen([this] {_climberMotor.SetPosition(0_deg);})
-        .FinallyDo([this] {_climberMotor.StopMotor();});
+        .FinallyDo([this] {
+            _climberMotor.StopMotor();
+            if (ResetM1 == false) {
+                rev::spark::SparkBaseConfig config;
+                config.SecondaryCurrentLimit(0, 100);
+                _climberMotor.AdjustConfig(config); 
+            }
+        });
 }
 
 frc2::CommandPtr SubClimber::ClimberResetCheck() {
