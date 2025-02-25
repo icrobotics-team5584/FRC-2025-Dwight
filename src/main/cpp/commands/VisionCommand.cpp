@@ -55,13 +55,7 @@ frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
           units::degree_t error = tagAngle - goalAngle;
 
           SubVision::Side cameraSide = SubVision::GetInstance().GetLastCameraUsed();
-          if (side == SubVision::Side::Left && cameraSide == SubVision::Side::Left) {}
-
-          if (side == SubVision::Side::Left && cameraSide == SubVision::Side::Right) {
-            error *= -1;
-          }
-          if (side == SubVision::Side::Right && cameraSide == SubVision::Side::Left) {}
-          if (side == SubVision::Side::Right && cameraSide == SubVision::Side::Right) {
+          if (cameraSide == SubVision::Side::Right) {
             error *= -1;
           }
           

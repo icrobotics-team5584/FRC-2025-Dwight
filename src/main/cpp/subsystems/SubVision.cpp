@@ -8,6 +8,7 @@
 #include <frc/DriverStation.h>
 #include <frc/RobotBase.h>
 #include <photon/estimation/CameraTargetRelation.h>
+#include <frc/MathUtil.h>
 
 SubVision::SubVision() {
   // Set up dev table
@@ -160,6 +161,9 @@ bool SubVision::CheckReef(const photon::PhotonTrackedTarget& reef) {
   }
   units::degree_t errorAngle = SubDrivebase::GetInstance().GetAllianceRelativeGyroAngle().Degrees() -
                                GetReefPose(Left,reef.GetFiducialId()).Rotation().Degrees();
+
+  errorAngle = frc::InputModulus(errorAngle, -180_deg, 180_deg);
+
   frc::SmartDashboard::PutNumber("Vision/errorAngle", errorAngle.value());
   if ((errorAngle > 30_deg || errorAngle < -30_deg)) {
     return false;
