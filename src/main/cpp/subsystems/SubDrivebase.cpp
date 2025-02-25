@@ -329,6 +329,16 @@ frc::Rotation2d SubDrivebase::GetGyroAngle() {
   return _gyro.GetRotation2d();
 }
 
+frc::Rotation2d SubDrivebase::GetAllianceRelativeGyroAngle(){
+  auto alliance = frc::DriverStation::GetAlliance();
+  if (alliance.value_or(frc::DriverStation::Alliance::kBlue) ==
+      frc::DriverStation::Alliance::kBlue) {
+    return _gyro.GetRotation2d();
+  } else {
+    return _gyro.GetRotation2d() - 180_deg;
+  }
+}
+
 units::meters_per_second_t SubDrivebase::GetVelocity() {
   // Use pythag to find velocity from x and y components
   auto speeds = _kinematics.ToChassisSpeeds(_frontLeft.GetState(), _frontRight.GetState(),
@@ -480,11 +490,8 @@ void SubDrivebase::DisplayTrajectory(std::string name, frc::Trajectory trajector
   _fieldDisplay.GetObject(name)->SetTrajectory(trajectory);
 }
 
-void SubDrivebase::AddVisionMeasurement(frc::Pose2d pose, double ambiguity,
-                                        units::second_t timeStamp) {
-
-  _poseEstimator.AddVisionMeasurement(frc::Pose2d{pose.X(), pose.Y(), GetPose().Rotation()}, timeStamp);
-
+void SubDrivebase::AddVisionMeasurement(frc::Pose2d pose, units::second_t timeStamp, wpi::array<double,3> dev) {
+  _poseEstimator.AddVisionMeasurement(frc::Pose2d{pose.X(), pose.Y(), GetPose().Rotation()}, timeStamp, dev);
 }
 
 void SubDrivebase::SetBrakeMode(bool mode) {
