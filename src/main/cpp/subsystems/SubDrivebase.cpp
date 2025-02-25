@@ -80,6 +80,8 @@ SubDrivebase::SubDrivebase() {
 
 void SubDrivebase::Periodic() {
   auto loopStart = frc::GetTime();
+  frc::SmartDashboard::PutNumber("Drivebase/GyroAngle/Roll", SubDrivebase::GetInstance().GetRoll().value());
+  frc::SmartDashboard::PutNumber("Drivebase/GyroAngle/Pitch", SubDrivebase::GetInstance().GetPitch().value());
   frc::SmartDashboard::PutBoolean("Drivebase/Check button", CheckCoastButton().Get());
 
   Logger::Log("Drivebase/heading", GetHeading());
@@ -327,6 +329,16 @@ frc::Rotation2d SubDrivebase::GetGyroAngle() {
   return _gyro.GetRotation2d();
 }
 
+frc::Rotation2d SubDrivebase::GetAllianceRelativeGyroAngle(){
+  auto alliance = frc::DriverStation::GetAlliance();
+  if (alliance.value_or(frc::DriverStation::Alliance::kBlue) ==
+      frc::DriverStation::Alliance::kBlue) {
+    return _gyro.GetRotation2d();
+  } else {
+    return _gyro.GetRotation2d() - 180_deg;
+  }
+}
+
 units::meters_per_second_t SubDrivebase::GetVelocity() {
   // Use pythag to find velocity from x and y components
   auto speeds = _kinematics.ToChassisSpeeds(_frontLeft.GetState(), _frontRight.GetState(),
@@ -461,6 +473,19 @@ frc2::Trigger SubDrivebase::CheckCoastButton() {
   return frc2::Trigger{[this] { return !_toggleBrakeCoast.Get(); }};
 }
 
+frc2::Trigger SubDrivebase::IsTipping() {
+  return frc2::Trigger{[this] {
+    if ((SubDrivebase::GetInstance().GetRoll() > 5_deg ||
+         SubDrivebase::GetInstance().GetRoll() < -5_deg) ||
+        (SubDrivebase::GetInstance().GetPitch() > 5_deg ||
+         SubDrivebase::GetInstance().GetPitch() < -5_deg)) {
+      return true;
+    } else {
+      return false;
+    }
+  }};
+}
+
 void SubDrivebase::DisplayTrajectory(std::string name, frc::Trajectory trajectory) {
   _fieldDisplay.GetObject(name)->SetTrajectory(trajectory);
 }
@@ -478,6 +503,10 @@ void SubDrivebase::SetBrakeMode(bool mode) {
 
 units::degree_t SubDrivebase::GetPitch() {
   return (_gyro.GetPitch().GetValue());
+}
+
+units::degree_t SubDrivebase::GetRoll() {
+  return (_gyro.GetRoll().GetValue());
 }
 
 frc2::CommandPtr SubDrivebase::WheelCharecterisationCmd() {

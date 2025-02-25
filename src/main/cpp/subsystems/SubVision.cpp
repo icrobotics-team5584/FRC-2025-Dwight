@@ -146,11 +146,12 @@ double SubVision::GetLastReefTagArea() {
 bool SubVision::CheckReef(const photon::PhotonTrackedTarget& reef) {
   const auto& myReef =
       (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) ? redReef : blueReef;
-  if (std::find(myReef.begin(), myReef.end(), reef.GetFiducialId()) != myReef.end()) {
+  if (std::find(myReef.begin(), myReef.end(), reef.GetFiducialId()) == myReef.end()) {
     return false;
   }
-  units::degree_t errorAngle = SubDrivebase::GetInstance().GetPose().Rotation().Degrees() -
-                               GetReefPose(Left,reef.GetFiducialId()).Rotation().Degrees() - 180_deg;
+  units::degree_t errorAngle = SubDrivebase::GetInstance().GetAllianceRelativeGyroAngle().Degrees() -
+                               GetReefPose(Left,reef.GetFiducialId()).Rotation().Degrees();
+  frc::SmartDashboard::PutNumber("Vision/errorAngle", errorAngle.value());
   if ((errorAngle > 30_deg || errorAngle < -30_deg)) {
     return false;
   } else {

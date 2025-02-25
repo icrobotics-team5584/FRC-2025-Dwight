@@ -96,10 +96,10 @@ public:
   };
 
   std::map<int, ReefCameraAngles> tagToReefAngles {
-    // left reef
+    // blue reef
     //    right cam   |        left cam
     {17, {0_deg, 0_deg, 11.4_deg, -8.300_deg}},
-    {18, {0_deg, 0_deg, 11.4_deg, -8.300_deg}},
+    {18, {0_deg, 18.55_deg, 21.00_deg, 0_deg}},
     {19, {0_deg, 0_deg, 11.4_deg, -8.300_deg}},
     {20, {0_deg, 0_deg, 11.4_deg, -8.300_deg}},
     {21, {0_deg, 0_deg, 11.4_deg, -8.300_deg}},
@@ -135,7 +135,7 @@ std::map<int, ReefPositions> tagToReefPositions = {
   //+9.4418
 
   //Left camera config
-  std::string _leftCamName = "photonvision_5584";
+  std::string _leftCamName = "ICR_OV2981_L (1)";
 
   photon::PhotonCamera _leftCamera{_leftCamName};
 
@@ -153,7 +153,7 @@ std::map<int, ReefPositions> tagToReefPositions = {
   std::optional<photon::EstimatedRobotPose> _leftEstPose;
 
   //Right camera config
-  std::string _rightCamName = "placeholder"; // Need to find out
+  std::string _rightCamName = "ICR_OV9281_R (1)"; // Need to find out
 
   photon::PhotonCamera _rightCamera{_rightCamName};
 
@@ -172,4 +172,3 @@ std::map<int, ReefPositions> tagToReefPositions = {
 
   wpi::interpolating_map<units::meter_t, double> _devTable;
 };
-
