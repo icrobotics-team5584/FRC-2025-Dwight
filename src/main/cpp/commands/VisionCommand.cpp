@@ -43,21 +43,42 @@ frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
   // reef so you stay aligned rotationally and at the right distance.
   return SubDrivebase::GetInstance().Drive(
       [side] {
-        if (SubVision::GetInstance().GetLastReefTagArea() > 3.5) {
+        if (SubVision::GetInstance().GetLastReefTagArea() > 0) { // 0 is for removing the move forward 
           units::degree_t goalAngle;
+          units::degree_t tagAngle = SubVision::GetInstance().GetLastReefTagAngle();
+          
           if (Logger::Tune("Vision/use dashbaord target", false)) {
             goalAngle = Logger::Tune("Vision/Goal Angle", SubVision::GetInstance().GetReefAlignAngle(side));
           } else {
             goalAngle = SubVision::GetInstance().GetReefAlignAngle(side); // 16.45 for left reef face, 15.60_deg for front reef face (all left side so far) // 15.60,-20
           }
-          units::degree_t tagAngle = SubVision::GetInstance().GetLastReefTagAngle();
           units::degree_t error = tagAngle - goalAngle;
+
+          SubVision::Side cameraSide = SubVision::GetInstance().GetLastCameraUsed();
+          if (side == SubVision::Side::Left && cameraSide == SubVision::Side::Left) {}
+
+          if (side == SubVision::Side::Left && cameraSide == SubVision::Side::Right) {
+            error *= -1;
+          }
+          if (side == SubVision::Side::Right && cameraSide == SubVision::Side::Left) {}
+          if (side == SubVision::Side::Right && cameraSide == SubVision::Side::Right) {
+            error *= -1;
+          }
+          
           units::meters_per_second_t overallVelocity = std::clamp(0.12_mps * error.value(),-0.3_mps,0.3_mps);
           units::degree_t driveAngle = units::math::copysign(8_deg, error);
+          
           // Calc x and y from known angle and hypotenuse length
           units::meters_per_second_t xVel = overallVelocity * units::math::cos(driveAngle);
           units::meters_per_second_t yVel = overallVelocity * units::math::sin(driveAngle);
+          
+          Logger::Log("Vision/Alignment Overall Velocity", overallVelocity);
+          Logger::Log("Vision/Tag Angle", tagAngle);
+          Logger::Log("Vision/Goal Angle", goalAngle);
+          Logger::Log("Vision/Target Pole", side == SubVision::Side::Left ? "Left":"Right");
+          
           return frc::ChassisSpeeds{xVel, yVel, 0_deg_per_s};
+          
         } else {
           frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(side,-1).Rotation();
           using ds = frc::DriverStation;

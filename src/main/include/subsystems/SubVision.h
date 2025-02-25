@@ -40,6 +40,7 @@ public:
 
   units::degree_t GetLastReefTagAngle();
   double GetLastReefTagArea();
+  Side GetLastCameraUsed();
   frc::Pose2d GetReefPose(Side side, int pose);
   units::degree_t GetReefAlignAngle(Side reefSide);
 
@@ -99,7 +100,7 @@ public:
     // blue reef
     //    right cam   |        left cam
     {17, {0_deg, 0_deg, 11.4_deg, -8.300_deg}},
-    {18, {0_deg, 18.55_deg, 21.00_deg, 0_deg}},
+    {18, {0_deg, 18.55_deg , 21.00_deg, 0_deg}},
     {19, {0_deg, 0_deg, 11.4_deg, -8.300_deg}},
     {20, {0_deg, 0_deg, 11.4_deg, -8.300_deg}},
     {21, {0_deg, 0_deg, 11.4_deg, -8.300_deg}},

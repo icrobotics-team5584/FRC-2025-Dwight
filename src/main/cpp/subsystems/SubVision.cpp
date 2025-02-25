@@ -38,6 +38,11 @@ SubVision::SubVision() {
 
 void SubVision::Periodic() {
   frc::SmartDashboard::PutNumber("Vision/LastReefTag", _lastReefObservation.reefTag.GetFiducialId());
+  if (_lastReefObservation.cameraSide == Side::Left) {
+    frc::SmartDashboard::PutString("Vision/Last Used Camera", "Left");
+  } else {
+    frc::SmartDashboard::PutString("Vision/Last Used Camera", "Right");
+  }
   UpdateVision();
 }
 
@@ -118,7 +123,7 @@ frc::Pose2d SubVision::GetReefPose(Side side = Left, int pose = -1) {
   return targPose;
 }
 
-units::degree_t SubVision::GetReefAlignAngle(Side reefSide = Left) {
+units::degree_t SubVision::GetReefAlignAngle(Side reefSide) {
   int reefTagID = _lastReefObservation.reefTag.GetFiducialId();
   Side cameraSide = _lastReefObservation.cameraSide;
   if (cameraSide == Left)
@@ -129,7 +134,7 @@ units::degree_t SubVision::GetReefAlignAngle(Side reefSide = Left) {
   else // CameraSide == Right
   {
     if (reefSide == Left) { return tagToReefAngles[reefTagID].RightCameraLeftScoreAngle; } //left pole
-    else { return tagToReefAngles[reefTagID].RightCameraLeftScoreAngle; } //right pole
+    else { return tagToReefAngles[reefTagID].RightCameraRightScoreAngle; } //right pole
   }
 
   return 0_deg;
@@ -141,6 +146,10 @@ units::degree_t SubVision::GetLastReefTagAngle() {
 
 double SubVision::GetLastReefTagArea() {
   return _lastReefObservation.reefTag.GetArea();
+}
+
+SubVision::Side SubVision::GetLastCameraUsed() {
+  return _lastReefObservation.cameraSide;
 }
 
 bool SubVision::CheckReef(const photon::PhotonTrackedTarget& reef) {
