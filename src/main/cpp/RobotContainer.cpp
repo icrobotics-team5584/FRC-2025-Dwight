@@ -100,10 +100,17 @@ void RobotContainer::ConfigureBindings() {
     return (_operatorController.GetLeftY() < -0.2);
   }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
 
-  _operatorController.A().OnTrue(cmd::SetL1());
-  _operatorController.X().OnTrue(cmd::SetL2());
-  _operatorController.B().OnTrue(cmd::SetL3());
-  _operatorController.Y().OnTrue(cmd::SetL4());
+  (!_operatorController.Back() && _operatorController.A()).OnTrue(cmd::SetL1());
+  (_operatorController.Back() && _operatorController.A()).OnTrue(SubElevator::GetInstance().CmdSetL1());
+
+  (!_operatorController.Back() && _operatorController.X()).OnTrue(cmd::SetL2());
+  (_operatorController.Back() && _operatorController.X()).OnTrue(SubElevator::GetInstance().CmdSetL2());
+
+  (!_operatorController.Back() && _operatorController.B()).OnTrue(cmd::SetL3());
+  (_operatorController.Back() && _operatorController.B()).OnTrue(SubElevator::GetInstance().CmdSetL3());
+
+  (!_operatorController.Back() && _operatorController.Y()).OnTrue(cmd::SetL4());
+  (_operatorController.Back() && _operatorController.Y()).OnTrue(SubElevator::GetInstance().CmdSetL4());
 
   _operatorController.POVLeft().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
   _operatorController.POVRight().OnTrue(SubElevator::GetInstance().CmdSetSource());
