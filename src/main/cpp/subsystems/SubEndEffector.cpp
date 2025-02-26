@@ -77,12 +77,14 @@ frc2::Trigger SubEndEffector::CheckLineBreakTriggerLower() {
 frc2::CommandPtr SubEndEffector::KeepCoralInEndEffector() {
   return Run([this] {
     if (CheckLineBreakHigher() && !CheckLineBreakLower()) {
-      _endEffectorMotor.Set(-0.8);
-    }
-    if (CheckLineBreakLower() && !CheckLineBreakHigher()) {
-      _endEffectorMotor.Set(0.8);
+        frc::SmartDashboard::PutString("EndEffector/Coral Position", "Too High");
+        _endEffectorMotor.Set(-0.8);
+    } else if (CheckLineBreakLower() && !CheckLineBreakHigher()) {
+        frc::SmartDashboard::PutString("EndEffector/Coral Position", "Too Low");
+        _endEffectorMotor.Set(0.8);
     } else {
-      _endEffectorMotor.Set(0);
+        frc::SmartDashboard::PutString("EndEffector/Coral Position", "Just Right");
+        _endEffectorMotor.Set(0);
     }
   });
 }
