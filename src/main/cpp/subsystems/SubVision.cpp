@@ -60,6 +60,9 @@ void SubVision::UpdateVision() {
   if (resultCount > 0) {
     for (auto result : results) {
       _leftEstPose = _leftPoseEstimater.Update(result);
+      if (_leftEstPose.value().timestamp - _lastReefObservation.timestamp >= 10_s) {
+        _lastReefObservation.timestamp = -1_s;
+      }
       frc::SmartDashboard::PutNumber("Vision/Left/target", result.GetBestTarget().fiducialId);
 
       for (const auto& target : result.targets) {
@@ -68,6 +71,7 @@ void SubVision::UpdateVision() {
         if (targetArea > largestArea ) {
           _lastReefObservation.reefTag = target;
           _lastReefObservation.cameraSide = Side::Left;
+          _lastReefObservation.timestamp = _leftEstPose.value().timestamp;
 
           largestArea = targetArea;
         }
@@ -88,11 +92,17 @@ void SubVision::UpdateVision() {
         if (targetArea > largestArea) {
           _lastReefObservation.reefTag = target;
           _lastReefObservation.cameraSide = Side::Right;
+          _lastReefObservation.timestamp = _rightEstPose.value().timestamp;
+
           largestArea = targetArea;
         }
       }
     }
   }
+}
+
+bool SubVision::HadReef() {
+  return _lastReefObservation.timestamp == -1_s;
 }
 
 std::map<SubVision::Side, std::optional<photon::EstimatedRobotPose>> SubVision::GetPose() {

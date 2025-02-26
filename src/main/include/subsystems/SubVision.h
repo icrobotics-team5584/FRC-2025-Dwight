@@ -38,6 +38,8 @@ public:
    */
   void UpdateVision();
 
+  bool HadReef();
+
   units::degree_t GetLastReefTagAngle();
   double GetLastReefTagArea();
   Side GetLastCameraUsed();
@@ -61,6 +63,7 @@ public:
   struct ReefObservation {
     photon::PhotonTrackedTarget reefTag;
     Side cameraSide;
+    units::time::second_t timestamp;
   };
   struct ReefObservation _lastReefObservation;
 

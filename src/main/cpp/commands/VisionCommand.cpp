@@ -17,16 +17,17 @@ using namespace frc2::cmd;
  * @param side align to left: 1, align to right: 2
  * @return A command that will align to the tag when executed.* 3.500_m, 3.870
  */
-frc2::CommandPtr AlignToReef(SubVision::Side side) 
+frc2::CommandPtr AlignToReef(SubVision::Side side)
 {
   static frc::Pose2d targetPose;
   return SubDrivebase::GetInstance()
       .Drive(
           [side] {
-            targetPose = SubVision::GetInstance().GetLastReefPose(side);
-            frc::ChassisSpeeds speeds =
-                SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose);
-
+            frc::ChassisSpeeds speeds = {0_mps,0_mps};
+            if (SubVision::GetInstance().HadReef()) {
+              targetPose = SubVision::GetInstance().GetLastReefPose(side);
+              speeds = SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose);
+            }
             return speeds;
           },
           true)
@@ -139,7 +140,7 @@ frc2::CommandPtr AlignToSource() {
 }
 
 frc2::CommandPtr AlignAndShoot(SubVision::Side side){
- return ForceAlignWithTarget(side).AlongWith(AutoShootIfAligned(side));
+ return AlignToReef(side).AlongWith(AutoShootIfAligned(side));
 }
 
 frc2::CommandPtr AutoShootIfAligned(SubVision::Side side) {
