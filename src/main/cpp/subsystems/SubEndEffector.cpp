@@ -74,10 +74,6 @@ frc2::Trigger SubEndEffector::CheckLineBreakTriggerLower() {
     return frc2::Trigger {[this] {return this->CheckLineBreakLower();}};
 }
 
-frc2::Trigger SubEndEffector::HasCoralTrigger() {
-    return frc2::Trigger {[this] {return this->HasCoral;}};
-}
-
 frc2::CommandPtr SubEndEffector::KeepCoralInEndEffector() {
   return Run([this] {
     if (CheckLineBreakHigher() && !CheckLineBreakLower()) {
