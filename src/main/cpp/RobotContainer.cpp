@@ -27,8 +27,7 @@ RobotContainer::RobotContainer() {
   SubVision::GetInstance();
   SubEndEffector::GetInstance();
   // Default Commands
-  SubDrivebase::GetInstance().SetDefaultCommand(
-      SubDrivebase::GetInstance().JoystickDrive(_driverController));
+  SubDrivebase::GetInstance().SetDefaultCommand(SubDrivebase::GetInstance().JoystickDrive(_driverController));
   SubVision::GetInstance().SetDefaultCommand(cmd::AddVisionMeasurement());
   
   // Trigger Bindings

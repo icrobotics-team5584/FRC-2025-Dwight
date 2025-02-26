@@ -218,12 +218,7 @@ frc2::CommandPtr SubElevator::ElevatorStop() {
 
 
 frc2::Trigger SubElevator::ElevatorNotStowed() {
-  if (_targetHeight != _SOURCE_HEIGHT){
-    return frc2::Trigger([this] { return true; });
-  }
-  else {
-    return frc2::Trigger([this] { return true; });
-  }
+  return frc2::Trigger([this] { return (_targetHeight > _SOURCE_HEIGHT); });
 }
 
 bool SubElevator::IsAtTarget() {
