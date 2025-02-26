@@ -48,17 +48,18 @@ class SubDrivebase : public frc2::SubsystemBase {
   // Getters
   bool IsAtPose(frc::Pose2d pose);
   frc2::Trigger CheckCoastButton();
-
+  frc2::Trigger IsTipping();
+  
   frc::ChassisSpeeds CalcDriveToPoseSpeeds(frc::Pose2d targetPose);
   frc::ChassisSpeeds CalcJoystickSpeeds(frc2::CommandXboxController& controller);
   units::turns_per_second_t CalcRotateSpeed(units::turn_t rotationError);
   units::degree_t GetPitch();
+  units::degree_t GetRoll();
   frc::Pose2d GetPose();
   frc::Pose2d GetSimPose();
-  frc::Rotation2d
-  GetHeading();  // Heading as recorded by the pose estimator (matches field orientation)
-  frc::Rotation2d
-  GetGyroAngle();  // Heading as recorded by the gyro (zero is direction when switched on)
+  frc::Rotation2d GetHeading();  // Heading as recorded by the pose estimator (matches field orientation)
+  frc::Rotation2d GetGyroAngle();  // Heading as recorded by the gyro (zero is direction when switched on)
+  frc::Rotation2d GetAllianceRelativeGyroAngle();
   units::meters_per_second_t GetVelocity();
   frc::SwerveDriveKinematics<4> GetKinematics();
   frc::ChassisSpeeds GetRobotRelativeSpeeds();

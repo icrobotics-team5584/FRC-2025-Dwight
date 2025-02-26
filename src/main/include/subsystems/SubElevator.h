@@ -22,6 +22,7 @@ class SubElevator : public frc2::SubsystemBase {
 
   SubElevator();
 
+  frc2::CommandPtr CmdSetSource();
   frc2::CommandPtr CmdSetL1();
   frc2::CommandPtr CmdSetL2();
   frc2::CommandPtr CmdSetL3();
@@ -29,16 +30,12 @@ class SubElevator : public frc2::SubsystemBase {
   frc2::CommandPtr CmdSetClimb();
   frc2::CommandPtr CmdSetClearHighAlgea();
   frc2::CommandPtr CmdSetClearLowAlgea();
-  frc2::CommandPtr CmdSetSource();
   frc2::CommandPtr ZeroElevator();
   frc2::CommandPtr ElevatorResetCheck();
   frc2::CommandPtr ElevatorAutoReset();
   frc2::CommandPtr ElevatorStop();
   frc2::CommandPtr ManualElevatorMovementUP();
   frc2::CommandPtr ManualElevatorMovementDOWN();
-  frc2::CommandPtr DriveDownToReset();
-  frc2::CommandPtr ElevatorToClimbHeight();
-  frc2::CommandPtr Climb();
   frc2::CommandPtr ManualElevatorMovementAlgae();
 
   frc2::CommandPtr CmdElevatorToPosition(units::meter_t height);
@@ -64,9 +61,7 @@ class SubElevator : public frc2::SubsystemBase {
   units::meter_t _targetHeight = 0_m;
 
   // reset
-  bool Reseting = false;
-  bool Reseted = false;
-  bool ResetM1 = false;
+  bool _hasReset = false;
 
   //Elevator target heights
   static constexpr units::meter_t _L1_HEIGHT = 0.20_m;
@@ -76,7 +71,7 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr units::meter_t _ALGAE_LOW_HEIGHT = 0.78_m;  // get numbers later
   static constexpr units::meter_t _ALGAE_HIGH_HEIGHT = 1.242_m;
   static constexpr units::meter_t _SOURCE_HEIGHT = 0.01_m;
-  static constexpr units::meter_t _CLIMB_HEIGHT = 0.01_m;
+  static constexpr units::meter_t _CLIMB_HEIGHT = 0.722_m;
 
  private:
   ctre::phoenix6::configs::TalonFXConfiguration _motorConfig{};

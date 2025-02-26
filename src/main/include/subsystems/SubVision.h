@@ -40,8 +40,9 @@ public:
 
   units::degree_t GetLastReefTagAngle();
   double GetLastReefTagArea();
+  Side GetLastCameraUsed();
   frc::Pose2d GetReefPose(Side side, int pose);
-  units::degree_t GetReefAlignAngle(Side side);
+  units::degree_t GetReefAlignAngle(Side reefSide);
 
   std::map<Side, std::optional<photon::EstimatedRobotPose>> GetPose();
 
@@ -56,6 +57,11 @@ public:
  * @param pose Pose of the target
  */
   bool CheckReef(const photon::PhotonTrackedTarget& reef);
+  struct ReefObservation {
+    photon::PhotonTrackedTarget reefTag;
+    Side cameraSide;
+  };
+  struct ReefObservation _lastReefObservation;
 
   std::string _tagLayoutPath = frc::filesystem::GetDeployDirectory() + "/2025-reefscape.json";
   frc::AprilTagFieldLayout _tagLayout{_tagLayoutPath};
@@ -81,31 +87,56 @@ public:
     units::meter_t leftY;
     units::meter_t rightX;
     units::meter_t rightY;
-    units::degree_t leftScoreAngle = 11.4_deg;
-    units::degree_t rightScoreAngle = -8.3_deg;
   };
 
-std::map<int, ReefPositions> tagToReefPositions = {
-    {17, {60_deg-90_deg, 3.529_m, 2.805_m, 3.820_m, 2.671_m, 11.4_deg, -8.3_deg}},
-    {18, {0_deg-90_deg, 3.150_m, 4.190_m, 3.150_m, 3.870_m, 11.4_deg, -8.3_deg}},
-    {19, {300_deg-90_deg, 3.960_m, 5.250_m, 3.690_m, 5.090_m, 11.4_deg, -8.3_deg}},
-    {20, {240_deg-90_deg, 5.290_m, 5.095_m, 5.020_m, 5.250_m, 11.4_deg, -8.3_deg}},
-    {21, {180_deg-90_deg, 5.810_m, 3.860_m, 5.810_m, 4.190_m, 11.4_deg, -8.3_deg}},
-    {22, {120_deg-90_deg, 5.010_m, 2.800_m, 5.290_m, 2.950_m, 11.4_deg, -8.3_deg}},
+  struct ReefCameraAngles {
+    units::degree_t RightCameraLeftScoreAngle;
+    units::degree_t RightCameraRightScoreAngle;
+    units::degree_t LeftCameraLeftScoreAngle;
+    units::degree_t LeftCameraRightScoreAngle;
+  };
 
-    {6, {120_deg-90_deg, 13.410_m, 3.100_m, 13.700_m, 3.260_m, 11.4_deg, -8.3_deg}},
-    {7, {180_deg-90_deg, 14.060_m, 3.860_m, 14.060_m, 4.190_m, 11.4_deg, -8.3_deg}},
-    {8, {240_deg-90_deg, 13.700_m, 4.800_m, 13.420_m, 4.980_m, 11.4_deg, -8.3_deg}},
-    {9, {300_deg-90_deg, 12.710_m, 4.970_m, 12.430_m, 4.800_m, 11.4_deg, -8.3_deg}},
-    {10, {0_deg-90_deg, 4.190_m, 12.080_m, 3.860_m, 12.080_m, 11.4_deg, -8.3_deg}},
-    {11, {60_deg-90_deg, 12.430_m, 3.260_m, 12.720_m, 3.100_m, 11.4_deg, -8.3_deg}}
+  std::map<int, ReefCameraAngles> tagToReefAngles {
+    // blue reef
+    //    right cam   |        left cam
+    {17, {0_deg, 18.55_deg , 21.00_deg, 0_deg}},
+    {18, {0_deg, 18.55_deg , 21.00_deg, 0_deg}},
+    {19, {0_deg, 18.55_deg , 21.00_deg, 0_deg}},
+    {20, {0_deg, 18.55_deg , 21.00_deg, 0_deg}},
+    {21, {0_deg, 18.55_deg , 21.00_deg, 0_deg}},
+    {22, {0_deg, 18.55_deg , 21.00_deg, 0_deg}},
+
+    // red reef
+    //    right cam   |        left cam
+    { 6, {0_deg, 0_deg, 11.4_deg, -8.300_deg}},
+    { 7, {0_deg, 0_deg, 11.4_deg, -8.300_deg}},
+    { 8, {0_deg, 0_deg, 11.4_deg, -8.300_deg}},
+    { 9, {0_deg, 0_deg, 11.4_deg, -8.300_deg}},
+    {10, {0_deg, 0_deg, 11.4_deg, -8.300_deg}},
+    {11, {0_deg, 0_deg, 11.4_deg, -8.300_deg}},
+
+};
+
+std::map<int, ReefPositions> tagToReefPositions = {
+    {17, {60_deg-90_deg, 3.529_m, 2.805_m, 3.820_m, 2.671_m}},
+    {18, {0_deg-90_deg, 3.150_m, 4.190_m, 3.150_m, 3.870_m}},
+    {19, {300_deg-90_deg, 3.960_m, 5.250_m, 3.690_m, 5.090_m}},
+    {20, {240_deg-90_deg, 5.290_m, 5.095_m, 5.020_m, 5.250_m}},
+    {21, {180_deg-90_deg, 5.810_m, 3.860_m, 5.810_m, 4.190_m}},
+    {22, {120_deg-90_deg, 5.010_m, 2.800_m, 5.290_m, 2.950_m}},
+
+    {6, {120_deg-90_deg, 13.410_m, 3.100_m, 13.700_m, 3.260_m}},
+    {7, {180_deg-90_deg, 14.060_m, 3.860_m, 14.060_m, 4.190_m}},
+    {8, {240_deg-90_deg, 13.700_m, 4.800_m, 13.420_m, 4.980_m}},
+    {9, {300_deg-90_deg, 12.710_m, 4.970_m, 12.430_m, 4.800_m}},
+    {10, {0_deg-90_deg, 4.190_m, 12.080_m, 3.860_m, 12.080_m}},
+    {11, {60_deg-90_deg, 12.430_m, 3.260_m, 12.720_m, 3.100_m}}
 
 };
   //+9.4418
-  photon::PhotonTrackedTarget _lastReefTag;
 
   //Left camera config
-  std::string _leftCamName = "photonvision_5584";
+  std::string _leftCamName = "ICR_OV2981_L (1)";
 
   photon::PhotonCamera _leftCamera{_leftCamName};
 
@@ -123,7 +154,7 @@ std::map<int, ReefPositions> tagToReefPositions = {
   std::optional<photon::EstimatedRobotPose> _leftEstPose;
 
   //Right camera config
-  std::string _rightCamName = "placeholder"; // Need to find out
+  std::string _rightCamName = "ICR_OV9281_R (1)"; // Need to find out
 
   photon::PhotonCamera _rightCamera{_rightCamName};
 
@@ -142,4 +173,3 @@ std::map<int, ReefPositions> tagToReefPositions = {
 
   wpi::interpolating_map<units::meter_t, double> _devTable;
 };
-
