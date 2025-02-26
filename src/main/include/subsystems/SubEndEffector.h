@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "utilities/ICSparkMax.h"
+#include "utilities/ICSparkFlex.h"
 #include <frc2/command/SubsystemBase.h>
-#include <frc2/command/CommandPtr.h>
+#include <frc2/command/CommandPtr.h> 
 #include <frc2/command/Commands.h>
 #include "Constants.h"
 #include <frc/DigitalInput.h>
@@ -19,8 +19,7 @@ class SubEndEffector : public frc2::SubsystemBase {
     static SubEndEffector inst;
     return inst;
   }
-
-  frc2::CommandPtr IntakeFromSource();
+  
   frc2::CommandPtr FeedUp();
   frc2::CommandPtr FeedUpSLOW();
   frc2::CommandPtr FeedDown();
@@ -44,9 +43,9 @@ class SubEndEffector : public frc2::SubsystemBase {
   void Periodic() override;
 
  private:
-  frc::DigitalInput _endEffectorLineBreakHigher{dio::EndEffectorLineBreakHigher};
-  frc::DigitalInput _endEffectorLineBreakLower{dio::EndEffectorLineBreakLower};
-  ICSparkMax _endEffectorMotor{canid::EndEffectorMotor, 30_A};
+  frc::DigitalInput _endEffectorLineBreakHigher{dio::ENDEFFECTOR_LINEBREAK_HIGHER};
+  frc::DigitalInput _endEffectorLineBreakLower{dio::ENDEFFECTOR_LINEBREAK_LOWER};
+  ICSparkFlex _endEffectorMotor{canid::ENDEFFECTOR_MOTOR, 30_A};
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
 };

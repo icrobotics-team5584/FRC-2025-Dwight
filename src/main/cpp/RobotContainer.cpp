@@ -17,16 +17,15 @@
 #include "commands/DriveCommands.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 #include "subsystems/SubEndEffector.h"
-#include "subsystems/SubIntake.h"
 #include "commands/VisionCommand.h"
 #include <frc/Filesystem.h>
 #include <wpinet/WebServer.h>
+#include "subsystems/SubFunnel.h"
 
 RobotContainer::RobotContainer() {
   wpi::WebServer::GetInstance().Start(5800, frc::filesystem::GetDeployDirectory());
   SubVision::GetInstance();
-  SubIntake::GetInstance();
-
+  SubEndEffector::GetInstance();
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(
       SubDrivebase::GetInstance().JoystickDrive(_driverController));
@@ -68,9 +67,9 @@ RobotContainer::RobotContainer() {
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   // return pathplanner::PathPlannerAuto("test auto").ToPtr();
   auto _autoSelected = _autoChooser.GetSelected();
-  units::second_t delay = 0.00_s;
-
-  return frc2::cmd::Wait(delay).AndThen(pathplanner::PathPlannerAuto(_autoSelected).ToPtr());
+  return SubElevator::GetInstance().ElevatorAutoReset()
+    .AndThen(SubClimber::GetInstance().ClimberAutoReset())
+    .AndThen(pathplanner::PathPlannerAuto(_autoSelected).ToPtr());
 }
 
 void RobotContainer::ConfigureBindings() {
@@ -80,21 +79,29 @@ void RobotContainer::ConfigureBindings() {
   // ));
   _driverController.X().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
-  _driverController.RightTrigger().WhileTrue(cmd::ForceAlignWithTarget(2));
-  _driverController.LeftTrigger().WhileTrue(cmd::ForceAlignWithTarget(1));
-  _driverController.LeftBumper().WhileTrue(SubEndEffector::GetInstance().IntakeFromSource());
-
-  // Opperator
-
-
+  _driverController.A().WhileTrue(cmd::RemoveAlgaeLow());
+  _driverController.B().WhileTrue(cmd::RemoveAlgaeHigh());
+  _driverController.RightTrigger().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Right));
+  _driverController.LeftTrigger().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Left));
+  _driverController.LeftBumper().WhileTrue(cmd::IntakeFromSource());
+  _driverController.RightBumper().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
+  
   // Triggers
   SubDrivebase::GetInstance().CheckCoastButton().ToggleOnTrue(cmd::ToggleBrakeCoast());
+  (SubDrivebase::GetInstance().IsTipping() && !SubClimber::GetInstance().IsClimbing())
+      .OnTrue(SubElevator::GetInstance().CmdSetSource());
 
   //Opperator
-  frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
-    return (_operatorController.GetLeftY() > 0.2);
-  }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
+  _operatorController.AxisGreaterThan(frc::XboxController::Axis::kLeftY, 0.2)
+    .WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
 
+  _operatorController.AxisLessThan(frc::XboxController::Axis::kLeftY, -0.2)
+    .WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
+
+  frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
+    return (_operatorController.GetLeftY() < -0.2);
+  }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
+ 
   _operatorController.A().OnTrue(SubElevator::GetInstance().CmdSetL1());
   _operatorController.X().OnTrue(SubElevator::GetInstance().CmdSetL2());
   _operatorController.B().OnTrue(SubElevator::GetInstance().CmdSetL3());
@@ -102,12 +109,13 @@ void RobotContainer::ConfigureBindings() {
 
   _operatorController.POVLeft().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
   _operatorController.POVRight().OnTrue(SubElevator::GetInstance().CmdSetSource());
-  // _operatorController.POVUp.OnTrue()
-  // _operatorController.POVDown.OnTrue()
+  _operatorController.POVUp().OnTrue(cmd::ClimbUpSequence());
+  _operatorController.POVDown().OnTrue(cmd::ClimbDownSequence());
 
-  _operatorController.LeftTrigger().WhileTrue(SubEndEffector::GetInstance().IntakeFromSource());
+  _operatorController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
   _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
-  _operatorController.RightBumper().WhileTrue(SubEndEffector::GetInstance().FeedUpSLOW());
+  _operatorController.Start().WhileTrue(SubClimber::GetInstance().ClimberAutoReset());
+  _operatorController.RightBumper().WhileTrue(cmd::Outtake());
 
   //  _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise
   //  camera object
