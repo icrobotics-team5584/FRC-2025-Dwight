@@ -23,7 +23,7 @@ frc2::CommandPtr YAlignWithTarget(SubVision::Side side)
   return SubDrivebase::GetInstance()
       .Drive(
           [side] {
-            targetPose = SubVision::GetInstance().GetReefPose(side,-1);
+            targetPose = SubVision::GetInstance().GetLastReefPose(side);
             frc::ChassisSpeeds speeds =
                 SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose);
 
@@ -74,7 +74,7 @@ frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
           return frc::ChassisSpeeds{xVel, yVel, 0_deg_per_s};
           
         } else {
-          frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(side,-1).Rotation();
+          frc::Rotation2d targetRotation = SubVision::GetInstance().GetLastReefPose(side).Rotation();
           using ds = frc::DriverStation;
           if (ds::GetAlliance().value_or(ds::Alliance::kBlue) == ds::kRed) {
             targetRotation = +180_deg;

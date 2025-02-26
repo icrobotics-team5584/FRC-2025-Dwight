@@ -103,15 +103,7 @@ frc::Pose2d SubVision::GetSourcePose(int tagId) {
   return tagToSourcePose[tagId];
 }
 
-/**
- * @brief Get the pose of the reef from the apriltag.
- *
- * @param side The side of the reef you want to get the pose of. 1 for the left side, 2 for the
- * right side.
- *
- * @returns The pose of the reef in the field coordinate system.
- */
-frc::Pose2d SubVision::GetReefPose(Side side = Left, int pose = -1) {
+frc::Pose2d SubVision::GetReefPose(int pose, Side side) {
   int reefTagID = (pose == -1)? _lastReefObservation.reefTag.GetFiducialId() : pose;
   frc::Pose2d targPose;
   if (side == Left) {
@@ -122,6 +114,10 @@ frc::Pose2d SubVision::GetReefPose(Side side = Left, int pose = -1) {
                 tagToReefPositions[reefTagID].angle};
   }
   return targPose;
+}
+
+frc::Pose2d SubVision::GetLastReefPose(Side side) {
+  return GetReefPose(_lastReefObservation.reefTag.GetFiducialId(),side);
 }
 
 units::degree_t SubVision::GetReefAlignAngle(Side reefSide) {
@@ -160,7 +156,7 @@ bool SubVision::CheckReef(const photon::PhotonTrackedTarget& reef) {
     return false;
   }
   units::degree_t errorAngle = SubDrivebase::GetInstance().GetAllianceRelativeGyroAngle().Degrees() -
-                               GetReefPose(Left,reef.GetFiducialId()).Rotation().Degrees();
+                               GetReefPose(reef.GetFiducialId(),Left).Rotation().Degrees();
 
   errorAngle = frc::InputModulus(errorAngle, -180_deg, 180_deg);
 

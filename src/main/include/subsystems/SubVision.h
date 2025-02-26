@@ -41,7 +41,8 @@ public:
   units::degree_t GetLastReefTagAngle();
   double GetLastReefTagArea();
   Side GetLastCameraUsed();
-  frc::Pose2d GetReefPose(Side side, int pose);
+  frc::Pose2d GetReefPose(int pose, Side side);
+  frc::Pose2d GetLastReefPose(Side side);
   units::degree_t GetReefAlignAngle(Side reefSide);
 
   std::map<Side, std::optional<photon::EstimatedRobotPose>> GetPose();
