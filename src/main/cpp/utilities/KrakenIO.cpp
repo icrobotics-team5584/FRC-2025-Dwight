@@ -80,10 +80,10 @@ void KrakenIO::StopMotors() {
 
 void KrakenIO::SetNeutralMode(bool brakeModeToggle) {
   if (brakeModeToggle) {
-    _canTurnMotor.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Brake);
+    _canDriveMotor.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Brake);
     _canTurnMotor.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Brake);
   } else {
-    _canTurnMotor.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Coast);
+    _canDriveMotor.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Coast);
     _canTurnMotor.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Coast);
   }
 }
