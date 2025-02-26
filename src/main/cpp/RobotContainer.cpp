@@ -80,8 +80,8 @@ void RobotContainer::ConfigureBindings() {
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
   _driverController.A().WhileTrue(cmd::RemoveAlgaeLow());
   _driverController.B().WhileTrue(cmd::RemoveAlgaeHigh());
-  _driverController.RightTrigger().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Right));
-  _driverController.LeftTrigger().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Left));
+  _driverController.RightTrigger().WhileTrue(cmd::AlignToReef(SubVision::Right));
+  _driverController.LeftTrigger().WhileTrue(cmd::AlignToReef(SubVision::Left));
   _driverController.LeftBumper().WhileTrue(cmd::IntakeFromSource());
   _driverController.RightBumper().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
   
