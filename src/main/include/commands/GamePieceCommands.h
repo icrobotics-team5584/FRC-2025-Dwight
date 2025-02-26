@@ -8,8 +8,10 @@ namespace cmd {
     frc2::CommandPtr RemoveAlgaeHigh();
     frc2::CommandPtr IntakeFromSource();
     frc2::CommandPtr Outtake();
-    frc2::CommandPtr SetL1();
-    frc2::CommandPtr SetL2();
-    frc2::CommandPtr SetL3();
-    frc2::CommandPtr SetL4();
+
+    frc2::CommandPtr SetElevatorPosition(units::meter_t height, bool force=false);
+    frc2::CommandPtr SetL1(bool force=false);
+    frc2::CommandPtr SetL2(bool force=false);
+    frc2::CommandPtr SetL3(bool force=false);
+    frc2::CommandPtr SetL4(bool force=false);
 }
