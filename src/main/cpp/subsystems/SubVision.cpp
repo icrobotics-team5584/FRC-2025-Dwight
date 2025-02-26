@@ -60,7 +60,7 @@ void SubVision::UpdateVision() {
   if (resultCount > 0) {
     for (auto result : results) {
       _leftEstPose = _leftPoseEstimater.Update(result);
-      if (_leftEstPose.value().timestamp - _lastReefObservation.timestamp >= 10_s) {
+      if (result.GetTimestamp() - _lastReefObservation.timestamp >= 10_s) {
         _lastReefObservation.timestamp = -1_s;
       }
       frc::SmartDashboard::PutNumber("Vision/Left/target", result.GetBestTarget().fiducialId);
@@ -102,7 +102,8 @@ void SubVision::UpdateVision() {
 }
 
 bool SubVision::HadReef() {
-  return _lastReefObservation.timestamp == -1_s;
+  // return _lastReefObservation.timestamp != -1_s;
+  return false;
 }
 
 std::map<SubVision::Side, std::optional<photon::EstimatedRobotPose>> SubVision::GetPose() {
