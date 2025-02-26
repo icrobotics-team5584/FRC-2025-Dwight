@@ -381,7 +381,8 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   frc::Pose2d currentPosition = GetPose();
   double currentXMeters = currentPosition.X().value();
   double currentYMeters = currentPosition.Y().value();
-  units::turn_t currentRotation = currentPosition.Rotation().Radians();
+  // units::turn_t currentRotation = currentPosition.Rotation().Radians();
+  units::turn_t currentRotation = GetAllianceRelativeGyroAngle().Degrees();
 
   // Use PID controllers to calculate speeds
   auto xSpeed = _teleopTranslationController.Calculate(currentXMeters, targetXMeters) * 1_mps;
@@ -393,6 +394,11 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   xSpeed = units::math::max(xSpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
   ySpeed = units::math::min(ySpeed, MAX_DRIVE_TO_POSE_VELOCITY);
   ySpeed = units::math::max(ySpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
+
+  if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed) {
+    xSpeed *= -1;
+    ySpeed *= -1;
+  }
 
   frc::SmartDashboard::PutNumber("CalcDriveLogs/xSpeed", -xSpeed.value());
   frc::SmartDashboard::PutNumber("CalcDriveLogs/ySpeed", ySpeed.value());
