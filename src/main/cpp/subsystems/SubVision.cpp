@@ -52,7 +52,7 @@ void SubVision::SimulationPeriodic() {
 }
 
 void SubVision::UpdateVision() {
-  double largestArea = 2;
+  double largestArea = 0;
 
   // Left camera
   std::vector<photon::PhotonPipelineResult> results = _leftCamera.GetAllUnreadResults();
@@ -66,7 +66,7 @@ void SubVision::UpdateVision() {
       frc::SmartDashboard::PutNumber("Vision/Left/target", result.GetBestTarget().fiducialId);
 
       for (const auto& target : result.targets) {
-        if (!CheckReef(target)) {continue;}
+        // if (!CheckReef(target)) {continue;}
         double targetArea = target.GetArea();
         if (targetArea > largestArea ) {
           _lastReefObservation.reefTag = target;
@@ -87,7 +87,7 @@ void SubVision::UpdateVision() {
       frc::SmartDashboard::PutNumber("Vision/Right/target", result.GetBestTarget().fiducialId);
 
       for (const auto& target : result.targets) {
-        if (!CheckReef(target)) {continue;}
+        // if (!CheckReef(target)) {continue;}5
         double targetArea = target.GetArea();
         if (targetArea > largestArea) {
           _lastReefObservation.reefTag = target;
@@ -102,8 +102,7 @@ void SubVision::UpdateVision() {
 }
 
 bool SubVision::HadReef() {
-  // return _lastReefObservation.timestamp != -1_s;
-  return false;
+  return _lastReefObservation.timestamp != -1_s;
 }
 
 std::map<SubVision::Side, std::optional<photon::EstimatedRobotPose>> SubVision::GetPose() {

@@ -19,13 +19,15 @@ using namespace frc2::cmd;
  */
 frc2::CommandPtr AlignToReef(SubVision::Side side)
 {
-  static frc::Pose2d targetPose;
+  static frc::Pose2d targetPose = {-1_m,-1_m,0_tr};
   return SubDrivebase::GetInstance()
       .Drive(
           [side] {
-            frc::ChassisSpeeds speeds = {0_mps,0_mps};
-            if (SubVision::GetInstance().HadReef()) {
+            if (targetPose.X() == -1_m && SubVision::GetInstance().HadReef()) {
               targetPose = SubVision::GetInstance().GetLastReefPose(side);
+            }
+            frc::ChassisSpeeds speeds = {0_mps,0_mps};
+            if (targetPose.X() != -1_m) {
               speeds = SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose);
             }
             return speeds;
@@ -34,7 +36,7 @@ frc2::CommandPtr AlignToReef(SubVision::Side side)
       .Until([] {
         return SubDrivebase::GetInstance().IsAtPose(targetPose);
       })
-      .AndThen(ForceAlignWithTarget(side));
+      .AndThen(ForceAlignWithTarget(side)).FinallyDo([] {targetPose = {-1_m, -1_m, 0_tr};});
 }
 
 frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
