@@ -14,4 +14,7 @@ namespace cmd {
     frc2::CommandPtr SetL2(bool force=false);
     frc2::CommandPtr SetL3(bool force=false);
     frc2::CommandPtr SetL4(bool force=false);
+    frc2::CommandPtr SetClimb(bool force=false);
+    frc2::CommandPtr SetClearAlgaeLow(bool force=false);
+    frc2::CommandPtr SetClearAlgaeHigh(bool force=false);
 }

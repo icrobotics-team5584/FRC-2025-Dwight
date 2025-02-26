@@ -39,42 +39,18 @@ frc2::CommandPtr SetElevatorPosition(units::meter_t height, bool force) {
   });
 }
 
-frc2::CommandPtr SetL1(bool force) {
-  return cmd::SetElevatorPosition(SubElevator::_L1_HEIGHT, force);
+frc2::CommandPtr SetL1(bool force) { return cmd::SetElevatorPosition(SubElevator::_L1_HEIGHT, force); }
+frc2::CommandPtr SetL2(bool force) { return cmd::SetElevatorPosition(SubElevator::_L2_HEIGHT, force); }
+frc2::CommandPtr SetL3(bool force) { return cmd::SetElevatorPosition(SubElevator::_L3_HEIGHT, force); }
+frc2::CommandPtr SetL4(bool force) { return cmd::SetElevatorPosition(SubElevator::_L4_HEIGHT, force); }
+
+frc2::CommandPtr SetClimb(bool force) { return cmd::SetElevatorPosition(SubElevator::_CLIMB_HEIGHT, force); }
+
+frc2::CommandPtr SetClearAlgaeLow(bool force) {
+  return cmd::SetElevatorPosition(SubElevator::_ALGAE_LOW_HEIGHT, force);
 }
 
-frc2::CommandPtr SetL2(bool force) {
-  return cmd::SetElevatorPosition(SubElevator::_L2_HEIGHT, force);
+frc2::CommandPtr SetClearAlgaeHigh(bool force) {
+  return cmd::SetElevatorPosition(SubElevator::_ALGAE_HIGH_HEIGHT, force);
 }
-
-frc2::CommandPtr SetL3(bool force) {
-  return cmd::SetElevatorPosition(SubElevator::_L3_HEIGHT, force);
-}
-
-frc2::CommandPtr SetL4(bool force) {
-  return cmd::SetElevatorPosition(SubElevator::_L4_HEIGHT, force);
-}
-
-
-frc2::CommandPtr SetL2(){
-  return SubElevator::GetInstance().CmdSetL2().OnlyIf([] {
-    return SubEndEffector::GetInstance().CheckLineBreakLower() ==
-           SubEndEffector::GetInstance().CheckLineBreakHigher();
-  });
-}
-
-frc2::CommandPtr SetL3(){
-  return SubElevator::GetInstance().CmdSetL3().OnlyIf([] {
-    return SubEndEffector::GetInstance().CheckLineBreakLower() ==
-           SubEndEffector::GetInstance().CheckLineBreakHigher();
-  });
-}
-
-frc2::CommandPtr SetL4(){
-  return SubElevator::GetInstance().CmdSetL4().OnlyIf([] {
-    return SubEndEffector::GetInstance().CheckLineBreakLower() ==
-           SubEndEffector::GetInstance().CheckLineBreakHigher();
-  });
-}
-
 }  // namespace cmd //
