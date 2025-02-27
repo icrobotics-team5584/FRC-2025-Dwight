@@ -115,8 +115,12 @@ void RobotContainer::ConfigureBindings() {
 
   _operatorController.POVLeft().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
   _operatorController.POVRight().OnTrue(SubElevator::GetInstance().CmdSetSource());
-  _operatorController.POVUp().OnTrue(cmd::ClimbUpSequence());
-  _operatorController.POVDown().OnTrue(cmd::ClimbDownSequence());
+
+  (!_operatorController.Back() && _operatorController.POVUp()).OnTrue(cmd::ClimbUpSequence());
+  (_operatorController.Back() && _operatorController.POVUp()).OnTrue(cmd::ClimbUpSequence(true)); // Force elevator to move for climb
+  
+  (!_operatorController.Back() && _operatorController.POVDown()).OnTrue(cmd::ClimbDownSequence());
+  (_operatorController.Back() && _operatorController.POVDown()).OnTrue(cmd::ClimbDownSequence(true));
 
   _operatorController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
   _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());

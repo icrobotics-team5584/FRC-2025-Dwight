@@ -7,14 +7,14 @@
 
 namespace cmd {
 
-frc2::CommandPtr ClimbUpSequence() {
-  return SetClimb()
+frc2::CommandPtr ClimbUpSequence(bool force) {
+  return SetClimb(force)
       .AndThen(frc2::cmd::WaitUntil([] { return SubElevator::GetInstance().IsAtTarget(); }))
       .AndThen(SubClimber::GetInstance().ReadyClimber());
 }
 
-frc2::CommandPtr ClimbDownSequence() {
-  return SetClimb()
+frc2::CommandPtr ClimbDownSequence(bool force) {
+  return SetClimb(force)
       .AndThen(frc2::cmd::WaitUntil([] { return SubElevator::GetInstance().IsAtTarget(); }))
       .AndThen(SubClimber::GetInstance().Climb());
       //.AndThen(SubElevator::GetInstance().CmdElevatorToPosition(0_m)) // 0_m is the start height
