@@ -50,6 +50,8 @@ public:
 
   double GetDev(photon::EstimatedRobotPose pose);
 
+  bool IsEstimateUsable(photon::EstimatedRobotPose pose);
+
  private:
  /**
  * Check if the pose if good enough to be used as reference
@@ -141,9 +143,9 @@ std::map<int, ReefPositions> tagToReefPositions = {
   photon::PhotonCamera _leftCamera{_leftCamName};
 
   photon::PhotonCameraSim _leftCamSim{&_leftCamera};
-  photon::VisionSystemSim _leftVisionSim{_leftCamName};
+  photon::VisionSystemSim _visionSim{_leftCamName};
 
-  frc::Transform3d _leftBotToCam{{270_mm,305_mm,220_mm},{0_deg,0_deg,320_deg}};
+  frc::Transform3d _leftBotToCam{{-270_mm,305_mm,220_mm},{0_deg,5_deg,45_deg}};
 
   photon::PhotonPoseEstimator _leftPoseEstimater{
     _tagLayout,
@@ -159,9 +161,8 @@ std::map<int, ReefPositions> tagToReefPositions = {
   photon::PhotonCamera _rightCamera{_rightCamName};
 
   photon::PhotonCameraSim _rightCamSim{&_rightCamera};
-  photon::VisionSystemSim _rightVisionSim{_rightCamName};
 
-  frc::Transform3d _rightBotToCam{{270_mm,-230_mm,220_mm},{0_deg,0_deg,40_deg}};
+  frc::Transform3d _rightBotToCam{{270_mm,305_mm,220_mm},{0_deg,5_deg,135_deg}};
 
   photon::PhotonPoseEstimator _rightPoseEstimater{
     _tagLayout,

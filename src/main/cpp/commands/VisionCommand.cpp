@@ -93,7 +93,7 @@ frc2::CommandPtr AddVisionMeasurement() {
         auto estimatePoses = SubVision::GetInstance().GetPose();
 
         auto leftPose = estimatePoses[SubVision::Left];
-        if (leftPose.has_value()) {
+        if (leftPose.has_value() && SubVision::GetInstance().IsEstimateUsable(leftPose.value())) {
           auto estimatedPose = leftPose.value();
           double d = SubVision::GetInstance().GetDev(estimatedPose);
           wpi::array<double,3> dev = {d, d, 0.9};
@@ -101,10 +101,12 @@ frc2::CommandPtr AddVisionMeasurement() {
               estimatedPose.estimatedPose.ToPose2d(), estimatedPose.timestamp, dev);
           SubDrivebase::GetInstance().DisplayPose("LeftEstimatedPose",
                                                   estimatedPose.estimatedPose.ToPose2d());
+        } else {
+          SubDrivebase::GetInstance().DisplayPose("LeftEstimatedPose", {});
         }
 
         auto rightPose = estimatePoses[SubVision::Right];
-        if (rightPose.has_value()) {
+        if (rightPose.has_value() && SubVision::GetInstance().IsEstimateUsable(rightPose.value())) {
           auto estimatedPose = rightPose.value();
           double d = SubVision::GetInstance().GetDev(estimatedPose);
           wpi::array<double,3> dev = {d, d, 0.9};
@@ -112,10 +114,13 @@ frc2::CommandPtr AddVisionMeasurement() {
               estimatedPose.estimatedPose.ToPose2d(), estimatedPose.timestamp, dev);
           SubDrivebase::GetInstance().DisplayPose("RightEstimatedPose",
                                                   estimatedPose.estimatedPose.ToPose2d());
+        } else {
+          SubDrivebase::GetInstance().DisplayPose("RightEstimatedPose", {});
         }
       },
       {&SubVision::GetInstance()}).IgnoringDisable(true);
-}  // namespace cmd
+} 
+
 // check pose -> decide which source is closer -> drive there
 frc2::CommandPtr AlignToSource() {
   return SubDrivebase::GetInstance().Drive(
