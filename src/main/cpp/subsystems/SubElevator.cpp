@@ -167,7 +167,7 @@ frc2::CommandPtr SubElevator::ManualElevatorMovementUP() {
   return frc2::cmd::RunEnd(
       [this] {
         auto currentHeight = HeightFromRotations(_elevatorMotor1.GetPosition(true).GetValue());
-        if (currentHeight < _L4_HEIGHT) {
+        if (currentHeight < _MAX_HEIGHT) {
           _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(1_V));
         } else {
           _elevatorMotor1.StopMotor();
