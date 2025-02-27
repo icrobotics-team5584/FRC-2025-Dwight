@@ -30,14 +30,12 @@ class SubElevator : public frc2::SubsystemBase {
   frc2::CommandPtr CmdSetClimb();
   frc2::CommandPtr CmdSetClearHighAlgea();
   frc2::CommandPtr CmdSetClearLowAlgea();
-
   frc2::CommandPtr ZeroElevator();
   frc2::CommandPtr ElevatorResetCheck();
   frc2::CommandPtr ElevatorAutoReset();
   frc2::CommandPtr ElevatorStop();
   frc2::CommandPtr ManualElevatorMovementUP();
   frc2::CommandPtr ManualElevatorMovementDOWN();
-  frc2::CommandPtr ElevatorToClimbHeight();
   frc2::CommandPtr ManualElevatorMovementAlgae();
 
   frc2::CommandPtr CmdElevatorToPosition(units::meter_t height);
@@ -73,12 +71,12 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr units::meter_t _ALGAE_LOW_HEIGHT = 0.78_m;  // get numbers later
   static constexpr units::meter_t _ALGAE_HIGH_HEIGHT = 1.242_m;
   static constexpr units::meter_t _SOURCE_HEIGHT = 0.01_m;
-  static constexpr units::meter_t _CLIMB_HEIGHT = 0.01_m;
+  static constexpr units::meter_t _CLIMB_HEIGHT = 0.722_m;
 
  private:
   ctre::phoenix6::configs::TalonFXConfiguration _motorConfig{};
-  ctre::phoenix6::hardware::TalonFX _elevatorMotor1{canid::elevatorMotor1};
-  ctre::phoenix6::hardware::TalonFX _elevatorMotor2{canid::elevatorMotor2};
+  ctre::phoenix6::hardware::TalonFX _elevatorMotor1{canid::ELEVATOR_MOTOR_1};
+  ctre::phoenix6::hardware::TalonFX _elevatorMotor2{canid::ELEVATOR_MOTOR_2};
 
   static constexpr double _P = 30;  // 134.04;
   static constexpr double _I = 0;

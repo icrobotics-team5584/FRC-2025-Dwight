@@ -1,11 +1,26 @@
 #include "subsystems/SubEndEffector.h"
 #include "subsystems/SubElevator.h"
+#include "subsystems/SubClimber.h"
 #include "commands/GamePieceCommands.h"
 #include "subsystems/SubFunnel.h"
 #include <frc2/command/Commands.h>
 
 
 namespace cmd {
+
+frc2::CommandPtr ClimbUpSequence() {
+    return SubElevator::GetInstance().CmdSetClimb()
+            .AndThen(frc2::cmd::WaitUntil([]{return SubElevator::GetInstance().IsAtTarget();}))
+        .AndThen(SubClimber::GetInstance().ReadyClimber());
+}
+
+frc2::CommandPtr ClimbDownSequence() {
+    return SubElevator::GetInstance().CmdSetClimb()
+            .AndThen(frc2::cmd::WaitUntil([]{return SubElevator::GetInstance().IsAtTarget();}))
+        .AndThen(SubClimber::GetInstance().Climb());
+        //.AndThen(SubElevator::GetInstance().CmdElevatorToPosition(0_m)) // 0_m is the start height
+        //.AndThen(SubClimber::GetInstance().StowClimber());
+}
 
 frc2::CommandPtr RemoveAlgaeLow(bool force) {
   return SubEndEffector::GetInstance().FeedDown().AlongWith(SetClearAlgaeLow(force));

@@ -6,6 +6,8 @@ namespace cmd {
     frc2::CommandPtr IntakeFullSequence();
     frc2::CommandPtr RemoveAlgaeLow(bool force=false);
     frc2::CommandPtr RemoveAlgaeHigh(bool force=false);
+    frc2::CommandPtr ClimbUpSequence();
+    frc2::CommandPtr ClimbDownSequence();
     frc2::CommandPtr IntakeFromSource();
     frc2::CommandPtr Outtake();
 

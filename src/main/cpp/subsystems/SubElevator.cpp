@@ -82,8 +82,8 @@ frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height) {
     else {
       _elevatorMotor1.SetControl(
           controls::MotionMagicVoltage(RotationsFromHeight(height)).WithEnableFOC(true));
-    }
-  });
+    }});
+
 }
 
 frc2::CommandPtr SubElevator::CmdSetL1() {
@@ -161,10 +161,6 @@ void SubElevator::EnableSoftLimit(bool enabled) {
     _elevatorMotor1.GetConfigurator().Apply(_motorConfig);
     _elevatorMotor2.GetConfigurator().Apply(_motorConfig);
   }
-}
-
-frc2::CommandPtr SubElevator::ElevatorToClimbHeight() {
-  return CmdElevatorToPosition(0.14_m);
 }
 
 frc2::CommandPtr SubElevator::ManualElevatorMovementUP() {
