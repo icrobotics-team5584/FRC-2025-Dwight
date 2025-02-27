@@ -78,8 +78,13 @@ void RobotContainer::ConfigureBindings() {
   // ));
   _driverController.X().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
-  _driverController.A().WhileTrue(cmd::RemoveAlgaeLow());
-  _driverController.B().WhileTrue(cmd::RemoveAlgaeHigh());
+
+  (!_driverController.Back() && _driverController.A()).WhileTrue(cmd::RemoveAlgaeLow());
+  (_driverController.Back() && _driverController.A()).WhileTrue(cmd::RemoveAlgaeLow(true)); //Force remove algae
+  
+  (!_driverController.Back() && _driverController.B()).WhileTrue(cmd::RemoveAlgaeHigh());
+  (_driverController.Back() && _driverController.B()).WhileTrue(cmd::RemoveAlgaeHigh(true));
+
   _driverController.RightTrigger().WhileTrue(cmd::ForceAlignWithTarget(2));
   _driverController.LeftTrigger().WhileTrue(cmd::ForceAlignWithTarget(1));
   _driverController.LeftBumper().WhileTrue(cmd::IntakeFromSource());
