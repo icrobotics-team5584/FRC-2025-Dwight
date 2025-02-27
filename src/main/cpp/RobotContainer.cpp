@@ -66,9 +66,9 @@ RobotContainer::RobotContainer() {
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   // return pathplanner::PathPlannerAuto("test auto").ToPtr();
   auto _autoSelected = _autoChooser.GetSelected();
-  units::second_t delay = 0.00_s;
-
-  return frc2::cmd::Wait(delay).AndThen(pathplanner::PathPlannerAuto(_autoSelected).ToPtr());
+  return SubElevator::GetInstance().ElevatorAutoReset()
+    .AndThen(SubClimber::GetInstance().ClimberAutoReset())
+    .AndThen(pathplanner::PathPlannerAuto(_autoSelected).ToPtr());
 }
 
 void RobotContainer::ConfigureBindings() {
@@ -80,14 +80,15 @@ void RobotContainer::ConfigureBindings() {
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
   _driverController.A().WhileTrue(cmd::RemoveAlgaeLow());
   _driverController.B().WhileTrue(cmd::RemoveAlgaeHigh());
-  _driverController.RightTrigger().WhileTrue(cmd::ForceAlignWithTarget(2));
-  _driverController.LeftTrigger().WhileTrue(cmd::ForceAlignWithTarget(1));
+  _driverController.RightTrigger().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Right));
+  _driverController.LeftTrigger().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Left));
   _driverController.LeftBumper().WhileTrue(cmd::IntakeFromSource());
   _driverController.RightBumper().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
   
   // Triggers
   SubDrivebase::GetInstance().CheckCoastButton().ToggleOnTrue(cmd::ToggleBrakeCoast());
-  SubDrivebase::GetInstance().IsTipping().OnTrue(SubElevator::GetInstance().CmdSetSource());
+  (SubDrivebase::GetInstance().IsTipping() && !SubClimber::GetInstance().IsClimbing())
+      .OnTrue(SubElevator::GetInstance().CmdSetSource());
 
   //Opperator
   _operatorController.AxisGreaterThan(frc::XboxController::Axis::kLeftY, 0.2)
@@ -107,11 +108,12 @@ void RobotContainer::ConfigureBindings() {
 
   _operatorController.POVLeft().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
   _operatorController.POVRight().OnTrue(SubElevator::GetInstance().CmdSetSource());
-  // _operatorController.POVUp.OnTrue()
-  // _operatorController.POVDown.OnTrue()
+  _operatorController.POVUp().OnTrue(cmd::ClimbUpSequence());
+  _operatorController.POVDown().OnTrue(cmd::ClimbDownSequence());
 
   _operatorController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
   _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
+  _operatorController.Start().WhileTrue(SubClimber::GetInstance().ClimberAutoReset());
   _operatorController.RightBumper().WhileTrue(cmd::Outtake());
 
   //  _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise

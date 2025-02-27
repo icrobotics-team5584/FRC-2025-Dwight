@@ -82,8 +82,8 @@ frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height) {
     else {
       _elevatorMotor1.SetControl(
           controls::MotionMagicVoltage(RotationsFromHeight(height)).WithEnableFOC(true));
-    }
-  });
+    }});
+
 }
 
 frc2::CommandPtr SubElevator::CmdSetL1() {
@@ -163,15 +163,11 @@ void SubElevator::EnableSoftLimit(bool enabled) {
   }
 }
 
-frc2::CommandPtr SubElevator::ElevatorToClimbHeight() {
-  return CmdElevatorToPosition(0.14_m);
-}
-
 frc2::CommandPtr SubElevator::ManualElevatorMovementUP() {
   return frc2::cmd::RunEnd(
       [this] {
         auto currentHeight = HeightFromRotations(_elevatorMotor1.GetPosition(true).GetValue());
-        if (currentHeight < _L4_HEIGHT) {
+        if (currentHeight < _MAX_HEIGHT) {
           _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(1_V));
         } else {
           _elevatorMotor1.StopMotor();
