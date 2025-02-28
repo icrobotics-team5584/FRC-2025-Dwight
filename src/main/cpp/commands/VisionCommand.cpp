@@ -162,20 +162,19 @@ frc2::CommandPtr AutoShootIfAligned(SubVision::Side side) {
      if (tagAngle < goalAngle + tolerance*1_deg && tagAngle > goalAngle - tolerance*1_deg) {
        return true;
      }
-     
      else {
-     return false;
+      return false;
      }
       }),
-      SubElevator::GetInstance()
-          .CmdElevatorToPosition(target_height.value_or(0_m))
-          .OnlyIf([target_height] { return target_height.has_value(); }),
-      WaitUntil([] {
-        if (SubElevator::GetInstance().GetTargetHeight() != SubElevator::_SOURCE_HEIGHT) {
-          return SubElevator::GetInstance().IsAtTarget();
-        }
-        return false;
-      }),
-      SubEndEffector::GetInstance().ScoreCoral());
+    WaitUntil([] { 
+      if (SubElevator::GetInstance().GetTargetHeight() != SubElevator::_SOURCE_HEIGHT){
+        return SubElevator::GetInstance().IsAtTarget();
+      }
+      return false;
+    }),
+    SubEndEffector::GetInstance().ScoreCoral()
+  );
 }
+
+
 }  // namespace cmd
