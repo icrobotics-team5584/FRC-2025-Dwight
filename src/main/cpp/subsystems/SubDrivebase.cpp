@@ -235,19 +235,22 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
   return frc::ChassisSpeeds{forwardSpeed, sidewaysSpeed, rotationSpeed};
 }
 
-frc2::CommandPtr SubDrivebase::GyroCoralLeftStationAlign(frc2::CommandXboxController& controller) {
+frc2::CommandPtr SubDrivebase::GyroCoralRightStationAlign(frc2::CommandXboxController& controller) {
   return Drive([this, &controller]{
+    units::angle::degree_t gyro_angle = frc::InputModulus(GetGyroAngle().Degrees(), -180_deg, 180_deg);
     frc::ChassisSpeeds joystick_speeds = CalcJoystickSpeeds(controller);
-    units::turns_per_second_t rotation_speeds = CalcRotateSpeed(128_deg);
+    units::turns_per_second_t rotation_speeds = CalcRotateSpeed(144_deg + gyro_angle);
     return frc::ChassisSpeeds(joystick_speeds.vx, joystick_speeds.vy, rotation_speeds);
   }, true);
 }
 
 frc2::CommandPtr SubDrivebase::GyroCoralLeftStationAlign(frc2::CommandXboxController& controller) {
   return Drive([this, &controller]{
+    units::angle::degree_t gyro_angle = frc::InputModulus(GetGyroAngle().Degrees(), -180_deg, 180_deg);
     frc::ChassisSpeeds joystick_speeds = CalcJoystickSpeeds(controller);
-    units::turns_per_second_t rotation_speeds = CalcRotateSpeed(-128_deg);
+    units::turns_per_second_t rotation_speeds = CalcRotateSpeed(-144_deg + gyro_angle);
     return frc::ChassisSpeeds(joystick_speeds.vx, joystick_speeds.vy, rotation_speeds);
+
   }, true);
 }
 
