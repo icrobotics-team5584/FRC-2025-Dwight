@@ -235,6 +235,22 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
   return frc::ChassisSpeeds{forwardSpeed, sidewaysSpeed, rotationSpeed};
 }
 
+frc2::CommandPtr SubDrivebase::GyroCoralLeftStationAlign(frc2::CommandXboxController& controller) {
+  return Drive([this, &controller]{
+    frc::ChassisSpeeds joystick_speeds = CalcJoystickSpeeds(controller);
+    units::turns_per_second_t rotation_speeds = CalcRotateSpeed(128_deg);
+    return frc::ChassisSpeeds(joystick_speeds.vx, joystick_speeds.vy, rotation_speeds);
+  }, true);
+}
+
+frc2::CommandPtr SubDrivebase::GyroCoralLeftStationAlign(frc2::CommandXboxController& controller) {
+  return Drive([this, &controller]{
+    frc::ChassisSpeeds joystick_speeds = CalcJoystickSpeeds(controller);
+    units::turns_per_second_t rotation_speeds = CalcRotateSpeed(-128_deg);
+    return frc::ChassisSpeeds(joystick_speeds.vx, joystick_speeds.vy, rotation_speeds);
+  }, true);
+}
+
 frc2::CommandPtr SubDrivebase::JoystickDrive(frc2::CommandXboxController& controller) {
   return Drive([this, &controller] { return CalcJoystickSpeeds(controller); }, true);
 }

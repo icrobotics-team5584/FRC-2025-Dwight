@@ -65,6 +65,8 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc::ChassisSpeeds GetRobotRelativeSpeeds();
 
   // Commands
+  frc2::CommandPtr GyroCoralLeftStationAlign(frc2::CommandXboxController& controller);
+  frc2::CommandPtr GyroCoralRightStationAlign(frc2::CommandXboxController& controller);
   frc2::CommandPtr JoystickDrive(frc2::CommandXboxController& controller);
   frc2::CommandPtr WheelCharecterisationCmd();
   frc2::CommandPtr Drive(std::function<frc::ChassisSpeeds()> speeds, bool fieldOriented);
