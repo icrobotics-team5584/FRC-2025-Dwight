@@ -242,7 +242,9 @@ frc2::CommandPtr SubDrivebase::JoystickDrive(frc2::CommandXboxController& contro
 frc2::CommandPtr SubDrivebase::JoystickDriveSlow(frc2::CommandXboxController& controller) {
   return Drive([this, &controller] { 
     auto speeds = CalcJoystickSpeeds(controller);
-    return frc::ChassisSpeeds{speeds.vx / 2, speeds.vy / 2, speeds.omega} ; }, true);
+    if(speeds.vx > 2.5_mps) {speeds.vx = 2.5_mps;}
+    if(speeds.vy > 2.5_mps) {speeds.vx = 2.5_mps;}
+    return frc::ChassisSpeeds{speeds.vx, speeds.vy, speeds.omega} ; }, true);
 }
 
 frc2::CommandPtr SubDrivebase::RobotCentricDrive(frc2::CommandXboxController& controller) {
