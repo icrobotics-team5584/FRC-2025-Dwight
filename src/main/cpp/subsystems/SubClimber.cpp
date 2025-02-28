@@ -40,12 +40,13 @@ void SubClimber::Periodic() {
 }
 
 void SubClimber::SetBrakeMode(bool mode) {
+  rev::spark::SparkBaseConfig _neutralModeConfig;
   if (mode == true) {
-    _climberMotorConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
-    _climberMotor.AdjustConfigNoPersist(_climberMotorConfig);
+    _neutralModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
+    _climberMotor.AdjustConfigNoPersist(_neutralModeConfig);
   } else if (mode == false) {
-    _climberMotorConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
-    _climberMotor.AdjustConfigNoPersist(_climberMotorConfig);
+    _neutralModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
+    _climberMotor.AdjustConfigNoPersist(_neutralModeConfig);
   }
 }
 
@@ -86,18 +87,18 @@ frc2::CommandPtr SubClimber::ClimberResetCheck() {
 
 frc2::CommandPtr SubClimber::ManualClimberMovementUP() {
   return StartEnd([this] { _climberMotor.SetVoltage(4_V); },
-                             [this] {
-                               auto targRot = _climberMotor.GetPosition();
-                               _climberMotor.SetMaxMotionTarget(targRot);
-                             });
+                  [this] {
+                    auto targRot = _climberMotor.GetPosition();
+                    _climberMotor.SetMaxMotionTarget(targRot);
+                  });
 }
 
 frc2::CommandPtr SubClimber::ManualClimberMovementDOWN() {
   return StartEnd([this] { _climberMotor.SetVoltage(-4_V); },
-                             [this] {
-                               auto targRot = _climberMotor.GetPosition();
-                               _climberMotor.SetMaxMotionTarget(targRot);
-                             });
+                  [this] {
+                    auto targRot = _climberMotor.GetPosition();
+                    _climberMotor.SetMaxMotionTarget(targRot);
+                  });
 }
 
 frc2::CommandPtr SubClimber::ManualClimberMovementDOWNSLOW() {
