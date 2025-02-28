@@ -12,6 +12,7 @@
 SubEndEffector::SubEndEffector() {
     rev::spark::SparkBaseConfig config;
     config.Inverted(BotVars::Choose(true, false));
+    config.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
     _endEffectorMotor.AdjustConfig(config);
     frc::SmartDashboard::PutData("EndEffector/motorData", &_endEffectorMotor);
 }
