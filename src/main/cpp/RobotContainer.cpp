@@ -76,10 +76,10 @@ void RobotContainer::ConfigureBindings() {
   //   [this] { _cameraStream.SetPath("/dev/video1"); }, //Toggle to second camera (climb cam)
   //   [this] { _cameraStream.SetPath("/dev/video0"); } //Toggle to first camera (drive cam)
   // ));
-  _driverController.X().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
+  _driverController.A().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
-  _driverController.A().WhileTrue(cmd::RemoveAlgaeLow());
-  _driverController.B().WhileTrue(cmd::RemoveAlgaeHigh());
+  _driverController.X().OnTrue(SubDrivebase::GetInstance().GyroCoralLeftStationAlign(_driverController));
+  _driverController.B().OnTrue(SubDrivebase::GetInstance().GyroCoralRightStationAlign(_driverController)); 
   _driverController.RightTrigger().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Right));
   _driverController.LeftTrigger().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Left));
   _driverController.LeftBumper().WhileTrue(cmd::IntakeFromSource());
@@ -111,8 +111,8 @@ void RobotContainer::ConfigureBindings() {
   _operatorController.POVUp().OnTrue(cmd::ClimbUpSequence());
   _operatorController.POVDown().OnTrue(cmd::ClimbDownSequence());
 
-  _operatorController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
-  _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
+  _operatorController.LeftTrigger().WhileTrue(cmd::RemoveAlgaeLow());
+  _operatorController.RightTrigger().WhileTrue(cmd::RemoveAlgaeHigh());
   _operatorController.Start().WhileTrue(SubClimber::GetInstance().ClimberAutoReset());
   _operatorController.RightBumper().WhileTrue(cmd::Outtake());
 
