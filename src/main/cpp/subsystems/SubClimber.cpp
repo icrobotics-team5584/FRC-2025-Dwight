@@ -81,6 +81,10 @@ frc2::CommandPtr SubClimber::ClimberResetCheck() {
       if (GetM1Current() > zeroingCurrentLimit) {
         _hasReset = true;
       }
+      if (frc::RobotBase::IsSimulation() == true) {
+        _hasReset = true;
+      }
+
     }).Until([this] { return _hasReset; }));
   // clang-format on
 }

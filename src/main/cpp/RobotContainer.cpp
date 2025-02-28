@@ -59,13 +59,18 @@ RobotContainer::RobotContainer() {
   _sideChooser.AddOption("Right Side", true);
 
   // AutoChooser options
-  _autoChooser.SetDefaultOption("Default-Move-Forward-4m-0.1ms", "MoveForward-4M-0.1ms"); // default
-  _autoChooser.AddOption("Default-Left", "Default-Score3L4-Vision"); // auton testing
+  _autoChooser.SetDefaultOption("Default-Move-Forward-4m-0.1ms", "MoveForward-4M-0.1ms"); // safety option
+
+  // main autons
+  _autoChooser.AddOption("Default-Left", "Default-Score3L4-Vision");
+  _autoChooser.AddOption("DefaultMiddle-ScoreLeft", "Default-Score1L4-G-Vision");
+  _autoChooser.AddOption("DefaultMiddle-ScoreLeft", "Default-Score1L4-H-Vision");
+
+  // tuning autons
   _autoChooser.AddOption("L-Shape", "L-Shape");
   _autoChooser.AddOption("L-Shape-Slow", "L-Shape-Slow");
   _autoChooser.AddOption("L-Shape-Spinning", "L-Shape-Spinning");
   _autoChooser.AddOption("L-Shape-Spinning-Slow", "L-Shape-Spinning-Slow");
-
   _autoChooser.AddOption("WheelCharecterisation-4m-0.1ms", "MoveForward-4M-0.1ms");
   _autoChooser.AddOption("WheelCharecterisation-4m-0.5ms", "MoveForward-4M-0.5ms");
   _autoChooser.AddOption("WheelCharecterisation-4m-1.0ms", "MoveForward-4M-1.0ms");
@@ -74,7 +79,6 @@ RobotContainer::RobotContainer() {
   _autoChooser.AddOption("WheelCharecterisation-4m-0.1ms-360rot", "MoveForwardRotate-4M-0.1ms");
   _autoChooser.AddOption("WheelCharecterisation-4m-1.0ms-360rot", "MoveForwardRotate-4M-1.0ms");
   _autoChooser.AddOption("WheelCharecterisation-7ishm-0.1ms", "MoveForward-7ishM-0.1ms");
-
   _autoChooser.AddOption("SpinInSpot-180", "SpinInSpot-180");
   _autoChooser.AddOption("SpinInSpot-180-Slow", "SpinInSpot-180-Slow");
   _autoChooser.AddOption("SpinInSpot-360", "SpinInSpot-360");

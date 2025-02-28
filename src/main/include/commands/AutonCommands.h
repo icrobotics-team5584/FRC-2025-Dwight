@@ -11,10 +11,11 @@
 
 #include "subsystems/SubEndEffector.h"
 #include "subsystems/SubElevator.h"
+#include "subsystems/SubVision.h"
 
 namespace cmd {
     frc2::CommandPtr AutonSubSystemsZeroSequence();
-    frc2::CommandPtr ScoreWithVision(int side);
+    frc2::CommandPtr ScoreWithVision(SubVision::Side side);
     frc2::CommandPtr Score(int side);
     frc2::CommandPtr IntakeSourceWithVision();
     frc2::CommandPtr IntakeSource();

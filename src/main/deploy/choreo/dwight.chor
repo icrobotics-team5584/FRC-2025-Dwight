@@ -37,8 +37,50 @@
      "val":5.5
     },
     "heading":{
-     "exp":"-4.6970055704 rad",
-     "val":-4.6970055704
+     "exp":"1.57 rad",
+     "val":1.57
+    }
+   },
+   "MiddleStart":{
+    "x":{
+     "exp":"7.18711519241333 m",
+     "val":7.18711519241333
+    },
+    "y":{
+     "exp":"4 m",
+     "val":4.0
+    },
+    "heading":{
+     "exp":"1.57 rad",
+     "val":1.57
+    }
+   },
+   "ReefPoleG":{
+    "x":{
+     "exp":"5.81 m",
+     "val":5.81
+    },
+    "y":{
+     "exp":"3.86 m",
+     "val":3.86
+    },
+    "heading":{
+     "exp":"1.57 rad",
+     "val":1.57
+    }
+   },
+   "ReefPoleH":{
+    "x":{
+     "exp":"5.81 m",
+     "val":5.81
+    },
+    "y":{
+     "exp":"4.19 m",
+     "val":4.19
+    },
+    "heading":{
+     "exp":"1.57 rad",
+     "val":1.57
     }
    },
    "ReefPoleI":{
