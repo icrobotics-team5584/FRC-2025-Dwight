@@ -32,14 +32,13 @@ RobotContainer::RobotContainer() {
   SubEndEffector::GetInstance();
 
   // registar named commands
-  pathplanner::NamedCommands::registerCommand("ScoreLeft-WithVision", cmd::ScoreWithVision(1));
-  pathplanner::NamedCommands::registerCommand("ScoreRight-WithVision", cmd::ScoreWithVision(2));
+  pathplanner::NamedCommands::registerCommand("ScoreLeft-WithVision", cmd::ScoreWithVision(SubVision::Side::Left));
+  pathplanner::NamedCommands::registerCommand("ScoreRight-WithVision", cmd::ScoreWithVision(SubVision::Side::Right));
   pathplanner::NamedCommands::registerCommand("ScoreLeft", cmd::Score(1));
   pathplanner::NamedCommands::registerCommand("ScoreRight", cmd::Score(2));
   pathplanner::NamedCommands::registerCommand("SetElevatorL4", SubElevator::GetInstance().CmdSetL4());
   
   //.AndThen(cmd::ForceAlignWithTarget(1, _driverController).WithName("AutonAlignToSource"))
-  pathplanner::NamedCommands::registerCommand("IntakeSource-WithVision", cmd::IntakeSourceWithVision());
   pathplanner::NamedCommands::registerCommand("IntakeSource", cmd::IntakeFromSource());
   pathplanner::NamedCommands::registerCommand("AutonSubSystemsZeroSequence", cmd::AutonSubSystemsZeroSequence());
   

@@ -26,7 +26,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ScoreLeft"
+            "name": "ScoreLeft-WithVision"
           }
         },
         {
@@ -50,7 +50,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ScoreLeft"
+            "name": "ScoreLeft-WithVision"
           }
         },
         {
@@ -74,7 +74,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ScoreRight"
+            "name": "ScoreRight-WithVision"
           }
         }
       ]
