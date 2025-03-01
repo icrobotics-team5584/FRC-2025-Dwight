@@ -25,7 +25,7 @@ class SubClimber : public frc2::SubsystemBase {
   static SubClimber& GetInstance() {static SubClimber inst; return inst;}
   SubClimber();
 
-  const double P = 20;
+  const double P = 19;
   const double I = 0;
   const double D = 0;
   const double GEAR_RATIO = 600; // 600:1
