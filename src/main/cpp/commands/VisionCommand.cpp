@@ -91,30 +91,41 @@ frc2::CommandPtr AddVisionMeasurement() {
         auto estimatePoses = SubVision::GetInstance().GetPose();
 
         auto leftPose = estimatePoses[SubVision::Left];
-        if (leftPose.has_value() && SubVision::GetInstance().IsEstimateUsable(leftPose.value())) {
-          auto estimatedPose = leftPose.value();
-          double d = SubVision::GetInstance().GetDev(estimatedPose);
-          wpi::array<double,3> dev = {d, d, 0.9};
-          SubDrivebase::GetInstance().AddVisionMeasurement(
-              estimatedPose.estimatedPose.ToPose2d(), estimatedPose.timestamp, dev);
-          SubDrivebase::GetInstance().DisplayPose("LeftEstimatedPose",
-                                                  estimatedPose.estimatedPose.ToPose2d());
+        if (leftPose.has_value()) {
+          if (SubVision::GetInstance().IsEstimateUsable(leftPose.value())) {
+            auto estimatedPose = leftPose.value();
+            double d = SubVision::GetInstance().GetDev(estimatedPose);
+            wpi::array<double,3> dev = {d, d, 0.9};
+            SubDrivebase::GetInstance().AddVisionMeasurement(
+                estimatedPose.estimatedPose.ToPose2d(), estimatedPose.timestamp, dev);
+            SubDrivebase::GetInstance().DisplayPose("LeftEstimatedPose",
+                                                    estimatedPose.estimatedPose.ToPose2d());
+          } else {
+            SubDrivebase::GetInstance().DisplayPose("DiscardedLeftEstimatedPose", {leftPose.value().estimatedPose.ToPose2d()});
+          }
         } else {
           SubDrivebase::GetInstance().DisplayPose("LeftEstimatedPose", {});
+          SubDrivebase::GetInstance().DisplayPose("DiscardedLeftEstimatedPose", {});
         }
 
         auto rightPose = estimatePoses[SubVision::Right];
-        if (rightPose.has_value() && SubVision::GetInstance().IsEstimateUsable(rightPose.value())) {
-          auto estimatedPose = rightPose.value();
-          double d = SubVision::GetInstance().GetDev(estimatedPose);
-          wpi::array<double,3> dev = {d, d, 0.9};
-          SubDrivebase::GetInstance().AddVisionMeasurement(
-              estimatedPose.estimatedPose.ToPose2d(), estimatedPose.timestamp, dev);
-          SubDrivebase::GetInstance().DisplayPose("RightEstimatedPose",
-                                                  estimatedPose.estimatedPose.ToPose2d());
+        if (rightPose.has_value()){
+          if(SubVision::GetInstance().IsEstimateUsable(rightPose.value())) {
+            auto estimatedPose = rightPose.value();
+            double d = SubVision::GetInstance().GetDev(estimatedPose);
+            wpi::array<double,3> dev = {d, d, 0.9};
+            SubDrivebase::GetInstance().AddVisionMeasurement(
+                estimatedPose.estimatedPose.ToPose2d(), estimatedPose.timestamp, dev);
+            SubDrivebase::GetInstance().DisplayPose("RightEstimatedPose",
+                                                    estimatedPose.estimatedPose.ToPose2d());
+            } else {
+              SubDrivebase::GetInstance().DisplayPose("DiscardedRightEstimatedPose", {rightPose.value().estimatedPose.ToPose2d()});
+            }
         } else {
           SubDrivebase::GetInstance().DisplayPose("RightEstimatedPose", {});
+          SubDrivebase::GetInstance().DisplayPose("DiscardedRightEstimatedPose", {});
         }
+      
       },
       {&SubVision::GetInstance()}).IgnoringDisable(true);
 } 
