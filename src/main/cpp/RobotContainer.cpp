@@ -111,10 +111,12 @@ void RobotContainer::ConfigureBindings() {
   _operatorController.POVUp().OnTrue(cmd::ClimbUpSequence());
   _operatorController.POVDown().OnTrue(cmd::ClimbDownSequence());
 
-  _operatorController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
-  _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
-  _operatorController.Start().WhileTrue(SubClimber::GetInstance().ClimberAutoReset());
+  _operatorController.LeftTrigger().WhileTrue(cmd::RemoveAlgaeLow());
+  _operatorController.RightTrigger().WhileTrue(cmd::RemoveAlgaeHigh());
   _operatorController.RightBumper().WhileTrue(cmd::Outtake());
+  
+  _operatorController.Start().WhileTrue(SubClimber::GetInstance().ClimberAutoReset());
+  _operatorController.Back().OnTrue(cmd::StowClimber());
 
   //  _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise
   //  camera object
