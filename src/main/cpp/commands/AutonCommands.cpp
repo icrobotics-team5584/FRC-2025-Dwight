@@ -37,7 +37,7 @@ namespace cmd {
     frc2::CommandPtr ScoreWithVision(SubVision::Side side) {
         return SubElevator::GetInstance().CmdSetL4()//.OnlyIf([] { return !SubElevator::GetInstance().IsAtTarget(); })
             .AndThen(frc2::cmd::WaitUntil([]{ return SubElevator::GetInstance().IsAtTarget(); }))
-            .AndThen(cmd::AlignAndShoot(side))
+            .AndThen(cmd::AlignAndShoot(side)).Until([]{ return !SubEndEffector::GetInstance().CheckLineBreakLower(); })
             .AndThen(SubElevator::GetInstance().CmdSetSource());
     }
 }

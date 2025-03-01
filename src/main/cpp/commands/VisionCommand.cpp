@@ -178,6 +178,14 @@ frc2::CommandPtr AutoShootIfAligned(SubVision::Side side) {
       }
       return false;
     }),
+    WaitUntil([]{
+      units::meters_per_second_t tolerance = 0.1_mps;
+      if (SubDrivebase::GetInstance().GetVelocity() < tolerance) {
+        return true;
+      }
+      return false;
+    }
+    ),
     SubEndEffector::GetInstance().ScoreCoral()
   );
 }
