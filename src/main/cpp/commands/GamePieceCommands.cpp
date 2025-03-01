@@ -9,9 +9,11 @@
 namespace cmd {
 
 frc2::CommandPtr ClimbUpSequence() {
-    return SubElevator::GetInstance().CmdSetClimb()
-            .AndThen(frc2::cmd::WaitUntil([]{return SubElevator::GetInstance().IsAtTarget();}))
-        .AndThen(SubClimber::GetInstance().ReadyClimber());
+  return SubElevator::GetInstance()
+      .CmdSetLatch()
+      .AndThen(frc2::cmd::WaitUntil([] { return SubElevator::GetInstance().IsAtTarget(); }))
+      .AndThen(SubClimber::GetInstance().ReadyClimber().AlongWith(
+          SubElevator::GetInstance().CmdSetClimb()));
 }
 
 frc2::CommandPtr ClimbDownSequence() {
@@ -43,8 +45,16 @@ frc2::CommandPtr IntakeFromSource() {
           [] { return SubEndEffector::GetInstance().CheckLineBreakLower(); }));
 }
 
+frc2::CommandPtr StowClimber() {
+  return SubElevator::GetInstance()
+      .CmdSetClimb()
+      .AndThen(frc2::cmd::WaitUntil([] { return SubElevator::GetInstance().IsAtTarget(); }))
+      .AndThen(SubClimber::GetInstance().StowClimber()) 
+      .AndThen(frc2::cmd::WaitUntil([] { return SubClimber::GetInstance().IsAtTarget(); }))
+      .AndThen(SubElevator::GetInstance().CmdSetSource());
+}
+
 frc2::CommandPtr Outtake(){
   return SubEndEffector::GetInstance().FeedUpSLOW().AlongWith(SubFunnel::GetInstance().FeedUpFunnel());
 }
-
 }  // namespace cmd //
