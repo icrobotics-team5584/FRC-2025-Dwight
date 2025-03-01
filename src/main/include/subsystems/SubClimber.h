@@ -24,7 +24,7 @@ class SubClimber : public frc2::SubsystemBase {
   static SubClimber& GetInstance() {static SubClimber inst; return inst;}
   SubClimber();
 
-  const double P = 10;
+  const double P = 19;
   const double I = 0;
   const double D = 0;
   const double GEAR_RATIO = 600; // 600:1
@@ -55,7 +55,7 @@ class SubClimber : public frc2::SubsystemBase {
   bool _hasReset = false; 
   static constexpr units::ampere_t zeroingCurrentLimit = 30_A;
   static constexpr units::turn_t PREPARE_TURNS = 180_deg;//get numbers later 
-  static constexpr units::turn_t CLIMB_TURNS = 0.28_tr; // 0.217_tr for climbing all the way in
+  static constexpr units::turn_t CLIMB_TURNS = 0.23_tr; // 0.217_tr for climbing all the way in
   static constexpr units::turn_t STOW_TURNS = 1_deg; 
 
   //sim
