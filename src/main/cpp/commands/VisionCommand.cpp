@@ -56,11 +56,6 @@ frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
                         // far) // 15.60,-20
           }
           units::degree_t error = tagAngle - goalAngle;
-
-          SubVision::Side cameraSide = SubVision::GetInstance().GetLastCameraUsed();
-          if (cameraSide == SubVision::Side::Right) {
-            error *= -1;
-          }
           
           units::meters_per_second_t overallVelocity = std::clamp(0.12_mps * error.value(),-0.3_mps,0.3_mps);
           units::degree_t driveAngle = units::math::copysign(8_deg, error);
