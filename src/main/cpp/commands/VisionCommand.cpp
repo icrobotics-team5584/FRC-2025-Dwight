@@ -36,6 +36,7 @@ frc2::CommandPtr AlignToReef(SubVision::Side side)
       .Until([] {
         return SubDrivebase::GetInstance().IsAtPose(targetPose);
       })
+      .AndThen(SubDrivebase::GetInstance().Drive([] { return frc::ChassisSpeeds(0_mps,0.2_mps,0_deg_per_s);},false))
       .AndThen(ForceAlignWithTarget(side)).FinallyDo([] {targetPose = {-1_m, -1_m, 0_tr};});
 }
 

@@ -448,7 +448,7 @@ bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
   frc::SmartDashboard::PutBoolean("Drivebase/IsAtPose",
                                   units::math::abs(rotError.Degrees()) < 1_deg && posError < 2_cm);
 
-  if (units::math::abs(rotError.Degrees()) < 1_deg && posError < 2_cm && velocity < 0.0001_mps) {
+  if (units::math::abs(rotError.Degrees()) < 2_deg && posError < 2_cm && velocity < 0.001_mps) {
     return true;
   } else {
     return false;

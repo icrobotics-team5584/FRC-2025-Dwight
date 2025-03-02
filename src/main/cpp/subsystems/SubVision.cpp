@@ -53,7 +53,7 @@ void SubVision::SimulationPeriodic() {
 }
 
 void SubVision::UpdateVision() {
-  double largestArea = 2;
+  double largestArea = 0;
   std::string leftTargets = "";
   std::string rightTargets = "";
 
