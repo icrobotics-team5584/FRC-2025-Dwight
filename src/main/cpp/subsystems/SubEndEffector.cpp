@@ -71,6 +71,10 @@ bool SubEndEffector::CheckLineBreakLower() {
     return !_endEffectorLineBreakLower.Get();
 }
 
+bool SubEndEffector::IsCoralSecure() {
+    return !_endEffectorLineBreakHigher.Get() == !_endEffectorLineBreakLower.Get();
+}
+
 frc2::Trigger SubEndEffector::CheckLineBreakTriggerHigher() {
     return frc2::Trigger {[this] {return this->CheckLineBreakHigher();}};
 }

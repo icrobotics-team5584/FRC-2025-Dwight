@@ -61,6 +61,12 @@ bool SubClimber::IsAtTarget() {
   }
 }
 
+bool SubClimber::IsOut() {
+  if (_hasReset == false) {return false;}
+  auto errorAngle = _climberMotor.GetPosition() - STOW_TURNS;
+  return errorAngle < -5_deg || errorAngle > 5_deg;
+}
+
 // Auto climber reset by bringing Climber to zero position then reset
 frc2::CommandPtr SubClimber::ClimberAutoReset() {
   return RunOnce([this] { _resetting = true; })

@@ -14,8 +14,7 @@ frc2::CommandPtr ClimbUpSequence(bool force) {
     return SubElevator::GetInstance().IsAtTarget(); }))
       .AndThen(SubClimber::GetInstance().ReadyClimber().AlongWith(SetElevatorClimb(force)))
       .OnlyIf([force] {
-    return (force || SubEndEffector::GetInstance().CheckLineBreakLower() ==
-                         SubEndEffector::GetInstance().CheckLineBreakHigher());});
+    return (force || (SubEndEffector::GetInstance().IsCoralSecure() && !SubClimber::GetInstance().IsOut()));});
 }
 
 frc2::CommandPtr ClimbDownSequence(bool force) {
@@ -23,8 +22,7 @@ frc2::CommandPtr ClimbDownSequence(bool force) {
       .AndThen(frc2::cmd::WaitUntil([] { return SubElevator::GetInstance().IsAtTarget(); }))
       .AndThen(SubClimber::GetInstance().Climb())
       .OnlyIf([force] {
-    return (force || SubEndEffector::GetInstance().CheckLineBreakLower() ==
-                         SubEndEffector::GetInstance().CheckLineBreakHigher());});
+    return (force || (SubEndEffector::GetInstance().IsCoralSecure() && !SubClimber::GetInstance().IsOut()));});
 }
 
 frc2::CommandPtr RemoveAlgaeLow(bool force) {
@@ -50,8 +48,7 @@ frc2::CommandPtr IntakeFromSource() {
 
 frc2::CommandPtr SetElevatorPosition(units::meter_t height, bool force) {
   return SubElevator::GetInstance().CmdElevatorToPosition(height).OnlyIf([force] {
-    return (force || SubEndEffector::GetInstance().CheckLineBreakLower() ==
-                     SubEndEffector::GetInstance().CheckLineBreakHigher());
+    return (force || (SubEndEffector::GetInstance().IsCoralSecure() && !SubClimber::GetInstance().IsOut()));
   });
 }
 
