@@ -10,8 +10,12 @@ namespace cmd {
 frc2::CommandPtr ClimbUpSequence(bool force) {
   return SubElevator::GetInstance()
       .CmdSetLatch()
-      .AndThen(frc2::cmd::WaitUntil([] { return SubElevator::GetInstance().IsAtTarget(); }))
-      .AndThen(SubClimber::GetInstance().ReadyClimber().AlongWith(SetClimb(force)));
+      .AndThen(frc2::cmd::WaitUntil([] {
+    return SubElevator::GetInstance().IsAtTarget(); }))
+      .AndThen(SubClimber::GetInstance().ReadyClimber().AlongWith(SetClimb(force)))
+      .OnlyIf([force] {
+    return (force || SubEndEffector::GetInstance().CheckLineBreakLower() ==
+                         SubEndEffector::GetInstance().CheckLineBreakHigher());});
 }
 
 frc2::CommandPtr ClimbDownSequence(bool force) {
@@ -56,6 +60,8 @@ frc2::CommandPtr SetL3(bool force) { return cmd::SetElevatorPosition(SubElevator
 frc2::CommandPtr SetL4(bool force) { return cmd::SetElevatorPosition(SubElevator::_L4_HEIGHT, force); }
 
 frc2::CommandPtr SetClimb(bool force) { return cmd::SetElevatorPosition(SubElevator::_CLIMB_HEIGHT, force); }
+
+frc2::CommandPtr SetLatch(bool force) { }
 
 frc2::CommandPtr SetClearAlgaeLow(bool force) {
   return cmd::SetElevatorPosition(SubElevator::_ALGAE_LOW_HEIGHT, force);
