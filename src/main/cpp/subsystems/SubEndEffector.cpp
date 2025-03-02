@@ -71,7 +71,7 @@ bool SubEndEffector::CheckLineBreakLower() {
     return !_endEffectorLineBreakLower.Get();
 }
 
-bool SubEndEffector::CheckCoralStuck() {
+bool SubEndEffector::IsCoralSecure() {
     return !_endEffectorLineBreakHigher.Get() == !_endEffectorLineBreakLower.Get();
 }
 
