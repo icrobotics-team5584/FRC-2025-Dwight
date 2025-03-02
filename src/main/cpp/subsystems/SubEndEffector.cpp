@@ -64,11 +64,11 @@ frc2::CommandPtr SubEndEffector::ScoreCoralSLOW() {
 }
 
 bool SubEndEffector::CheckLineBreakHigher() {
-    return _endEffectorLineBreakHigher.Get();
+    return !_endEffectorLineBreakHigher.Get();
 }
 
 bool SubEndEffector::CheckLineBreakLower() {
-    return _endEffectorLineBreakLower.Get();
+    return !_endEffectorLineBreakLower.Get();
 }
 
 bool SubEndEffector::IsCoralSecure() {
