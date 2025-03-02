@@ -3,24 +3,23 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "RobotContainer.h"
-#include "subsystems/SubElevator.h"
-#include "commands/GamePieceCommands.h"
+
 #include <frc2/command/Commands.h>
-#include "subsystems/SubDrivebase.h"
-
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
-#include "subsystems/SubDrivebase.h"
-#include "subsystems/SubClimber.h"
-
-#include "subsystems/SubVision.h"
-#include "commands/VisionCommand.h"
-#include "commands/DriveCommands.h"
 #include <frc/smartdashboard/SmartDashboard.h>
-#include "subsystems/SubEndEffector.h"
-#include "commands/VisionCommand.h"
 #include <frc/Filesystem.h>
 #include <wpinet/WebServer.h>
+
+#include "subsystems/SubDrivebase.h"
+#include "subsystems/SubElevator.h"
+#include "subsystems/SubClimber.h"
+#include "subsystems/SubVision.h"
+#include "subsystems/SubEndEffector.h"
 #include "subsystems/SubFunnel.h"
+
+#include "commands/GamePieceCommands.h"
+#include "commands/DriveCommands.h"
+#include "commands/VisionCommand.h"
 
 RobotContainer::RobotContainer() {
   wpi::WebServer::GetInstance().Start(5800, frc::filesystem::GetDeployDirectory());
@@ -30,12 +29,9 @@ RobotContainer::RobotContainer() {
   SubDrivebase::GetInstance().SetDefaultCommand(
       SubDrivebase::GetInstance().JoystickDrive(_driverController));
   SubVision::GetInstance().SetDefaultCommand(cmd::AddVisionMeasurement());
-  
+
   // Trigger Bindings
   ConfigureBindings();
-
-  // Initialise camera object(s)
-  _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0);
 
   // AutoChooser options
   _autoChooser.AddOption("Default-Left-Slowed", "Default-Left-SlowTest");  // auton testing
@@ -72,6 +68,9 @@ frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
 }
 
 void RobotContainer::ConfigureBindings() {
+  // Driver
+
+  //  _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise camera object
   // _driverController.A().ToggleOnTrue(frc2::cmd::StartEnd(
   //   [this] { _cameraStream.SetPath("/dev/video1"); }, //Toggle to second camera (climb cam)
   //   [this] { _cameraStream.SetPath("/dev/video0"); } //Toggle to first camera (drive cam)
@@ -84,42 +83,46 @@ void RobotContainer::ConfigureBindings() {
   _driverController.LeftTrigger().WhileTrue(cmd::AlignAndShoot(SubVision::Left));
   _driverController.LeftBumper().WhileTrue(cmd::IntakeFromSource());
   _driverController.RightBumper().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
-  
+
   // Triggers
   SubDrivebase::GetInstance().CheckCoastButton().ToggleOnTrue(cmd::ToggleBrakeCoast());
   (SubDrivebase::GetInstance().IsTipping() && !SubClimber::GetInstance().IsClimbing())
       .OnTrue(SubElevator::GetInstance().CmdSetSource());
 
-  //Opperator
+  // Operator
   _operatorController.AxisGreaterThan(frc::XboxController::Axis::kLeftY, 0.2)
-    .WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
+      .WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
 
   _operatorController.AxisLessThan(frc::XboxController::Axis::kLeftY, -0.2)
-    .WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
+      .WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
 
-  frc2::Trigger(frc2::CommandScheduler::GetInstance().GetDefaultButtonLoop(), [=, this] {
-    return (_operatorController.GetLeftY() < -0.2);
-  }).WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
- 
-  _operatorController.A().OnTrue(SubElevator::GetInstance().CmdSetL1());
-  _operatorController.X().OnTrue(SubElevator::GetInstance().CmdSetL2());
-  _operatorController.B().OnTrue(SubElevator::GetInstance().CmdSetL3());
-  _operatorController.Y().OnTrue(SubElevator::GetInstance().CmdSetL4());
+  (!_operatorController.Back() && _operatorController.A()).OnTrue(cmd::SetElevatorL1());  // Set L1 normally
+  (_operatorController.Back() && _operatorController.A()).OnTrue(cmd::SetElevatorL1(true));  // Force set L1
+
+  (!_operatorController.Back() && _operatorController.X()).OnTrue(cmd::SetElevatorL2());  // Set L2 normally
+  (_operatorController.Back() && _operatorController.X()).OnTrue(cmd::SetElevatorL2(true));  // Force set L2
+
+  (!_operatorController.Back() && _operatorController.B()).OnTrue(cmd::SetElevatorL3());  // Set L3 normally
+  (_operatorController.Back() && _operatorController.B()).OnTrue(cmd::SetElevatorL3(true));  // Force set L3
+
+  (!_operatorController.Back() && _operatorController.Y()).OnTrue(cmd::SetElevatorL4());  // Set L4 normally
+  (_operatorController.Back() && _operatorController.Y()).OnTrue(cmd::SetElevatorL4(true));  // Force set L4
 
   _operatorController.POVLeft().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
   _operatorController.POVRight().OnTrue(SubElevator::GetInstance().CmdSetSource());
-  _operatorController.POVUp().OnTrue(cmd::ClimbUpSequence());
-  _operatorController.POVDown().OnTrue(cmd::ClimbDownSequence());
+
+  (!_operatorController.Back() && _operatorController.POVUp()).OnTrue(cmd::ClimbUpSequence());
+  (_operatorController.Back() && _operatorController.POVUp()).OnTrue(cmd::ClimbUpSequence(true)); // Force elevator to move for climb
+  
+  (!_operatorController.Back() && _operatorController.POVDown()).OnTrue(cmd::ClimbDownSequence());
+  (_operatorController.Back() && _operatorController.POVDown()).OnTrue(cmd::ClimbDownSequence(true));
 
   _operatorController.LeftTrigger().WhileTrue(cmd::RemoveAlgaeLow());
   _operatorController.RightTrigger().WhileTrue(cmd::RemoveAlgaeHigh());
   _operatorController.RightBumper().WhileTrue(cmd::Outtake());
   
   _operatorController.Start().WhileTrue(SubClimber::GetInstance().ClimberAutoReset());
-  _operatorController.Back().OnTrue(cmd::StowClimber());
-
-  //  _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise
-  //  camera object
+  _operatorController.LeftBumper().OnTrue(cmd::StowClimber());
 
   // Rumble controller when end effector line break triggers
   //  SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnFalse(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
