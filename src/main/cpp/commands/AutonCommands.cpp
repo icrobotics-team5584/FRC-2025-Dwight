@@ -58,7 +58,7 @@ namespace cmd {
             .AndThen(frc2::cmd::WaitUntil([]{ return SubElevator::GetInstance().IsAtTarget(); }))
             .AndThen([]{timer.Restart();})
             .AndThen(cmd::AlignAndShoot(side).Until([]{ 
-                bool has_coral = SubEndEffector::GetInstance().CheckLineBreakLower() && SubEndEffector::GetInstance().CheckLineBreakHigher();
+                bool has_coral = SubEndEffector::GetInstance().CheckLineBreakHigher();
                 if ( has_coral == false) {
                     Logger::Log("EndEffector/ScoreWithVision/has coral", false);
                     timer.Start();

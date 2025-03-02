@@ -57,7 +57,7 @@ frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
           }
           units::degree_t error = tagAngle - goalAngle;
           
-          units::meters_per_second_t overallVelocity = std::clamp(0.12_mps * error.value(),-0.3_mps,0.3_mps);
+          units::meters_per_second_t overallVelocity = std::clamp(0.16_mps * error.value(),-0.3_mps,0.3_mps);
           units::degree_t driveAngle = units::math::copysign(8_deg, error);
           
           // Calc x and y from known angle and hypotenuse length
