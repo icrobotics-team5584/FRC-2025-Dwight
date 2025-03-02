@@ -122,7 +122,7 @@ void RobotContainer::ConfigureBindings() {
   _operatorController.RightBumper().WhileTrue(cmd::Outtake());
   
   _operatorController.Start().WhileTrue(SubClimber::GetInstance().ClimberAutoReset());
-  _operatorController.Back().OnTrue(cmd::StowClimber());
+  _operatorController.LeftBumper().OnTrue(cmd::StowClimber());
 
   // Rumble controller when end effector line break triggers
   //  SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnFalse(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
