@@ -21,9 +21,10 @@ frc2::CommandPtr ClimbUpSequence(bool force) {
 frc2::CommandPtr ClimbDownSequence(bool force) {
   return SetElevatorClimb(force)
       .AndThen(frc2::cmd::WaitUntil([] { return SubElevator::GetInstance().IsAtTarget(); }))
-      .AndThen(SubClimber::GetInstance().Climb());
-      //.AndThen(SubElevator::GetInstance().CmdElevatorToPosition(0_m)) // 0_m is the start height
-      //.AndThen(SubClimber::GetInstance().StowClimber());
+      .AndThen(SubClimber::GetInstance().Climb())
+      .OnlyIf([force] {
+    return (force || SubEndEffector::GetInstance().CheckLineBreakLower() ==
+                         SubEndEffector::GetInstance().CheckLineBreakHigher());});
 }
 
 frc2::CommandPtr RemoveAlgaeLow(bool force) {
