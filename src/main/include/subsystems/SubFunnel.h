@@ -24,6 +24,7 @@ class SubFunnel : public frc2::SubsystemBase {
   void Periodic() override;
 
   frc2::CommandPtr FeedDownFunnel();
+  frc2::CommandPtr FeedDownFunnelSLOW();
   frc2::CommandPtr StopFunnelMotor();
   frc2::CommandPtr FeedUpFunnel();
 
