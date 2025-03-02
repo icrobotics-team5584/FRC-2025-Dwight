@@ -171,31 +171,36 @@ frc2::CommandPtr AlignAndShoot(SubVision::Side side){
 frc2::CommandPtr AutoShootIfAligned(SubVision::Side side) {
   return Sequence(
     WaitUntil([side] {
-     units::degree_t goalAngle = SubVision::GetInstance().GetReefAlignAngle(side);
-     units::degree_t tagAngle = SubVision::GetInstance().GetLastReefTagAngle();
-     Logger::Log("AutoShoot/errorangle", (goalAngle-tagAngle).value());
-     double tolerance = Logger::Tune("AutoShoot/autoshootTolerance", 0.5);
-     if (tagAngle < goalAngle + tolerance*1_deg && tagAngle > goalAngle - tolerance*1_deg) {
-       return true;
-     }
-     else {
-      return false;
-     }
-      }),
-    WaitUntil([] { 
-      if (SubElevator::GetInstance().GetTargetHeight() != SubElevator::_SOURCE_HEIGHT){
-        return SubElevator::GetInstance().IsAtTarget();
+      units::degree_t goalAngle = SubVision::GetInstance().GetReefAlignAngle(side);
+      units::degree_t tagAngle = SubVision::GetInstance().GetLastReefTagAngle();
+      double visionTolerance = Logger::Tune("AutoShoot/AutoShootVisionTolerance", 0.5);
+      double drivebaseTolerance = Logger::Tune("AutoShoot/AutoShootDrivebaseTolerance", 0.01);
+      Logger::Log("AutoShoot/errorangle", (goalAngle-tagAngle).value());
+     
+      bool inTagAngleRange = false; 
+      bool isAtTargetHeight = false;
+      bool isStill = false;
+
+      // vision tag angles 
+      if (tagAngle < goalAngle + visionTolerance*1_deg && tagAngle > goalAngle - visionTolerance*1_deg) {
+        inTagAngleRange = true;
       }
-      return false;
-    }),
-    WaitUntil([]{
-      units::meters_per_second_t tolerance = 0.01_mps;
-      if (SubDrivebase::GetInstance().GetVelocity() < tolerance) {
+
+      // height target 
+      if (SubElevator::GetInstance().GetTargetHeight() != SubElevator::_SOURCE_HEIGHT){
+        isAtTargetHeight =  SubElevator::GetInstance().IsAtTarget();
+      }
+
+      // is still
+      if (SubDrivebase::GetInstance().GetVelocity() < drivebaseTolerance *1_mps) {
+        isStill = true;
+      }
+      
+      if (isStill && isAtTargetHeight && inTagAngleRange) {
         return true;
       }
       return false;
-    }
-    ),
+      }),
     SubEndEffector::GetInstance().ScoreCoral()
   );
 }
