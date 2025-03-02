@@ -77,15 +77,10 @@ void RobotContainer::ConfigureBindings() {
   // ));
   _driverController.X().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
-
-  (!_driverController.Back() && _driverController.A()).WhileTrue(cmd::RemoveAlgaeLow());
-  (_driverController.Back() && _driverController.A()).WhileTrue(cmd::RemoveAlgaeLow(true)); //Force remove algae
-  
-  (!_driverController.Back() && _driverController.B()).WhileTrue(cmd::RemoveAlgaeHigh());
-  (_driverController.Back() && _driverController.B()).WhileTrue(cmd::RemoveAlgaeHigh(true));
-
-  _driverController.RightTrigger().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Right));
-  _driverController.LeftTrigger().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Left));
+  _driverController.A().WhileTrue(cmd::RemoveAlgaeLow());
+  _driverController.B().WhileTrue(cmd::RemoveAlgaeHigh());
+  _driverController.RightTrigger().WhileTrue(cmd::AlignAndShoot(SubVision::Right));
+  _driverController.LeftTrigger().WhileTrue(cmd::AlignAndShoot(SubVision::Left));
   _driverController.LeftBumper().WhileTrue(cmd::IntakeFromSource());
   _driverController.RightBumper().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
 
@@ -122,10 +117,12 @@ void RobotContainer::ConfigureBindings() {
   (!_operatorController.Back() && _operatorController.POVDown()).OnTrue(cmd::ClimbDownSequence());
   (_operatorController.Back() && _operatorController.POVDown()).OnTrue(cmd::ClimbDownSequence(true));
 
-  _operatorController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
-  _operatorController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
-  _operatorController.Start().WhileTrue(SubClimber::GetInstance().ClimberAutoReset());
+  _operatorController.LeftTrigger().WhileTrue(cmd::RemoveAlgaeLow());
+  _operatorController.RightTrigger().WhileTrue(cmd::RemoveAlgaeHigh());
   _operatorController.RightBumper().WhileTrue(cmd::Outtake());
+  
+  _operatorController.Start().WhileTrue(SubClimber::GetInstance().ClimberAutoReset());
+  _operatorController.Back().OnTrue(cmd::StowClimber());
 
   // Rumble controller when end effector line break triggers
   //  SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnFalse(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));

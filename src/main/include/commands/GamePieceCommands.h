@@ -19,4 +19,5 @@ namespace cmd {
     frc2::CommandPtr SetClimb(bool force=false);
     frc2::CommandPtr SetClearAlgaeLow(bool force=false);
     frc2::CommandPtr SetClearAlgaeHigh(bool force=false);
+    frc2::CommandPtr StowClimber();
 }
