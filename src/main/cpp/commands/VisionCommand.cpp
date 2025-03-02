@@ -53,11 +53,6 @@ frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
             goalAngle = SubVision::GetInstance().GetReefAlignAngle(side); // 16.45 for left reef face, 15.60_deg for front reef face (all left side so far) // 15.60,-20
           }
           units::degree_t error = tagAngle - goalAngle;
-
-          SubVision::Side cameraSide = SubVision::GetInstance().GetLastCameraUsed();
-          if (cameraSide == SubVision::Side::Right) {
-            error *= -1;
-          }
           
           units::meters_per_second_t overallVelocity = std::clamp(0.12_mps * error.value(),-0.3_mps,0.3_mps);
           units::degree_t driveAngle = units::math::copysign(8_deg, error);
@@ -93,30 +88,41 @@ frc2::CommandPtr AddVisionMeasurement() {
         auto estimatePoses = SubVision::GetInstance().GetPose();
 
         auto leftPose = estimatePoses[SubVision::Left];
-        if (leftPose.has_value() && SubVision::GetInstance().IsEstimateUsable(leftPose.value())) {
-          auto estimatedPose = leftPose.value();
-          double d = SubVision::GetInstance().GetDev(estimatedPose);
-          wpi::array<double,3> dev = {d, d, 0.9};
-          SubDrivebase::GetInstance().AddVisionMeasurement(
-              estimatedPose.estimatedPose.ToPose2d(), estimatedPose.timestamp, dev);
-          SubDrivebase::GetInstance().DisplayPose("LeftEstimatedPose",
-                                                  estimatedPose.estimatedPose.ToPose2d());
+        if (leftPose.has_value()) {
+          if (SubVision::GetInstance().IsEstimateUsable(leftPose.value())) {
+            auto estimatedPose = leftPose.value();
+            double d = SubVision::GetInstance().GetDev(estimatedPose);
+            wpi::array<double,3> dev = {d, d, 0.9};
+            SubDrivebase::GetInstance().AddVisionMeasurement(
+                estimatedPose.estimatedPose.ToPose2d(), estimatedPose.timestamp, dev);
+            SubDrivebase::GetInstance().DisplayPose("LeftEstimatedPose",
+                                                    estimatedPose.estimatedPose.ToPose2d());
+          } else {
+            SubDrivebase::GetInstance().DisplayPose("DiscardedLeftEstimatedPose", {leftPose.value().estimatedPose.ToPose2d()});
+          }
         } else {
           SubDrivebase::GetInstance().DisplayPose("LeftEstimatedPose", {});
+          SubDrivebase::GetInstance().DisplayPose("DiscardedLeftEstimatedPose", {});
         }
 
         auto rightPose = estimatePoses[SubVision::Right];
-        if (rightPose.has_value() && SubVision::GetInstance().IsEstimateUsable(rightPose.value())) {
-          auto estimatedPose = rightPose.value();
-          double d = SubVision::GetInstance().GetDev(estimatedPose);
-          wpi::array<double,3> dev = {d, d, 0.9};
-          SubDrivebase::GetInstance().AddVisionMeasurement(
-              estimatedPose.estimatedPose.ToPose2d(), estimatedPose.timestamp, dev);
-          SubDrivebase::GetInstance().DisplayPose("RightEstimatedPose",
-                                                  estimatedPose.estimatedPose.ToPose2d());
+        if (rightPose.has_value()){
+          if(SubVision::GetInstance().IsEstimateUsable(rightPose.value())) {
+            auto estimatedPose = rightPose.value();
+            double d = SubVision::GetInstance().GetDev(estimatedPose);
+            wpi::array<double,3> dev = {d, d, 0.9};
+            SubDrivebase::GetInstance().AddVisionMeasurement(
+                estimatedPose.estimatedPose.ToPose2d(), estimatedPose.timestamp, dev);
+            SubDrivebase::GetInstance().DisplayPose("RightEstimatedPose",
+                                                    estimatedPose.estimatedPose.ToPose2d());
+            } else {
+              SubDrivebase::GetInstance().DisplayPose("DiscardedRightEstimatedPose", {rightPose.value().estimatedPose.ToPose2d()});
+            }
         } else {
           SubDrivebase::GetInstance().DisplayPose("RightEstimatedPose", {});
+          SubDrivebase::GetInstance().DisplayPose("DiscardedRightEstimatedPose", {});
         }
+      
       },
       {&SubVision::GetInstance()}).IgnoringDisable(true);
 } 

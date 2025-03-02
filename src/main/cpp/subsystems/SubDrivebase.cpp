@@ -506,7 +506,7 @@ void SubDrivebase::DisplayTrajectory(std::string name, frc::Trajectory trajector
 }
 
 void SubDrivebase::AddVisionMeasurement(frc::Pose2d pose, units::second_t timeStamp, wpi::array<double,3> dev) {
-  _poseEstimator.AddVisionMeasurement(frc::Pose2d{pose.X(), pose.Y(), GetPose().Rotation()}, timeStamp, dev);
+  _poseEstimator.AddVisionMeasurement(frc::Pose2d{pose.X(), pose.Y(), pose.Rotation()}, timeStamp, dev);
 }
 
 void SubDrivebase::SetBrakeMode(bool mode) {
