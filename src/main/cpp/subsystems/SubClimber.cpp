@@ -13,7 +13,7 @@ SubClimber::SubClimber() {
   _climberMotorConfig.encoder.PositionConversionFactor(1 / GEAR_RATIO);
   _climberMotorConfig.encoder.VelocityConversionFactor(GEAR_RATIO / 60.0);
   _climberMotorConfig.closedLoop.Pid(P, I, D, rev::spark::ClosedLoopSlot::kSlot0);
-  _climberMotorConfig.closedLoop.MinOutput(-0.5);  // limits climb speed
+  //_climberMotorConfig.closedLoop.MinOutput(-0.5);  // limits climb speed
   _climberMotorConfig.Inverted(true).SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
   auto err = _climberMotor.AdjustConfig(_climberMotorConfig);
   frc::SmartDashboard::PutNumber("Climber/config set err", (int)err);
@@ -39,12 +39,13 @@ void SubClimber::Periodic() {
 }
 
 void SubClimber::SetBrakeMode(bool mode) {
+  rev::spark::SparkBaseConfig _neutralModeConfig;
   if (mode == true) {
-    _climberMotorConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
-    _climberMotor.AdjustConfigNoPersist(_climberMotorConfig);
+    _neutralModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
+    _climberMotor.AdjustConfigNoPersist(_neutralModeConfig);
   } else if (mode == false) {
-    _climberMotorConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
-    _climberMotor.AdjustConfigNoPersist(_climberMotorConfig);
+    _neutralModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
+    _climberMotor.AdjustConfigNoPersist(_neutralModeConfig);
   }
 }
 
@@ -58,6 +59,12 @@ bool SubClimber::IsAtTarget() {
   } else {
     return false;
   }
+}
+
+bool SubClimber::IsOut() {
+  if (_hasReset == false) {return false;}
+  auto errorAngle = _climberMotor.GetPosition() - STOW_TURNS;
+  return errorAngle < -5_deg || errorAngle > 5_deg;
 }
 
 // Auto climber reset by bringing Climber to zero position then reset
@@ -85,18 +92,18 @@ frc2::CommandPtr SubClimber::ClimberResetCheck() {
 
 frc2::CommandPtr SubClimber::ManualClimberMovementUP() {
   return StartEnd([this] { _climberMotor.SetVoltage(4_V); },
-                             [this] {
-                               auto targRot = _climberMotor.GetPosition();
-                               _climberMotor.SetMaxMotionTarget(targRot);
-                             });
+                  [this] {
+                    auto targRot = _climberMotor.GetPosition();
+                    _climberMotor.SetMaxMotionTarget(targRot);
+                  });
 }
 
 frc2::CommandPtr SubClimber::ManualClimberMovementDOWN() {
   return StartEnd([this] { _climberMotor.SetVoltage(-4_V); },
-                             [this] {
-                               auto targRot = _climberMotor.GetPosition();
-                               _climberMotor.SetMaxMotionTarget(targRot);
-                             });
+                  [this] {
+                    auto targRot = _climberMotor.GetPosition();
+                    _climberMotor.SetMaxMotionTarget(targRot);
+                  });
 }
 
 frc2::CommandPtr SubClimber::ManualClimberMovementDOWNSLOW() {

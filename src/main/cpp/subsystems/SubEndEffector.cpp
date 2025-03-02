@@ -12,6 +12,7 @@
 SubEndEffector::SubEndEffector() {
     rev::spark::SparkBaseConfig config;
     config.Inverted(BotVars::Choose(true, false));
+    config.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
     _endEffectorMotor.AdjustConfig(config);
     frc::SmartDashboard::PutData("EndEffector/motorData", &_endEffectorMotor);
 }
@@ -44,6 +45,10 @@ frc2::CommandPtr SubEndEffector::Shoot() {
     return StartEnd([this] {_endEffectorMotor.Set(-0.3);}, [this] {_endEffectorMotor.Set(0);});
 }
 
+frc2::CommandPtr SubEndEffector::RemoveAlgae(){
+    return StartEnd([this] {_endEffectorMotor.Set(-0.7);}, [this] {_endEffectorMotor.Set(0);});
+}
+
 frc2::CommandPtr SubEndEffector::StopMotor() {
     return RunOnce([this] {
         _endEffectorMotor.Set(0);
@@ -64,6 +69,10 @@ bool SubEndEffector::CheckLineBreakHigher() {
 
 bool SubEndEffector::CheckLineBreakLower() {
     return _endEffectorLineBreakLower.Get();
+}
+
+bool SubEndEffector::IsCoralSecure() {
+    return !_endEffectorLineBreakHigher.Get() == !_endEffectorLineBreakLower.Get();
 }
 
 frc2::Trigger SubEndEffector::CheckLineBreakTriggerHigher() {

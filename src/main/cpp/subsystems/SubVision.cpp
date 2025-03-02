@@ -23,11 +23,12 @@ SubVision::SubVision() {
   _leftPoseEstimater.SetMultiTagFallbackStrategy(photon::PoseStrategy::LOWEST_AMBIGUITY);
 
   // Sim set up
-  _leftVisionSim.AddAprilTags(_tagLayout);
-  _leftVisionSim.AddCamera(&_leftCamSim, _leftBotToCam);
+  _visionSim.AddAprilTags(_tagLayout);
+  _visionSim.AddCamera(&_leftCamSim, _leftBotToCam);
+  _visionSim.AddCamera(&_rightCamSim, _rightBotToCam);
 
   // Display tags on field
-  for (auto target : _leftVisionSim.GetVisionTargets()) {
+  for (auto target : _visionSim.GetVisionTargets()) {
     SubDrivebase::GetInstance().DisplayPose(fmt::format("tag{}", target.fiducialId),
                                             target.GetPose().ToPose2d());
   }
@@ -48,11 +49,13 @@ void SubVision::Periodic() {
 }
 
 void SubVision::SimulationPeriodic() {
-  _leftVisionSim.Update(SubDrivebase::GetInstance().GetSimPose());
+  _visionSim.Update(SubDrivebase::GetInstance().GetSimPose());
 }
 
 void SubVision::UpdateVision() {
   double largestArea = 2;
+  std::string leftTargets = "";
+  std::string rightTargets = "";
 
   // Left camera
   std::vector<photon::PhotonPipelineResult> results = _leftCamera.GetAllUnreadResults();
@@ -60,9 +63,9 @@ void SubVision::UpdateVision() {
   if (resultCount > 0) {
     for (auto result : results) {
       _leftEstPose = _leftPoseEstimater.Update(result);
-      frc::SmartDashboard::PutNumber("Vision/Left/target", result.GetBestTarget().fiducialId);
 
       for (const auto& target : result.targets) {
+        leftTargets += target.fiducialId + ", ";
         if (!CheckReef(target)) {continue;}
         double targetArea = target.GetArea();
         if (targetArea > largestArea ) {
@@ -80,9 +83,9 @@ void SubVision::UpdateVision() {
   if (resultCount > 0) {
     for (auto result : results) {
       _rightEstPose = _rightPoseEstimater.Update(result);
-      frc::SmartDashboard::PutNumber("Vision/Right/target", result.GetBestTarget().fiducialId);
 
       for (const auto& target : result.targets) {
+        rightTargets += target.fiducialId + ", ";
         if (!CheckReef(target)) {continue;}
         double targetArea = target.GetArea();
         if (targetArea > largestArea) {
@@ -93,6 +96,9 @@ void SubVision::UpdateVision() {
       }
     }
   }
+
+  frc::SmartDashboard::PutString("Vision/Left/targets", leftTargets);
+  frc::SmartDashboard::PutString("Vision/Right/targets", rightTargets);
 }
 
 std::map<SubVision::Side, std::optional<photon::EstimatedRobotPose>> SubVision::GetPose() {
@@ -182,4 +188,17 @@ double SubVision::GetDev(photon::EstimatedRobotPose pose) {
   }
   distance /= pose.targetsUsed.size();
   return _devTable[distance];
+}
+
+bool SubVision::IsEstimateUsable(photon::EstimatedRobotPose pose) {
+  units::meter_t distance = 0_m;
+  auto tagCount = pose.targetsUsed.size();
+  if (pose.targetsUsed.size() == 0) {
+    return 0;
+  }
+  for (auto target : pose.targetsUsed) {
+    distance += target.GetBestCameraToTarget().Translation().Norm();
+  }
+  distance /= pose.targetsUsed.size();
+  return (distance < 0.7_m) || (tagCount > 1);
 }

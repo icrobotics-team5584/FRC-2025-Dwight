@@ -22,6 +22,10 @@ frc2::CommandPtr SubFunnel::FeedDownFunnel() {
     return StartEnd([this] {_funnelMotor.Set(-0.8);}, [this] {_funnelMotor.Set(0);});
 }
 
+frc2::CommandPtr SubFunnel::FeedDownFunnelSLOW() {
+    return StartEnd([this] {_funnelMotor.Set(-0.3);}, [this] {_funnelMotor.Set(0);});
+}
+
 frc2::CommandPtr SubFunnel::StopFunnelMotor(){
     return RunOnce([this] {_funnelMotor.Set(0);});
 }

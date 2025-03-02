@@ -106,6 +106,10 @@ frc2::CommandPtr SubElevator::CmdSetClimb() {
   return CmdElevatorToPosition(_CLIMB_HEIGHT);
 }
 
+frc2::CommandPtr SubElevator::CmdSetLatch(){
+  return CmdElevatorToPosition(_CLEAR_LATCH_HEIGHT);
+}
+
 frc2::CommandPtr SubElevator::CmdSetClearLowAlgea() {
   return CmdElevatorToPosition(_ALGAE_LOW_HEIGHT);
 }
@@ -167,7 +171,7 @@ frc2::CommandPtr SubElevator::ManualElevatorMovementUP() {
   return frc2::cmd::RunEnd(
       [this] {
         auto currentHeight = HeightFromRotations(_elevatorMotor1.GetPosition(true).GetValue());
-        if (currentHeight < _L4_HEIGHT) {
+        if (currentHeight < _MAX_HEIGHT) {
           _elevatorMotor1.SetControl(ctre::phoenix6::controls::VoltageOut(1_V));
         } else {
           _elevatorMotor1.StopMotor();
