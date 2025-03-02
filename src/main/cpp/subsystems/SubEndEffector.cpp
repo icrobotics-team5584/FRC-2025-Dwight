@@ -12,6 +12,7 @@
 SubEndEffector::SubEndEffector() {
     rev::spark::SparkBaseConfig config;
     config.Inverted(BotVars::Choose(true, false));
+    config.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
     _endEffectorMotor.AdjustConfig(config);
     frc::SmartDashboard::PutData("EndEffector/motorData", &_endEffectorMotor);
 }
@@ -44,6 +45,10 @@ frc2::CommandPtr SubEndEffector::Shoot() {
     return StartEnd([this] {_endEffectorMotor.Set(-0.3);}, [this] {_endEffectorMotor.Set(0);});
 }
 
+frc2::CommandPtr SubEndEffector::RemoveAlgae(){
+    return StartEnd([this] {_endEffectorMotor.Set(-0.7);}, [this] {_endEffectorMotor.Set(0);});
+}
+
 frc2::CommandPtr SubEndEffector::StopMotor() {
     return RunOnce([this] {
         _endEffectorMotor.Set(0);
@@ -66,11 +71,30 @@ bool SubEndEffector::CheckLineBreakLower() {
     return !_endEffectorLineBreakLower.Get();
 }
 
+bool SubEndEffector::IsCoralSecure() {
+    return !_endEffectorLineBreakHigher.Get() == !_endEffectorLineBreakLower.Get();
+}
+
 frc2::Trigger SubEndEffector::CheckLineBreakTriggerHigher() {
     return frc2::Trigger {[this] {return this->CheckLineBreakHigher();}};
 }
 
 frc2::Trigger SubEndEffector::CheckLineBreakTriggerLower() {
     return frc2::Trigger {[this] {return this->CheckLineBreakLower();}};
+}
+
+frc2::CommandPtr SubEndEffector::KeepCoralInEndEffector() {
+  return Run([this] {
+    if (CheckLineBreakHigher() && !CheckLineBreakLower()) {
+        frc::SmartDashboard::PutString("EndEffector/Coral Position", "Too High");
+        _endEffectorMotor.Set(-0.3);
+    } else if (CheckLineBreakLower() && !CheckLineBreakHigher()) {
+        frc::SmartDashboard::PutString("EndEffector/Coral Position", "Too Low");
+        _endEffectorMotor.Set(0.3);
+    } else {
+        frc::SmartDashboard::PutString("EndEffector/Coral Position", "Just Right");
+        _endEffectorMotor.Set(0);
+    }
+  });
 }
 
