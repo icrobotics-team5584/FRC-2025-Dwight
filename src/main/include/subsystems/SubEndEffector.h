@@ -32,6 +32,7 @@ class SubEndEffector : public frc2::SubsystemBase {
   
   bool CheckLineBreakHigher();
   bool CheckLineBreakLower();
+  bool CheckCoralStuck();
   bool LineBreakDownSignal();
   frc2::Trigger CheckLineBreakTriggerHigher();
   frc2::Trigger CheckLineBreakTriggerLower();
