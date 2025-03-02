@@ -216,6 +216,11 @@ frc2::CommandPtr SubElevator::ElevatorStop() {
   return frc2::cmd::RunOnce([this] { SubElevator::GetInstance().Stop(); });
 }
 
+
+frc2::Trigger SubElevator::ElevatorNotStowed() {
+  return frc2::Trigger([this] { return (_targetHeight > _SOURCE_HEIGHT); });
+}
+
 bool SubElevator::IsAtTarget() {
   units::meter_t currentHeight = HeightFromRotations(_elevatorMotor1.GetPosition().GetValue());
   units::meter_t tolerance = 0.05_m;
