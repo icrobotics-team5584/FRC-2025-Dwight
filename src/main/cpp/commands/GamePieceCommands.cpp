@@ -41,7 +41,9 @@ frc2::CommandPtr IntakeFromSource() {
       .AndThen(SubFunnel::GetInstance().FeedDownFunnel())
       .AlongWith(SubEndEffector::GetInstance().FeedDown())
       .Until([] { return SubEndEffector::GetInstance().CheckLineBreakHigher(); })
-      .AndThen(SubEndEffector::GetInstance().FeedDownSLOW().Until(
+      .AndThen(SubEndEffector::GetInstance().FeedDownSLOW()
+      .AlongWith(SubFunnel::GetInstance().FeedDownFunnelSLOW())
+      .Until(
           [] { return SubEndEffector::GetInstance().CheckLineBreakLower(); }));
 }
 
