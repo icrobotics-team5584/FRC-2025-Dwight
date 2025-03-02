@@ -4,11 +4,18 @@
  "type":"Swerve",
  "variables":{
   "expressions":{
+   "TestingAccel":{
+    "dimension":"LinAcc",
+    "var":{
+     "exp":"1 m / s ^ 2",
+     "val":1.0
+    }
+   },
    "TestingSpeed":{
     "dimension":"LinVel",
     "var":{
-     "exp":"1.5 m / s",
-     "val":1.5
+     "exp":"2.5 m / s",
+     "val":2.5
     }
    }
   },

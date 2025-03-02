@@ -69,7 +69,17 @@ frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
           Logger::Log("Vision/Goal Angle", goalAngle);
           Logger::Log("Vision/Target Pole", side == SubVision::Side::Left ? "Left":"Right");
           
-          return frc::ChassisSpeeds{xVel, yVel, 0_deg_per_s};
+          // rotation componet
+          frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(side,-1).Rotation();
+          using ds = frc::DriverStation;
+          if (ds::GetAlliance().value_or(ds::Alliance::kBlue) == ds::kRed) {
+            targetRotation = +180_deg;
+          };
+
+          units::angle::turn_t roterror = SubDrivebase::GetInstance().GetPose().Rotation().Degrees() - targetRotation.Degrees();
+          auto rotationSpeed = SubDrivebase::GetInstance().CalcRotateSpeed(roterror) / 5;
+
+          return frc::ChassisSpeeds{xVel, yVel, rotationSpeed};
           
         } else {
           frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(side,-1).Rotation();
@@ -179,7 +189,7 @@ frc2::CommandPtr AutoShootIfAligned(SubVision::Side side) {
       return false;
     }),
     WaitUntil([]{
-      units::meters_per_second_t tolerance = 0.1_mps;
+      units::meters_per_second_t tolerance = 0.01_mps;
       if (SubDrivebase::GetInstance().GetVelocity() < tolerance) {
         return true;
       }

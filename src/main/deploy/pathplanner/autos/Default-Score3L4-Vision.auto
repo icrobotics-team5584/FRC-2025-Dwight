@@ -38,13 +38,26 @@
         {
           "type": "named",
           "data": {
-            "name": "IntakeSource"
+            "name": "BeginSourceIntake"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "LeftSourceToReefPoleL.0"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LeftSourceToReefPoleL"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "EndSourceIntake"
+                }
+              }
+            ]
           }
         },
         {
@@ -62,13 +75,26 @@
         {
           "type": "named",
           "data": {
-            "name": "IntakeSource"
+            "name": "BeginSourceIntake"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "LeftSourceToReefPoleK.0"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LeftSourceToReefPoleK"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "EndSourceIntake"
+                }
+              }
+            ]
           }
         },
         {

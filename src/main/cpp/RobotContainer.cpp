@@ -37,6 +37,8 @@ RobotContainer::RobotContainer() {
   pathplanner::NamedCommands::registerCommand("ScoreLeft", cmd::Score(1));
   pathplanner::NamedCommands::registerCommand("ScoreRight", cmd::Score(2));
   pathplanner::NamedCommands::registerCommand("SetElevatorL4", SubElevator::GetInstance().CmdSetL4());
+  pathplanner::NamedCommands::registerCommand("BeginSourceIntake", cmd::AutonBeginSourceIntake());
+  pathplanner::NamedCommands::registerCommand("EndSourceIntake", cmd::AutonEndSourceIntake());
   
   //.AndThen(cmd::ForceAlignWithTarget(1, _driverController).WithName("AutonAlignToSource"))
   pathplanner::NamedCommands::registerCommand("IntakeSource", cmd::IntakeFromSource());

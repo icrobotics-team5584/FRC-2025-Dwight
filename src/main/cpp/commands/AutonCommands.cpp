@@ -34,6 +34,23 @@ namespace cmd {
             .AndThen(SubElevator::GetInstance().CmdSetSource());
     }
 
+    frc2::CommandPtr AutonBeginSourceIntake() {
+        return SubElevator::GetInstance()
+            .CmdSetSource()
+            .AndThen(frc2::cmd::WaitUntil([] { return SubElevator::GetInstance().IsAtTarget();}))
+            .AndThen(SubFunnel::GetInstance().FeedDownFunnel())
+            .AlongWith(SubEndEffector::GetInstance().FeedDown())
+            .Until([] { return SubEndEffector::GetInstance().CheckLineBreakHigher(); });
+    }
+    
+    frc2::CommandPtr AutonEndSourceIntake() {
+        return SubEndEffector::GetInstance().FeedDownSLOW()
+            .AlongWith(SubFunnel::GetInstance().FeedDownFunnelSLOW())
+            .Until([] { return SubEndEffector::GetInstance().CheckLineBreakLower(); });
+    }
+
+
+    // vision
     frc2::CommandPtr ScoreWithVision(SubVision::Side side) {
         static frc::Timer timer;
 
