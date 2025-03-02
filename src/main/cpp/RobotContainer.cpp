@@ -96,17 +96,17 @@ void RobotContainer::ConfigureBindings() {
   _operatorController.AxisLessThan(frc::XboxController::Axis::kLeftY, -0.2)
       .WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
 
-  (!_operatorController.Back() && _operatorController.A()).OnTrue(cmd::SetL1());  // Set L1 normally
-  (_operatorController.Back() && _operatorController.A()).OnTrue(cmd::SetL1(true));  // Force set L1
+  (!_operatorController.Back() && _operatorController.A()).OnTrue(cmd::SetElevatorL1());  // Set L1 normally
+  (_operatorController.Back() && _operatorController.A()).OnTrue(cmd::SetElevatorL1(true));  // Force set L1
 
-  (!_operatorController.Back() && _operatorController.X()).OnTrue(cmd::SetL2());  // Set L2 normally
-  (_operatorController.Back() && _operatorController.X()).OnTrue(cmd::SetL2(true));  // Force set L2
+  (!_operatorController.Back() && _operatorController.X()).OnTrue(cmd::SetElevatorL2());  // Set L2 normally
+  (_operatorController.Back() && _operatorController.X()).OnTrue(cmd::SetElevatorL2(true));  // Force set L2
 
-  (!_operatorController.Back() && _operatorController.B()).OnTrue(cmd::SetL3());  // Set L3 normally
-  (_operatorController.Back() && _operatorController.B()).OnTrue(cmd::SetL3(true));  // Force set L3
+  (!_operatorController.Back() && _operatorController.B()).OnTrue(cmd::SetElevatorL3());  // Set L3 normally
+  (_operatorController.Back() && _operatorController.B()).OnTrue(cmd::SetElevatorL3(true));  // Force set L3
 
-  (!_operatorController.Back() && _operatorController.Y()).OnTrue(cmd::SetL4());  // Set L4 normally
-  (_operatorController.Back() && _operatorController.Y()).OnTrue(cmd::SetL4(true));  // Force set L4
+  (!_operatorController.Back() && _operatorController.Y()).OnTrue(cmd::SetElevatorL4());  // Set L4 normally
+  (_operatorController.Back() && _operatorController.Y()).OnTrue(cmd::SetElevatorL4(true));  // Force set L4
 
   _operatorController.POVLeft().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
   _operatorController.POVRight().OnTrue(SubElevator::GetInstance().CmdSetSource());

@@ -12,11 +12,11 @@ namespace cmd {
     frc2::CommandPtr Outtake();
 
     frc2::CommandPtr SetElevatorPosition(units::meter_t height, bool force=false);
-    frc2::CommandPtr SetL1(bool force=false);
-    frc2::CommandPtr SetL2(bool force=false);
-    frc2::CommandPtr SetL3(bool force=false);
-    frc2::CommandPtr SetL4(bool force=false);
-    frc2::CommandPtr SetClimb(bool force=false);
+    frc2::CommandPtr SetElevatorL1(bool force=false);
+    frc2::CommandPtr SetElevatorL2(bool force=false);
+    frc2::CommandPtr SetElevatorL3(bool force=false);
+    frc2::CommandPtr SetElevatorL4(bool force=false);
+    frc2::CommandPtr SetElevatorClimb(bool force=false);
     frc2::CommandPtr SetClearAlgaeLow(bool force=false);
     frc2::CommandPtr SetClearAlgaeHigh(bool force=false);
     frc2::CommandPtr StowClimber();

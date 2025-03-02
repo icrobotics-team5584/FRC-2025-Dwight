@@ -12,14 +12,14 @@ frc2::CommandPtr ClimbUpSequence(bool force) {
       .CmdSetLatch()
       .AndThen(frc2::cmd::WaitUntil([] {
     return SubElevator::GetInstance().IsAtTarget(); }))
-      .AndThen(SubClimber::GetInstance().ReadyClimber().AlongWith(SetClimb(force)))
+      .AndThen(SubClimber::GetInstance().ReadyClimber().AlongWith(SetElevatorClimb(force)))
       .OnlyIf([force] {
     return (force || SubEndEffector::GetInstance().CheckLineBreakLower() ==
                          SubEndEffector::GetInstance().CheckLineBreakHigher());});
 }
 
 frc2::CommandPtr ClimbDownSequence(bool force) {
-  return SetClimb(force)
+  return SetElevatorClimb(force)
       .AndThen(frc2::cmd::WaitUntil([] { return SubElevator::GetInstance().IsAtTarget(); }))
       .AndThen(SubClimber::GetInstance().Climb());
       //.AndThen(SubElevator::GetInstance().CmdElevatorToPosition(0_m)) // 0_m is the start height
@@ -54,14 +54,12 @@ frc2::CommandPtr SetElevatorPosition(units::meter_t height, bool force) {
   });
 }
 
-frc2::CommandPtr SetL1(bool force) { return cmd::SetElevatorPosition(SubElevator::_L1_HEIGHT, force); }
-frc2::CommandPtr SetL2(bool force) { return cmd::SetElevatorPosition(SubElevator::_L2_HEIGHT, force); }
-frc2::CommandPtr SetL3(bool force) { return cmd::SetElevatorPosition(SubElevator::_L3_HEIGHT, force); }
-frc2::CommandPtr SetL4(bool force) { return cmd::SetElevatorPosition(SubElevator::_L4_HEIGHT, force); }
+frc2::CommandPtr SetElevatorL1(bool force) { return cmd::SetElevatorPosition(SubElevator::_L1_HEIGHT, force); }
+frc2::CommandPtr SetElevatorL2(bool force) { return cmd::SetElevatorPosition(SubElevator::_L2_HEIGHT, force); }
+frc2::CommandPtr SetElevatorL3(bool force) { return cmd::SetElevatorPosition(SubElevator::_L3_HEIGHT, force); }
+frc2::CommandPtr SetElevatorL4(bool force) { return cmd::SetElevatorPosition(SubElevator::_L4_HEIGHT, force); }
 
-frc2::CommandPtr SetClimb(bool force) { return cmd::SetElevatorPosition(SubElevator::_CLIMB_HEIGHT, force); }
-
-frc2::CommandPtr SetLatch(bool force) { }
+frc2::CommandPtr SetElevatorClimb(bool force) { return cmd::SetElevatorPosition(SubElevator::_CLIMB_HEIGHT, force); }
 
 frc2::CommandPtr SetClearAlgaeLow(bool force) {
   return cmd::SetElevatorPosition(SubElevator::_ALGAE_LOW_HEIGHT, force);
