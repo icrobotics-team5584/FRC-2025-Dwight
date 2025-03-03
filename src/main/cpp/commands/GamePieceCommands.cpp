@@ -10,19 +10,16 @@ namespace cmd {
 frc2::CommandPtr ClimbUpSequence(bool force) {
   return SubElevator::GetInstance()
       .CmdSetLatch()
-      .AndThen(frc2::cmd::WaitUntil([] {
-    return SubElevator::GetInstance().IsAtTarget(); }))
+      .AndThen(frc2::cmd::WaitUntil([] { return SubElevator::GetInstance().IsAtTarget(); }))
       .AndThen(SubClimber::GetInstance().ReadyClimber().AlongWith(SetElevatorClimb(force)))
-      .OnlyIf([force] {
-    return (force || (SubEndEffector::GetInstance().IsCoralSecure() && !SubClimber::GetInstance().IsOut()));});
+      .OnlyIf([force] { return (force || (SubEndEffector::GetInstance().IsCoralSecure())); });
 }
 
 frc2::CommandPtr ClimbDownSequence(bool force) {
   return SetElevatorClimb(force)
       .AndThen(frc2::cmd::WaitUntil([] { return SubElevator::GetInstance().IsAtTarget(); }))
       .AndThen(SubClimber::GetInstance().Climb())
-      .OnlyIf([force] {
-    return (force || (SubEndEffector::GetInstance().IsCoralSecure() && !SubClimber::GetInstance().IsOut()));});
+      .OnlyIf([force] { return (force || (SubEndEffector::GetInstance().IsCoralSecure())); });
 }
 
 frc2::CommandPtr RemoveAlgaeLow(bool force) {
