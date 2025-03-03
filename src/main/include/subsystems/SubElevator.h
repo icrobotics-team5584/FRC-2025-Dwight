@@ -50,6 +50,7 @@ class SubElevator : public frc2::SubsystemBase {
   units::meter_t GetTargetHeight();
 
   bool IsAtTarget();
+  bool IsAboveSourceHeight();
 
   void SetMotorVoltageLimits12V();
   void CheckAndChangeCurrentLimitIfReset();
