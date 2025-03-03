@@ -216,11 +216,6 @@ frc2::CommandPtr SubElevator::ElevatorStop() {
   return frc2::cmd::RunOnce([this] { SubElevator::GetInstance().Stop(); });
 }
 
-
-frc2::Trigger SubElevator::ElevatorNotStowed() {
-  return frc2::Trigger([this] { return (_targetHeight > _SOURCE_HEIGHT); });
-}
-
 bool SubElevator::IsAboveSourceHeight() {
   return (_targetHeight > _SOURCE_HEIGHT);
 }

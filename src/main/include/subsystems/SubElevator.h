@@ -31,7 +31,6 @@ class SubElevator : public frc2::SubsystemBase {
   frc2::CommandPtr CmdSetLatch();
   frc2::CommandPtr CmdSetClearHighAlgea();
   frc2::CommandPtr CmdSetClearLowAlgea();
-  frc2::Trigger ElevatorNotStowed();
 
   frc2::CommandPtr ZeroElevator();
   frc2::CommandPtr ElevatorResetCheck();
