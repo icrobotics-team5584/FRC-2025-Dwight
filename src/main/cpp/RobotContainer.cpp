@@ -78,10 +78,10 @@ void RobotContainer::ConfigureBindings() {
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
   _driverController.X().WhileTrue(SubDrivebase::GetInstance().GyroCoralLeftStationAlign(_driverController));
   _driverController.B().WhileTrue(SubDrivebase::GetInstance().GyroCoralRightStationAlign(_driverController)); 
-  _driverController.RightTrigger().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Right));
-  _driverController.LeftTrigger().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Left));
-  _driverController.LeftBumper().WhileTrue(cmd::IntakeFromSource()).OnFalse(SubEndEffector::GetInstance().KeepCoralInEndEffector().WithTimeout(1_s));
-  _driverController.RightBumper().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
+  _driverController.RightBumper().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Right));
+  _driverController.LeftBumper().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Left));
+  _driverController.LeftTrigger().WhileTrue(cmd::IntakeFromSource()).OnFalse(SubEndEffector::GetInstance().KeepCoralInEndEffector().WithTimeout(1_s));
+  _driverController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
 
   // Triggers
   SubDrivebase::GetInstance().CheckCoastButton().ToggleOnTrue(cmd::ToggleBrakeCoast());
