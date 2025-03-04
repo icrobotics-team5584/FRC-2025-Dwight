@@ -43,6 +43,7 @@ class SubClimber : public frc2::SubsystemBase {
   units::ampere_t  GetM1Current();
   frc2::Trigger IsClimbing();
   bool IsAtTarget();
+  bool IsOut();
 
   void SetBrakeMode(bool mode);
 
