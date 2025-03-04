@@ -23,7 +23,6 @@
 RobotContainer::RobotContainer() {
   wpi::WebServer::GetInstance().Start(5800, frc::filesystem::GetDeployDirectory());
   SubVision::GetInstance();
-  // SubIntake::GetInstance(); -- dont get instance since the electronics dont exist on the bot yet, and we dont want warnings about it
   SubEndEffector::GetInstance();
 
   // registar named commands
@@ -46,9 +45,6 @@ RobotContainer::RobotContainer() {
 
   // Trigger Bindings
   ConfigureBindings();
-
-  //Initialise camera object(s)
-  _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); 
 
   // sidechooser options 
   _sideChooser.SetDefaultOption("Left Side", false);
