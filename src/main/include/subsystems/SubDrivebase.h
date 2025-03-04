@@ -68,6 +68,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc2::CommandPtr GyroCoralLeftStationAlign(frc2::CommandXboxController& controller);
   frc2::CommandPtr GyroCoralRightStationAlign(frc2::CommandXboxController& controller);
   frc2::CommandPtr JoystickDrive(frc2::CommandXboxController& controller);
+  frc2::CommandPtr JoystickDriveSlow(frc2::CommandXboxController& controller);
   frc2::CommandPtr WheelCharecterisationCmd();
   frc2::CommandPtr Drive(std::function<frc::ChassisSpeeds()> speeds, bool fieldOriented);
   frc2::CommandPtr RobotCentricDrive(frc2::CommandXboxController& controller);
@@ -92,8 +93,8 @@ class SubDrivebase : public frc2::SubsystemBase {
   static constexpr double MAX_JOYSTICK_ACCEL = 5;
   static constexpr double MAX_ANGULAR_JOYSTICK_ACCEL = 3;
   static constexpr double JOYSTICK_DEADBAND = 0.08;
-  static constexpr double TRANSLATION_R_SCALING = 2;  // Set to 1 for linear scaling
-  static constexpr double ROTATION_R_SCALING = 1;     // Set to 1 for linear scaling
+  static constexpr double TRANSLATION_SCALING = 2;  // Set to 1 for linear scaling
+  static constexpr double ROTATION_SCALING = 1;     // Set to 1 for linear scaling
 
  private:
   void Drive(units::meters_per_second_t xSpeed, units::meters_per_second_t ySpeed,

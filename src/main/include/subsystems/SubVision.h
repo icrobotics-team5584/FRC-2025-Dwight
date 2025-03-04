@@ -101,12 +101,12 @@ public:
   std::map<int, ReefCameraAngles> tagToReefAngles {
     // blue reef
     //    right cam   |        left cam
-    {17, {0_deg, 18.55_deg , 21.00_deg, 0_deg}},
-    {18, {0_deg, 18.55_deg , 21.00_deg, 0_deg}},
-    {19, {0_deg, 18.55_deg , 21.00_deg, 0_deg}},
-    {20, {0_deg, 18.55_deg , 21.00_deg, 0_deg}},
-    {21, {0_deg, 18.55_deg , 21.00_deg, 0_deg}},
-    {22, {0_deg, 18.55_deg , 21.00_deg, 0_deg}},
+    {17, {0_deg, -21.2_deg , 21.00_deg, 0_deg}},
+    {18, {0_deg, -21.2_deg , 21.00_deg, 0_deg}},
+    {19, {0_deg, -21.2_deg , 21.00_deg, 0_deg}},
+    {20, {0_deg, -21.2_deg , 21.00_deg, 0_deg}},
+    {21, {0_deg, -21.2_deg , 21.00_deg, 0_deg}},
+    {22, {0_deg, -21.2_deg , 21.00_deg, 0_deg}},
 
     // red reef
     //    right cam   |        left cam
@@ -145,7 +145,7 @@ std::map<int, ReefPositions> tagToReefPositions = {
   photon::PhotonCameraSim _leftCamSim{&_leftCamera};
   photon::VisionSystemSim _visionSim{_leftCamName};
 
-  frc::Transform3d _leftBotToCam{{-270_mm,305_mm,220_mm},{0_deg,5_deg,45_deg}};
+  frc::Transform3d _leftBotToCam{{-270_mm,270_mm,220_mm},{0_deg,5_deg,45_deg}};
 
   photon::PhotonPoseEstimator _leftPoseEstimater{
     _tagLayout,
@@ -162,7 +162,7 @@ std::map<int, ReefPositions> tagToReefPositions = {
 
   photon::PhotonCameraSim _rightCamSim{&_rightCamera};
 
-  frc::Transform3d _rightBotToCam{{270_mm,305_mm,220_mm},{0_deg,5_deg,135_deg}};
+  frc::Transform3d _rightBotToCam{{270_mm,270_mm,220_mm},{0_deg,5_deg,135_deg}};
 
   photon::PhotonPoseEstimator _rightPoseEstimater{
     _tagLayout,

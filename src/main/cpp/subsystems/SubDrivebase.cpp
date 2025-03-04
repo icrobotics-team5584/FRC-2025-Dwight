@@ -174,9 +174,9 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
   auto maxJoystickAccel = Logger::Tune(configPath + "Max Joystick Accel", MAX_JOYSTICK_ACCEL);
   auto maxAngularJoystickAccel =
       Logger::Tune(configPath + "Max Joystick Angular Accel", MAX_ANGULAR_JOYSTICK_ACCEL);
-  auto translationRScaling =
-      Logger::Tune(configPath + "Translation R-value Scaling", TRANSLATION_R_SCALING);
-  auto rotationRScaling = Logger::Tune(configPath + "Rotation R-value Scaling", ROTATION_R_SCALING);
+  auto translationScaling =
+      Logger::Tune(configPath + "Translation Scaling", TRANSLATION_SCALING);
+  auto rotationScaling = Logger::Tune(configPath + "Rotation Scaling", ROTATION_SCALING);
 
   // Recreate slew rate limiters if limits have changed
   if (maxJoystickAccel != _tunedMaxJoystickAccel) {
@@ -197,7 +197,7 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
   // Convert cartesian (x, y) translation stick coordinates to polar (R, theta) and scale R-value
   double rawTranslationR = std::min(1.0, sqrt(pow(rawTranslationX, 2) + pow(rawTranslationY, 2)));
   double translationTheta = atan2(rawTranslationY, rawTranslationX);
-  double scaledTranslationR = pow(rawTranslationR, translationRScaling);
+  double scaledTranslationR = pow(rawTranslationR, translationScaling);
 
   // Convert polar coordinates (with scaled R-value) back to cartesian; scale rotation as well
   double scaledTranslationY = scaledTranslationR * sin(translationTheta);
@@ -205,9 +205,9 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
 
   double scaledRotation;
   if (rawRotation >= 0) {
-    scaledRotation = pow(rawRotation, rotationRScaling);
+    scaledRotation = pow(rawRotation, rotationScaling);
   } else {
-    scaledRotation = std::copysign(pow(abs(rawRotation), rotationRScaling), rawRotation);
+    scaledRotation = std::copysign(pow(abs(rawRotation), rotationScaling), rawRotation);
   }
 
   // Apply joystick rate limits and calculate speed
@@ -222,7 +222,7 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
   frc::SmartDashboard::PutNumber(
       "Drivebase/Joystick Scaling/translationTheta (degrees)",
       translationTheta *
-          (180 / 3.141592653589793238463));  // Multiply by 180/pi to convert radians to degrees
+          (180 / math::pi));  // Multiply by 180/pi to convert radians to degrees
   frc::SmartDashboard::PutNumber("Drivebase/Joystick Scaling/scaledTranslationR",
                                  scaledTranslationR);
   frc::SmartDashboard::PutNumber("Drivebase/Joystick Scaling/scaledTranslationY",
@@ -255,7 +255,24 @@ frc2::CommandPtr SubDrivebase::GyroCoralLeftStationAlign(frc2::CommandXboxContro
 }
 
 frc2::CommandPtr SubDrivebase::JoystickDrive(frc2::CommandXboxController& controller) {
-  return Drive([this, &controller] { return CalcJoystickSpeeds(controller); }, true);
+  return frc2::cmd::RunOnce([this] {
+    frc::SmartDashboard::PutBoolean("Drivebase/Normal Drive", true);
+  }).AndThen(Drive([this, &controller] { return CalcJoystickSpeeds(controller); }, true)).FinallyDo([this] {
+    frc::SmartDashboard::PutBoolean("Drivebase/Normal Drive", false);
+  });
+}
+
+frc2::CommandPtr SubDrivebase::JoystickDriveSlow(frc2::CommandXboxController& controller) {
+  return frc2::cmd::RunOnce([this] {
+    frc::SmartDashboard::PutBoolean("Drivebase/Slow Drive", true);
+  }).AndThen(Drive([this, &controller] {
+    auto speeds = CalcJoystickSpeeds(controller);
+    speeds.vx = std::clamp(speeds.vx, -2.5_mps, 2.5_mps);
+    speeds.vy = std::clamp(speeds.vy, -2.5_mps, 2.5_mps);
+    return frc::ChassisSpeeds{speeds.vx, speeds.vy, speeds.omega};
+  }, true)).FinallyDo([this] {
+    frc::SmartDashboard::PutBoolean("Drivebase/Slow Drive", false);
+  });
 }
 
 frc2::CommandPtr SubDrivebase::RobotCentricDrive(frc2::CommandXboxController& controller) {
@@ -265,8 +282,7 @@ frc2::CommandPtr SubDrivebase::RobotCentricDrive(frc2::CommandXboxController& co
         std::swap(speeds.vx, speeds.vy);
 
         return speeds;
-      },
-      false)};
+      }, false)};
 }
 
 frc2::CommandPtr SubDrivebase::Drive(std::function<frc::ChassisSpeeds()> speeds,
@@ -348,7 +364,7 @@ frc::Rotation2d SubDrivebase::GetGyroAngle() {
   return _gyro.GetRotation2d();
 }
 
-frc::Rotation2d SubDrivebase::GetAllianceRelativeGyroAngle(){
+frc::Rotation2d SubDrivebase::GetAllianceRelativeGyroAngle() {
   auto alliance = frc::DriverStation::GetAlliance();
   if (alliance.value_or(frc::DriverStation::Alliance::kBlue) ==
       frc::DriverStation::Alliance::kBlue) {
@@ -388,7 +404,6 @@ void SubDrivebase::UpdateOdometry() {
   }
 
   _fieldDisplay.SetRobotPose(_poseEstimator.GetEstimatedPosition());
-
 }
 
 frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
@@ -475,11 +490,11 @@ void SubDrivebase::SetPose(frc::Pose2d pose) {
   auto br = _backRight.GetPosition();
 
   auto alliance = frc::DriverStation::GetAlliance();
-  if (alliance.value_or(frc::DriverStation::Alliance::kBlue) == frc::DriverStation::Alliance::kBlue) {
-    ResetGyroHeading(pose.Rotation().Degrees()); 
-  }
-  else {
-    ResetGyroHeading(pose.Rotation().Degrees() - 180_deg); 
+  if (alliance.value_or(frc::DriverStation::Alliance::kBlue) ==
+      frc::DriverStation::Alliance::kBlue) {
+    ResetGyroHeading(pose.Rotation().Degrees());
+  } else {
+    ResetGyroHeading(pose.Rotation().Degrees() - 180_deg);
   }
   _poseEstimator.ResetPosition(pose.Rotation().Degrees(), {fl, fr, bl, br}, pose);
 }
@@ -510,7 +525,7 @@ void SubDrivebase::DisplayTrajectory(std::string name, frc::Trajectory trajector
 }
 
 void SubDrivebase::AddVisionMeasurement(frc::Pose2d pose, units::second_t timeStamp, wpi::array<double,3> dev) {
-  _poseEstimator.AddVisionMeasurement(frc::Pose2d{pose.X(), pose.Y(), GetPose().Rotation()}, timeStamp, dev);
+  _poseEstimator.AddVisionMeasurement(frc::Pose2d{pose.X(), pose.Y(), pose.Rotation()}, timeStamp, dev);
 }
 
 void SubDrivebase::SetBrakeMode(bool mode) {

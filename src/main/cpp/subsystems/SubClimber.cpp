@@ -13,7 +13,7 @@ SubClimber::SubClimber() {
   _climberMotorConfig.encoder.PositionConversionFactor(1 / GEAR_RATIO);
   _climberMotorConfig.encoder.VelocityConversionFactor(GEAR_RATIO / 60.0);
   _climberMotorConfig.closedLoop.Pid(P, I, D, rev::spark::ClosedLoopSlot::kSlot0);
-  _climberMotorConfig.closedLoop.MinOutput(-0.5);  // limits climb speed
+  //_climberMotorConfig.closedLoop.MinOutput(-0.5);  // limits climb speed
   _climberMotorConfig.Inverted(true).SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
   auto err = _climberMotor.AdjustConfig(_climberMotorConfig);
   frc::SmartDashboard::PutNumber("Climber/config set err", (int)err);
@@ -59,6 +59,12 @@ bool SubClimber::IsAtTarget() {
   } else {
     return false;
   }
+}
+
+bool SubClimber::IsOut() {
+  if (_hasReset == false) {return false;}
+  auto errorAngle = _climberMotor.GetPosition() - STOW_TURNS;
+  return errorAngle < -5_deg || errorAngle > 5_deg;
 }
 
 // Auto climber reset by bringing Climber to zero position then reset
