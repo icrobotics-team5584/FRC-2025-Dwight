@@ -18,6 +18,7 @@ using namespace frc2::cmd;
  * @param side align to left: 1, align to right: 2
  * @return A command that will align to the tag when executed.* 3.500_m, 3.870
  */
+
 frc2::CommandPtr YAlignWithTarget(SubVision::Side side) 
 {
   static frc::Pose2d targetPose;
@@ -31,9 +32,10 @@ frc2::CommandPtr YAlignWithTarget(SubVision::Side side)
             return speeds;
           },
           true)
-      .AlongWith(Run(
-          [] { frc::SmartDashboard::PutNumber("Drivebase/targetpose", targetPose.X().value()); }))
-      .Until([] { return SubDrivebase::GetInstance().IsAtPose(targetPose); })
+      .AlongWith(Run([]{ frc::SmartDashboard::PutNumber("Drivebase/targetpose", targetPose.X().value()); }))
+      .Until([] {
+        return SubDrivebase::GetInstance().IsAtPose(targetPose);
+      })
       .AndThen(SubDrivebase::GetInstance().Drive(
           [] { return frc::ChassisSpeeds{0_mps, 0.15_mps, 0_deg_per_s}; }, false));
 }
