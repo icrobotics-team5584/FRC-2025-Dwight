@@ -3,32 +3,22 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "RobotContainer.h"
-
 #include <frc2/command/Commands.h>
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 #include <pathplanner/lib/auto/NamedCommands.h>
 #include "subsystems/SubDrivebase.h"
 #include "subsystems/SubClimber.h"
-
 #include "subsystems/SubVision.h"
 #include "commands/VisionCommand.h"
 #include "commands/DriveCommands.h"
 #include "commands/AutonCommands.h"
-
+#include "commands/GamePieceCommands.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/Filesystem.h>
 #include <wpinet/WebServer.h>
-
-#include "subsystems/SubDrivebase.h"
 #include "subsystems/SubElevator.h"
-#include "subsystems/SubClimber.h"
-#include "subsystems/SubVision.h"
 #include "subsystems/SubEndEffector.h"
 #include "subsystems/SubFunnel.h"
-
-#include "commands/GamePieceCommands.h"
-#include "commands/DriveCommands.h"
-#include "commands/VisionCommand.h"
 
 RobotContainer::RobotContainer() {
   wpi::WebServer::GetInstance().Start(5800, frc::filesystem::GetDeployDirectory());
