@@ -75,12 +75,12 @@ void RobotContainer::ConfigureBindings() {
   //   [this] { _cameraStream.SetPath("/dev/video1"); }, //Toggle to second camera (climb cam)
   //   [this] { _cameraStream.SetPath("/dev/video0"); } //Toggle to first camera (drive cam)
   // ));
-  _driverController.X().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
+  _driverController.A().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
-  _driverController.A().WhileTrue(cmd::RemoveAlgaeLow());
-  _driverController.B().WhileTrue(cmd::RemoveAlgaeHigh());
-  _driverController.RightTrigger().WhileTrue(cmd::AlignAndShoot(SubVision::Right));
-  _driverController.LeftTrigger().WhileTrue(cmd::AlignAndShoot(SubVision::Left));
+  _driverController.X().WhileTrue(SubDrivebase::GetInstance().GyroCoralLeftStationAlign(_driverController));
+  _driverController.B().WhileTrue(SubDrivebase::GetInstance().GyroCoralRightStationAlign(_driverController)); 
+  _driverController.RightTrigger().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Right));
+  _driverController.LeftTrigger().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Left));
   _driverController.LeftBumper().WhileTrue(cmd::IntakeFromSource());
   _driverController.RightBumper().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
 
