@@ -11,7 +11,9 @@ frc2::CommandPtr ClimbUpSequence(bool force) {
   return SubElevator::GetInstance()
       .CmdSetLatch()
       .AndThen(frc2::cmd::WaitUntil([] { return SubElevator::GetInstance().IsAtTarget(); }))
-      .AndThen(SubClimber::GetInstance().ReadyClimber().AlongWith(SetElevatorClimb(force)))
+      .AndThen(SubClimber::GetInstance().ReadyClimber())
+      .AndThen(frc2::cmd::Wait(1_s)) // time for the latch to deploy
+      .AndThen(SetElevatorClimb(true)) // Always force this, because the climber is known to be out
       .OnlyIf([force] { return (force || (SubEndEffector::GetInstance().IsCoralSecure())); });
 }
 

@@ -74,8 +74,8 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr units::meter_t _ALGAE_LOW_HEIGHT = 0.78_m;
   static constexpr units::meter_t _ALGAE_HIGH_HEIGHT = 1.242_m;
   static constexpr units::meter_t _SOURCE_HEIGHT = 0.01_m;
-  static constexpr units::meter_t _CLIMB_HEIGHT = 0.782_m;
-  static constexpr units::meter_t _CLEAR_LATCH_HEIGHT = 0.863_m;
+  static constexpr units::meter_t _CLIMB_HEIGHT = 0.8288_m;
+  static constexpr units::meter_t _CLEAR_LATCH_HEIGHT = 0.95_m;
 
  private:
   ctre::phoenix6::configs::TalonFXConfiguration _motorConfig{};
