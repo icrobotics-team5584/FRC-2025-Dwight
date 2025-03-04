@@ -28,4 +28,15 @@ frc2::CommandPtr ToggleBrakeCoast() {
       .IgnoringDisable(true)
       .Until([] { return frc::DriverStation::IsEnabled(); });
 }
+
+frc2::CommandPtr TeleopDrive(frc2::CommandXboxController& controller) {
+  return SubDrivebase::GetInstance().Drive([&controller] {
+    auto speeds = SubDrivebase::GetInstance().CalcJoystickSpeeds(controller);
+    if (SubElevator::GetInstance().IsAboveSourceHeight()) {
+      speeds.vx = std::clamp(speeds.vx, -2.5_mps, 2.5_mps);
+      speeds.vy = std::clamp(speeds.vy, -2.5_mps, 2.5_mps);
+    }
+    return frc::ChassisSpeeds{speeds.vx, speeds.vy, speeds.omega};
+  }, true);
+}
 }  // namespace cmd
