@@ -110,12 +110,12 @@ public:
 
     // red reef
     //    right cam   |        left cam
-    { 6, {0_deg, 0_deg, 11.4_deg, -8.300_deg}},
-    { 7, {0_deg, 0_deg, 11.4_deg, -8.300_deg}},
-    { 8, {0_deg, 0_deg, 11.4_deg, -8.300_deg}},
-    { 9, {0_deg, 0_deg, 11.4_deg, -8.300_deg}},
-    {10, {0_deg, 0_deg, 11.4_deg, -8.300_deg}},
-    {11, {0_deg, 0_deg, 11.4_deg, -8.300_deg}},
+    { 6, {0_deg, -21.2_deg , 21.00_deg, 0_deg}},
+    { 7, {0_deg, -21.2_deg , 21.00_deg, 0_deg}},
+    { 8, {0_deg, -21.2_deg , 21.00_deg, 0_deg}},
+    { 9, {0_deg, -21.2_deg , 21.00_deg, 0_deg}},
+    {10, {0_deg, -21.2_deg , 21.00_deg, 0_deg}},
+    {11, {0_deg, -21.2_deg , 21.00_deg, 0_deg}},
 
 };
 

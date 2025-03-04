@@ -90,7 +90,6 @@ frc2::CommandPtr SubClimber::ClimberResetCheck() {
       if (frc::RobotBase::IsSimulation() == true) {
         _hasReset = true;
       }
-
     }).Until([this] { return _hasReset; }));
   // clang-format on
 }

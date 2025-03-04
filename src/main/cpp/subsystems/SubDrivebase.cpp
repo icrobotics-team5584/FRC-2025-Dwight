@@ -240,25 +240,36 @@ frc::ChassisSpeeds SubDrivebase::CalcJoystickSpeeds(frc2::CommandXboxController&
   return frc::ChassisSpeeds{forwardSpeed, sidewaysSpeed, rotationSpeed};
 }
 
+frc2::CommandPtr SubDrivebase::GyroCoralRightStationAlign(frc2::CommandXboxController& controller) {
+  return Drive([this, &controller]{
+    units::angle::degree_t gyro_angle = frc::InputModulus(GetGyroAngle().Degrees(), -180_deg, 180_deg);
+    frc::ChassisSpeeds joystick_speeds = CalcJoystickSpeeds(controller);
+    units::turns_per_second_t rotation_speeds = CalcRotateSpeed(36_deg + gyro_angle);
+    return frc::ChassisSpeeds(joystick_speeds.vx, joystick_speeds.vy, rotation_speeds);
+  }, true);
+}
+
+frc2::CommandPtr SubDrivebase::GyroCoralLeftStationAlign(frc2::CommandXboxController& controller) {
+  return Drive([this, &controller]{
+    units::angle::degree_t gyro_angle = frc::InputModulus(GetGyroAngle().Degrees(), -180_deg, 180_deg);
+    frc::ChassisSpeeds joystick_speeds = CalcJoystickSpeeds(controller);
+    units::turns_per_second_t rotation_speeds = CalcRotateSpeed(144_deg + gyro_angle);
+    return frc::ChassisSpeeds(joystick_speeds.vx, joystick_speeds.vy, rotation_speeds);
+
+  }, true);
+}
+
 frc2::CommandPtr SubDrivebase::JoystickDrive(frc2::CommandXboxController& controller) {
-  return frc2::cmd::RunOnce([this] {
-    frc::SmartDashboard::PutBoolean("Drivebase/Normal Drive", true);
-  }).AndThen(Drive([this, &controller] { return CalcJoystickSpeeds(controller); }, true)).FinallyDo([this] {
-    frc::SmartDashboard::PutBoolean("Drivebase/Normal Drive", false);
-  });
+  return Drive([this, &controller] { return CalcJoystickSpeeds(controller); }, true);
 }
 
 frc2::CommandPtr SubDrivebase::JoystickDriveSlow(frc2::CommandXboxController& controller) {
-  return frc2::cmd::RunOnce([this] {
-    frc::SmartDashboard::PutBoolean("Drivebase/Slow Drive", true);
-  }).AndThen(Drive([this, &controller] {
+  return Drive([this, &controller] {
     auto speeds = CalcJoystickSpeeds(controller);
     speeds.vx = std::clamp(speeds.vx, -2.5_mps, 2.5_mps);
     speeds.vy = std::clamp(speeds.vy, -2.5_mps, 2.5_mps);
     return frc::ChassisSpeeds{speeds.vx, speeds.vy, speeds.omega};
-  }, true)).FinallyDo([this] {
-    frc::SmartDashboard::PutBoolean("Drivebase/Slow Drive", false);
-  });
+  }, true);
 }
 
 frc2::CommandPtr SubDrivebase::RobotCentricDrive(frc2::CommandXboxController& controller) {
