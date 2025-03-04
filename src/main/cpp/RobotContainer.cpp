@@ -85,7 +85,6 @@ void RobotContainer::ConfigureBindings() {
 
   // Triggers
   SubDrivebase::GetInstance().CheckCoastButton().ToggleOnTrue(cmd::ToggleBrakeCoast());
-  SubDrivebase::GetInstance().IsTipping().OnTrue(SubElevator::GetInstance().CmdSetSource());
   (SubDrivebase::GetInstance().IsTipping() && !SubClimber::GetInstance().IsClimbing())
       .OnTrue(SubElevator::GetInstance().CmdSetSource());
 
