@@ -86,10 +86,7 @@ void RobotContainer::ConfigureBindings() {
 
   // Triggers
   SubDrivebase::GetInstance().CheckCoastButton().ToggleOnTrue(cmd::ToggleBrakeCoast());
-  SubElevator::GetInstance().ElevatorNotStowed().WhileTrue(SubDrivebase::GetInstance().JoystickDriveSlow(_driverController));
-  SubElevator::GetInstance().ElevatorNotStowed().OnChange(frc2::cmd::RunOnce([this] {
-    frc::SmartDashboard::PutBoolean("Elevator Not Stowed", SubElevator::GetInstance().ElevatorNotStowed().Get());
-  }));
+  SubDrivebase::GetInstance().IsTipping().OnTrue(SubElevator::GetInstance().CmdSetSource());
   (SubDrivebase::GetInstance().IsTipping() && !SubClimber::GetInstance().IsClimbing())
       .OnTrue(SubElevator::GetInstance().CmdSetSource());
 
