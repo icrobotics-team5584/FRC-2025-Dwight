@@ -28,7 +28,6 @@ RobotContainer::RobotContainer() {
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(cmd::TeleopDrive(_driverController));
   SubVision::GetInstance().SetDefaultCommand(cmd::AddVisionMeasurement());
-  SubEndEffector::GetInstance().SetDefaultCommand(SubEndEffector::GetInstance().KeepCoralInEndEffector());
 
   // Trigger Bindings
   ConfigureBindings();
@@ -81,7 +80,7 @@ void RobotContainer::ConfigureBindings() {
   _driverController.B().WhileTrue(SubDrivebase::GetInstance().GyroCoralRightStationAlign(_driverController)); 
   _driverController.RightTrigger().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Right));
   _driverController.LeftTrigger().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Left));
-  _driverController.LeftBumper().WhileTrue(cmd::IntakeFromSource());
+  _driverController.LeftBumper().WhileTrue(cmd::IntakeFromSource()).OnFalse(SubEndEffector::GetInstance().KeepCoralInEndEffector().WithTimeout(1_s));
   _driverController.RightBumper().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
 
   // Triggers
