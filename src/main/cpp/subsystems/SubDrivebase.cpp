@@ -443,13 +443,6 @@ units::turns_per_second_t SubDrivebase::CalcRotateSpeed(units::turn_t rotationEr
   return omega;
 }
 
-units::turns_per_second_t SubDrivebase::CalcRotateSpeed(units::turn_t rotationError) {
-  auto omega = _teleopRotationController.Calculate(rotationError, 0_deg) * 1_rad_per_s;
-  omega = units::math::min(omega, MAX_ANGULAR_VELOCITY);
-  omega = units::math::max(omega, -MAX_ANGULAR_VELOCITY);
-  return omega;
-}
-
 bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
   auto currentPose = _poseEstimator.GetEstimatedPosition();
   auto rotError = currentPose.Rotation() - pose.Rotation();
