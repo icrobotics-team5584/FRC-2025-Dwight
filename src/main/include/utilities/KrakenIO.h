@@ -36,7 +36,7 @@ class KrakenIO : public SwerveIO {
 
     const double TURNING_GEAR_RATIO = 150.0 / 7.0;
     const double DRIVE_GEAR_RATIO = 6.75;  // L2 - Fast kit
-    const units::meter_t WHEEL_RADIUS = 0.0485554951_m;
+    const units::meter_t WHEEL_RADIUS = 0.0502044712_m;
     const units::meter_t WHEEL_CIRCUMFERENCE = 2 * std::numbers::pi * WHEEL_RADIUS;
 
     const double TURN_P = 60.0;

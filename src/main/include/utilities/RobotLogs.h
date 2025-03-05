@@ -17,6 +17,8 @@
 #include <units/temperature.h>
 #include <array>
 
+#include <frc2/command/CommandScheduler.h>
+
 namespace Logger {
 void LogFalcon(std::string name, ctre::phoenix6::hardware::TalonFX& talonFX);
 

@@ -10,6 +10,7 @@
 #include "subsystems/SubElevator.h"
 #include "subsystems/SubEndEffector.h"
 #include "utilities/RobotLogs.h"
+#include "iostream"
 namespace cmd {
 using namespace frc2::cmd;
 /**
@@ -17,6 +18,7 @@ using namespace frc2::cmd;
  * @param side align to left: 1, align to right: 2
  * @return A command that will align to the tag when executed.* 3.500_m, 3.870
  */
+
 frc2::CommandPtr YAlignWithTarget(SubVision::Side side) 
 {
   static frc::Pose2d targetPose;
@@ -48,13 +50,16 @@ frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
           units::degree_t tagAngle = SubVision::GetInstance().GetLastReefTagAngle();
           
           if (Logger::Tune("Vision/use dashbaord target", false)) {
-            goalAngle = Logger::Tune("Vision/Goal Angle", SubVision::GetInstance().GetReefAlignAngle(side));
+            goalAngle =
+                Logger::Tune("Vision/Goal Angle", SubVision::GetInstance().GetReefAlignAngle(side));
           } else {
-            goalAngle = SubVision::GetInstance().GetReefAlignAngle(side); // 16.45 for left reef face, 15.60_deg for front reef face (all left side so far) // 15.60,-20
+            goalAngle = SubVision::GetInstance().GetReefAlignAngle(
+                side);  // 16.45 for left reef face, 15.60_deg for front reef face (all left side so
+                        // far) // 15.60,-20
           }
           units::degree_t error = tagAngle - goalAngle;
           
-          units::meters_per_second_t overallVelocity = std::clamp(0.12_mps * error.value(),-0.3_mps,0.3_mps);
+          units::meters_per_second_t overallVelocity = std::clamp(0.16_mps * error.value(),-0.3_mps,0.3_mps);
           units::degree_t driveAngle = units::math::copysign(8_deg, error);
           
           // Calc x and y from known angle and hypotenuse length
@@ -66,7 +71,17 @@ frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
           Logger::Log("Vision/Goal Angle", goalAngle);
           Logger::Log("Vision/Target Pole", side == SubVision::Side::Left ? "Left":"Right");
           
-          return frc::ChassisSpeeds{xVel, yVel, 0_deg_per_s};
+          // rotation componet
+          frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(side,-1).Rotation();
+          using ds = frc::DriverStation;
+          if (ds::GetAlliance().value_or(ds::Alliance::kBlue) == ds::kRed) {
+            targetRotation = +180_deg;
+          };
+
+          units::angle::turn_t roterror = SubDrivebase::GetInstance().GetPose().Rotation().Degrees() - targetRotation.Degrees();
+          auto rotationSpeed = SubDrivebase::GetInstance().CalcRotateSpeed(roterror) / 5;
+
+          return frc::ChassisSpeeds{xVel, yVel, rotationSpeed};
           
         } else {
           frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(side,-1).Rotation();
@@ -158,25 +173,39 @@ frc2::CommandPtr AlignAndShoot(SubVision::Side side){
 frc2::CommandPtr AutoShootIfAligned(SubVision::Side side) {
   return Sequence(
     WaitUntil([side] {
-     units::degree_t goalAngle = SubVision::GetInstance().GetReefAlignAngle(side);
-     units::degree_t tagAngle = SubVision::GetInstance().GetLastReefTagAngle();
-     Logger::Log("AutoShoot/errorangle", (goalAngle-tagAngle).value());
-     double tolerance = Logger::Tune("AutoShoot/autoshootTolerance", 0.2);
-     if (tagAngle < goalAngle + tolerance*1_deg && tagAngle > goalAngle - tolerance*1_deg) {
-       return true;
-     }
+      units::degree_t goalAngle = SubVision::GetInstance().GetReefAlignAngle(side);
+      units::degree_t tagAngle = SubVision::GetInstance().GetLastReefTagAngle();
+      double visionTolerance = Logger::Tune("AutoShoot/AutoShootVisionTolerance", 0.5);
+      double drivebaseTolerance = Logger::Tune("AutoShoot/AutoShootDrivebaseTolerance", 0.01);
+      Logger::Log("AutoShoot/errorangle", (goalAngle-tagAngle).value());
      
-     else {
-     return false;
-     }
-      }),
-    WaitUntil([] { 
+      bool inTagAngleRange = false; 
+      bool isAtTargetHeight = false;
+      bool isStill = false;
+
+      // vision tag angles 
+      if (tagAngle < goalAngle + visionTolerance*1_deg && tagAngle > goalAngle - visionTolerance*1_deg) {
+        inTagAngleRange = true;
+      }
+
+      // height target 
       if (SubElevator::GetInstance().GetTargetHeight() != SubElevator::_SOURCE_HEIGHT){
-       return SubElevator::GetInstance().IsAtTarget();
+        isAtTargetHeight =  SubElevator::GetInstance().IsAtTarget();
+      }
+
+      // is still
+      if (SubDrivebase::GetInstance().GetVelocity() < drivebaseTolerance *1_mps) {
+        isStill = true;
+      }
+      
+      if (isStill && isAtTargetHeight && inTagAngleRange) {
+        return true;
       }
       return false;
-    }),
+      }),
     SubEndEffector::GetInstance().ScoreCoral()
   );
 }
+
+
 }  // namespace cmd
