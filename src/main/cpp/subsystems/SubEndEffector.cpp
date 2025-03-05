@@ -46,7 +46,7 @@ frc2::CommandPtr SubEndEffector::Shoot() {
 }
 
 frc2::CommandPtr SubEndEffector::RemoveAlgae(){
-    return StartEnd([this] {_endEffectorMotor.Set(-0.7);}, [this] {_endEffectorMotor.Set(0);});
+    return StartEnd([this] {_endEffectorMotor.Set(-1.0);}, [this] {_endEffectorMotor.Set(0);});
 }
 
 frc2::CommandPtr SubEndEffector::StopMotor() {
