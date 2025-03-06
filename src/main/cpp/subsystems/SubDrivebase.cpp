@@ -11,6 +11,8 @@
 #include <pathplanner/lib/auto/AutoBuilder.h>
 #include <pathplanner/lib/config/RobotConfig.h>
 #include "utilities/RobotLogs.h"
+#include "RobotContainer.h"
+#include <frc/geometry/Translation2d.h>
 
 SubDrivebase::SubDrivebase() {
   frc::SmartDashboard::PutData("Drivebase/Teleop PID/Rotation Controller",
@@ -24,10 +26,28 @@ SubDrivebase::SubDrivebase() {
   using namespace pathplanner;
   AutoBuilder::configure(
       // Robot pose supplier
-      [this]() { return GetPose(); },
+      [this]() { 
+        if (frc::SmartDashboard::GetString("Chosen Side/active", "Left Side") == "Left Side") {
+            return GetPose();
+          } else {
+            auto pose = GetPose();
+            frc::Pose2d true_pose = {pose.Translation(), pose.Rotation().RotateBy(180_deg) };
+            return true_pose;
+        }
+      },
 
       // Method to reset odometry (will be called if your auto has a starting pose)
-      [this](frc::Pose2d pose) { SetPose(pose); },
+      [this](frc::Pose2d pose) { 
+        Logger::Tune("Drivebase/ResetAutoStartingPose", true); 
+        if (frc::SmartDashboard::GetBoolean("DriveBase/ResetAutoStartingPose", true)) {
+          if (frc::SmartDashboard::GetString("Chosen Side/active", "Left Side") == "Left Side") {
+            SetPose(pose);
+          } else {
+            pose = pose.RotateBy(180_deg);
+            SetPose(pose);
+          }
+        }
+      }, 
 
       // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
       [this]() { return GetRobotRelativeSpeeds(); },
@@ -37,6 +57,7 @@ SubDrivebase::SubDrivebase() {
       [this](auto speeds, auto feedforwards) {
         double _voltageFFscaler = 2.0;  // Logger::Tune("drivebase/volatageFFscaler", 1.0); // this
                                         // a scaler for the voltageFF
+        if (!(frc::SmartDashboard::GetString("Chosen Side/active", "Left Side") == "Left Side")) { _voltageFFscaler *= -1.0; }
         if (feedforwards.robotRelativeForcesX.size() == 4 &&
             feedforwards.robotRelativeForcesY.size() == 4) {
           std::array<units::newton_t, 4> xForces = {
@@ -49,9 +70,18 @@ SubDrivebase::SubDrivebase() {
               (feedforwards.robotRelativeForcesY[1] / _voltageFFscaler),
               (feedforwards.robotRelativeForcesY[2] / _voltageFFscaler),
               (feedforwards.robotRelativeForcesY[3] / _voltageFFscaler)};
-          Drive(speeds.vx, speeds.vy, speeds.omega, false, xForces, yForces);
+
+          if (frc::SmartDashboard::GetString("Chosen Side/active", "Left Side") == "Left Side") {
+            Drive(speeds.vx, speeds.vy, speeds.omega, false, xForces, yForces);
+          } else {
+            Drive(-speeds.vx, -speeds.vy, -speeds.omega, false, xForces, yForces);
+          }
         } else {
-          Drive(speeds.vx, speeds.vy, speeds.omega, false);
+          if (frc::SmartDashboard::GetString("Chosen Side/active", "Left Side") == "Left Side") {
+            Drive(speeds.vx, speeds.vy, speeds.omega, false);
+          } else {
+            Drive(-speeds.vx, -speeds.vy, -speeds.omega, false);
+          }
         }
       },
       // PID Feedback controller for translation and rotation
@@ -489,6 +519,7 @@ void SubDrivebase::SetPose(frc::Pose2d pose) {
     ResetGyroHeading(pose.Rotation().Degrees() - 180_deg);
   }
   _poseEstimator.ResetPosition(pose.Rotation().Degrees(), {fl, fr, bl, br}, pose);
+  _simPoseEstimator.ResetPosition(pose.Rotation().Degrees(), {fl, fr, bl, br}, pose);
 }
 
 void SubDrivebase::DisplayPose(std::string label, frc::Pose2d pose) {

@@ -29,6 +29,7 @@ class RobotContainer {
   frc2::CommandXboxController _tuningController{5};
 
   frc::SendableChooser<std::string> _autoChooser;
+  frc::SendableChooser<bool> _sideChooser;
   
   cs::UsbCamera _cameraStream; //Camera object
 };

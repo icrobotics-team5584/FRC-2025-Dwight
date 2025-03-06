@@ -45,7 +45,7 @@ void KrakenIO::SetAngle(units::turn_t angle) {
 void KrakenIO::SendSensorsToDash() {
     std::string driveMotorName = "swerve/drive motor/" + std::to_string(_canDriveMotor.GetDeviceID());
     std::string turnMotorName = "swerve/turn motor/" + std::to_string(_canTurnMotor.GetDeviceID());
-
+    
     frc::SmartDashboard::PutNumber(driveMotorName + "Target velocity", _canDriveMotor.GetClosedLoopReference().GetValue());
     frc::SmartDashboard::PutNumber(driveMotorName + "velocity", _canDriveMotor.GetVelocity().GetValue().value());
     frc::SmartDashboard::PutNumber(driveMotorName + "voltage", _canDriveMotor.GetMotorVoltage().GetValue().value());
