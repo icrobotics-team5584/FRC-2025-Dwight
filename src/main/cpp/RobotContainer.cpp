@@ -78,7 +78,7 @@ RobotContainer::RobotContainer() {
   // _autoChooser.AddOption("SpinInSpot-360-Slow", "SpinInSpot360-Slow");
 
   frc::SmartDashboard::PutData("Chosen Auton", &_autoChooser);
-  frc::SmartDashboard::PutData("Chosen Side", &_sideChooser);
+  //frc::SmartDashboard::PutData("Chosen Side", &_sideChooser);
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
