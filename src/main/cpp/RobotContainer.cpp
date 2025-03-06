@@ -55,6 +55,7 @@ RobotContainer::RobotContainer() {
 
   // main autons
   _autoChooser.AddOption("Default-Left", "Default-Score3L4-Vision");
+  _autoChooser.AddOption("Default-Right", "Right-Score3L4-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreLeft", "Default-Score1L4-G-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreRight", "Default-Score1L4-H-Vision");
 
@@ -77,7 +78,7 @@ RobotContainer::RobotContainer() {
   // _autoChooser.AddOption("SpinInSpot-360-Slow", "SpinInSpot360-Slow");
 
   frc::SmartDashboard::PutData("Chosen Auton", &_autoChooser);
-  frc::SmartDashboard::PutData("Chosen Side", &_sideChooser);
+  //frc::SmartDashboard::PutData("Chosen Side", &_sideChooser);
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
