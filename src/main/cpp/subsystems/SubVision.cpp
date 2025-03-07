@@ -62,6 +62,8 @@ void SubVision::UpdateVision() {
   auto resultCount = results.size();
   if (resultCount > 0) {
     for (auto result : results) {
+      const auto& myReef =
+      (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) ? redReef : blueReef;
       _leftEstPose = _leftPoseEstimater.Update(result);
 
       for (const auto& target : result.targets) {

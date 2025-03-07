@@ -86,7 +86,7 @@ frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   auto _autoSelected = _autoChooser.GetSelected();
   bool _sideSelected = _sideChooser.GetSelected();
 
-  return pathplanner::PathPlannerAuto(_autoSelected, _sideSelected).ToPtr();
+  return pathplanner::PathPlannerAuto(_autoSelected).ToPtr();
 }
 
 void RobotContainer::ConfigureBindings() {
@@ -103,7 +103,7 @@ void RobotContainer::ConfigureBindings() {
   _driverController.B().WhileTrue(SubDrivebase::GetInstance().GyroCoralRightStationAlign(_driverController)); 
   _driverController.RightBumper().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Right));
   _driverController.LeftBumper().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Left));
-  _driverController.LeftTrigger().WhileTrue(cmd::IntakeFromSource()).OnFalse(SubEndEffector::GetInstance().KeepCoralInEndEffector().WithTimeout(1_s));
+  _driverController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
   _driverController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
 
   // Triggers
