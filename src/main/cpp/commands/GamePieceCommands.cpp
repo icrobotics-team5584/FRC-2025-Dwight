@@ -17,6 +17,13 @@ frc2::CommandPtr ClimbUpSequence(bool force) {
       .OnlyIf([force] { return (force || (SubEndEffector::GetInstance().IsCoralSecure())); });
 }
 
+frc2::CommandPtr ClimbHalfwaySequence(bool force) {
+  return SetElevatorClimb(force)
+      .AndThen(frc2::cmd::WaitUntil([] { return SubElevator::GetInstance().IsAtTarget(); }))
+      .AndThen(SubClimber::GetInstance().ClimbToHalfway())
+      .OnlyIf([force] { return (force || (SubEndEffector::GetInstance().IsCoralSecure())); });
+}
+
 frc2::CommandPtr ClimbDownSequence(bool force) {
   return SetElevatorClimb(force)
       .AndThen(frc2::cmd::WaitUntil([] { return SubElevator::GetInstance().IsAtTarget(); }))

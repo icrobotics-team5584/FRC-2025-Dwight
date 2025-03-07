@@ -128,8 +128,8 @@ void RobotContainer::ConfigureBindings() {
   _operatorController.AxisLessThan(frc::XboxController::Axis::kLeftY, -0.2)
       .WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
 
-  (!_operatorController.Back() && _operatorController.A()).OnTrue(cmd::SetElevatorL1());  // Set L1 normally
-  (_operatorController.Back() && _operatorController.A()).OnTrue(cmd::SetElevatorL1(true));  // Force set L1
+  (!_operatorController.Back() && _operatorController.A()).OnTrue(cmd::ClimbHalfwaySequence());  // Climb to halfway
+  (_operatorController.Back() && _operatorController.A()).OnTrue(cmd::ClimbHalfwaySequence(true));  // Force climb halfway
 
   (!_operatorController.Back() && _operatorController.X()).OnTrue(cmd::SetElevatorL2());  // Set L2 normally
   (_operatorController.Back() && _operatorController.X()).OnTrue(cmd::SetElevatorL2(true));  // Force set L2
