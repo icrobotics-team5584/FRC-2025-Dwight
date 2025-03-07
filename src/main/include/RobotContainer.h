@@ -9,12 +9,13 @@
 #include <frc2/command/button/CommandXboxController.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <cameraserver/CameraServer.h>
+#include <pathplanner/lib/commands/PathPlannerAuto.h>
 
 class RobotContainer {
  public:
   RobotContainer();
 
-  frc2::CommandPtr GetAutonomousCommand();
+  frc2::CommandPtr* GetAutonomousCommand();
   frc2::CommandPtr ControllerRumbleLeft(frc2::CommandXboxController& controller);
   frc2::CommandPtr ControllerRumbleRight(frc2::CommandXboxController& controller);
   frc2::CommandPtr ControllerRumble(frc2::CommandXboxController& controller);
@@ -32,4 +33,12 @@ class RobotContainer {
   frc::SendableChooser<bool> _sideChooser;
   
   cs::UsbCamera _cameraStream; //Camera object
+
+  frc2::CommandPtr defaultLeft = pathplanner::PathPlannerAuto("Default-Score3L4-Vision").ToPtr();
+  frc2::CommandPtr defaultRight = pathplanner::PathPlannerAuto("Right-Score3L4-Vision").ToPtr();
+  frc2::CommandPtr defaultMiddleScoreLeft = pathplanner::PathPlannerAuto("Default-Score1L4-G-Vision").ToPtr();
+  frc2::CommandPtr defaultMiddleScoreRight = pathplanner::PathPlannerAuto("Default-Score1L4-H-Vision").ToPtr();
+
+
+  //std::map
 };

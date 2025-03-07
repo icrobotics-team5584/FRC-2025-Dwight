@@ -58,7 +58,6 @@ RobotContainer::RobotContainer() {
   _autoChooser.AddOption("Default-Right", "Right-Score3L4-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreLeft", "Default-Score1L4-G-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreRight", "Default-Score1L4-H-Vision");
-
   // tuning autons
   // _autoChooser.AddOption("L-Shape", "L-Shape");
   // _autoChooser.AddOption("L-Shape-Slow", "L-Shape-Slow");
@@ -81,12 +80,23 @@ RobotContainer::RobotContainer() {
   //frc::SmartDashboard::PutData("Chosen Side", &_sideChooser);
 }
 
-frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
+frc2::CommandPtr* RobotContainer::GetAutonomousCommand() {
   // return pathplanner::PathPlannerAuto("test auto").ToPtr();
-  auto _autoSelected = _autoChooser.GetSelected();
-  bool _sideSelected = _sideChooser.GetSelected();
+  auto chosen = _autoChooser.GetSelected();
+  if (chosen == "Default-Score3L4-Vision") {
+    return &defaultLeft;
+  }
+  if (chosen == "Right-Score3L4-Vision") {
+    return &defaultRight;
+  }
+  if (chosen == "Default-Score1L4-G-Vision") {
+    return &defaultMiddleScoreLeft;
+  }
+  if (chosen == "Default-Score1L4-H-Vision") {
+    return &defaultMiddleScoreRight;
+  }
+  
 
-  return pathplanner::PathPlannerAuto(_autoSelected).ToPtr();
 }
 
 void RobotContainer::ConfigureBindings() {
