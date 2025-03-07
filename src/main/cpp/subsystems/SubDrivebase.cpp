@@ -509,10 +509,10 @@ frc2::Trigger SubDrivebase::CheckCoastButton() {
 
 frc2::Trigger SubDrivebase::IsTipping() {
   return frc2::Trigger{[this] {
-    if ((SubDrivebase::GetInstance().GetRoll() > 5_deg ||
-         SubDrivebase::GetInstance().GetRoll() < -5_deg) ||
-        (SubDrivebase::GetInstance().GetPitch() > 5_deg ||
-         SubDrivebase::GetInstance().GetPitch() < -5_deg)) {
+    if ((SubDrivebase::GetInstance().GetRoll() > 15_deg ||
+         SubDrivebase::GetInstance().GetRoll() < -15_deg) ||
+        (SubDrivebase::GetInstance().GetPitch() > 15_deg ||
+         SubDrivebase::GetInstance().GetPitch() < -15_deg)) {
       return true;
     } else {
       return false;

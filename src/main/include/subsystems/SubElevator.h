@@ -74,7 +74,7 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr units::meter_t _ALGAE_LOW_HEIGHT = 0.643_m;
   static constexpr units::meter_t _ALGAE_HIGH_HEIGHT = 1.087_m;
   static constexpr units::meter_t _SOURCE_HEIGHT = 0.01_m;
-  static constexpr units::meter_t _CLIMB_HEIGHT = 0.75_m;
+  static constexpr units::meter_t _CLIMB_HEIGHT = 0.763_m;
   static constexpr units::meter_t _CLEAR_LATCH_HEIGHT = 0.95_m;
 
  private:
