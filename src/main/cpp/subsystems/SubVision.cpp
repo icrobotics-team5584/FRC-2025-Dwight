@@ -192,12 +192,19 @@ double SubVision::GetDev(photon::EstimatedRobotPose pose) {
 bool SubVision::IsEstimateUsable(photon::EstimatedRobotPose pose) {
   units::meter_t distance = 0_m;
   auto tagCount = pose.targetsUsed.size();
+  bool hasMyTargets = false;
   if (pose.targetsUsed.size() == 0) {
     return 0;
   }
   for (auto target : pose.targetsUsed) {
+    const auto& myReef = (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) ? redReef : blueReef;
+    if (std::find(myReef.begin(), myReef.end(), target.GetFiducialId()) != myReef.end()) {
+      hasMyTargets = true;
+    }
     distance += target.GetBestCameraToTarget().Translation().Norm();
   }
   distance /= pose.targetsUsed.size();
-  return (distance < 0.7_m) || (tagCount > 1);
+
+
+  return ((distance < 0.7_m) || (tagCount > 1)) && hasMyTargets;
 }
