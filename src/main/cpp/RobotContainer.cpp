@@ -45,11 +45,6 @@ RobotContainer::RobotContainer() {
   // Trigger Bindings
   ConfigureBindings();
 
-  // sidechooser options 
-  _sideChooser.SetDefaultOption("Left Side", false);
-  _sideChooser.AddOption("Left Side", false);
-  _sideChooser.AddOption("Right Side", true);
-
   // AutoChooser options
   _autoChooser.SetDefaultOption("Default-Move-Forward-4m-0.1ms", "MoveForward-4M-0.1ms"); // safety option
 
@@ -58,6 +53,7 @@ RobotContainer::RobotContainer() {
   _autoChooser.AddOption("Default-Right", "Right-Score3L4-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreLeft", "Default-Score1L4-G-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreRight", "Default-Score1L4-H-Vision");
+
   // tuning autons
   // _autoChooser.AddOption("L-Shape", "L-Shape");
   // _autoChooser.AddOption("L-Shape-Slow", "L-Shape-Slow");
@@ -77,26 +73,31 @@ RobotContainer::RobotContainer() {
   // _autoChooser.AddOption("SpinInSpot-360-Slow", "SpinInSpot360-Slow");
 
   frc::SmartDashboard::PutData("Chosen Auton", &_autoChooser);
-  //frc::SmartDashboard::PutData("Chosen Side", &_sideChooser);
+
+  // Load all auton paths
+  defaultLeft = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score3L4-Vision").ToPtr());
+  defaultRight = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Right-Score3L4-Vision").ToPtr());
+  defaultMiddleScoreLeft = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score1L4-G-Vision").ToPtr());
+  defaultMiddleScoreRight = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score1L4-H-Vision").ToPtr());
+  moveForward = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("MoveForward-4M-0.1ms").ToPtr());
 }
 
-frc2::CommandPtr* RobotContainer::GetAutonomousCommand() {
+std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {
   // return pathplanner::PathPlannerAuto("test auto").ToPtr();
   auto chosen = _autoChooser.GetSelected();
   if (chosen == "Default-Score3L4-Vision") {
-    return &defaultLeft;
+    return defaultLeft;
   }
   if (chosen == "Right-Score3L4-Vision") {
-    return &defaultRight;
+    return defaultRight;
   }
   if (chosen == "Default-Score1L4-G-Vision") {
-    return &defaultMiddleScoreLeft;
+    return defaultMiddleScoreLeft;
   }
   if (chosen == "Default-Score1L4-H-Vision") {
-    return &defaultMiddleScoreRight;
+    return defaultMiddleScoreRight;
   }
-  
-
+  return moveForward;
 }
 
 void RobotContainer::ConfigureBindings() {

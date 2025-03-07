@@ -15,7 +15,7 @@ class RobotContainer {
  public:
   RobotContainer();
 
-  frc2::CommandPtr* GetAutonomousCommand();
+  std::shared_ptr<frc2::CommandPtr> GetAutonomousCommand();
   frc2::CommandPtr ControllerRumbleLeft(frc2::CommandXboxController& controller);
   frc2::CommandPtr ControllerRumbleRight(frc2::CommandXboxController& controller);
   frc2::CommandPtr ControllerRumble(frc2::CommandXboxController& controller);
@@ -34,11 +34,12 @@ class RobotContainer {
   
   cs::UsbCamera _cameraStream; //Camera object
 
-  frc2::CommandPtr defaultLeft = pathplanner::PathPlannerAuto("Default-Score3L4-Vision").ToPtr();
-  frc2::CommandPtr defaultRight = pathplanner::PathPlannerAuto("Right-Score3L4-Vision").ToPtr();
-  frc2::CommandPtr defaultMiddleScoreLeft = pathplanner::PathPlannerAuto("Default-Score1L4-G-Vision").ToPtr();
-  frc2::CommandPtr defaultMiddleScoreRight = pathplanner::PathPlannerAuto("Default-Score1L4-H-Vision").ToPtr();
-
+  //Auton paths
+  std::shared_ptr<frc2::CommandPtr> defaultLeft;
+  std::shared_ptr<frc2::CommandPtr> defaultRight;
+  std::shared_ptr<frc2::CommandPtr> defaultMiddleScoreLeft;
+  std::shared_ptr<frc2::CommandPtr> defaultMiddleScoreRight;
+  std::shared_ptr<frc2::CommandPtr> moveForward;
 
   //std::map
 };
