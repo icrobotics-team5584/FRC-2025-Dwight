@@ -4,11 +4,11 @@
  "type":"Swerve",
  "variables":{
   "expressions":{
-   "TestingAccel":{
-    "dimension":"LinAcc",
+   "LastStepSpeed":{
+    "dimension":"LinVel",
     "var":{
-     "exp":"1 m / s ^ 2",
-     "val":1.0
+     "exp":"3.5 m / s",
+     "val":3.5
     }
    },
    "TestingSpeed":{
@@ -17,21 +17,42 @@
      "exp":"3 m / s",
      "val":3.0
     }
+   },
+   "TestingAccel":{
+    "dimension":"LinAcc",
+    "var":{
+     "exp":"1 m / s ^ 2",
+     "val":1.0
+    }
    }
   },
   "poses":{
-   "ReefPoleL":{
+   "ReefPoleK":{
     "x":{
-     "exp":"3.72 m",
-     "val":3.72
+     "exp":"3.96 m",
+     "val":3.96
     },
     "y":{
-     "exp":"5.05 m",
-     "val":5.05
+     "exp":"5.19 m",
+     "val":5.19
     },
     "heading":{
      "exp":"210 deg",
      "val":3.665191429188092
+    }
+   },
+   "LeftStart":{
+    "x":{
+     "exp":"7.18711519241333 m",
+     "val":7.18711519241333
+    },
+    "y":{
+     "exp":"5.5 m",
+     "val":5.5
+    },
+    "heading":{
+     "exp":"1.57 rad",
+     "val":1.57
     }
    },
    "RightSource":{
@@ -48,32 +69,32 @@
      "val":5.759586531581287
     }
    },
-   "ReefPoleF":{
+   "RightStart":{
     "x":{
-     "exp":"5.213242053985596 m",
-     "val":5.213242053985596
+     "exp":"7.19 m",
+     "val":7.19
     },
     "y":{
-     "exp":"3.069976568222046 m",
-     "val":3.069976568222046
+     "exp":"2.5 m",
+     "val":2.5
     },
     "heading":{
-     "exp":"30 deg",
-     "val":0.5235987755982988
+     "exp":"90 deg",
+     "val":1.5707963267948966
     }
    },
-   "LeftStart":{
+   "ReefPoleC":{
     "x":{
-     "exp":"7.18711519241333 m",
-     "val":7.18711519241333
+     "exp":"3.75 m",
+     "val":3.75
     },
     "y":{
-     "exp":"5.5 m",
-     "val":5.5
+     "exp":"2.98 m",
+     "val":2.98
     },
     "heading":{
-     "exp":"1.57 rad",
-     "val":1.57
+     "exp":"330 deg",
+     "val":5.759586531581287
     }
    },
    "LeftSource":{
@@ -118,34 +139,6 @@
      "val":1.57
     }
    },
-   "MiddleStart":{
-    "x":{
-     "exp":"7.18711519241333 m",
-     "val":7.18711519241333
-    },
-    "y":{
-     "exp":"4 m",
-     "val":4.0
-    },
-    "heading":{
-     "exp":"1.57 rad",
-     "val":1.57
-    }
-   },
-   "RightStart":{
-    "x":{
-     "exp":"7.19 m",
-     "val":7.19
-    },
-    "y":{
-     "exp":"2.5 m",
-     "val":2.5
-    },
-    "heading":{
-     "exp":"90 deg",
-     "val":1.5707963267948966
-    }
-   },
    "ReefPoleJ":{
     "x":{
      "exp":"5 m",
@@ -174,32 +167,32 @@
      "val":5.759586531581287
     }
    },
-   "ReefPoleK":{
+   "ReefPoleL":{
     "x":{
-     "exp":"3.96 m",
-     "val":3.96
+     "exp":"3.72 m",
+     "val":3.72
     },
     "y":{
-     "exp":"5.19 m",
-     "val":5.19
+     "exp":"5.05 m",
+     "val":5.05
     },
     "heading":{
      "exp":"210 deg",
      "val":3.665191429188092
     }
    },
-   "ReefPoleC":{
+   "ReefPoleF":{
     "x":{
-     "exp":"3.75 m",
-     "val":3.75
+     "exp":"5.213242053985596 m",
+     "val":5.213242053985596
     },
     "y":{
-     "exp":"2.98 m",
-     "val":2.98
+     "exp":"3.069976568222046 m",
+     "val":3.069976568222046
     },
     "heading":{
-     "exp":"330 deg",
-     "val":5.759586531581287
+     "exp":"30 deg",
+     "val":0.5235987755982988
     }
    },
    "ReefPoleG":{
@@ -210,6 +203,20 @@
     "y":{
      "exp":"3.9 m",
      "val":3.9
+    },
+    "heading":{
+     "exp":"1.57 rad",
+     "val":1.57
+    }
+   },
+   "MiddleStart":{
+    "x":{
+     "exp":"7.18711519241333 m",
+     "val":7.18711519241333
+    },
+    "y":{
+     "exp":"4 m",
+     "val":4.0
     },
     "heading":{
      "exp":"1.57 rad",
