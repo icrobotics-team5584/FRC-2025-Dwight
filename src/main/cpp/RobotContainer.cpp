@@ -29,6 +29,7 @@ RobotContainer::RobotContainer() {
   pathplanner::NamedCommands::registerCommand("ScoreLeft-WithVision", cmd::ScoreWithVision(SubVision::Side::Left));
   pathplanner::NamedCommands::registerCommand("ScoreRight-WithVision", cmd::ScoreWithVision(SubVision::Side::Right));
   pathplanner::NamedCommands::registerCommand("ScoreLeft-WithPrescription", cmd::ScoreWithPrescription(SubVision::Side::Left));
+  pathplanner::NamedCommands::registerCommand("ScoringElevatorCleanUp", SubElevator::GetInstance().CmdSetSource());
   pathplanner::NamedCommands::registerCommand("ScoreLeft", cmd::Score(1));
   pathplanner::NamedCommands::registerCommand("ScoreRight", cmd::Score(2));
   pathplanner::NamedCommands::registerCommand("SetElevatorL4", SubElevator::GetInstance().CmdSetL4());
