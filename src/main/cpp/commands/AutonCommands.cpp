@@ -67,11 +67,7 @@ namespace cmd {
                     timer.Restart();
                 }
                 Logger::Log("EndEffector/ScoreWithVision/time elapsed without coral", timer.Get());
-                return timer.HasElapsed(0.5_s); }))
-            .AndThen(SubElevator::GetInstance().CmdSetClearHighAlgea())
-            .AndThen(SubEndEffector::GetInstance().RemoveAlgae()
-                .Until([]{ return SubElevator::GetInstance().IsAtTarget(); })
-            );
+                return timer.HasElapsed(0.5_s); }));
     }
 
     frc2::CommandPtr ScoreWithPrescription(SubVision::Side side) {
@@ -91,9 +87,6 @@ namespace cmd {
                 }
                 Logger::Log("EndEffector/ScoreWithVision/time elapsed without coral", timer.Get());
                 return timer.HasElapsed(0.5_s); }))
-            .AndThen(SubElevator::GetInstance().CmdSetSource())
-            .AndThen(SubEndEffector::GetInstance().RemoveAlgae()
-                .Until([]{ return SubElevator::GetInstance().IsAtTarget(); })
-            );
+            .AndThen(SubElevator::GetInstance().CmdSetSource());
     }
 }
