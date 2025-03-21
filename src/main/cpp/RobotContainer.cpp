@@ -47,7 +47,6 @@ RobotContainer::RobotContainer() {
 
   // AutoChooser options
   _autoChooser.SetDefaultOption("Default-Move-Forward-4m-0.1ms", "MoveForward-4M-0.1ms"); // safety option
-
   // main autons
   _autoChooser.AddOption("Default-Left", "Default-Score3L4-Vision");
   _autoChooser.AddOption("Default-Right", "Right-Score3L4-Vision");
