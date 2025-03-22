@@ -49,8 +49,8 @@ namespace cmd {
         return std::make_shared<pathplanner::PathPlannerPath>(path);
     }
 
-    std::shared_ptr<frc2::CommandPtr> GetTeleopPathCommand(std::string pathName, pathplanner::AutoBuilder autoBuilder) {
-        return std::make_shared<frc2::CommandPtr>(autoBuilder.followPath(GenerateTeleopPath()));
+    frc2::CommandPtr GetTeleopPathCommand(std::string pathName) {
+        return pathplanner::AutoBuilder::followPath(GenerateTeleopPath());
     }
     
     //  no vision
