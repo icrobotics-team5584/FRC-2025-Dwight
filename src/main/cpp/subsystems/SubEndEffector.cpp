@@ -5,15 +5,17 @@
 #include "subsystems/SubEndEffector.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 #include "utilities/ICSpark.h"
+#include "utilities/ICSparkConfig.h"
 #include "utilities/BotVars.h"
 
 
 
 SubEndEffector::SubEndEffector() {
-    rev::spark::SparkBaseConfig config;
-    config.Inverted(BotVars::Choose(true, false));
-    config.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
-    _endEffectorMotor.AdjustConfig(config);
+    ICSparkConfig config;
+    config.inverted = BotVars::Choose(true, false);
+    config.idleMode = rev::spark::SparkBaseConfig::IdleMode::kBrake;
+    config.smartCurrentStallLimit = 45_A;
+    _endEffectorMotor.OverwriteConfig(config);
     frc::SmartDashboard::PutData("EndEffector/motorData", &_endEffectorMotor);
 }
 

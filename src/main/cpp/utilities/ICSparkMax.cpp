@@ -1,8 +1,8 @@
 #include "utilities/ICSparkMax.h"
 
-ICSparkMax::ICSparkMax(int deviceID, units::ampere_t currentLimit)
+ICSparkMax::ICSparkMax(int deviceID)
     : SparkMax(deviceID, rev::spark::SparkLowLevel::MotorType::kBrushless),
-      ICSpark(this, GetEncoder(), SparkMax::configAccessor, currentLimit) {}
+      ICSpark(this, GetEncoder(), SparkMax::configAccessor) {}
 
 void ICSparkMax::Set(double speed) { ICSpark::SetDutyCycle(speed); }
 
@@ -14,6 +14,6 @@ double ICSparkMax::Get() const { return ICSpark::GetDutyCycle(); }
 
 void ICSparkMax::StopMotor() { ICSpark::StopMotor(); }
 
-void ICSparkMax::UseAlternateEncoder(int countsPerRev) {
-  ICSpark::UseRelativeEncoder(SparkMax::GetAlternateEncoder(), countsPerRev);
+void ICSparkMax::UseAlternateEncoder() {
+  ICSpark::UseRelativeEncoder(SparkMax::GetAlternateEncoder());
 }

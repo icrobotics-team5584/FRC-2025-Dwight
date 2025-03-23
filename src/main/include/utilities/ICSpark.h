@@ -17,6 +17,7 @@
 #include <wpi/sendable/Sendable.h>
 #include <wpi/sendable/SendableBuilder.h>
 #include "utilities/ICSparkEncoder.h"
+#include "utilities/ICSparkConfig.h"
 
 
 /**
@@ -294,7 +295,7 @@ class ICSpark : public wpi::Sendable {
    * by the absolute encoder's position conversion factor, and whether it is
    * inverted. So set those parameters before calling this.
    */
-  [[no_discard]] ICSparkConfig UseAbsoluteEncoder(units::turn_t zeroOffset = 0_tr);
+  [[nodiscard]] ICSparkConfig UseAbsoluteEncoder(units::turn_t zeroOffset = 0_tr);
 
   /**
    * Set the minimum and maximum input value for PID Wrapping with position closed loop
@@ -368,13 +369,10 @@ class ICSpark : public wpi::Sendable {
   void InitSendable(wpi::SendableBuilder& builder) override;
   
  protected:
-  // Use a relative (alternarte for Max, external for Flex) encoder as the feedback device.
+  // Use a relative (alternarte for Max, external for Flex) encoder as the logging device.
   template <std::derived_from<rev::RelativeEncoder> RelEncoder>
-  void UseRelativeEncoder(RelEncoder& encoder, int countsPerRev) {
+  void UseRelativeEncoder(RelEncoder& encoder) {
     _encoder.UseRelative(encoder);
-    _sparkConfig.closedLoop.SetFeedbackSensor(
-        rev::spark::ClosedLoopConfig::FeedbackSensor::kAlternateOrExternalEncoder);
-    AdjustConfig(_sparkConfig);
   }
 
  private:

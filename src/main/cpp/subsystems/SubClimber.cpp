@@ -11,12 +11,15 @@
 SubClimber::SubClimber() {
   frc::SmartDashboard::PutData("Climber/Motor", &_climberMotor);
 
-  _climberMotorConfig.encoder.PositionConversionFactor(1 / GEAR_RATIO);
-  _climberMotorConfig.encoder.VelocityConversionFactor(GEAR_RATIO / 60.0);
-  _climberMotorConfig.closedLoop.Pid(P, I, D, rev::spark::ClosedLoopSlot::kSlot0);
-  //_climberMotorConfig.closedLoop.MinOutput(-0.5);  // limits climb speed
-  _climberMotorConfig.Inverted(true).SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
-  auto err = _climberMotor.AdjustConfig(_climberMotorConfig);
+  _climberMotorConfig.encoder.positionConversionFactor = 1.0 / GEAR_RATIO;
+  _climberMotorConfig.encoder.velocityConversionFactor = GEAR_RATIO / 60.0;
+  _climberMotorConfig.closedLoop.slots[0].p = 0.0;
+  _climberMotorConfig.closedLoop.slots[0].i = 0.0;
+  _climberMotorConfig.closedLoop.slots[0].d = 0.0;
+  _climberMotorConfig.inverted = true;
+  _climberMotorConfig.idleMode = rev::spark::SparkBaseConfig::IdleMode::kBrake;
+  _climberMotorConfig.smartCurrentStallLimit = 60_A;
+  auto err = _climberMotor.OverwriteConfig(_climberMotorConfig);
   frc::SmartDashboard::PutNumber("Climber/config set err", (int)err);
 }
 
@@ -40,13 +43,13 @@ void SubClimber::Periodic() {
 }
 
 void SubClimber::SetBrakeMode(bool mode) {
-  rev::spark::SparkBaseConfig _neutralModeConfig;
+  ICSparkConfig neutralModeConfig;
   if (mode == true) {
-    _neutralModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
-    _climberMotor.AdjustConfigNoPersist(_neutralModeConfig);
+    neutralModeConfig.idleMode = rev::spark::SparkBaseConfig::IdleMode::kBrake;
+    _climberMotor.AdjustConfigNoPersist(neutralModeConfig);
   } else if (mode == false) {
-    _neutralModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
-    _climberMotor.AdjustConfigNoPersist(_neutralModeConfig);
+    neutralModeConfig.idleMode = rev::spark::SparkBaseConfig::IdleMode::kCoast;
+    _climberMotor.AdjustConfigNoPersist(neutralModeConfig);
   }
 }
 

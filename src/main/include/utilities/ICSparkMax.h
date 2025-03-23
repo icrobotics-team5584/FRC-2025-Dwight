@@ -10,7 +10,7 @@
  */
 class ICSparkMax : public rev::spark::SparkMax, public ICSpark {
  public:
-  ICSparkMax(int deviceID, units::ampere_t currentLimit);
+  ICSparkMax(int deviceID);
   static constexpr int NEO_ENCODER_RESOLUTION = 42;
 
   /**
@@ -50,9 +50,6 @@ class ICSparkMax : public rev::spark::SparkMax, public ICSpark {
    * Pin 8 (Reverse Limit Switch): Encoder B
    *
    * This call will disable support for the limit switch inputs.
-   *
-   * @param countsPerRev Number of encoder counts per revolution of the sensor.
-   * Defaulted to 8192 which is the value for a REV throughbore encoder.
    */
-  void UseAlternateEncoder(int countsPerRev = 8192);
+  void UseAlternateEncoder();
 };

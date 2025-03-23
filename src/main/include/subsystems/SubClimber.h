@@ -7,9 +7,8 @@
 #include <frc2/command/SubsystemBase.h>
 #include <frc/RobotBase.h>
 #include <frc2/command/Commands.h>
-#include "utilities/ICSpark.h"
 #include "utilities/ICSparkFlex.h"
-#include "utilities/ICSparkMax.h"
+#include "utilities/ICSparkConfig.h"
 #include <units/current.h>
 #include "Constants.h"
 #include <frc/simulation/DCMotorSim.h>
@@ -72,11 +71,11 @@ class SubClimber : public frc2::SubsystemBase {
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
-  ICSparkFlex _climberMotor{canid::CLIMBER_MOTOR, 60_A}; // _A is amps; 20 amps may be too low for the climber to function
-
+  ICSparkFlex _climberMotor{canid::CLIMBER_MOTOR}; // _A is amps; 20 amps may be too low for the climber to function
+  
   frc::sim::SingleJointedArmSim _climberSim{frc::DCMotor::NEO(1), GEAR_RATIO, frc::sim::SingleJointedArmSim::EstimateMOI(ARM_LENGTH, ARM_MASS), ARM_LENGTH, ARM_MIN_ANGLE, ARM_MAX_ANGLE, false, ARM_HOME_ANGLE};
 
-  rev::spark::SparkBaseConfig _climberMotorConfig;
+  ICSparkConfig _climberMotorConfig;
   
   frc::Mechanism2d _singleJointedArmMech{3, 3};  // canvas width and height
   frc::MechanismRoot2d* _armRoot = _singleJointedArmMech.GetRoot("armRoot", 1, 1);  // root x and y

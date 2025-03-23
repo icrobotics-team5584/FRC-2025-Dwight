@@ -10,7 +10,7 @@
  */
 class ICSparkFlex : public rev::spark::SparkFlex, public ICSpark {
  public:
-  ICSparkFlex(int deviceID, units::ampere_t currentLimit);
+  ICSparkFlex(int deviceID);
 
   static constexpr int VORTEX_ENCODER_RESOLUTION = 7168;
 
@@ -44,9 +44,6 @@ class ICSparkFlex : public rev::spark::SparkFlex, public ICSpark {
    * Use an external quadrature (relative) encoder connected to the Spark Flex
    * as the feedback device. This will be used for dashboard displays and PID
    * feedback.
-   *
-   * @param countsPerRev Number of encoder counts per revolution of the sensor.
-   * Defaulted to 8192 which is the value for a REV throughbore encoder.
    */
-  void UseExternalEncoder(int countsPerRev = 8192);
+  void UseExternalEncoder();
 };

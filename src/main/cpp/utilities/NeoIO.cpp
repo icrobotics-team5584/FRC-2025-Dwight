@@ -5,23 +5,27 @@
 
 NeoIO::NeoIO(int turnCanID, int driveCanID, int encoderCanID,
              units::turn_t cancoderMagOffset)
-    : _canTurnMotor(turnCanID, 40_A), _canDriveMotor(driveCanID, 40_A), _canEncoder(encoderCanID) {
+    : _canTurnMotor(turnCanID), _canDriveMotor(driveCanID), _canEncoder(encoderCanID) {
   frc::SmartDashboard::PutData("Swerve/DriveMotor" + std::to_string(driveCanID), (wpi::Sendable*) &_canDriveMotor);
   frc::SmartDashboard::PutData("Swerve/TurnMotor" + std::to_string(turnCanID), (wpi::Sendable*) &_canTurnMotor);
 }
 
 void NeoIO::ConfigTurnMotor() {
-  rev::spark::SparkBaseConfig _canTurnConfig;
+  ICSparkConfig turnMotorConfig;
 
-  _canTurnConfig.encoder.PositionConversionFactor(1.0 / TURNING_GEAR_RATIO).VelocityConversionFactor(TURNING_GEAR_RATIO / 60);
-  _canTurnConfig.closedLoop.Pid(TURN_P, TURN_I, TURN_D);
-  _canTurnConfig.closedLoop.PositionWrappingEnabled(true)
-    .PositionWrappingMinInput(0)
-    .PositionWrappingMaxInput(1);
-  _canTurnConfig.Inverted(true)
-    .SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
+  turnMotorConfig.encoder.positionConversionFactor = 1.0 / TURNING_GEAR_RATIO;
+  turnMotorConfig.encoder.velocityConversionFactor = TURNING_GEAR_RATIO / 60.0;
+  turnMotorConfig.closedLoop.slots[0].p = TURN_P;
+  turnMotorConfig.closedLoop.slots[0].i = TURN_I;
+  turnMotorConfig.closedLoop.slots[0].d = TURN_D;
+  turnMotorConfig.closedLoop.positionWrappingEnabled = true;
+  turnMotorConfig.closedLoop.positionWrappingMinInput = 0_tr;
+  turnMotorConfig.closedLoop.positionWrappingMaxInput = 1_tr;
+  turnMotorConfig.inverted = true;
+  turnMotorConfig.idleMode = rev::spark::SparkBaseConfig::IdleMode::kBrake;
+  turnMotorConfig.smartCurrentStallLimit = 40_A;
 
-  _canTurnMotor.AdjustConfig(_canTurnConfig);
+  _canTurnMotor.OverwriteConfig(turnMotorConfig);
 }
 
 void NeoIO::SetDesiredAngle(units::degree_t angle) {
@@ -70,29 +74,31 @@ void NeoIO::UpdateSim(units::second_t deltaTime) {
 }
 
 void NeoIO::SetNeutralMode(bool brakeModeToggle) {
-  rev::spark::SparkBaseConfig _neutralModeConfig;
+  ICSparkConfig _neutralModeConfig;
 
   if (brakeModeToggle == true) {
-    _neutralModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
+    _neutralModeConfig.idleMode = rev::spark::SparkBaseConfig::IdleMode::kBrake;
     _canDriveMotor.AdjustConfigNoPersist(_neutralModeConfig);
     _canTurnMotor.AdjustConfigNoPersist(_neutralModeConfig);
   } else if (brakeModeToggle == false) {
-    _neutralModeConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
+    _neutralModeConfig.idleMode = rev::spark::SparkBaseConfig::IdleMode::kCoast;
     _canDriveMotor.AdjustConfigNoPersist(_neutralModeConfig);
     _canTurnMotor.AdjustConfigNoPersist(_neutralModeConfig);
   }
 }
 
 void NeoIO::ConfigDriveMotor() {
-  rev::spark::SparkBaseConfig _canDriveConfig;
+  ICSparkConfig driveMotorConfig;
 
-  _canDriveConfig.SmartCurrentLimit(40);
-  _canDriveConfig.closedLoop.Pidf(DRIVE_P, DRIVE_I, DRIVE_D, DRIVE_FF);
-  _canDriveConfig.encoder.PositionConversionFactor(1.0 / DRIVE_GEAR_RATIO)
-    .VelocityConversionFactor(1.0/ (DRIVE_GEAR_RATIO * 60));
-  _canDriveConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
+  driveMotorConfig.smartCurrentStallLimit = 70_A;
+  driveMotorConfig.closedLoop.slots[0].p = DRIVE_P;
+  driveMotorConfig.closedLoop.slots[0].i = DRIVE_I;
+  driveMotorConfig.closedLoop.slots[0].d = DRIVE_D;
+  driveMotorConfig.encoder.positionConversionFactor = 1.0 / DRIVE_GEAR_RATIO;
+  driveMotorConfig.encoder.velocityConversionFactor = DRIVE_GEAR_RATIO / 60.0;
+  driveMotorConfig.idleMode = rev::spark::SparkBaseConfig::IdleMode::kBrake;
 
-  _canDriveMotor.AdjustConfig(_canDriveConfig);
+  _canDriveMotor.OverwriteConfig(driveMotorConfig);
 
 }
 

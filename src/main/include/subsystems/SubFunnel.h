@@ -31,5 +31,5 @@ class SubFunnel : public frc2::SubsystemBase {
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
-  ICSparkFlex _funnelMotor{canid::FUNNEL_MOTOR, 30_A};
+  ICSparkFlex _funnelMotor{canid::FUNNEL_MOTOR};
 };

@@ -1,5 +1,4 @@
 #include "utilities/ICSpark.h"
-#include "utilities/ICSparkConfig.h"
 
 #include <frc/RobotBase.h>
 #include <frc/smartdashboard/SmartDashboard.h>
@@ -15,11 +14,11 @@ ICSpark::ICSpark(rev::spark::SparkBase* spark, rev::spark::SparkRelativeEncoder&
       _sparkConfigAccessor(configAccessor),
       _encoder(inbuiltEncoder),
       _simSpark(spark, &_simMotor) {
-  
-  // Set vel conversion factor to use revs per sec not revs per min
-  ICSparkConfig config;
-  config.encoder.velocityConversionFactor = 1.0 / 60.0;
-  AdjustConfig(config);
+  // Apply the IC default configuration.
+  // Includes setting vel conversion factor to use revs per sec not revs per min and a safeish
+  // current limit.
+  ICSparkConfig defaultConfig;
+  AdjustConfig(defaultConfig);
 }
 
 void ICSpark::InitSendable(wpi::SendableBuilder& builder) {

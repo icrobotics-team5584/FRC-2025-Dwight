@@ -1,8 +1,8 @@
 #include "utilities/ICSparkFlex.h"
 
-ICSparkFlex::ICSparkFlex(int deviceID, units::ampere_t currentLimit)
+ICSparkFlex::ICSparkFlex(int deviceID)
     : SparkFlex(deviceID, rev::spark::SparkLowLevel::MotorType::kBrushless),
-      ICSpark(this, GetEncoder(), configAccessor, currentLimit) {}
+      ICSpark(this, GetEncoder(), configAccessor) {}
 
 void ICSparkFlex::Set(double speed) { ICSpark::SetDutyCycle(speed); }
 
@@ -14,6 +14,6 @@ double ICSparkFlex::Get() const { return ICSpark::GetDutyCycle(); }
 
 void ICSparkFlex::StopMotor() { ICSpark::StopMotor(); }
 
-void ICSparkFlex::UseExternalEncoder(int countsPerRev) {
-  ICSpark::UseRelativeEncoder(SparkFlex::GetExternalEncoder(), countsPerRev);
+void ICSparkFlex::UseExternalEncoder() {
+  ICSpark::UseRelativeEncoder(SparkFlex::GetExternalEncoder());
 }
