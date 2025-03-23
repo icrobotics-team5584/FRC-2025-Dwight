@@ -51,7 +51,7 @@ class ICSpark : public wpi::Sendable {
    * @param spark Reference to the spark to control
    */
   ICSpark(rev::spark::SparkBase* spark, rev::spark::SparkRelativeEncoder& inbuiltEncoder,
-          rev::spark::SparkBaseConfigAccessor& configAccessor, units::ampere_t currentLimit);
+          rev::spark::SparkBaseConfigAccessor& configAccessor);
 
   /**
    * Sets position of motor
@@ -241,22 +241,9 @@ class ICSpark : public wpi::Sendable {
    *
    * @param maxVelocity The maxmimum velocity for the motion profile.
    * @param maxAcceleration The maxmimum acceleration for the motion profile.
-   * @param tolerance When the position of the motor is within tolerance, the control mode will stop
-   * applying power (arbitary feedforward can still apply power).
    */
-  void SetMotionConstraints(units::turns_per_second_t maxVelocity,
-                            units::turns_per_second_squared_t maxAcceleration,
-                            units::turn_t tolerance);
   void SetMotionMaxVel(units::turns_per_second_t maxVelocity);
   void SetMotionMaxAccel(units::turns_per_second_squared_t maxAcceleration);
-
-  /**
-   * Set the conversion factor for position, velocity and acceleration of the encoder. The native
-   * position units of rotations will be multipled by this number before being used or returned.
-   * Velocity and acceleration conversion factors will be derived from this (as position units per
-   * second for velocity and velocity units per second for acceleration)
-   */
-  void SetConversionFactor(double rotationsToDesired);
 
   /**
    * Set the Proportional, Integral, Derivative and static FeedForward gain constants of the PID
@@ -267,7 +254,6 @@ class ICSpark : public wpi::Sendable {
    * @param I The Integral gain value, must be positive
    * @param D The Derivative gain value, must be positive
    */
-  void SetFeedbackGains(double P, double I, double D);
   void SetFeedbackProportional(double P);
   void SetFeedbackIntegral(double I);
   void SetFeedbackDerivative(double D);
@@ -295,7 +281,12 @@ class ICSpark : public wpi::Sendable {
 
   /**
    * Switch to using an external absolute encoder connected to the data port on
-   * the SPARK. To use a relative encoder, check the Spark Max and Spark Flex
+   * the SPARK for all encoder calls.
+   *
+   * This doesn't affect the built in feedback control on its own. To setup feedback control,
+   * apply the config that is returned by this function.
+   *
+   * To use a relative encoder, check the Spark Max and Spark Flex
    * specific implimentation. The Max uses "Alternate encoders" while the Flex
    * uses "External encoders"
    *
@@ -303,7 +294,7 @@ class ICSpark : public wpi::Sendable {
    * by the absolute encoder's position conversion factor, and whether it is
    * inverted. So set those parameters before calling this.
    */
-  void UseAbsoluteEncoder(units::turn_t zeroOffset = 0_tr);
+  [[no_discard]] ICSparkConfig UseAbsoluteEncoder(units::turn_t zeroOffset = 0_tr);
 
   /**
    * Set the minimum and maximum input value for PID Wrapping with position closed loop
@@ -350,7 +341,7 @@ class ICSpark : public wpi::Sendable {
    * @param persistMode Whether to persist the parameters after setting the configuration
    * @return REVLibError::kOk if successful
    */
-  rev::REVLibError Configure(rev::spark::SparkBaseConfig& config,
+  rev::REVLibError Configure(ICSparkConfig& config,
                              rev::spark::SparkBase::ResetMode resetMode,
                              rev::spark::SparkBase::PersistMode persistMode);
 
@@ -358,19 +349,19 @@ class ICSpark : public wpi::Sendable {
    * Convenience method for calling 
    * Configure(config, ResetMode::kNoResetSafeParameters, PersistMode::kPersistParameters)
    */
-  rev::REVLibError AdjustConfig(rev::spark::SparkBaseConfig &config);
+  rev::REVLibError AdjustConfig(ICSparkConfig &config);
 
   /**  
    * Convenience method for calling 
    * Configure(config, ResetMode::kNoResetSafeParameters, PersistMode::kNoPersistParameters)
    */
-  rev::REVLibError AdjustConfigNoPersist(rev::spark::SparkBaseConfig &config);
+  rev::REVLibError AdjustConfigNoPersist(ICSparkConfig &config);
 
   /**  
    * Convenience method for calling 
    * Configure(config, ResetMode::kResetSafeParameters, PersistMode::kPersistParameters)
    */
-  rev::REVLibError OverwriteConfig(rev::spark::SparkBaseConfig &config);
+  rev::REVLibError OverwriteConfig(ICSparkConfig &config);
 
 
   // Sendable setup, called automatically when this is passed into smartDashbaord::PutData()
@@ -389,11 +380,7 @@ class ICSpark : public wpi::Sendable {
  private:
   rev::spark::SparkBase* _spark;
   rev::spark::SparkBaseConfigAccessor _sparkConfigAccessor;
-  rev::spark::SparkBaseConfig _sparkConfig;
-  rev::REVLibError AdjustConfigWithoutCache(rev::spark::SparkBaseConfig& config) {
-    return _spark->Configure(config, rev::spark::SparkBase::ResetMode::kNoResetSafeParameters,
-                             rev::spark::SparkBase::PersistMode::kPersistParameters);
-  }
+  ICSparkConfig _configCache;
 
   // Feedback control objects
   rev::spark::SparkClosedLoopController _sparkPidController{_spark->GetClosedLoopController()};
@@ -414,11 +401,7 @@ class ICSpark : public wpi::Sendable {
   units::turn_t _positionTarget{0};
   units::turns_per_second_t _velocityTarget{0};
   units::volt_t _voltageTarget{0};
-  frc::TrapezoidProfile<units::angle::turns>::Constraints _motionConstraints{
-      units::turns_per_second_t{0},
-      units::turns_per_second_squared_t{0}
-  }; // constraints updated by SetMotionConstraints() or Configure()
-  frc::TrapezoidProfile<units::turns> _motionProfile{_motionConstraints};
+  frc::TrapezoidProfile<units::turns> _motionProfile{{0_tps, 0_tr_per_s_sq}};
   MPState CalcNextMotionTarget(MPState current, units::turn_t goalPosition,
                                units::second_t lookahead = 20_ms);
   MPState _latestMotionTarget;
@@ -427,12 +410,6 @@ class ICSpark : public wpi::Sendable {
   ControlType _controlType = ControlType::kDutyCycle;
   rev::spark::SparkLowLevel::ControlType GetREVControlType();
   bool InMotionMode();
-
-  // Store a cache of some of the config values since requesting them causes slow, blocking CAN
-  // calls.
-  double _minClosedLoopOutputCache = -1;
-  double _maxClosedLoopOutputCache = 1;
-  units::turn_t _motionProfileTolerance = 0_tr;
 
   // Simulation objects
   frc::DCMotor _simMotor = frc::DCMotor::NeoVortex();
