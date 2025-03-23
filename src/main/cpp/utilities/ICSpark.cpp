@@ -22,12 +22,6 @@ ICSpark::ICSpark(rev::spark::SparkBase* spark, rev::spark::SparkRelativeEncoder&
 }
 
 void ICSpark::InitSendable(wpi::SendableBuilder& builder) {
-  auto GetMaxMotionVel = [&] {
-    return _configCache.closedLoop.slots[0].maxMotion.maxVelocity.value_or(0_tps);
-  };
-  auto GetMaxMotionAccel = [&] {
-    return _configCache.closedLoop.slots[0].maxMotion.maxAcceleration.value_or(0_tr_per_s_sq);
-  };
   // clang-format off
   //----------------------- Label ------------------------ Getter ------------------------------------------------ Setter -------------------------------------------------
   builder.AddDoubleProperty("Position",                   [&] { return GetPosition().value(); },                  nullptr);
@@ -45,8 +39,13 @@ void ICSpark::InitSendable(wpi::SendableBuilder& builder) {
   builder.AddDoubleProperty("Gains/FF A Gain",            [&] { return _feedforwardAcceleration.value(); },       [&](double A) { SetFeedforwardAcceleration(VoltsPerTpsSq{A}); });
   builder.AddDoubleProperty("Gains/FF Linear G Gain",     [&] { return _feedforwardLinearGravity.value(); },      [&](double lG) { SetFeedforwardLinearGravity(lG*1_V); });
   builder.AddDoubleProperty("Gains/FF Rotational G Gain", [&] { return _feedforwardRotationalGravity.value(); },  [&](double rG) { SetFeedforwardRotationalGravity(rG*1_V); });
-  builder.AddDoubleProperty("Motion Config/Max vel",      [&] { return GetMaxMotionVel().value(); },              [&](double vel) { SetMotionMaxVel(vel*1_tps); });
-  builder.AddDoubleProperty("Motion Config/Max accel",    [&] { return GetMaxMotionAccel().value(); },            [&](double accel) { SetMotionMaxAccel(accel*1_tr_per_s_sq); });
+  
+  builder.AddDoubleProperty("Motion Config/Max vel",      
+    [&] { return _configCache.closedLoop.slots[0].maxMotion.maxVelocity.value_or(0_tps).value(); },              
+    [&](double vel) { SetMotionMaxVel(vel*1_tps); });
+  builder.AddDoubleProperty("Motion Config/Max accel",
+    [&] { return _configCache.closedLoop.slots[0].maxMotion.maxAcceleration.value_or(0_tr_per_s_sq).value(); },
+    [&](double accel) { SetMotionMaxAccel(accel*1_tr_per_s_sq); });
   // clang-format on
 }
 
