@@ -11,6 +11,7 @@
 #include "utilities/RobotLogs.h"
 #include "URCL.h"
 #include <frc/RobotController.h>
+#include <frc/DriverStation.h>
 
 Robot::Robot() {
   frc::DataLogManager::Start();
@@ -29,10 +30,7 @@ void Robot::RobotPeriodic() {
   Logger::Log("Robot/BatteryVoltage", frc::RobotController::GetBatteryVoltage());
   Logger::Log("Robot/PDHInputVoltage", frc::RobotController::GetInputVoltage());
   Logger::Log("Robot/PDHTotalCurrent", frc::RobotController::GetInputCurrent());
-  // frc::CANStatus canStatus = frc::RobotController::GetCANStatus();
-  // Logger::Log("Robot/CANBusUtilization", canStatus.percentBusUtilization);
-  // Logger::Log("Robot/CANBusOffCount", canStatus.busOffCount);
-  // Logger::Log("Robot/CANTxFullCount", canStatus.txFullCount);
+
 }
 
 void Robot::DisabledInit() {}
