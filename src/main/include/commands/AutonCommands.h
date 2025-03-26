@@ -16,6 +16,7 @@
 namespace cmd {
     frc2::CommandPtr AutonSubSystemsZeroSequence();
     frc2::CommandPtr ScoreWithVision(SubVision::Side side);
+    frc2::CommandPtr ScoreWithPrescription(SubVision::Side side);
     frc2::CommandPtr Score(int side);
     frc2::CommandPtr AutonBeginSourceIntake();
     frc2::CommandPtr AutonEndSourceIntake();
