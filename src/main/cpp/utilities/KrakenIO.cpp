@@ -53,6 +53,7 @@ void KrakenIO::SendSensorsToDash() {
     frc::SmartDashboard::PutNumber(turnMotorName + "voltage", _canTurnMotor.GetMotorVoltage().GetValueAsDouble());
     frc::SmartDashboard::PutNumber(turnMotorName + "target", _canTurnMotor.GetClosedLoopReference().GetValue());
     frc::SmartDashboard::PutNumber(turnMotorName + "error", _canTurnMotor.GetClosedLoopError().GetValue());
+    frc::SmartDashboard::PutNumber(turnMotorName + "temperature", _canTurnMotor.GetDeviceTemp().GetValueAsDouble());
 }
 
 void KrakenIO::SetDesiredVelocity(units::meters_per_second_t velocity, units::newton_t forceFF) {

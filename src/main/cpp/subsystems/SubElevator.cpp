@@ -295,6 +295,22 @@ void SubElevator::Periodic() {
   Logger::Log("Elevator/_targetheight", _targetHeight);
   Logger::Log("Elevator/M1Current", GetM1Current().value());
   Logger::Log("Elevator/_hasReset", _hasReset);
+
+  Logger::Log("Elevator/Motor1/MotorVoltage", _elevatorMotor1.GetMotorVoltage().GetValue());
+  Logger::Log("Elevator/Motor1/SupplyVoltage", _elevatorMotor1.GetSupplyVoltage().GetValue());
+  Logger::Log("Elevator/Motor2/MotorVoltage", _elevatorMotor2.GetMotorVoltage().GetValue());
+  Logger::Log("Elevator/Motor2/SupplyVoltage", _elevatorMotor2.GetSupplyVoltage().GetValue());
+
+  Logger::Log("Elevator/Motor1/StatorCurrent", _elevatorMotor1.GetStatorCurrent().GetValue());
+  Logger::Log("Elevator/Motor1/SupplyCurrent", _elevatorMotor1.GetSupplyCurrent().GetValue());
+  Logger::Log("Elevator/Motor2/StatorCurrent", _elevatorMotor2.GetStatorCurrent().GetValue());
+  Logger::Log("Elevator/Motor2/SupplyCurrent", _elevatorMotor2.GetSupplyCurrent().GetValue());
+
+  Logger::Log("Elevator/Motor1/Velocity", _elevatorMotor1.GetVelocity().GetValue());
+  Logger::Log("Elevator/Motor2/Velocity", _elevatorMotor2.GetVelocity().GetValue());
+
+  Logger::Log("Elevator/Motor1/Velocity", _elevatorMotor1.GetDeviceTemp().GetValue());
+  Logger::Log("Elevator/Motor2/Velocity", _elevatorMotor2.GetDeviceTemp().GetValue());
 }
 
 void SubElevator::SimulationPeriodic() {
