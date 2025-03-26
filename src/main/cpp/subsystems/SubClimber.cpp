@@ -32,6 +32,8 @@ void SubClimber::Periodic() {
   frc::SmartDashboard::PutNumber("Climber/M1Current", GetM1Current().value());
   frc::SmartDashboard::PutNumber("Climber/hasReset", _hasReset);
   frc::SmartDashboard::PutNumber("Climber/resetting", _resetting);
+  frc::SmartDashboard::PutNumber("Climber/Velocity", _climberMotor.GetVelocity().value());
+  frc::SmartDashboard::PutNumber("Climber/Temperature", _climberMotor.GetMotorTemperature());
   // clang-format on
 
   if (_hasReset == false && _resetting == false) {
