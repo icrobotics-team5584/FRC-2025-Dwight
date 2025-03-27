@@ -6,6 +6,26 @@
 
 #include <frc2/command/Command.h>
 #include <frc2/command/Commands.h>
+#include <units/angular_velocity.h>
+#include <units/length.h>
+
+#include <pathplanner/lib/commands/PathPlannerAuto.h>
+#include "subsystems/SubVision.h"
+
+enum ReefSide {
+    FrontRight = 0,
+    FrontMiddle = 1,
+    FrontLeft = 2,
+    BackLeft = 3,
+    BackMiddle = 4,
+    BackRight = 5,
+};
+
+struct PathPlannerReefPosition {
+    units::meter_t x;
+    units::meter_t y;
+    units::degree_t angle;
+};
 
 namespace cmd {
     frc2::CommandPtr AutonSubSystemsZeroSequence();
