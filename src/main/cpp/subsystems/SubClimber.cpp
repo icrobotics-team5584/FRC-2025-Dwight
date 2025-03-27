@@ -11,11 +11,11 @@
 SubClimber::SubClimber() {
   frc::SmartDashboard::PutData("Climber/Motor", &_climberMotor);
 
-  _climberMotorConfig.encoder.positionConversionFactor = 1.0 / GEAR_RATIO;
+  _climberMotorConfig.encoder.positionConversionFactor = GEAR_RATIO;
   _climberMotorConfig.encoder.velocityConversionFactor = GEAR_RATIO / 60.0;
-  _climberMotorConfig.closedLoop.slots[0].p = 0.0;
-  _climberMotorConfig.closedLoop.slots[0].i = 0.0;
-  _climberMotorConfig.closedLoop.slots[0].d = 0.0;
+  _climberMotorConfig.closedLoop.slots[0].p = P;
+  _climberMotorConfig.closedLoop.slots[0].i = I;
+  _climberMotorConfig.closedLoop.slots[0].d = D;
   _climberMotorConfig.inverted = true;
   _climberMotorConfig.idleMode = rev::spark::SparkBaseConfig::IdleMode::kBrake;
   _climberMotorConfig.smartCurrentStallLimit = 60_A;

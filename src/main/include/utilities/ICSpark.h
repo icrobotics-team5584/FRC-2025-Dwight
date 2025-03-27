@@ -4,8 +4,6 @@
 #include <rev/SparkSim.h>
 #include <frc/controller/PIDController.h>
 #include <frc/trajectory/TrapezoidProfile.h>
-#include <frc/simulation/SimDeviceSim.h>
-#include <hal/SimDevice.h>
 #include <units/acceleration.h>
 #include <units/length.h>
 #include <units/angle.h>
@@ -237,48 +235,98 @@ class ICSpark : public wpi::Sendable {
   void SetVoltage(units::volt_t output);
 
   /**
-   * Configure the constrains for the SparkMax's Smart Motion control mode. Maximum velocity,
-   * maximum acceleration, and position tolerance must be set.
+   * Configure the maximum velocity constraint for motion profiles. This includes the on-controller
+   * MAX Motion mode and the on-rio motion profiles.
    *
    * @param maxVelocity The maxmimum velocity for the motion profile.
-   * @param maxAcceleration The maxmimum acceleration for the motion profile.
    */
   void SetMotionMaxVel(units::turns_per_second_t maxVelocity);
+
+  /**
+   * Configure the maximum acceleration constraint for motion profiles. This includes the
+   * on-controller MAX Motion mode and the on-rio motion profiles.
+   *
+   * @param maxAcceleration The maxmimum acceleration for the motion profile.
+   */
   void SetMotionMaxAccel(units::turns_per_second_squared_t maxAcceleration);
 
   /**
-   * Set the Proportional, Integral, Derivative and static FeedForward gain constants of the PID
-   * controller on the SPARK. This uses the Set Parameter API and should be used infrequently.
-   * The parameters do not presist unless burnFlash() is called.
+   * Set the Proportional gain for PID feedback control. This uses the Set Parameter API and should
+   * be used infrequently.
    *
    * @param P The proportional gain value, must be positive
-   * @param I The Integral gain value, must be positive
-   * @param D The Derivative gain value, must be positive
    */
   void SetFeedbackProportional(double P);
+
+  /**
+   * Set the Integral gain for PID feedback control. This uses the Set Parameter API and should
+   * be used infrequently.
+   *
+   * @param I The Integral gain value, must be positive
+   */
   void SetFeedbackIntegral(double I);
+
+  /**
+   * Set the Derivative gain for PID feedback control. This uses the Set Parameter API and should
+   * be used infrequently.
+   *
+   * @param D The Derivative gain value, must be positive
+   */
   void SetFeedbackDerivative(double D);
 
   /**
    * Set the Static Friction, Gravity, Velocity and Acceleration gain constants of the feed forward
-   * model. This uses the Set Parameter API and should be used infrequently. The parameters do not
-   * presist unless burnFlash() is called.
+   * model. To apply voltages from the feed forward model, call UpdateControls() periodically.
    *
-   * @param P The proportional gain value, must be positive
-   * @param I The Integral gain value, must be positive
-   * @param D The Derivative gain value, must be positive
-   * @param updateSparkNow Whether to calculate and send the new FF voltage to the spark over CAN as
-   * part of this call. This will use the (blocking) Set Parameter API of the Spark and should be
-   * used infrequently. The parameters do not presist unless burnFlash() is called. 
+   * @param S Constant voltage to overcome static friction in the system. Sign of applied voltage is
+   * determined by direction of rotation.
+   * @param G Voltage to overcome gravity in the system. Can be linear or rotational depending on the 
+   * value of gravityIsRotational.  
+   * @param gravityIsRotational Whether to use rotational gravity or linear gravity
+   * @param V Voltage to travel at a desired velocity.
+   * @param A Voltage to travel at a desired acceleration.
    */
   void SetFeedforwardGains(units::volt_t S = 0_V, units::volt_t G = 0_V,
                            bool gravityIsRotational = false, VoltsPerTps V = 0_V / 1_tps,
-                           VoltsPerTpsSq A = 0_V / 1_tr_per_s_sq, bool updateSparkNow = true);
-  void SetFeedforwardStaticFriction(units::volt_t S, bool updateSparkNow = true);
-  void SetFeedforwardLinearGravity(units::volt_t linearG, bool updateSparkNow = true);
-  void SetFeedforwardRotationalGravity(units::volt_t rotationalG, bool updateSparkNow = true);
-  void SetFeedforwardVelocity(VoltsPerTps V, bool updateSparkNow = true);
-  void SetFeedforwardAcceleration(VoltsPerTpsSq A, bool updateSparkNow = true);
+                           VoltsPerTpsSq A = 0_V / 1_tr_per_s_sq);
+  
+  /**
+   * Set the Static Friction gain constant of the feed forward model.
+   * 
+   * @param S Constant voltage to overcome static friction in the system.
+   */
+  void SetFeedforwardStaticFriction(units::volt_t S);
+
+  /**
+   * Set the Linear Gravity gain constant of the feed forward model. linearG is a constant voltage
+   * that is always applied, regardless of direction of travel. Useful on elevators.
+   * 
+   * @param linearG Voltage to overcome linear gravity in the system.
+   */
+  void SetFeedforwardLinearGravity(units::volt_t linearG);
+
+  /**
+   * Set the Rotational Gravity gain constant of the feed forward model. Gravity compensation
+   * voltage is calculated as rotationalG * cos(angle). Meaning, rotationalG should be the voltage 
+   * to compensate gravity when the mechanism is at 0 degrees. Useful on arms.
+   *
+   * @param rotationalG Voltage to overcome rotational gravity in the system.
+   */
+  void SetFeedforwardRotationalGravity(units::volt_t rotationalG);
+
+  /**
+   * Set the Velocity gain constant of the feed forward model.
+   *
+   * @param V Voltage to travel at a desired velocity.
+   */
+  void SetFeedforwardVelocity(VoltsPerTps V);
+  
+  /**
+   * Set the Acceleration gain constant of the feed forward model.
+   * 
+   * @param A Voltage to travel at a desired acceleration.
+   */
+  void SetFeedforwardAcceleration(VoltsPerTpsSq A);
 
   /**
    * Switch to using an external absolute encoder connected to the data port on
@@ -296,15 +344,6 @@ class ICSpark : public wpi::Sendable {
    * inverted. So set those parameters before calling this.
    */
   [[nodiscard]] ICSparkConfig UseAbsoluteEncoder(units::turn_t zeroOffset = 0_tr);
-
-  /**
-   * Set the minimum and maximum input value for PID Wrapping with position closed loop
-   * control.
-   *
-   * @param max The maximum input value
-   * @param min The minimum input value
-   */
-  void EnableClosedLoopWrapping(units::turn_t min, units::turn_t max);
 
   /**
    * Check whether the motor is on its position target, within a given tolerance.

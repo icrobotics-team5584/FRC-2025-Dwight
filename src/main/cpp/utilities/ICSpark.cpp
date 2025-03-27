@@ -52,35 +52,34 @@ void ICSpark::InitSendable(wpi::SendableBuilder& builder) {
 rev::REVLibError ICSpark::Configure(ICSparkConfig& config,
                                     rev::spark::SparkBase::ResetMode resetMode,
                                     rev::spark::SparkBase::PersistMode persistMode) {
-  auto& slot0 = config.closedLoop.slots[0];
-  auto& oldSlot0 = _configCache.closedLoop.slots[0];
+  // Update my cached config to match new config.
+  if (resetMode == rev::spark::SparkBase::ResetMode::kResetSafeParameters) {
+    _configCache = config;
+  } else {
+    _configCache.Adjust(config);
+  }
 
   // Motion profile config for sim and feed forward model
-  _motionProfile = frc::TrapezoidProfile<units::turns>{{
-      slot0.maxMotion.maxVelocity.value_or(oldSlot0.maxMotion.maxVelocity.value_or(0_tps)),
-      slot0.maxMotion.maxAcceleration.value_or(oldSlot0.maxMotion.maxAcceleration.value_or(0_tr_per_s_sq))
-  }};
+  auto& slot0 = _configCache.closedLoop.slots[0];
+  _motionProfile = frc::TrapezoidProfile<units::turns>{
+      {slot0.maxMotion.maxVelocity.value_or(0_tps),
+       slot0.maxMotion.maxAcceleration.value_or(0_tr_per_s_sq)}};
 
   // Wrapping settings for sim
-  if (config.closedLoop.positionWrappingEnabled.has_value()) {
-    if (config.closedLoop.positionWrappingEnabled.value()) {
-      _rioPidController.EnableContinuousInput(
-          config.closedLoop.positionWrappingMinInput.value_or(0_tr).value(),
-          config.closedLoop.positionWrappingMaxInput.value_or(0_tr).value());
-    } else {
-      _rioPidController.DisableContinuousInput();
-    }
+  if (_configCache.closedLoop.positionWrappingEnabled.value_or(false)) {
+    _rioPidController.EnableContinuousInput(
+        _configCache.closedLoop.positionWrappingMinInput.value_or(0_tr).value(),
+        _configCache.closedLoop.positionWrappingMaxInput.value_or(0_tr).value());
+  } else {
+    _rioPidController.DisableContinuousInput();
   }
 
   // Set the rio pid gains to match the spark config
-  _rioPidController.SetPID(slot0.p.value_or(oldSlot0.p.value_or(0)),
-                           slot0.i.value_or(oldSlot0.i.value_or(0)),
-                           slot0.d.value_or(oldSlot0.d.value_or(0)));
+  _rioPidController.SetPID(slot0.p.value_or(0), slot0.i.value_or(0), slot0.d.value_or(0));
 
   // Run the configuration and return any errors
-  _configCache = config; // todo: overwrite individual settings, not whole lot.
   rev::spark::SparkBaseConfig revConfig;
-  config.FillREVConfig(revConfig);
+  _configCache.FillREVConfig(revConfig);
   return _spark->Configure(revConfig, resetMode, persistMode);
 }
 
@@ -270,41 +269,35 @@ void ICSpark::SetFeedbackDerivative(double D) {
 }
 
 void ICSpark::SetFeedforwardGains(units::volt_t S, units::volt_t G, bool gravityIsRotational,
-                                  VoltsPerTps V, VoltsPerTpsSq A, bool updateSparkNow) {
-  SetFeedforwardStaticFriction(S, false);
-  SetFeedforwardVelocity(V, false);
-  SetFeedforwardAcceleration(A, false);
+                                  VoltsPerTps V, VoltsPerTpsSq A) {
+  SetFeedforwardStaticFriction(S);
+  SetFeedforwardVelocity(V);
+  SetFeedforwardAcceleration(A);
   if (gravityIsRotational) {
-    SetFeedforwardRotationalGravity(G, false);
+    SetFeedforwardRotationalGravity(G);
   } else {
-    SetFeedforwardLinearGravity(G, false);
+    SetFeedforwardLinearGravity(G);
   }
-  if (updateSparkNow) UpdateControls(0_s);
 }
 
-void ICSpark::SetFeedforwardStaticFriction(units::volt_t S, bool updateSparkNow) {
+void ICSpark::SetFeedforwardStaticFriction(units::volt_t S) {
   _feedforwardStaticFriction = S;
-  if (updateSparkNow) UpdateControls(0_s);
 }
 
-void ICSpark::SetFeedforwardLinearGravity(units::volt_t linearG, bool updateSparkNow) {
+void ICSpark::SetFeedforwardLinearGravity(units::volt_t linearG) {
   _feedforwardLinearGravity = linearG;
-  if (updateSparkNow) UpdateControls(0_s);
 }
 
-void ICSpark::SetFeedforwardRotationalGravity(units::volt_t rotationalG, bool updateSparkNow) {
+void ICSpark::SetFeedforwardRotationalGravity(units::volt_t rotationalG) {
   _feedforwardRotationalGravity = rotationalG;
-  if (updateSparkNow) UpdateControls(0_s);
 }
 
-void ICSpark::SetFeedforwardVelocity(VoltsPerTps V, bool updateSparkNow) {
+void ICSpark::SetFeedforwardVelocity(VoltsPerTps V) {
   _feedforwardVelocity = V;
-  if (updateSparkNow) UpdateControls(0_s);
 }
 
-void ICSpark::SetFeedforwardAcceleration(VoltsPerTpsSq A, bool updateSparkNow) {
+void ICSpark::SetFeedforwardAcceleration(VoltsPerTpsSq A) {
   _feedforwardAcceleration = A;
-  if (updateSparkNow) UpdateControls(0_s);
 }
 
 units::turns_per_second_t ICSpark::GetVelocity() {
