@@ -5,10 +5,8 @@
 #include <frc2/command/Command.h>
 #include <frc2/command/Commands.h>
 #include <RobotContainer.h>
-
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 #include <pathplanner/lib/auto/NamedCommands.h>
-#include <pathplanner/lib/auto/AutoBuilder.h>
 
 #include "subsystems/SubEndEffector.h"
 #include "subsystems/SubElevator.h"
@@ -27,31 +25,6 @@ namespace cmd {
         );
     }
 
-    std::shared_ptr<pathplanner::PathPlannerPath> GenerateTeleopPath() {
-        // rotation is the direction of the path
-        std::vector<frc::Pose2d> poses{
-            frc::Pose2d(1.0_m, 1.0_m, frc::Rotation2d(0_deg)),
-            frc::Pose2d(2.0_m, 1.0_m, frc::Rotation2d(0_deg))
-        };
-        std::vector<pathplanner::Waypoint> waypoints = pathplanner::PathPlannerPath::waypointsFromPoses(poses);
-        pathplanner::PathConstraints constraints(
-            1.0_mps, // max_speed
-            1.0_mps_sq, // max_accel
-            360_deg_per_s, // max_rotspeed
-            360_deg_per_s_sq // max_rotaccel
-        );
-        pathplanner::PathPlannerPath path(
-            waypoints,
-            constraints,
-            std::nullopt,
-            pathplanner::GoalEndState(0.0_mps, frc::Rotation2d(-0_deg)) // oppisite of the start rotating
-        );
-        return std::make_shared<pathplanner::PathPlannerPath>(path);
-    }
-
-    std::shared_ptr<frc2::CommandPtr> GetTeleopPathCommand(std::string pathName, pathplanner::AutoBuilder autoBuilder) {
-        return std::make_shared<frc2::CommandPtr>(autoBuilder.followPath(GenerateTeleopPath()));
-    }
     
     //  no vision
     frc2::CommandPtr Score(int side) {
