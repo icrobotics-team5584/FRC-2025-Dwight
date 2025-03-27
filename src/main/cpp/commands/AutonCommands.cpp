@@ -11,7 +11,6 @@
 #include <pathplanner/lib/auto/AutoBuilder.h>
 
 #include "subsystems/SubEndEffector.h"
-#include "subsystems/SubDrivebase.h"
 #include "subsystems/SubElevator.h"
 #include "subsystems/SubFunnel.h"
 #include "subsystems/SubClimber.h"
@@ -19,7 +18,6 @@
 
 #include "commands/VisionCommand.h"
 #include "commands/GamePieceCommands.h"
-#include "commands/AutonCommands.h"
 
 namespace cmd {
     frc2::CommandPtr AutonSubSystemsZeroSequence() {
@@ -29,41 +27,11 @@ namespace cmd {
         );
     }
 
-    /* loops over a set of 6 constants for pathreef poses */ 
     std::shared_ptr<pathplanner::PathPlannerPath> GenerateTeleopPath() {
-        //TODO: MOVE FIND CLOSEST POSE TO ITS OWN FUNCTION; THINK ABT MOVING INTO DIFFERENT FILE
-
-        frc::Pose2d curpose = SubDrivebase::GetInstance().GetPose();
-        frc::Pose2d endpose;
-        double shortestDistance = 100;
-        double curDistance;
-        int closestindex;
-        //TODO: FIX THE HEADER STDMAP ISSUES
-        /* this is workaround for C/C++ 289; was hoping to define this in <AutonCommands.h> but kept getting C/C++ 289 */
-        PathPlannerReefPosition PathReefPoses[6] {
-            {3.62_m, 2.91_m, -30_deg}, //FR
-            {3.22_m, 4.025_m, -90_deg}, //FM
-            {3.84_m , 5.12_m, 210_deg}, //FL
-            {5.11_m, 5.14_m, 150_deg}, //BL
-            {5.76_m, 4.04_m, 90_deg}, //BM
-            {5.15_m, 2.94_m, 30_deg} //BR
-        };
-
-        for (int i = 0; i<6; i++) {
-            frc::Pose2d pathpose = frc::Pose2d(PathReefPoses[i].x, PathReefPoses[i].y, frc::Rotation2d(PathReefPoses[i].angle));
-            curDistance = curpose.Translation().Distance(pathpose.Translation()).value();
-            if (curDistance < shortestDistance) {
-                shortestDistance = curDistance;
-                closestindex = i;
-                Logger::Log("Auton/Distance", shortestDistance);
-            }
-            Logger::Log("Auton/EndPoseIndex",  static_cast<double>(closestindex));            
-        } 
-        endpose = frc::Pose2d(PathReefPoses[closestindex].x, PathReefPoses[closestindex].y, frc::Rotation2d(PathReefPoses[closestindex].angle));
         // rotation is the direction of the path
         std::vector<frc::Pose2d> poses{
-            curpose,
-            endpose
+            frc::Pose2d(1.0_m, 1.0_m, frc::Rotation2d(0_deg)),
+            frc::Pose2d(2.0_m, 1.0_m, frc::Rotation2d(0_deg))
         };
         std::vector<pathplanner::Waypoint> waypoints = pathplanner::PathPlannerPath::waypointsFromPoses(poses);
         pathplanner::PathConstraints constraints(
@@ -76,19 +44,13 @@ namespace cmd {
             waypoints,
             constraints,
             std::nullopt,
-            pathplanner::GoalEndState(0.0_mps, endpose.Rotation()/*.RotateBy(frc::Rotation2d(180_deg))*/) 
+            pathplanner::GoalEndState(0.0_mps, frc::Rotation2d(-0_deg)) // oppisite of the start rotating
         );
-
-        Logger::Log("Auton/CurrentPose/x", curpose.Translation().X());
-        Logger::Log("Auton/CurrentPose/y", curpose.Translation().Y());
-        Logger::Log("Auton/CurrentPose/angle", curpose.Translation().Angle());
-
         return std::make_shared<pathplanner::PathPlannerPath>(path);
     }
 
     frc2::CommandPtr GetTeleopPathCommand(std::string pathName) {
-        auto path = GenerateTeleopPath();
-        return pathplanner::AutoBuilder::followPath(path);
+        return pathplanner::AutoBuilder::followPath(GenerateTeleopPath());
     }
     
     //  no vision
