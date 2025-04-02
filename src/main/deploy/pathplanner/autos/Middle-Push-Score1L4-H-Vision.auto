@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "MiddleStartToReefRoleH"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ScoreRight-WithVision"
+            "pathName": "MiddleStartPushToReefPoleH.0"
           }
         }
       ]
