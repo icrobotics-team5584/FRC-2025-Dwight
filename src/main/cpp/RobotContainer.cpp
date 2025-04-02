@@ -82,6 +82,8 @@ RobotContainer::RobotContainer() {
   defaultMiddleScoreLeft = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score1L4-G-Vision").ToPtr());
   defaultMiddleScoreRight = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score1L4-H-Vision").ToPtr());
   moveForward = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("MoveForward-4M-0.1ms").ToPtr());
+  pushAndScore = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Middle-Push-Score1L4-H-Vision").ToPtr());
+
 }
 
 std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {
@@ -98,6 +100,9 @@ std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {
   }
   if (chosen == "Default-Score1L4-H-Vision") {
     return defaultMiddleScoreRight;
+  }
+  if (chosen == "Middle-Push-Score1L4-H-Vision") {
+    return pushAndScore;
   }
   return moveForward;
 }
