@@ -11,6 +11,7 @@
 #include "utilities/RobotLogs.h"
 #include "URCL.h"
 #include <frc/RobotController.h>
+#include "utilities/LEDHelper.h"
 
 Robot::Robot() {
   frc::DataLogManager::Start();
