@@ -40,6 +40,7 @@ class RobotContainer {
   std::shared_ptr<frc2::CommandPtr> defaultMiddleScoreLeft;
   std::shared_ptr<frc2::CommandPtr> defaultMiddleScoreRight;
   std::shared_ptr<frc2::CommandPtr> moveForward;
+  std::shared_ptr<frc2::CommandPtr> pushAndScore;
 
   //std::map
 };
