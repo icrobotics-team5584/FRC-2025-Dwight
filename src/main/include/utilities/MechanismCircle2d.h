@@ -21,7 +21,7 @@ class MechanismCircle2d {
             //Create circle background spokes
             for (int i = 0; i < backgroundSpokes; i++) {
                 frc::MechanismLigament2d* spoke = location->template Append<frc::MechanismLigament2d>(
-                        name+"_spoke"+std::to_string(i),
+                        name+"-spoke"+std::to_string(i),
                         radius,
                         angle+(360_deg/backgroundSpokes)*i,
                         spokeWidth,

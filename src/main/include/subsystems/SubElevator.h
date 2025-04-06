@@ -12,6 +12,9 @@
 #include <frc2/command/button/CommandXboxController.h>
 #include "Constants.h"
 #include "utilities/BotVars.h"
+#include <frc/smartdashboard/Mechanism2d.h>
+#include <frc/smartdashboard/MechanismLigament2d.h>
+#include "utilities/MechanismCircle2d.h"
 
 class SubElevator : public frc2::SubsystemBase {
  public:
@@ -110,4 +113,13 @@ class SubElevator : public frc2::SubsystemBase {
                                   _MAX_HEIGHT,
                                   true,
                                   _START_HEIGHT};
+  
+  frc::Mechanism2d _elevatorMech{5, 5};
+  frc::MechanismRoot2d* _elevatorMechRoot = _elevatorMech.GetRoot("elevatorRoot", 1, 1);
+  //MechanismCircle2d _elevatorMechLeft{_elevatorMechRoot, "leftRoller", 0.75, 0_deg, 36, 10};
+  frc::MechanismLigament2d* _elevatorMechM1Lig = 
+    _elevatorMechRoot->Append<frc::MechanismLigament2d>("motor1", 1, 82_deg, 6, frc::Color8Bit{frc::Color::kLightBlue});
+  frc::MechanismLigament2d* _elevatorMechM2Lig = 
+    _elevatorMechRoot->Append<frc::MechanismLigament2d>("motor2", 1, 82_deg, 6, frc::Color8Bit{frc::Color::kDarkBlue});
+
 };

@@ -64,6 +64,8 @@ SubElevator::SubElevator() {
   // Set motor 2 to follow motor 1
   _elevatorMotor2.SetControl(controls::Follower(_elevatorMotor1.GetDeviceID(), false));
   _elevatorMotor1.GetClosedLoopReference().SetUpdateFrequency(100_Hz);
+
+  frc::SmartDashboard::PutData("Elevator/mech2dDisplay", &_elevatorMech);
 }
 
 frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height) {
@@ -282,12 +284,13 @@ void SubElevator::SetBrakeMode(bool mode) {
 // This method will be called once per scheduler run
 void SubElevator::Periodic() {
   Logger::LogFalcon("Elevator/Motor1", _elevatorMotor1);
-
   Logger::LogFalcon("Elevator/Motor2", _elevatorMotor2);
-  Logger::Log("Elevator/Motor1/Height",
-              HeightFromRotations(_elevatorMotor1.GetPosition().GetValue()));
-  Logger::Log("Elevator/Motor2/Height",
-              HeightFromRotations(_elevatorMotor2.GetPosition().GetValue()));
+
+  auto motor1Height = HeightFromRotations(_elevatorMotor1.GetPosition().GetValue());
+  auto motor2Height = HeightFromRotations(_elevatorMotor2.GetPosition().GetValue());
+
+  Logger::Log("Elevator/Motor1/Height", motor1Height);
+  Logger::Log("Elevator/Motor2/Height", motor2Height);
   Logger::Log("Elevator/Motor1/Target",
               HeightFromRotations(_elevatorMotor1.GetClosedLoopReference().GetValue() * 1_tr));
   Logger::Log("Elevator/Motor2/Target",
@@ -295,6 +298,9 @@ void SubElevator::Periodic() {
   Logger::Log("Elevator/_targetheight", _targetHeight);
   Logger::Log("Elevator/M1Current", GetM1Current().value());
   Logger::Log("Elevator/_hasReset", _hasReset);
+
+  _elevatorMechM1Lig->SetLength(1+motor1Height.value());
+  _elevatorMechM2Lig->SetLength(1+motor2Height.value());  
 }
 
 void SubElevator::SimulationPeriodic() {
