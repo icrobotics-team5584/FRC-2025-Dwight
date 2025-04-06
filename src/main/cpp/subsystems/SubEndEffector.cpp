@@ -15,6 +15,8 @@ SubEndEffector::SubEndEffector() {
     config.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
     _endEffectorMotor.AdjustConfig(config);
     frc::SmartDashboard::PutData("EndEffector/motorData", &_endEffectorMotor);
+
+    frc::SmartDashboard::PutData("EndEffector/mech2dDisplay", &_endEffectorMech);
 }
 
 // This method will be called once per scheduler run
@@ -23,6 +25,10 @@ void SubEndEffector::Periodic() {
     frc::SmartDashboard::PutBoolean("EndEffector/LinebreakLower", SubEndEffector::GetInstance().CheckLineBreakLower());
     frc::SmartDashboard::PutNumber("EndEffector/endEffectorMotor", _endEffectorMotor.Get());
     frc::SmartDashboard::PutNumber("EndEffector/MotorCurrent", _endEffectorMotor.GetOutputCurrent());
+
+    _endEffectorMechTopRoller.SetAngle(_endEffectorMotor.GetPosition());
+    _endEffectorMechMedialRoller.SetAngle(_endEffectorMotor.GetPosition());
+    _endEffectorMechLateralRoller.SetAngle(_endEffectorMotor.GetPosition());
 }
 
 frc2::CommandPtr SubEndEffector::FeedUp() {
