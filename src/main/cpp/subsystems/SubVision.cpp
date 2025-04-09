@@ -8,6 +8,7 @@
 #include <frc/DriverStation.h>
 #include <frc/RobotBase.h>
 #include <photon/estimation/CameraTargetRelation.h>
+#include <pathplanner/lib/auto/AutoBuilder.h>
 #include <frc/MathUtil.h>
 
 SubVision::SubVision() {
@@ -39,7 +40,8 @@ SubVision::SubVision() {
 }
 
 void SubVision::Periodic() {
-  frc::SmartDashboard::PutNumber("Vision/LastReefTag", _lastReefObservation.reefTag.GetFiducialId());
+  frc::SmartDashboard::PutNumber("Vision/LastReefTag",
+                                 _lastReefObservation.reefTag.GetFiducialId());
   if (_lastReefObservation.cameraSide == Side::Left) {
     frc::SmartDashboard::PutString("Vision/Last Used Camera", "Left");
   } else {
@@ -65,9 +67,11 @@ void SubVision::UpdateVision() {
       _leftEstPose = _leftPoseEstimater.Update(result);
       for (const auto& target : result.targets) {
         leftTargets += std::to_string(target.GetFiducialId()) + ", ";
-        if (!CheckReef(target)) {continue;}
+        if (!CheckReef(target)) {
+          continue;
+        }
         double targetArea = target.GetArea();
-        if (targetArea > largestArea ) {
+        if (targetArea > largestArea) {
           _lastReefObservation.reefTag = target;
           _lastReefObservation.cameraSide = Side::Left;
 
@@ -85,7 +89,9 @@ void SubVision::UpdateVision() {
 
       for (const auto& target : result.targets) {
         rightTargets += std::to_string(target.GetFiducialId()) + ", ";
-        if (!CheckReef(target)) {continue;}
+        if (!CheckReef(target)) {
+          continue;
+        }
         double targetArea = target.GetArea();
         if (targetArea > largestArea) {
           _lastReefObservation.reefTag = target;
@@ -117,7 +123,7 @@ frc::Pose2d SubVision::GetSourcePose(int tagId) {
  * @returns The pose of the reef in the field coordinate system.
  */
 frc::Pose2d SubVision::GetReefPose(Side side = Left, int pose = -1) {
-  int reefTagID = (pose == -1)? _lastReefObservation.reefTag.GetFiducialId() : pose;
+  int reefTagID = (pose == -1) ? _lastReefObservation.reefTag.GetFiducialId() : pose;
   frc::Pose2d targPose;
   if (side == Left) {
     targPose = {tagToReefPositions[reefTagID].leftX, tagToReefPositions[reefTagID].leftY,
@@ -132,15 +138,21 @@ frc::Pose2d SubVision::GetReefPose(Side side = Left, int pose = -1) {
 units::degree_t SubVision::GetReefAlignAngle(Side reefSide) {
   int reefTagID = _lastReefObservation.reefTag.GetFiducialId();
   Side cameraSide = _lastReefObservation.cameraSide;
-  if (cameraSide == Left)
+  if (cameraSide == Left) {
+    if (reefSide == Left) {
+      return tagToReefAngles[reefTagID].LeftCameraLeftScoreAngle;
+    }  // left pole
+    else {
+      return tagToReefAngles[reefTagID].LeftCameraRightScoreAngle;
+    }  // right pole
+  } else  // CameraSide == Right
   {
-    if (reefSide == Left) { return tagToReefAngles[reefTagID].LeftCameraLeftScoreAngle; } //left pole
-    else { return tagToReefAngles[reefTagID].LeftCameraRightScoreAngle; } //right pole
-  }
-  else // CameraSide == Right
-  {
-    if (reefSide == Left) { return tagToReefAngles[reefTagID].RightCameraLeftScoreAngle; } //left pole
-    else { return tagToReefAngles[reefTagID].RightCameraRightScoreAngle; } //right pole
+    if (reefSide == Left) {
+      return tagToReefAngles[reefTagID].RightCameraLeftScoreAngle;
+    }  // left pole
+    else {
+      return tagToReefAngles[reefTagID].RightCameraRightScoreAngle;
+    }  // right pole
   }
 
   return 0_deg;
@@ -164,8 +176,9 @@ bool SubVision::CheckReef(const photon::PhotonTrackedTarget& reef) {
   if (std::find(myReef.begin(), myReef.end(), reef.GetFiducialId()) == myReef.end()) {
     return false;
   }
-  units::degree_t errorAngle = SubDrivebase::GetInstance().GetAllianceRelativeGyroAngle().Degrees() -
-                               GetReefPose(Left,reef.GetFiducialId()).Rotation().Degrees();
+  units::degree_t errorAngle =
+      SubDrivebase::GetInstance().GetAllianceRelativeGyroAngle().Degrees() -
+      GetReefPose(Left, reef.GetFiducialId()).Rotation().Degrees();
 
   errorAngle = frc::InputModulus(errorAngle, -180_deg, 180_deg);
 
@@ -197,14 +210,14 @@ bool SubVision::IsEstimateUsable(photon::EstimatedRobotPose pose) {
     return 0;
   }
   for (auto target : pose.targetsUsed) {
-    const auto& myReef = (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) ? redReef : blueReef;
+    const auto& myReef =
+        (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) ? redReef : blueReef;
     if (std::find(myReef.begin(), myReef.end(), target.GetFiducialId()) != myReef.end()) {
       hasMyTargets = true;
     }
     distance += target.GetBestCameraToTarget().Translation().Norm();
   }
   distance /= pose.targetsUsed.size();
-
 
   return ((distance < 0.7_m) || (tagCount > 1)) && hasMyTargets;
 }

@@ -82,6 +82,8 @@ class SubDrivebase : public frc2::SubsystemBase {
     return _sysIdRoutine.Dynamic(direction);
   }
 
+  frc2::CommandPtr DriveToPosePP(frc::Pose2d targetPose);
+
   // Constants
   static constexpr units::meters_per_second_t MAX_VELOCITY = 5_mps;
   static constexpr units::meters_per_second_t MAX_DRIVE_TO_POSE_VELOCITY = 1_mps;
