@@ -22,7 +22,16 @@ using namespace frc2::cmd;
 frc2::CommandPtr YAlignWithTarget(SubVision::Side side) 
 {
   static frc::Pose2d targetPose = {-1_m,-1_m,0_tr};
-  return RunOnce([side] {targetPose = SubVision::GetInstance().GetLastReefPose(side);}).AndThen(
+  return RunOnce([side] {
+    frc::Pose2d tagPose = SubVision::GetInstance().GetAprilTagPose(SubVision::GetInstance().GetLastReefId());
+    
+    if (side == SubVision::Side::Left) {
+      targetPose = SubVision::GetInstance().CalculateRelativePose(tagPose,0.5_m, 0.16_m);
+    } else {
+      targetPose = SubVision::GetInstance().CalculateRelativePose(tagPose,0.5_m, -0.16_m);
+    }
+    SubDrivebase::GetInstance().DisplayPose("3d align pose", targetPose);
+  }).AndThen(
   SubDrivebase::GetInstance()
       .Drive(
           [side] {
@@ -31,9 +40,22 @@ frc2::CommandPtr YAlignWithTarget(SubVision::Side side)
           true)
       .Until([] {
         return SubDrivebase::GetInstance().IsAtPose(targetPose);
-      }));
+      })).AndThen(FrontApproachAlign(targetPose));
       // .AndThen(SubDrivebase::GetInstance().Drive([] { return frc::ChassisSpeeds(0_mps,0.2_mps,0_deg_per_s);},false))
       // .AndThen(ForceAlignWithTarget(side)).FinallyDo([] {targetPose = {-1_m, -1_m, 0_tr};});
+}
+
+frc2::CommandPtr FrontApproachAlign (frc::Pose2d targetPose) {
+  return SubDrivebase::GetInstance().Drive([targetPose] {
+    auto RelativeDifference = SubDrivebase::GetInstance().GetPose().RelativeTo(targetPose);
+    frc::ChassisSpeeds speeds {0.5_mps, 0_mps, 0_tps};
+    if (RelativeDifference.Y() < -0.02_m) {
+      speeds.vy = -0.1_mps;
+    } else if (RelativeDifference.Y() > 0.02_m) {
+      speeds.vy = 0.1_mps;
+    }
+    return speeds;
+  }, false);
 }
 
 frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
@@ -77,7 +99,6 @@ frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
           
         } else {
           frc::Rotation2d targetRotation = SubVision::GetInstance().GetLastReefPose(side).Rotation();
-          using ds = frc::DriverStation;
           units::angle::turn_t roterror = SubDrivebase::GetInstance().GetAllianceRelativeGyroAngle().Degrees() - targetRotation.Degrees();
           auto rotationSpeed = SubDrivebase::GetInstance().CalcRotateSpeed(roterror) / 5;
           return frc::ChassisSpeeds{0_mps, 0.5_mps, rotationSpeed};
