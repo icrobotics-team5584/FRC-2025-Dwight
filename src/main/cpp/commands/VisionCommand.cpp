@@ -16,10 +16,10 @@ using namespace frc2::cmd;
 
 frc2::CommandPtr AlignReef(SubVision::Side side, int id) {
   static frc::Pose2d targetPose;
-  return RunOnce([] { targetPose = SubVision::GetInstance().GetReefPose(side, id); })
-      .AndThen(SubDrivebase::GetInstance().DriveToPosePP().Until([] {
-        return SubDrivebase::GetInstance().IsAtPose(SubVision::GetInstance().GetReefPose(side, id))
-      }));
+  return RunOnce([side,id] { targetPose = SubVision::GetInstance().GetReefPose(side, id); })
+      .AndThen(SubDrivebase::GetInstance().DriveToPosePP().Until([side, id] {
+        return SubDrivebase::GetInstance().IsAtPose(SubVision::GetInstance().GetReefPose(side, id));
+      })).AndThen(FrontApproachAlign(targetPose));
 }
 
 frc2::CommandPtr FrontApproachAlign (frc::Pose2d targetPose) {
