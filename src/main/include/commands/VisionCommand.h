@@ -20,4 +20,6 @@ namespace cmd {
   frc2::CommandPtr AutoShootIfAligned(SubVision::Side side);
   frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side);
   frc2::CommandPtr AlignAndShoot(SubVision::Side side);
+  frc2::CommandPtr AutoShootIfKindaAligned(SubVision::Side side);
+  frc2::CommandPtr HopeAndShoot(SubVision::Side side);
 }

@@ -11,6 +11,8 @@
 #include <pathplanner/lib/auto/AutoBuilder.h>
 #include <pathplanner/lib/config/RobotConfig.h>
 #include "utilities/RobotLogs.h"
+#include "RobotContainer.h"
+#include <frc/geometry/Translation2d.h>
 
 SubDrivebase::SubDrivebase() {
   frc::SmartDashboard::PutData("Drivebase/Teleop PID/Rotation Controller",
@@ -24,10 +26,15 @@ SubDrivebase::SubDrivebase() {
   using namespace pathplanner;
   AutoBuilder::configure(
       // Robot pose supplier
-      [this]() { return GetPose(); },
+      [this]() { 
+        return GetPose();
+      },
 
       // Method to reset odometry (will be called if your auto has a starting pose)
-      [this](frc::Pose2d pose) { SetPose(pose); },
+      [this](frc::Pose2d pose) { 
+        Logger::Tune("Drivebase/ResetAutoStartingPose", true); 
+            SetPose(pose);
+      }, 
 
       // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
       [this]() { return GetRobotRelativeSpeeds(); },
@@ -51,7 +58,7 @@ SubDrivebase::SubDrivebase() {
               (feedforwards.robotRelativeForcesY[3] / _voltageFFscaler)};
           Drive(speeds.vx, speeds.vy, speeds.omega, false, xForces, yForces);
         } else {
-          Drive(speeds.vx, speeds.vy, speeds.omega, false);
+            Drive(speeds.vx, speeds.vy, speeds.omega, false);
         }
       },
       // PID Feedback controller for translation and rotation
@@ -495,6 +502,7 @@ void SubDrivebase::SetPose(frc::Pose2d pose) {
     ResetGyroHeading(pose.Rotation().Degrees() - 180_deg);
   }
   _poseEstimator.ResetPosition(pose.Rotation().Degrees(), {fl, fr, bl, br}, pose);
+  _simPoseEstimator.ResetPosition(pose.Rotation().Degrees(), {fl, fr, bl, br}, pose);
 }
 
 void SubDrivebase::DisplayPose(std::string label, frc::Pose2d pose) {
@@ -507,10 +515,10 @@ frc2::Trigger SubDrivebase::CheckCoastButton() {
 
 frc2::Trigger SubDrivebase::IsTipping() {
   return frc2::Trigger{[this] {
-    if ((SubDrivebase::GetInstance().GetRoll() > 5_deg ||
-         SubDrivebase::GetInstance().GetRoll() < -5_deg) ||
-        (SubDrivebase::GetInstance().GetPitch() > 5_deg ||
-         SubDrivebase::GetInstance().GetPitch() < -5_deg)) {
+    if ((SubDrivebase::GetInstance().GetRoll() > 15_deg ||
+         SubDrivebase::GetInstance().GetRoll() < -15_deg) ||
+        (SubDrivebase::GetInstance().GetPitch() > 15_deg ||
+         SubDrivebase::GetInstance().GetPitch() < -15_deg)) {
       return true;
     } else {
       return false;

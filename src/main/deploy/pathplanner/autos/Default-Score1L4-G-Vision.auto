@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SpinInSpot-360-Slow"
+                  "pathName": "MiddleStartToReefRoleG.0"
                 }
               },
               {
@@ -21,6 +21,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreLeft-WithVision"
           }
         }
       ]

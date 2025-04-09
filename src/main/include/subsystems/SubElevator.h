@@ -67,14 +67,14 @@ class SubElevator : public frc2::SubsystemBase {
   bool _hasReset = false;
 
   //Elevator target heights
-  static constexpr units::meter_t _L1_HEIGHT = 0.20_m;
+  static constexpr units::meter_t _L1_HEIGHT = 0.212_m;
   static constexpr units::meter_t _L2_HEIGHT = 0.448_m;
-  static constexpr units::meter_t _L3_HEIGHT = 0.8288_m;
-  static constexpr units::meter_t _L4_HEIGHT = 1.406_m;
-  static constexpr units::meter_t _ALGAE_LOW_HEIGHT = 0.78_m;
-  static constexpr units::meter_t _ALGAE_HIGH_HEIGHT = 1.242_m;
+  static constexpr units::meter_t _L3_HEIGHT = 0.839_m;
+  static constexpr units::meter_t _L4_HEIGHT = 1.43_m;
+  static constexpr units::meter_t _ALGAE_LOW_HEIGHT = 0.643_m;
+  static constexpr units::meter_t _ALGAE_HIGH_HEIGHT = 1.087_m;
   static constexpr units::meter_t _SOURCE_HEIGHT = 0.01_m;
-  static constexpr units::meter_t _CLIMB_HEIGHT = 0.8288_m;
+  static constexpr units::meter_t _CLIMB_HEIGHT = 0.763_m;
   static constexpr units::meter_t _CLEAR_LATCH_HEIGHT = 0.95_m;
 
  private:
@@ -82,9 +82,11 @@ class SubElevator : public frc2::SubsystemBase {
   ctre::phoenix6::hardware::TalonFX _elevatorMotor1{canid::ELEVATOR_MOTOR_1};
   ctre::phoenix6::hardware::TalonFX _elevatorMotor2{canid::ELEVATOR_MOTOR_2};
 
+  // real world PID 30, 0, 0.2
   static constexpr double _P = 30;  // 134.04;
   static constexpr double _I = 0;
   static constexpr double _D = 0.2;
+
   static constexpr double _V = 0;
   static constexpr double _A = 0;
   static constexpr double _G = 0.15;  // 8.6704096794128409086;
@@ -100,10 +102,10 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr units::meters_per_second_squared_t _ACCELERATION = 15_mps_sq;
   static constexpr units::ampere_t zeroingCurrentLimit = 40_A;
   //   //Simulation stuff
-  frc::sim::ElevatorSim _motorSim{frc::DCMotor::Falcon500(2),
+  frc::sim::ElevatorSim _motorSim{frc::DCMotor::Falcon500FOC(2),
                                   _GEAR_RATIO,
                                   _CARRIAGE_MASS,
-                                  _DRUM_RADIUS,
+                                  _DRUM_RADIUS, // sim elevator isnt 2 stage 
                                   _MIN_HEIGHT,
                                   _MAX_HEIGHT,
                                   true,

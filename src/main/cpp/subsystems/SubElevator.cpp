@@ -292,6 +292,7 @@ void SubElevator::Periodic() {
               HeightFromRotations(_elevatorMotor1.GetClosedLoopReference().GetValue() * 1_tr));
   Logger::Log("Elevator/Motor2/Target",
               HeightFromRotations(_elevatorMotor2.GetClosedLoopReference().GetValue() * 1_tr));
+  Logger::Log("Elevator/_targetheight", _targetHeight);
   Logger::Log("Elevator/M1Current", GetM1Current().value());
   Logger::Log("Elevator/_hasReset", _hasReset);
 }

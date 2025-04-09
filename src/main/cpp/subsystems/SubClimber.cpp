@@ -130,6 +130,10 @@ frc2::CommandPtr SubClimber::ReadyClimber() {
   return RunOnce([this] { _climberMotor.SetPositionTarget(PREPARE_TURNS); });
 }
 
+frc2::CommandPtr SubClimber::ClimbToHalfway() {
+  return RunOnce([this] { _climberMotor.SetPositionTarget(HALF_CLIMB_TURNS); });
+}
+
 frc2::CommandPtr SubClimber::Climb() {
   return RunOnce([this] { _climberMotor.SetPositionTarget(CLIMB_TURNS); });
 }
