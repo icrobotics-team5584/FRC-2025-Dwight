@@ -22,24 +22,18 @@ using namespace frc2::cmd;
 frc2::CommandPtr YAlignWithTarget(SubVision::Side side) 
 {
   static frc::Pose2d targetPose = {-1_m,-1_m,0_tr};
-  return SubDrivebase::GetInstance()
+  return RunOnce([side] {targetPose = SubVision::GetInstance().GetLastReefPose(side);}).AndThen(
+  SubDrivebase::GetInstance()
       .Drive(
           [side] {
-            if (targetPose.X() == -1_m && SubVision::GetInstance().HadReef()) {
-              targetPose = SubVision::GetInstance().GetLastReefPose(side);
-            }
-            frc::ChassisSpeeds speeds = {0_mps,0_mps};
-            if (targetPose.X() != -1_m) {
-              speeds = SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose);
-            }
-            return speeds;
+            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose);
           },
           true)
       .Until([] {
         return SubDrivebase::GetInstance().IsAtPose(targetPose);
-      })
-      .AndThen(SubDrivebase::GetInstance().Drive([] { return frc::ChassisSpeeds(0_mps,0.2_mps,0_deg_per_s);},false))
-      .AndThen(ForceAlignWithTarget(side)).FinallyDo([] {targetPose = {-1_m, -1_m, 0_tr};});
+      }));
+      // .AndThen(SubDrivebase::GetInstance().Drive([] { return frc::ChassisSpeeds(0_mps,0.2_mps,0_deg_per_s);},false))
+      // .AndThen(ForceAlignWithTarget(side)).FinallyDo([] {targetPose = {-1_m, -1_m, 0_tr};});
 }
 
 frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
@@ -74,8 +68,7 @@ frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
           Logger::Log("Vision/Target Pole", side == SubVision::Side::Left ? "Left":"Right");
           
           // rotation componet
-          frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(side,-1).Rotation();
-          using ds = frc::DriverStation;
+          frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(-1,side).Rotation();
 
           units::angle::turn_t roterror = SubDrivebase::GetInstance().GetPose().Rotation().Degrees() - targetRotation.Degrees();
           auto rotationSpeed = SubDrivebase::GetInstance().CalcRotateSpeed(roterror) / 5;
@@ -163,7 +156,7 @@ frc2::CommandPtr AlignToSource() {
 }
 
 frc2::CommandPtr AlignAndShoot(SubVision::Side side){
- return AlignToReef(side).AlongWith(AutoShootIfAligned(side));
+ return YAlignWithTarget(side).AlongWith(AutoShootIfAligned(side));
 }
 frc2::CommandPtr HopeAndShoot(SubVision::Side side) {
   return ForceAlignWithTarget(side).AlongWith(AutoShootIfKindaAligned(side));

@@ -112,10 +112,12 @@ void RobotContainer::ConfigureBindings() {
   // ));
   _driverController.A().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
+  
   _driverController.X().WhileTrue(SubDrivebase::GetInstance().GyroCoralLeftStationAlign(_driverController));
   _driverController.B().WhileTrue(SubDrivebase::GetInstance().GyroCoralRightStationAlign(_driverController)); 
-  _driverController.RightBumper().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Right));
-  _driverController.LeftBumper().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Left));
+  // _driverController.RightBumper().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Right));
+  // _driverController.LeftBumper().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Left));
+  _driverController.RightBumper().WhileTrue(cmd::YAlignWithTarget(SubVision::Side::Left));
   _driverController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
   _driverController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
 
