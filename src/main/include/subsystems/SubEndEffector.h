@@ -58,9 +58,9 @@ class SubEndEffector : public frc2::SubsystemBase {
   // Mechanism2d
   frc::Mechanism2d _endEffectorMech{0.5, 0.5};
   frc::MechanismRoot2d* _endEffectorMechRoot = _endEffectorMech.GetRoot("endEffectorRoot", 0.1, 0.2);
-  frc::MechanismLigament2d* _endEffectorMech_connectorLig = 
-    _endEffectorMechRoot->Append<frc::MechanismLigament2d>("_connectorLig", 0.15, 55_deg, 0);
-  MechanismCircle2d _endEffectorMechTopRoller{_endEffectorMech_connectorLig, "topRoller", 0.025, 0_deg};
+  frc::MechanismLigament2d* _endEffectorMech_connectorLig1 = 
+    _endEffectorMechRoot->Append<frc::MechanismLigament2d>("_connectorLig1", 0.15, 55_deg, 0);
+  MechanismCircle2d _endEffectorMechTopRoller{_endEffectorMech_connectorLig1, "topRoller", 0.025, 0_deg};
   MechanismCircle2d _endEffectorMechMedialRoller{_endEffectorMechRoot, "medialRoller", 0.025, 0_deg};
   frc::MechanismLigament2d* _endEffectorMechBody = 
     _endEffectorMechRoot->Append<frc::MechanismLigament2d>("body", 0.19, 325_deg, 6, frc::Color8Bit{frc::Color::kOrange});

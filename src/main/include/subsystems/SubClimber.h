@@ -19,6 +19,7 @@
 #include <frc2/command/button/Trigger.h>
 #include <units/angular_velocity.h>
 #include "utilities/RobotLogs.h"
+#include "utilities/MechanismCircle2d.h"
 
 class SubClimber : public frc2::SubsystemBase {
  public:
@@ -78,9 +79,14 @@ class SubClimber : public frc2::SubsystemBase {
 
   rev::spark::SparkBaseConfig _climberMotorConfig;
   
-  frc::Mechanism2d _singleJointedArmMech{3, 3};  // canvas width and height
-  frc::MechanismRoot2d* _armRoot = _singleJointedArmMech.GetRoot("armRoot", 1, 1);  // root x and y
-  frc::MechanismLigament2d* _arm1Ligament =
-    _armRoot->Append<frc::MechanismLigament2d>("ligament2", ARM_LENGTH.value(), 0_deg);
+  frc::Mechanism2d _climberMech{1, 1};  // canvas width and height
+  frc::MechanismRoot2d* _climberMechRoot = _climberMech.GetRoot("climberRoot", 0.7, 0.1);  // root x and y
+  frc::MechanismLigament2d* _climberMechMountBeam =
+    _climberMechRoot->Append<frc::MechanismLigament2d>("mountBeam", 0.25, 90_deg);
+  MechanismCircle2d _climberMechGear{_climberMechMountBeam, "gear", 0.075, 90_deg};
+  frc::MechanismLigament2d* _climberMechArmLig1 =
+    _climberMechMountBeam->Append<frc::MechanismLigament2d>("armLigament1", 0.23, 90_deg);
+  frc::MechanismLigament2d* _climberMechArmLig2 =
+    _climberMechArmLig1->Append<frc::MechanismLigament2d>("armLigament2", 0.25, 90_deg);   
 
 };
