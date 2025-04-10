@@ -83,10 +83,10 @@ class SubClimber : public frc2::SubsystemBase {
   frc::MechanismRoot2d* _climberMechRoot = _climberMech.GetRoot("climberRoot", 0.7, 0.1);  // root x and y
   frc::MechanismLigament2d* _climberMechMountBeam =
     _climberMechRoot->Append<frc::MechanismLigament2d>("mountBeam", 0.25, 90_deg);
-  MechanismCircle2d _climberMechGear{_climberMechMountBeam, "gear", 0.075, 90_deg};
+  MechanismCircle2d _climberMechGear{_climberMechMountBeam, "gear", 0.075, 0_deg};
   frc::MechanismLigament2d* _climberMechArmLig1 =
-    _climberMechMountBeam->Append<frc::MechanismLigament2d>("armLigament1", 0.23, 90_deg);
+    _climberMechMountBeam->Append<frc::MechanismLigament2d>("armLigament1", 0.23, 180_deg);
   frc::MechanismLigament2d* _climberMechArmLig2 =
-    _climberMechArmLig1->Append<frc::MechanismLigament2d>("armLigament2", 0.25, 90_deg);   
+    _climberMechArmLig1->Append<frc::MechanismLigament2d>("armLigament2", 0.25, 270_deg);   
 
 };

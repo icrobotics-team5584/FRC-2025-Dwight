@@ -24,7 +24,7 @@ SubClimber::SubClimber() {
 void SubClimber::Periodic() {
   // clang-format off
   frc::SmartDashboard::PutNumber("Climber/MotorTarget", _climberMotor.GetPositionTarget().value());
-  frc::SmartDashboard::PutData("Climber/armMechDisplay", &_climberMech);
+  frc::SmartDashboard::PutData("Climber/climberMech", &_climberMech);
   frc::SmartDashboard::PutNumber("Climber/MotorVoltage", _climberMotor.GetMotorVoltage().value());
   frc::SmartDashboard::PutNumber("Climber/Current", _climberMotor.GetOutputCurrent());
   frc::SmartDashboard::PutNumber("Climber/PositionMotor", (_climberMotor.GetPosition().value()));
@@ -38,9 +38,9 @@ void SubClimber::Periodic() {
     _climberMotor.Set(0);
   }
 
-  units::angle::degree_t pivotAngle = _climberMotor.GetPosition();
-  _climberMechGear.SetAngle(pivotAngle+90_deg);
-  _climberMechArmLig1->SetAngle(pivotAngle+90_deg);
+  units::angle::degree_t pivotAngle = 180_deg-_climberMotor.GetPosition();
+  _climberMechGear.SetAngle(pivotAngle);
+  _climberMechArmLig1->SetAngle(pivotAngle);
 }
 
 void SubClimber::SetBrakeMode(bool mode) {

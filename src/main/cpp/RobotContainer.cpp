@@ -163,6 +163,10 @@ void RobotContainer::ConfigureBindings() {
   //  SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnFalse(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
   SubEndEffector::GetInstance().CheckLineBreakTriggerLower().OnFalse(
       ControllerRumbleLeft(_driverController).WithTimeout(0.1_s));
+  
+  //temp
+  _tempController.A().WhileTrue(SubClimber::GetInstance().ManualClimberMovementUP());
+  _tempController.B().WhileTrue(SubClimber::GetInstance().ManualClimberMovementDOWN());
 }
 
 // Controller rumble functions
