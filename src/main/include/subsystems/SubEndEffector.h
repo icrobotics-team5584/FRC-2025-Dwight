@@ -11,11 +11,9 @@
 #include "Constants.h"
 #include <frc/DigitalInput.h>
 #include <frc2/command/button/Trigger.h>
-#include <frc/simulation/DCMotorSim.h>
 #include <frc/smartdashboard/Mechanism2d.h>
 #include <frc/smartdashboard/MechanismLigament2d.h>
-#include "utilities/MechanismCircle2d.h"
-#include <frc/system/plant/LinearSystemId.h>
+#include "utilities/ICMechanism2d.h"
 
 class SubEndEffector : public frc2::SubsystemBase {
  public:
@@ -56,11 +54,11 @@ class SubEndEffector : public frc2::SubsystemBase {
   // declared private and exposed only through public methods.
 
   // Mechanism2d
-  frc::Mechanism2d _endEffectorMech{0.5, 0.5};
+  frc::Mechanism2d& _endEffectorMech = SharedMechanism2d::GetInstance().Get();
   frc::MechanismRoot2d* _endEffectorMechRoot = _endEffectorMech.GetRoot("endEffectorRoot", 0.1, 0.2);
-  frc::MechanismLigament2d* _endEffectorMech_connectorLig1 = 
-    _endEffectorMechRoot->Append<frc::MechanismLigament2d>("_connectorLig1", 0.15, 55_deg, 0);
-  MechanismCircle2d _endEffectorMechTopRoller{_endEffectorMech_connectorLig1, "topRoller", 0.025, 0_deg};
+  frc::MechanismLigament2d* _endEffectorMechConnectorLig1 = 
+    _endEffectorMechRoot->Append<frc::MechanismLigament2d>("connectorLig1", 0.15, 55_deg, 0);
+  MechanismCircle2d _endEffectorMechTopRoller{_endEffectorMechConnectorLig1, "topRoller", 0.025, 0_deg};
   MechanismCircle2d _endEffectorMechMedialRoller{_endEffectorMechRoot, "medialRoller", 0.025, 0_deg};
   frc::MechanismLigament2d* _endEffectorMechBody = 
     _endEffectorMechRoot->Append<frc::MechanismLigament2d>("body", 0.19, 325_deg, 6, frc::Color8Bit{frc::Color::kOrange});

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <string_view>
 #include <units/angle.h>
 #include <frc/util/Color8Bit.h>
 
@@ -43,4 +42,19 @@ class MechanismCircle2d {
     private:
         std::vector<frc::MechanismLigament2d*> _backgroundSpokeLigaments;
         frc::MechanismLigament2d* _indicatorLigament;
+};
+
+
+class SharedMechanism2d {
+ public:
+  SharedMechanism2d();
+  static SharedMechanism2d& GetInstance() {
+    static SharedMechanism2d inst;
+    return inst;
+  }
+
+  frc::Mechanism2d& Get();
+
+ private:
+  frc::Mechanism2d _mechanism{3, 3};
 };

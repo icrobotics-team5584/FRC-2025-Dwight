@@ -19,7 +19,7 @@
 #include <frc2/command/button/Trigger.h>
 #include <units/angular_velocity.h>
 #include "utilities/RobotLogs.h"
-#include "utilities/MechanismCircle2d.h"
+#include "utilities/ICMechanism2d.h"
 
 class SubClimber : public frc2::SubsystemBase {
  public:
@@ -79,8 +79,9 @@ class SubClimber : public frc2::SubsystemBase {
 
   rev::spark::SparkBaseConfig _climberMotorConfig;
   
+  // Mechanism2d
   frc::Mechanism2d _climberMech{1, 1};  // canvas width and height
-  frc::MechanismRoot2d* _climberMechRoot = _climberMech.GetRoot("climberRoot", 0.7, 0.1);  // root x and y
+  frc::MechanismRoot2d* _climberMechRoot = _climberMech.GetRoot("climberRoot", 0.6, 0.1);  // root x and y
   frc::MechanismLigament2d* _climberMechMountBeam =
     _climberMechRoot->Append<frc::MechanismLigament2d>("mountBeam", 0.25, 90_deg);
   MechanismCircle2d _climberMechGear{_climberMechMountBeam, "gear", 0.075, 0_deg};
@@ -88,5 +89,4 @@ class SubClimber : public frc2::SubsystemBase {
     _climberMechMountBeam->Append<frc::MechanismLigament2d>("armLigament1", 0.23, 180_deg);
   frc::MechanismLigament2d* _climberMechArmLig2 =
     _climberMechArmLig1->Append<frc::MechanismLigament2d>("armLigament2", 0.25, 270_deg);   
-
 };
