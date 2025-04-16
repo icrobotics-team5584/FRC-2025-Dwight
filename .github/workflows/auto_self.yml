@@ -1,9 +1,8 @@
 # This is a basic workflow to build robot code.
-name: manual_self_artifact
+name: auto_self
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the main branch.
-on:
-  workflow_dispatch:
+on: [push, pull_request]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -26,13 +25,3 @@ jobs:
     # Runs a single command using the runners shell
     - name: Compile and run tests on robot code
       run: ./gradlew build
-
-    - uses: actions/upload-artifact@v4
-      with:
-        # Name of the artifact to upload.
-        # Optional. Default is 'artifact'
-        name: file
-    
-        # A file, directory or wildcard pattern that describes what to upload
-        # Required.
-        path: /*
