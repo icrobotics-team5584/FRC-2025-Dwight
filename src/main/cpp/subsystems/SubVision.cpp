@@ -232,3 +232,28 @@ frc::Pose2d SubVision::GetAprilTagPose(int id) {
     return SubDrivebase::GetInstance().GetPose();
   }
 }
+
+int SubVision::GetClosestTag(frc::Pose2d currentPose){
+  int _closestTagID;
+  units::meter_t _closestTagInitX = (tagToReefPositions[17].leftX + tagToReefPositions[17].rightX)/2;
+  units::meter_t _closestTagInitY = (tagToReefPositions[17].leftY + tagToReefPositions[17].rightY)/2;
+  frc::Pose2d _closestTagPose = {_closestTagInitX, _closestTagInitY, tagToReefPositions[17].angle};
+
+  for (auto tagToReefPosition : tagToReefPositions) {
+    //initialise a reef pose for the current iteration and a key for current iteration
+    ReefPositions tagToReefPose = tagToReefPosition.second;
+    int tagToReefKey = tagToReefPosition.first;
+
+    //generate tag pose that is the avg of both pole poses
+    units::meter_t tagPoseX = (tagToReefPose.leftX + tagToReefPose.rightX)/2;
+    units::meter_t tagPoseY = (tagToReefPose.leftY + tagToReefPose.rightY)/2;
+    frc::Pose2d tagPose{tagPoseX, tagPoseY, tagToReefPose.angle};
+
+    //check if tag pose x and y are less than the current closest tag pose
+    if (tagPose.X() < _closestTagPose.X() && tagPose.Y() < _closestTagPose.Y()){
+      _closestTagID = tagToReefKey;
+      _closestTagPose = tagPose;
+    }
+  }
+  return _closestTagID;
+}

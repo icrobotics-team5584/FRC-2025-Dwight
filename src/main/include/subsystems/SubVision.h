@@ -55,6 +55,7 @@ public:
 
   frc::Pose2d CalculateRelativePose(frc::Pose2d pose, units::meter_t xTransform, units::meter_t yTransform);
 
+  int GetClosestTag(frc::Pose2d currentPose);
   double GetDev(photon::EstimatedRobotPose pose);
 
   bool IsEstimateUsable(photon::EstimatedRobotPose pose);
@@ -180,4 +181,6 @@ std::map<int, ReefPositions> tagToReefPositions = {
   std::optional<photon::EstimatedRobotPose> _rightEstPose;
 
   wpi::interpolating_map<units::meter_t, double> _devTable;
+
+
 };
