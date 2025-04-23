@@ -137,7 +137,7 @@ class SubDrivebase : public frc2::SubsystemBase {
 
   frc::PIDController _teleopTranslationController{1.7, 0.0, 0.0};
   frc::ProfiledPIDController<units::radian> _teleopRotationController{
-      3, 0, 0.2, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
+      1.5, 0, 0.2, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
   std::shared_ptr<pathplanner::PPHolonomicDriveController> _pathplannerController =
       std::make_shared<pathplanner::PPHolonomicDriveController>(
           // translation needs tuning and such
