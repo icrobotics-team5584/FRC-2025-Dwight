@@ -27,23 +27,17 @@ frc2::CommandPtr YAlignWithTarget(SubVision::Side side)
     frc::SmartDashboard::PutNumber("Cloest tag", tagId);
     frc::Pose2d tagPose = SubVision::GetInstance().GetAprilTagPose(tagId);
     
-    if (side == SubVision::Side::Left) {
-      targetPose = SubVision::GetInstance().CalculateRelativePose(tagPose,0.3_m,0.16_m);
-    } else {
-      targetPose = SubVision::GetInstance().CalculateRelativePose(tagPose,0.3_m,-0.16_m);
-    }
+    auto yOffset = (side == SubVision::Side::Left) ? 0.16_m : -0.16_m;
+    targetPose = SubVision::GetInstance().CalculateRelativePose(tagPose,0.3_m,yOffset);
   }).AndThen(
   SubDrivebase::GetInstance()
       .Drive(
           [side] {
             return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose) * 2.5;
-          },
-          true)
+          }, true)
       .Until([] {
         return SubDrivebase::GetInstance().IsAtPose(targetPose);
       })).AndThen(FrontApproachAlign(targetPose));
-      // .AndThen(SubDrivebase::GetInstance().Drive([] { return frc::ChassisSpeeds(0_mps,0.2_mps,0_deg_per_s);},false))
-      // .AndThen(ForceAlignWithTarget(side)).FinallyDo([] {targetPose = {-1_m, -1_m, 0_tr};});
 }
 
 frc2::CommandPtr FrontApproachAlign (frc::Pose2d targetPose) {
