@@ -23,12 +23,14 @@ frc2::CommandPtr YAlignWithTarget(SubVision::Side side)
 {
   static frc::Pose2d targetPose = {-1_m,-1_m,0_tr};
   return RunOnce([side] {
-    frc::Pose2d tagPose = SubVision::GetInstance().GetAprilTagPose(SubVision::GetInstance().GetLastReefId());
+    int tagId = SubVision::GetInstance().GetClosestTag(SubDrivebase::GetInstance().GetPose());
+    frc::SmartDashboard::PutNumber("Cloest tag", tagId);
+    frc::Pose2d tagPose = SubVision::GetInstance().GetAprilTagPose(tagId);
     
     if (side == SubVision::Side::Left) {
-      targetPose = SubVision::GetInstance().CalculateRelativePose(tagPose,0.5_m, 0.16_m);
+      targetPose = SubVision::GetInstance().CalculateRelativePose(tagPose,0.5_m, 0_m);//0.16_m);
     } else {
-      targetPose = SubVision::GetInstance().CalculateRelativePose(tagPose,0.5_m, -0.16_m);
+      targetPose = SubVision::GetInstance().CalculateRelativePose(tagPose,0.5_m, 0_m);//-0.16_m);
     }
     SubDrivebase::GetInstance().DisplayPose("3d align pose", targetPose);
   }).AndThen(

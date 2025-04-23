@@ -234,26 +234,41 @@ frc::Pose2d SubVision::GetAprilTagPose(int id) {
 }
 
 int SubVision::GetClosestTag(frc::Pose2d currentPose){
-  int _closestTagID;
-  units::meter_t _closestTagInitX = (tagToReefPositions[17].leftX + tagToReefPositions[17].rightX)/2;
-  units::meter_t _closestTagInitY = (tagToReefPositions[17].leftY + tagToReefPositions[17].rightY)/2;
-  frc::Pose2d _closestTagPose = {_closestTagInitX, _closestTagInitY, tagToReefPositions[17].angle};
+  // int _closestTagID;
+  // units::meter_t _closestTagInitX = (tagToReefPositions[17].leftX + tagToReefPositions[17].rightX)/2;
+  // units::meter_t _closestTagInitY = (tagToReefPositions[17].leftY + tagToReefPositions[17].rightY)/2;
+  // frc::Pose2d _closestTagPose = {_closestTagInitX, _closestTagInitY, tagToReefPositions[17].angle};
 
-  for (auto tagToReefPosition : tagToReefPositions) {
-    //initialise a reef pose for the current iteration and a key for current iteration
-    ReefPositions tagToReefPose = tagToReefPosition.second;
-    int tagToReefKey = tagToReefPosition.first;
+  // for (auto tagToReefPosition : tagToReefPositions) {
+  //   //initialise a reef pose for the current iteration and a key for current iteration
+  //   ReefPositions tagToReefPose = tagToReefPosition.second;
+  //   int tagToReefKey = tagToReefPosition.first;
 
-    //generate tag pose that is the avg of both pole poses
-    units::meter_t tagPoseX = (tagToReefPose.leftX + tagToReefPose.rightX)/2;
-    units::meter_t tagPoseY = (tagToReefPose.leftY + tagToReefPose.rightY)/2;
-    frc::Pose2d tagPose{tagPoseX, tagPoseY, tagToReefPose.angle};
+  //   //generate tag pose that is the avg of both pole poses
+  //   units::meter_t tagPoseX = (tagToReefPose.leftX + tagToReefPose.rightX)/2;
+  //   units::meter_t tagPoseY = (tagToReefPose.leftY + tagToReefPose.rightY)/2;
+  //   frc::Pose2d tagPose{tagPoseX, tagPoseY, tagToReefPose.angle};
 
-    //check if tag pose x and y are less than the current closest tag pose
-    if (tagPose.X() < _closestTagPose.X() && tagPose.Y() < _closestTagPose.Y()){
-      _closestTagID = tagToReefKey;
-      _closestTagPose = tagPose;
+  //   //check if tag pose x and y are less than the current closest tag pose
+  //   if (tagPose.X() < _closestTagPose.X() && tagPose.Y() < _closestTagPose.Y()){
+  //     _closestTagID = tagToReefKey;
+  //     _closestTagPose = tagPose;
+  //   }
+  // }
+
+  // return _closestTagID;
+
+  int closestReef = 0;
+  units::length::meter_t closestDistance;
+  auto reefList = (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) ? redReef : blueReef;
+  
+  for (int id : reefList) {
+    auto distance = currentPose.Translation().Distance(GetAprilTagPose(id).Translation());
+    if (closestReef == 0 || distance < closestDistance) {
+      closestDistance = distance;
+      closestReef = id;
     }
   }
-  return _closestTagID;
+
+  return closestReef;
 }
