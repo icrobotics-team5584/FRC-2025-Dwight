@@ -217,11 +217,8 @@ bool SubVision::IsEstimateUsable(photon::EstimatedRobotPose pose) {
 }
 
 frc::Pose2d SubVision::CalculateRelativePose(frc::Pose2d pose, units::meter_t x, units::meter_t y) {
-  double deg = 180 - pose.Rotation().Degrees().value();
-  SubDrivebase::GetInstance().DisplayPose("3d align tag", frc::Pose2d(pose.X(), pose.Y(), deg * 1_deg));
-  frc::Pose2d xTransform {pose.X() + x * cos(deg), pose.Y() + x * sin(deg), pose.Rotation()};
-  frc::Pose2d yTransform {xTransform.X() + y * cos(90 + deg), xTransform.Y() + y * cos(90 + deg), (deg + 90) * 1_deg};
-  return yTransform;
+  frc::Translation2d trans {x,y};
+  return frc::Pose2d{pose.Translation() + trans.RotateBy(pose.Rotation()), pose.Rotation() - 0.5_tr};
 }
 
 frc::Pose2d SubVision::GetAprilTagPose(int id) {

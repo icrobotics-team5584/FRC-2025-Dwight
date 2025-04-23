@@ -28,11 +28,10 @@ frc2::CommandPtr YAlignWithTarget(SubVision::Side side)
     frc::Pose2d tagPose = SubVision::GetInstance().GetAprilTagPose(tagId);
     
     if (side == SubVision::Side::Left) {
-      targetPose = SubVision::GetInstance().CalculateRelativePose(tagPose,0.5_m, 0_m);//0.16_m);
+      targetPose = SubVision::GetInstance().CalculateRelativePose(tagPose,0.5_m,0.16_m);
     } else {
-      targetPose = SubVision::GetInstance().CalculateRelativePose(tagPose,0.5_m, 0_m);//-0.16_m);
+      targetPose = SubVision::GetInstance().CalculateRelativePose(tagPose,0.5_m,-0.16_m);
     }
-    SubDrivebase::GetInstance().DisplayPose("3d align pose", targetPose);
   }).AndThen(
   SubDrivebase::GetInstance()
       .Drive(
