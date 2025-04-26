@@ -197,6 +197,15 @@ class ICSpark : public wpi::Sendable {
   ControlType GetControlType() { return _controlType; };
 
   /**
+   * Gets the output current.
+   */
+  units::ampere_t GetMotorOutputCurrent();
+
+  /**
+   * Gets motors temperature.
+   */
+  double GetTemperature();
+  /**
    * Get the velocity of the motor.
    */
   units::turns_per_second_t GetVelocity();

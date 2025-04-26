@@ -22,20 +22,6 @@ SubClimber::SubClimber() {
 
 // This method will be called once per scheduler run
 void SubClimber::Periodic() {
-  // clang-format off
-  frc::SmartDashboard::PutNumber("Climber/MotorTarget", _climberMotor.GetPositionTarget().value());
-  frc::SmartDashboard::PutData("Climber/armMechDisplay", &_singleJointedArmMech);
-  frc::SmartDashboard::PutNumber("Climber/MotorVoltage", _climberMotor.GetMotorVoltage().value());
-  frc::SmartDashboard::PutNumber("Climber/Current", _climberMotor.GetOutputCurrent());
-  frc::SmartDashboard::PutNumber("Climber/PositionMotor", (_climberMotor.GetPosition().value()));
-  frc::SmartDashboard::PutNumber("Climber/PositionArm", _climberMotor.GetPosition().value() / GEAR_RATIO);
-  frc::SmartDashboard::PutNumber("Climber/M1Current", GetM1Current().value());
-  frc::SmartDashboard::PutNumber("Climber/hasReset", _hasReset);
-  frc::SmartDashboard::PutNumber("Climber/resetting", _resetting);
-  frc::SmartDashboard::PutNumber("Climber/Velocity", _climberMotor.GetVelocity().value());
-  frc::SmartDashboard::PutNumber("Climber/Temperature", _climberMotor.GetMotorTemperature());
-  // clang-format on
-
   if (_hasReset == false && _resetting == false) {
     _climberMotor.Set(0);
   }
