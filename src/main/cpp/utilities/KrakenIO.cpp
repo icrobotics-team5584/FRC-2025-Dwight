@@ -43,8 +43,11 @@ void KrakenIO::SetAngle(units::turn_t angle) {
 }
 
 void KrakenIO::SendSensorsToDash() {
-    Logger::LogFalcon("drive motor", _canDriveMotor);
-    Logger::LogFalcon("turn motor", _canTurnMotor);
+    std::string driveMotorName = "swerve/drive motor/" + std::to_string(_canDriveMotor.GetDeviceID());
+    std::string turnMotorName = "swerve/turn motor/" + std::to_string(_canTurnMotor.GetDeviceID());
+
+    Logger::LogFalcon(driveMotorName, _canDriveMotor);
+    Logger::LogFalcon(turnMotorName, _canTurnMotor);
 }
 
 void KrakenIO::SetDesiredVelocity(units::meters_per_second_t velocity, units::newton_t forceFF) {
