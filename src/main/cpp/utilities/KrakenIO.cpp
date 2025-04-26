@@ -43,17 +43,8 @@ void KrakenIO::SetAngle(units::turn_t angle) {
 }
 
 void KrakenIO::SendSensorsToDash() {
-    std::string driveMotorName = "swerve/drive motor/" + std::to_string(_canDriveMotor.GetDeviceID());
-    std::string turnMotorName = "swerve/turn motor/" + std::to_string(_canTurnMotor.GetDeviceID());
-    
-    frc::SmartDashboard::PutNumber(driveMotorName + "Target velocity", _canDriveMotor.GetClosedLoopReference().GetValue());
-    frc::SmartDashboard::PutNumber(driveMotorName + "velocity", _canDriveMotor.GetVelocity().GetValue().value());
-    frc::SmartDashboard::PutNumber(driveMotorName + "voltage", _canDriveMotor.GetMotorVoltage().GetValue().value());
-    frc::SmartDashboard::PutNumber(turnMotorName + "position", _canTurnMotor.GetPosition().GetValue().value());
-    frc::SmartDashboard::PutNumber(turnMotorName + "voltage", _canTurnMotor.GetMotorVoltage().GetValueAsDouble());
-    frc::SmartDashboard::PutNumber(turnMotorName + "target", _canTurnMotor.GetClosedLoopReference().GetValue());
-    frc::SmartDashboard::PutNumber(turnMotorName + "error", _canTurnMotor.GetClosedLoopError().GetValue());
-    frc::SmartDashboard::PutNumber(turnMotorName + "temperature", _canTurnMotor.GetDeviceTemp().GetValueAsDouble());
+    Logger::LogFalcon("drive motor", _canDriveMotor);
+    Logger::LogFalcon("turn motor", _canTurnMotor);
 }
 
 void KrakenIO::SetDesiredVelocity(units::meters_per_second_t velocity, units::newton_t forceFF) {
