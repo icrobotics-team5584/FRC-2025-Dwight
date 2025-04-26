@@ -1,10 +1,11 @@
 #pragma once
 
+#include <frc2/command/SubsystemBase.h>
 #include <frc/AddressableLED.h>
 #include <frc/LEDPattern.h>
 #include <units/length.h>
 
-class LEDHelper {
+class LEDHelper : public frc2::SubsystemBase {  // made LEDHelper into a subsystem
 public:
   void Start();
 
