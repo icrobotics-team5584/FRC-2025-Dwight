@@ -6,8 +6,13 @@ class LEDHelper {
 public:
   void Start();
 
+  void SetSolidColour(frc::Color color);
+  void SetRainbow();
+  void FlashColour(frc::Color color);
+
 private:
   static constexpr int kLength = 60;
+
 
   // PWM port 9 as a dummy value
   // Must be a PWM header, not MXP or DIO
