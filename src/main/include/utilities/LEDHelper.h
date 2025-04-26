@@ -12,6 +12,7 @@ public:
   void SetScrollingRainbow();
   void SetContinuousGradient(frc::Color Color1, frc::Color Color2);
   void SetBreatheColour(frc::Color color);
+  void SetFollowProgress(double Progress);
   void SetFire();
   void FlashColour(frc::Color color);
 

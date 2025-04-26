@@ -38,6 +38,19 @@ void LEDHelper::SetFire() {
     m_led.SetData(m_ledBuffer);
 }
 
+void LEDHelper::SetFollowProgress(double Progress) {
+    // this can only be used for 0-1 progress
+    std::array<frc::Color, 2> colors{frc::Color::kWhite, frc::Color::kGreen};
+    frc::LEDPattern base = frc::LEDPattern::Gradient(frc::LEDPattern::GradientType::kContinuous, colors);
+    frc::LEDPattern mask = frc::LEDPattern::ProgressMaskLayer([&]() { return Progress; });
+    
+    frc::LEDPattern heightDisplay = base.Mask(mask);
+
+    // Apply the LED pattern to the data buffer
+    heightDisplay.ApplyTo(m_ledBuffer);
+    m_led.SetData(m_ledBuffer);
+}
+
 void LEDHelper::SetBreatheColour(frc::Color color) {
 
     frc::LEDPattern base = frc::LEDPattern::Solid(color);
