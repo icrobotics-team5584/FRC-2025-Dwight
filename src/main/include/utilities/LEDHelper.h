@@ -7,6 +7,9 @@
 
 class LEDHelper : public frc2::SubsystemBase {  // made LEDHelper into a subsystem
 public:
+  static LEDHelper& GetInstance() {static LEDHelper inst; return inst;}
+
+
   void Start();
 
   void SetSolidColour(frc::Color color);

@@ -34,6 +34,8 @@ void Robot::RobotPeriodic() {
   // Logger::Log("Robot/CANBusUtilization", canStatus.percentBusUtilization);
   // Logger::Log("Robot/CANBusOffCount", canStatus.busOffCount);
   // Logger::Log("Robot/CANTxFullCount", canStatus.txFullCount);
+  LEDHelper::GetInstance().Start();
+  LEDHelper::GetInstance().SetBreatheColour(frc::Color::kOrange);
 }
 
 void Robot::DisabledInit() {}
