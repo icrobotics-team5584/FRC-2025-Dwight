@@ -4,6 +4,7 @@
 #include <frc/AddressableLED.h>
 #include <frc/LEDPattern.h>
 #include <units/length.h>
+#include <frc2/command/Commands.h>
 
 class LEDHelper : public frc2::SubsystemBase {  // made LEDHelper into a subsystem
 public:
@@ -12,16 +13,16 @@ public:
 
   void Start();
 
-  void SetSolidColour(frc::Color color);
-  void SetScrollingRainbow();
-  void SetContinuousGradient(frc::Color Color1, frc::Color Color2);
-  void SetBreatheColour(frc::Color color);
-  void SetFollowProgress(double Progress);
-  void SetFire();
-  void FlashColour(frc::Color color);
+  frc2::CommandPtr SetSolidColour(frc::Color color);
+  frc2::CommandPtr SetScrollingRainbow();
+  frc2::CommandPtr SetContinuousGradient(frc::Color Color1, frc::Color Color2);
+  frc2::CommandPtr SetBreatheColour(frc::Color color);
+  frc2::CommandPtr SetFollowProgress(double Progress);
+  frc2::CommandPtr SetFire();
+  frc2::CommandPtr FlashColour(frc::Color color);
 
 private:
-  static constexpr int kLength = 60;
+  static constexpr int kLength = 17;
   units::meter_t kLedSpacing = (1/50)*1_m; // CHANGE LATER this is for 50 leds every meter
 
 

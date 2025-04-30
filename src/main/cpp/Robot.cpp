@@ -15,6 +15,7 @@
 
 Robot::Robot() {
   frc::DataLogManager::Start();
+  LEDHelper::GetInstance().Start();
   frc::SmartDashboard::PutData( &frc2::CommandScheduler::GetInstance() );
   frc::DriverStation::StartDataLog(frc::DataLogManager::GetLog());
   URCL::Start(std::map<int, std::string_view>{{canid::CLIMBER_MOTOR, "Climber"},
@@ -34,11 +35,11 @@ void Robot::RobotPeriodic() {
   // Logger::Log("Robot/CANBusUtilization", canStatus.percentBusUtilization);
   // Logger::Log("Robot/CANBusOffCount", canStatus.busOffCount);
   // Logger::Log("Robot/CANTxFullCount", canStatus.txFullCount);
-  LEDHelper::GetInstance().Start();
-  LEDHelper::GetInstance().SetBreatheColour(frc::Color::kOrange);
 }
 
-void Robot::DisabledInit() {}
+void Robot::DisabledInit() {
+    frc2::CommandScheduler::GetInstance().Schedule(LEDHelper::GetInstance().SetBreatheColour(frc::Color::kOrange));
+}
 
 void Robot::DisabledPeriodic() {}
 
@@ -47,7 +48,8 @@ void Robot::DisabledExit() {}
 void Robot::AutonomousInit() {
   m_autonomousCommand = m_container.GetAutonomousCommand();
 
-  if (m_autonomousCommand) {
+  if (m_autonomousCommand) 
+  {
     m_autonomousCommand->Schedule();
   }
 
@@ -65,7 +67,9 @@ void Robot::TeleopInit() {
   }
 }
 
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic() {
+  frc2::CommandScheduler::GetInstance().Schedule(LEDHelper::GetInstance().SetScrollingRainbow());
+}
 
 void Robot::TeleopExit() {}
 
