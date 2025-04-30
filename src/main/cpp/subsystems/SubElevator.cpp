@@ -284,17 +284,6 @@ void SubElevator::Periodic() {
   Logger::LogFalcon("Elevator/Motor1", _elevatorMotor1);
 
   Logger::LogFalcon("Elevator/Motor2", _elevatorMotor2);
-  Logger::Log("Elevator/Motor1/Height",
-              HeightFromRotations(_elevatorMotor1.GetPosition().GetValue()));
-  Logger::Log("Elevator/Motor2/Height",
-              HeightFromRotations(_elevatorMotor2.GetPosition().GetValue()));
-  Logger::Log("Elevator/Motor1/Target",
-              HeightFromRotations(_elevatorMotor1.GetClosedLoopReference().GetValue() * 1_tr));
-  Logger::Log("Elevator/Motor2/Target",
-              HeightFromRotations(_elevatorMotor2.GetClosedLoopReference().GetValue() * 1_tr));
-  Logger::Log("Elevator/_targetheight", _targetHeight);
-  Logger::Log("Elevator/M1Current", GetM1Current().value());
-  Logger::Log("Elevator/_hasReset", _hasReset);
 }
 
 void SubElevator::SimulationPeriodic() {

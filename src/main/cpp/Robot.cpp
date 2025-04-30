@@ -10,6 +10,7 @@
 #include <frc2/command/CommandScheduler.h>
 #include "utilities/RobotLogs.h"
 #include "URCL.h"
+#include <frc/RobotController.h>
 
 Robot::Robot() {
   frc::DataLogManager::Start();
@@ -22,6 +23,16 @@ Robot::Robot() {
 
 void Robot::RobotPeriodic() {
   frc2::CommandScheduler::GetInstance().Run();
+  Logger::Log("Robot/RioBrownOut", frc::RobotController::IsBrownedOut());
+  Logger::Log("Robot/RioInputVoltage", frc::RobotController::GetInputVoltage());
+  Logger::Log("Robot/RioInputCurrent", frc::RobotController::GetInputCurrent());
+  Logger::Log("Robot/BatteryVoltage", frc::RobotController::GetBatteryVoltage());
+  Logger::Log("Robot/PDHInputVoltage", frc::RobotController::GetInputVoltage());
+  Logger::Log("Robot/PDHTotalCurrent", frc::RobotController::GetInputCurrent());
+  // frc::CANStatus canStatus = frc::RobotController::GetCANStatus();
+  // Logger::Log("Robot/CANBusUtilization", canStatus.percentBusUtilization);
+  // Logger::Log("Robot/CANBusOffCount", canStatus.busOffCount);
+  // Logger::Log("Robot/CANTxFullCount", canStatus.txFullCount);
 }
 
 void Robot::DisabledInit() {}

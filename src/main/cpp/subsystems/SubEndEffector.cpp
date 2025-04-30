@@ -6,6 +6,7 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include "utilities/ICSpark.h"
 #include "utilities/BotVars.h"
+#include "utilities/RobotLogs.h"
 
 
 
@@ -21,8 +22,6 @@ SubEndEffector::SubEndEffector() {
 void SubEndEffector::Periodic() {
     frc::SmartDashboard::PutBoolean("EndEffector/LinebreakHigher", SubEndEffector::GetInstance().CheckLineBreakHigher());
     frc::SmartDashboard::PutBoolean("EndEffector/LinebreakLower", SubEndEffector::GetInstance().CheckLineBreakLower());
-    frc::SmartDashboard::PutNumber("EndEffector/endEffectorMotor", _endEffectorMotor.Get());
-    frc::SmartDashboard::PutNumber("EndEffector/MotorCurrent", _endEffectorMotor.GetOutputCurrent());
 }
 
 frc2::CommandPtr SubEndEffector::FeedUp() {

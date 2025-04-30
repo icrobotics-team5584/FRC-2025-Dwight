@@ -25,6 +25,10 @@ void Log(std::string_view keyName, double value) {
   frc::SmartDashboard::PutNumber(keyName, value);
 }
 
+void Log(std::string_view keyName, int value) {
+  frc::SmartDashboard::PutNumber(keyName, value);
+}
+
 void Log(std::string_view keyName, ctre::phoenix6::StatusSignal<double>& signal) {
   Log(keyName, signal.GetValue());
 }
