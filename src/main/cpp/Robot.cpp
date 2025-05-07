@@ -38,10 +38,11 @@ void Robot::RobotPeriodic() {
 }
 
 void Robot::DisabledInit() {
-    frc2::CommandScheduler::GetInstance().Schedule(LEDHelper::GetInstance().SetBreatheColour(frc::Color::kOrange));
 }
 
-void Robot::DisabledPeriodic() {}
+void Robot::DisabledPeriodic() {
+  
+}
 
 void Robot::DisabledExit() {}
 
@@ -65,10 +66,11 @@ void Robot::TeleopInit() {
   if (m_autonomousCommand) {
     m_autonomousCommand->Cancel();
   }
+
+  LEDHelper::GetInstance().SetDefaultCommand(LEDHelper::GetInstance().SetBreatheColour(frc::Color::kOrange));
 }
 
 void Robot::TeleopPeriodic() {
-  frc2::CommandScheduler::GetInstance().Schedule(LEDHelper::GetInstance().SetScrollingRainbow());
 }
 
 void Robot::TeleopExit() {}

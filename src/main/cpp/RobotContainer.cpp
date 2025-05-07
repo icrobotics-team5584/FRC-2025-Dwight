@@ -19,6 +19,7 @@
 #include "subsystems/SubElevator.h"
 #include "subsystems/SubEndEffector.h"
 #include "subsystems/SubFunnel.h"
+#include "utilities/LEDHelper.h"
 
 RobotContainer::RobotContainer() {
   wpi::WebServer::GetInstance().Start(5800, frc::filesystem::GetDeployDirectory());
@@ -43,6 +44,7 @@ RobotContainer::RobotContainer() {
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(cmd::TeleopDrive(_driverController));
   SubVision::GetInstance().SetDefaultCommand(cmd::AddVisionMeasurement());
+  
 
   // Trigger Bindings
   ConfigureBindings();
@@ -118,6 +120,8 @@ void RobotContainer::ConfigureBindings() {
   _driverController.LeftBumper().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Left));
   _driverController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
   _driverController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
+  // _driverController.RightTrigger().WhileTrue(LEDHelper::GetInstance().FlashColour(frc::Color::kGreen));
+  // _driverController.LeftTrigger().OnTrue(LEDHelper::GetInstance().SetScrollingRainbow());
 
   // Triggers
   SubDrivebase::GetInstance().CheckCoastButton().ToggleOnTrue(cmd::ToggleBrakeCoast());
@@ -133,6 +137,7 @@ void RobotContainer::ConfigureBindings() {
 
   (!_operatorController.Back() && _operatorController.A()).OnTrue(cmd::ClimbHalfwaySequence());  // Climb to halfway
   (_operatorController.Back() && _operatorController.A()).OnTrue(cmd::ClimbHalfwaySequence(true));  // Force climb halfway
+
 
   (!_operatorController.Back() && _operatorController.X()).OnTrue(cmd::SetElevatorL2());  // Set L2 normally
   (_operatorController.Back() && _operatorController.X()).OnTrue(cmd::SetElevatorL2(true));  // Force set L2
