@@ -28,7 +28,7 @@ frc2::CommandPtr YAlignWithTarget(SubVision::Side side)
     frc::Pose2d tagPose = SubVision::GetInstance().GetAprilTagPose(tagId);
     
     auto yOffset = (side == SubVision::Side::Left) ? 0.16_m : -0.16_m;
-    targetPose = SubVision::GetInstance().CalculateRelativePose(tagPose,0.3_m,yOffset);
+    targetPose = SubVision::GetInstance().CalculateRelativePose(tagPose,0.5_m,yOffset);
   }).AndThen(
   SubDrivebase::GetInstance()
       .Drive(
