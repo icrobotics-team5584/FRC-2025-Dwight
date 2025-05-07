@@ -284,6 +284,8 @@ void SubElevator::Periodic() {
   Logger::LogFalcon("Elevator/Motor1", _elevatorMotor1);
 
   Logger::LogFalcon("Elevator/Motor2", _elevatorMotor2);
+
+  Logger::Log("Elevator/_hasReset", _hasReset);
 }
 
 void SubElevator::SimulationPeriodic() {

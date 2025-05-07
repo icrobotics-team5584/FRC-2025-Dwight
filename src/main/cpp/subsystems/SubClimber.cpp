@@ -25,6 +25,8 @@ void SubClimber::Periodic() {
   if (_hasReset == false && _resetting == false) {
     _climberMotor.Set(0);
   }
+  frc::SmartDashboard::PutNumber("Climber/hasReset", _hasReset);
+  frc::SmartDashboard::PutNumber("Climber/resetting", _resetting);
 }
 
 void SubClimber::SetBrakeMode(bool mode) {
