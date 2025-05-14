@@ -116,7 +116,7 @@ void RobotContainer::ConfigureBindings() {
   _driverController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
   _driverController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
   // SubDrivebase::GetInstance().GetPose() is a workaround
-  _driverController.POVUp().OnTrue(cmd::GetTeleopPathCommand("placeholder"));
+  _driverController.POVUp().OnTrue(cmd::GenerateTeleopPath());
 
   // Triggers
   SubDrivebase::GetInstance().CheckCoastButton().ToggleOnTrue(cmd::ToggleBrakeCoast());

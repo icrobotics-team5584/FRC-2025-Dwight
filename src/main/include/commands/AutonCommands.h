@@ -31,7 +31,7 @@ namespace cmd {
     frc2::CommandPtr AutonSubSystemsZeroSequence();
     
     std::shared_ptr<pathplanner::PathPlannerPath> GenerateTeleopPath();
-    frc2::CommandPtr GetTeleopPathCommand(std::string pathName);
+    frc2::CommandPtr GetTeleopPath();
 
     frc2::CommandPtr ScoreWithVision(SubVision::Side side);
     
