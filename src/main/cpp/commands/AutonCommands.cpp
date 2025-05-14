@@ -20,6 +20,8 @@
 #include "commands/GamePieceCommands.h"
 #include "commands/AutonCommands.h"
 
+#include "utilities/ICgeometry.h"
+
 namespace cmd {
 frc2::CommandPtr AutonSubSystemsZeroSequence() {
   return frc2::cmd::Parallel(SubElevator::GetInstance().ElevatorAutoReset(),
@@ -38,7 +40,7 @@ std::shared_ptr<pathplanner::PathPlannerPath> GenerateTeleopPath() {
     // TODO: FIX THE HEADER STDMAP ISSUES
     /* this is workaround for C/C++ 289; was hoping to define this in <AutonCommands.h> but kept
      * getting C/C++ 289 */
-    PathPlannerReefPosition PathReefPoses[6]{
+    frc::Pose2d pathPoseArr[6]{
         {3.62_m, 2.91_m, -30_deg},   // FR
         {3.22_m, 4.025_m, -90_deg},  // FM
         {3.84_m, 5.12_m, 210_deg},   // FL
@@ -47,19 +49,10 @@ std::shared_ptr<pathplanner::PathPlannerPath> GenerateTeleopPath() {
         {5.15_m, 2.94_m, 30_deg}     // BR
     };
 
-    for (int i = 0; i < 6; i++) {
-      frc::Pose2d pathpose = frc::Pose2d(PathReefPoses[i].x, PathReefPoses[i].y,
-                                         frc::Rotation2d(PathReefPoses[i].angle));
-      curDistance = curpose.Translation().Distance(pathpose.Translation()).value();
-      if (curDistance < shortestDistance) {
-        shortestDistance = curDistance;
-        closestindex = i;
-        Logger::Log("Auton/DistanceToIndex[" + std::to_string(closestindex) + "]", curDistance);
-      }
-      Logger::Log("Auton/EndPoseIndex", static_cast<double>(closestindex));
-    }
-    endpose = frc::Pose2d(PathReefPoses[closestindex].x, PathReefPoses[closestindex].y,
-                          frc::Rotation2d(PathReefPoses[closestindex].angle));
+    if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed)
+      curpose = ICgeometry::xyPoseFlip(curpose);
+    endpose = ICgeometry::closestPoseVector(curpose, std::vector<frc::Pose2d>(std::begin(pathPoseArr), std::end(pathPoseArr)));
+
     // rotation is the direction of the path
     std::vector<frc::Pose2d> poses{curpose, endpose};
     std::vector<pathplanner::Waypoint> waypoints =
