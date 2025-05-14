@@ -115,8 +115,8 @@ void RobotContainer::ConfigureBindings() {
   _driverController.LeftBumper().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Left));
   _driverController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
   _driverController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
-  // SubDrivebase::GetInstance().GetPose() is a workaround
-  _driverController.POVUp().OnTrue(cmd::GenerateTeleopPath());
+  // SubDrivebase::GetInstance().GetPose() is a y
+  _driverController.POVUp().OnTrue(cmd::GetTeleopPath());
 
   // Triggers
   SubDrivebase::GetInstance().CheckCoastButton().ToggleOnTrue(cmd::ToggleBrakeCoast());

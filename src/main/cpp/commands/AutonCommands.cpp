@@ -90,6 +90,13 @@ frc2::CommandPtr GetTeleopPath() {
   );
 }
 
+frc2::CommandPtr Score(int side) {
+    return SubElevator::GetInstance().CmdSetL4()/*.OnlyIf([] { return !SubElevator::GetInstance().IsAtTarget(); })*/
+        .AndThen(frc2::cmd::WaitUntil([]{ return SubElevator::GetInstance().IsAtTarget(); }))
+        .AndThen(SubEndEffector::GetInstance().FeedDown().WithTimeout(0.5_s))
+        .AndThen(SubElevator::GetInstance().CmdSetSource());
+}
+
 frc2::CommandPtr AutonBeginSourceIntake() {
   return SubElevator::GetInstance()
       .CmdSetSource()
