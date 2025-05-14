@@ -60,9 +60,6 @@ std::shared_ptr<pathplanner::PathPlannerPath> GenerateTeleopPath() {
     }
     endpose = frc::Pose2d(PathReefPoses[closestindex].x, PathReefPoses[closestindex].y,
                           frc::Rotation2d(PathReefPoses[closestindex].angle));
-    if (rand() % 2 == 0) {
-      curpose = frc::Pose2d(5.15_m, 2.94_m, 30_deg);
-    }
     // rotation is the direction of the path
     std::vector<frc::Pose2d> poses{curpose, endpose};
     std::vector<pathplanner::Waypoint> waypoints =
