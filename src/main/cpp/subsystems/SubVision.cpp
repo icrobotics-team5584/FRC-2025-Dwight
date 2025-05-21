@@ -218,7 +218,7 @@ bool SubVision::IsEstimateUsable(photon::EstimatedRobotPose pose) {
 
 frc::Pose2d SubVision::CalculateRelativePose(frc::Pose2d pose, units::meter_t x, units::meter_t y) {
   frc::Translation2d trans {x,y};
-  return frc::Pose2d{pose.Translation() + trans.RotateBy(pose.Rotation()), pose.Rotation() + frc::Rotation2d(90_deg)};
+  return frc::Pose2d{pose.Translation() + trans.RotateBy(pose.Rotation()), pose.Rotation()};
 }
 
 frc::Pose2d SubVision::GetAprilTagPose(int id) {

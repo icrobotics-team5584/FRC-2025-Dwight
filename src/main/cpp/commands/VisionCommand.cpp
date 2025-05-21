@@ -21,14 +21,18 @@ using namespace frc2::cmd;
 
 frc2::CommandPtr YAlignWithTarget(SubVision::Side side) 
 {
-  static frc::Pose2d targetPose = {-1_m,-1_m,0_tr};
+  static frc::Pose2d targetPose;
+  static frc::Pose2d targetTagPose;
   return RunOnce([side] {
     int tagId = SubVision::GetInstance().GetClosestTag(SubDrivebase::GetInstance().GetPose());
     frc::SmartDashboard::PutNumber("Cloest tag", tagId);
     frc::Pose2d tagPose = SubVision::GetInstance().GetAprilTagPose(tagId);
-    
-    auto yOffset = (side == SubVision::Side::Left) ? 0.16_m : -0.16_m;
-    targetPose = SubVision::GetInstance().CalculateRelativePose(tagPose,0.5_m,yOffset);
+    auto yOffset = (side == SubVision::Side::Left) ? 0.12_m : -0.2_m;//0.16_m : -0.16_m;
+    targetTagPose = SubVision::GetInstance().CalculateRelativePose(tagPose, 0_m, yOffset);
+    targetPose = SubVision::GetInstance().CalculateRelativePose(targetTagPose,0.6_m,0_m);
+    targetTagPose = frc::Pose2d(targetTagPose.Translation(), targetTagPose.Rotation() + frc::Rotation2d(90_deg));
+    targetPose = frc::Pose2d(targetPose.Translation(), targetPose.Rotation() + frc::Rotation2d(90_deg));
+    SubDrivebase::GetInstance().DisplayPose("Vision 3d align pose", targetPose);
   }).AndThen(
   SubDrivebase::GetInstance()
       .Drive(
@@ -37,17 +41,27 @@ frc2::CommandPtr YAlignWithTarget(SubVision::Side side)
           }, true)
       .Until([] {
         return SubDrivebase::GetInstance().IsAtPose(targetPose);
-      })).AndThen(FrontApproachAlign(targetPose));
+      })).AndThen(FrontApproachAlign(targetTagPose));
 }
 
 frc2::CommandPtr FrontApproachAlign (frc::Pose2d targetPose) {
   return SubDrivebase::GetInstance().Drive([targetPose] {
     auto RelativeDifference = SubDrivebase::GetInstance().GetPose().RelativeTo(targetPose);
-    frc::ChassisSpeeds speeds {0.5_mps, 0_mps, 0_tps};
-    if (RelativeDifference.Y() < -0.02_m) {
-      speeds.vy = -0.1_mps;
-    } else if (RelativeDifference.Y() > 0.02_m) {
-      speeds.vy = 0.1_mps;
+    auto RotationDifference = SubDrivebase::GetInstance().GetPose().Rotation().Degrees() + 90_deg - targetPose.Rotation().Degrees();
+    frc::SmartDashboard::PutNumber("Vision/3D align X difference", RelativeDifference.X().value());
+    frc::SmartDashboard::PutNumber("Vision/3D align Y difference", RelativeDifference.Y().value());
+    frc::SmartDashboard::PutNumber("Vision/3D align roation difference",RotationDifference.value());
+    frc::SmartDashboard::PutNumber("Vision/3D align Z difference", RelativeDifference.Rotation().Degrees().value());
+    frc::ChassisSpeeds speeds {0_mps, 0.5_mps, 0_tps};
+    if (RotationDifference < -2_deg) {
+      speeds.omega = 3_deg_per_s;
+    } else if (RotationDifference > 2_deg) {
+      speeds.omega = -3_deg_per_s;
+    }
+    if (RelativeDifference.Y() < -0.01_m) {
+      speeds.vx = -0.1_mps;
+    } else if (RelativeDifference.Y() > 0.01_m) {
+      speeds.vx = 0.1_mps;
     }
     return speeds;
   }, false);

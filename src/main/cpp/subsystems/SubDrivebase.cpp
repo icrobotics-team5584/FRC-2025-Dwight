@@ -420,7 +420,7 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   // Use PID controllers to calculate speeds
   auto xSpeed = _teleopTranslationController.Calculate(currentXMeters, targetXMeters) * 1_mps;
   auto ySpeed = _teleopTranslationController.Calculate(currentYMeters, targetYMeters) * 1_mps;
-  auto rSpeed = CalcRotateSpeed(currentRotation - targetRotation) * 2;
+  auto rSpeed = CalcRotateSpeed(currentRotation - targetRotation);
 
   // Clamp to max velocity
   xSpeed = units::math::min(xSpeed, MAX_DRIVE_TO_POSE_VELOCITY);  // Max_Velocity
@@ -466,7 +466,7 @@ bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
   frc::SmartDashboard::PutBoolean("Drivebase/IsAtPose",
                                   units::math::abs(rotError.Degrees()) < 1_deg && posError < 2_cm);
 
-  if (units::math::abs(rotError.Degrees()) < 2_deg && posError < 3_cm) {
+  if (units::math::abs(rotError.Degrees()) < 3_deg && posError < 2_cm) {
     return true;
   } else {
     return false;
