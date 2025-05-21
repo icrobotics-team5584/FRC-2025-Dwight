@@ -31,22 +31,8 @@ frc2::CommandPtr AutonSubSystemsZeroSequence() {
 
 /* loops over a set of 6 constants for pathreef poses */
 std::shared_ptr<pathplanner::PathPlannerPath> GenerateTeleopPath() {
-    // TODO: MOVE FIND CLOSEST POSE TO ITS OWN FUNCTION; THINK ABT MOVING INTO DIFFERENT FILE
-
     frc::Pose2d curpose = SubDrivebase::GetInstance().GetPose();
     frc::Pose2d endpose;
-    double shortestDistance = 100;
-    // TODO: FIX THE HEADER STDMAP ISSUES
-    /* this is workaround for C/C++ 289; was hoping to define this in <AutonCommands.h> but kept
-     * getting C/C++ 289 */
-    frc::Pose2d pathPoseArr[6]{
-        {3.62_m, 2.91_m, -30_deg},   // FR
-        {3.22_m, 4.025_m, -90_deg},  // FM
-        {3.84_m, 5.12_m, 210_deg},   // FL
-        {5.11_m, 5.14_m, 150_deg},   // BL
-        {5.76_m, 4.04_m, 90_deg},    // BM
-        {5.15_m, 2.94_m, 30_deg}     // BR
-    };
 
     if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed)
       curpose = ICgeometry::xyPoseFlip(curpose);
@@ -54,7 +40,7 @@ std::shared_ptr<pathplanner::PathPlannerPath> GenerateTeleopPath() {
     std::vector<frc::Pose2d> vec_poses = SubVision::GetInstance().GetReefPoses();
     endpose = curpose.Nearest(std::span<frc::Pose2d>(vec_poses));
 
-    // rotation is the direction of the path
+    /*rotation is the direction of the path*/
     std::vector<frc::Pose2d> poses{curpose, endpose};
     std::vector<pathplanner::Waypoint> waypoints =
         pathplanner::PathPlannerPath::waypointsFromPoses(poses);
