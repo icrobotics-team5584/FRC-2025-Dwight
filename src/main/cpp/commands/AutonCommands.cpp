@@ -34,8 +34,8 @@ std::shared_ptr<pathplanner::PathPlannerPath> GenerateTeleopPath() {
     frc::Pose2d curpose = SubDrivebase::GetInstance().GetPose();
     frc::Pose2d endpose;
 
-    if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed)
-      curpose = ICgeometry::xyPoseFlip(curpose);
+    /*if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed)
+      curpose = ICgeometry::xyPoseFlip(curpose);*/
 
     std::vector<frc::Pose2d> vec_poses = SubVision::GetInstance().GetReefPoses();
     endpose = curpose.Nearest(std::span<frc::Pose2d>(vec_poses));

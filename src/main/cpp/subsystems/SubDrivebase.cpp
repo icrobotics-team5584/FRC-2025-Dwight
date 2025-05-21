@@ -13,6 +13,7 @@
 #include "utilities/RobotLogs.h"
 #include "RobotContainer.h"
 #include <frc/geometry/Translation2d.h>
+#include <frc2/command/button/RobotModeTriggers.h>
 
 SubDrivebase::SubDrivebase() {
   frc::SmartDashboard::PutData("Drivebase/Teleop PID/Rotation Controller",
@@ -73,8 +74,13 @@ SubDrivebase::SubDrivebase() {
       []() {
         auto alliance = frc::DriverStation::GetAlliance();
         if (alliance) {
-          Logger::Log("Drivebase/Pathplanner flipped to alliance", alliance.value());
-          return alliance.value() == frc::DriverStation::Alliance::kRed;
+          if (frc2::RobotModeTriggers::Teleop().Get()) {
+            Logger::Log("Drivebase/Pathplanner flipped to alliance", "In teleop, not fliping");
+            return false;
+          } else {
+            Logger::Log("Drivebase/Pathplanner flipped to alliance", alliance.value());
+            return alliance.value() == frc::DriverStation::Alliance::kRed;
+          }
         }
         Logger::Log("Drivebase/Pathplanner flipped to alliance",
                     "Failed to detect alliance, assuming blue");
