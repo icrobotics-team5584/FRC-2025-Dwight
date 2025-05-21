@@ -129,6 +129,17 @@ frc::Pose2d SubVision::GetReefPose(Side side = Left, int pose = -1) {
   return targPose;
 }
 
+std::vector<frc::Pose2d> SubVision::GetReefPoses(void) {
+  std::vector<frc::Pose2d> poses;
+  std::map<int, ReefPositions>::iterator i;
+  for (i = tagToReefPositions.begin(); i != tagToReefPositions.end(); i++) {
+    ReefPositions pose = i->second;
+    poses.push_back(frc::Pose2d(pose.leftX, pose.leftY, pose.angle));
+    poses.push_back(frc::Pose2d(pose.rightX, pose.rightY, pose.angle));
+  }
+  return poses;
+}
+
 units::degree_t SubVision::GetReefAlignAngle(Side reefSide) {
   int reefTagID = _lastReefObservation.reefTag.GetFiducialId();
   Side cameraSide = _lastReefObservation.cameraSide;
