@@ -13,6 +13,7 @@
 #include "subsystems/SubEndEffector.h"
 #include "subsystems/SubDrivebase.h"
 #include "subsystems/SubElevator.h"
+#include "subsystems/SubVision.h"
 #include "subsystems/SubFunnel.h"
 #include "subsystems/SubClimber.h"
 
@@ -35,8 +36,6 @@ std::shared_ptr<pathplanner::PathPlannerPath> GenerateTeleopPath() {
     frc::Pose2d curpose = SubDrivebase::GetInstance().GetPose();
     frc::Pose2d endpose;
     double shortestDistance = 100;
-    double curDistance;
-    int closestindex;
     // TODO: FIX THE HEADER STDMAP ISSUES
     /* this is workaround for C/C++ 289; was hoping to define this in <AutonCommands.h> but kept
      * getting C/C++ 289 */
@@ -51,7 +50,9 @@ std::shared_ptr<pathplanner::PathPlannerPath> GenerateTeleopPath() {
 
     if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed)
       curpose = ICgeometry::xyPoseFlip(curpose);
-    endpose = ICgeometry::closestPoseVector(curpose, std::vector<frc::Pose2d>(std::begin(pathPoseArr), std::end(pathPoseArr)));
+
+    std::vector<frc::Pose2d> vec_poses = SubVision::GetInstance().GetReefPoses();
+    endpose = curpose.Nearest(std::span<frc::Pose2d>(vec_poses));
 
     // rotation is the direction of the path
     std::vector<frc::Pose2d> poses{curpose, endpose};
