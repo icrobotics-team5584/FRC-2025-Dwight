@@ -164,6 +164,8 @@ void RobotContainer::ConfigureBindings() {
   _operatorController.Start().WhileTrue(SubClimber::GetInstance().ClimberAutoReset());
   _operatorController.LeftBumper().OnTrue(cmd::StowClimber());
 
+  SubEndEffector::GetInstance().CheckLineBreakTriggerLower().WhileTrue(LEDHelper::GetInstance().SetScrollingRainbow());
+
   // Rumble controller when end effector line break triggers
   //  SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnFalse(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
   SubEndEffector::GetInstance().CheckLineBreakTriggerLower().OnFalse(
