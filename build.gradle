@@ -99,3 +99,63 @@ model {
     //     }
     // }
 }
+
+// PCH precompile task 
+def pchHeader    = file('src/main/include/pch.hpp')
+def pchOutputDir = file("$buildDir/pch")
+tasks.register('compilePch', Exec) {
+    description = "Precompile pch.hpp into ${pchOutputDir}/pch.hpp.gch"
+    inputs.file(pchHeader)
+    outputs.file(file("$pchOutputDir/pch.hpp.gch"))
+
+    doFirst {
+        pchOutputDir.mkdirs()
+    }
+
+    // get all include dirs from one of the CppCompile tasks
+    // (just picking the first frcUserProgram compile task found)
+    def sample = tasks.withType(CppCompile)
+                        .matching { it.name.toLowerCase().contains("frcuserprogram") }
+                        .first()
+    // make a list of include flags: ['-I', 'dir1', '-I', 'dir2', ...]
+    def includeFlags = sample.includes.files.collectMany { dir ->
+        ["-I", dir.absolutePath]
+    }
+
+    // build up the compile command 
+    // TODO: Using windows filepath, make more generic
+    commandLine = [
+        "C:/Users/Public/wpilib/2025/roborio/bin/arm-frc2025-linux-gnueabi-g++.exe",
+        "-std=c++20",
+    ] + includeFlags + [
+        "-x", "c++-header",
+        pchHeader.absolutePath,
+        "-o", "${pchOutputDir}/pch.hpp.gch"
+    ]
+}
+
+// Wire every C++ compile to depend on & use the PCH
+tasks.withType(CppCompile).configureEach { task ->
+  task.dependsOn("compilePch")
+  task.compilerArgs.addAll("-include", "pch.hpp")
+  task.includes.from(file("$buildDir/pch"))
+}
+
+import org.gradle.language.cpp.tasks.CppCompile
+
+tasks.register("printPchIncludeDirs") {
+  group = "help"
+  description = "Prints all the include paths Gradle uses for frcUserProgram C++ compiles."
+
+  doLast {
+    tasks.withType(CppCompile).matching { t ->
+      t.name.toLowerCase().contains("frcuserprogram")
+    }.each { t ->
+      println "=== ${t.name} includes: ==="
+      t.includes.files.each { dir ->
+        println "  • " + dir.absolutePath
+      }
+    }
+  }
+}
+
