@@ -1,5 +1,7 @@
 #include "utilities/ICgeometry.h"
+#include <cmath>
 #include <units/length.h>
+#include <units/angle.h>
 #include <frc/geometry/Pose2d.h>
 
 namespace ICgeometry { 
@@ -17,5 +19,11 @@ namespace ICgeometry {
 
     frc::Pose2d xyFilpPose(frc::Pose2d pose) {
         return yFilpPose(xFilpPose(pose));
+    }
+
+    frc::Rotation2d PoseDirection(frc::Pose2d origin, frc::Pose2d destination) {
+        double x = (origin.X() - destination.X()).value();
+        double y = (origin.Y() - destination.Y()).value();
+        return frc::Rotation2d(static_cast<units::angle::radian_t>(std::tan(y/x)));
     }
 }

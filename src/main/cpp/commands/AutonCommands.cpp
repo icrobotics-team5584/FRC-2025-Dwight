@@ -34,12 +34,22 @@ std::shared_ptr<pathplanner::PathPlannerPath> GenerateTeleopPath() {
     frc::Pose2d curpose = SubDrivebase::GetInstance().GetPose();
     frc::Pose2d endpose;
 
-    /*if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed)
-      curpose = ICgeometry::xyPoseFlip(curpose);*/
+    /*
+    REFACTOR TO PULL THIS LOGIC INTO GetDriveToScorePath;
+    all logic about choosing paths should be in there
+    */
+    std::vector<frc::Pose2d> vec_poses;
+    std::vector<std::pair<frc::Pose2d, frc::Pose2d>> posevec = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed
+        ? SubVision::GetInstance().GetRedReefPoses()
+        : SubVision::GetInstance().GetBlueReefPoses();
+    std::vector<std::pair<frc::Pose2d, frc::Pose2d>>::iterator i;
+    for (i = posevec.begin(); i != posevec.end(); i++) {
+        vec_poses.push_back(i->first);
+        vec_poses.push_back(i->second);
+    }
 
-    std::vector<frc::Pose2d> vec_poses = SubVision::GetInstance().GetReefPoses();
     endpose = curpose.Nearest(std::span<frc::Pose2d>(vec_poses));
-
+    curpose = {curpose.X(), curpose.Y(), ICgeometry::PoseDirection(curpose, endpose)};
     /*rotation is the direction of the path*/
     std::vector<frc::Pose2d> poses{curpose, endpose};
     std::vector<pathplanner::Waypoint> waypoints =
@@ -61,7 +71,7 @@ std::shared_ptr<pathplanner::PathPlannerPath> GenerateTeleopPath() {
     return std::make_shared<pathplanner::PathPlannerPath>(path);
 }
 
-frc2::CommandPtr GetTeleopPath() {
+frc2::CommandPtr GetDriveToScorePath() {
   return frc2::cmd::DeferredProxy(
     [] { return pathplanner::AutoBuilder::followPath(GenerateTeleopPath()); }
   );

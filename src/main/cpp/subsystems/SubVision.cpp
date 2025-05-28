@@ -129,7 +129,7 @@ frc::Pose2d SubVision::GetReefPose(Side side = Left, int pose = -1) {
   return targPose;
 }
 
-std::vector<std::pair<frc::Pose2d, frc::Pose2d>> SubVision::GetReefBluePoses(void) {
+std::vector<std::pair<frc::Pose2d, frc::Pose2d>> SubVision::GetBlueReefPoses(void) {
   std::vector<std::pair<frc::Pose2d, frc::Pose2d>> poses;
   std::map<int, ReefPositions>::iterator i;
   for (i = tagToReefPositions.begin(); i != tagToReefPositions.end(); i++) {
@@ -145,7 +145,7 @@ std::vector<std::pair<frc::Pose2d, frc::Pose2d>> SubVision::GetReefBluePoses(voi
   return poses;
 }
 
-std::vector<std::pair<frc::Pose2d, frc::Pose2d>> SubVision::GetReefRedPoses(void) {
+std::vector<std::pair<frc::Pose2d, frc::Pose2d>> SubVision::GetRedReefPoses(void) {
   std::vector<std::pair<frc::Pose2d, frc::Pose2d>> poses;
   std::map<int, ReefPositions>::iterator i;
   for (i = tagToReefPositions.begin(); i != tagToReefPositions.end(); i++) {
