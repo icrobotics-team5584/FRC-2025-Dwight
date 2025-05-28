@@ -32,24 +32,40 @@ frc2::CommandPtr LEDHelper::SetContinuousGradient(frc::Color Color1, frc::Color 
     }).AndThen(frc2::cmd::Idle());
 }
 
-// frc2::CommandPtr LEDHelper::SetFire() {
-//     return Run([this] {
-//         double randomValue = 0.7 + static_cast<double>(rand()) / (static_cast<double>(RAND_MAX / 0.5));
+frc2::CommandPtr LEDHelper::SetFire() {
+    return Run([this] {
+        static bool goingUp = true;
+        static double ledValue = 0.5;
 
-//         std::array<frc::Color, 2> colors{frc::Color::kRed, frc::Color::kWhite};
-//         frc::LEDPattern base = frc::LEDPattern::Gradient(frc::LEDPattern::GradientType::kContinuous, colors);
-//         frc::LEDPattern mask = frc::LEDPattern::ProgressMaskLayer([&]() { return randomValue; });
+        if(ledValue > 0.98) {
+            goingUp = false;
+        }
+
+        if(ledValue < 0.5) {
+            goingUp = true;
+        }
+
+        if(goingUp) {
+            ledValue += 0.1;
+        }
+        if(!goingUp) {
+            ledValue -= 0.1;
+        }
+
+        std::array<frc::Color, 2> colors{frc::Color::kDarkRed, frc::Color::kDarkOrange};
+        frc::LEDPattern base = frc::LEDPattern::Gradient(frc::LEDPattern::GradientType::kDiscontinuous, colors);
+        frc::LEDPattern mask = frc::LEDPattern::ProgressMaskLayer([&]() { return ledValue; });
         
-//         frc::LEDPattern heightDisplay = base.Mask(mask);
+        frc::LEDPattern heightDisplay = base.Mask(mask);
 
-//         // Apply the LED pattern to the data buffer
-//         heightDisplay.ApplyTo(m_ledBuffer);
-//         m_led.SetData(m_ledBuffer);
-//     });
-// }
+        // Apply the LED pattern to the data buffer
+        heightDisplay.ApplyTo(m_ledBuffer);
+        m_led.SetData(m_ledBuffer);
+    });
+}
 
 frc2::CommandPtr LEDHelper::SetFollowProgress(double Progress) {
-    return Run([this, Progress] {
+    return RunOnce([this, Progress] {
         std::array<frc::Color, 2> colors{frc::Color::kWhite, frc::Color::kGreen};
         frc::LEDPattern base = frc::LEDPattern::Gradient(frc::LEDPattern::GradientType::kContinuous, colors);
         frc::LEDPattern mask = frc::LEDPattern::ProgressMaskLayer([&]() { return Progress; });
@@ -79,8 +95,7 @@ frc2::CommandPtr LEDHelper::FlashColour(frc::Color color) {
         frc::LEDPattern ledpattern = frc::LEDPattern::Solid(color);
         ledpattern.ApplyTo(m_ledBuffer);
         m_led.SetData(m_ledBuffer);
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
-    });
+    }).AndThen(frc2::cmd::Wait(200_ms));
 }
 
 void LEDHelper::Start() {

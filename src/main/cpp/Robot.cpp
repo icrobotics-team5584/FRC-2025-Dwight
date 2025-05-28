@@ -38,7 +38,7 @@ void Robot::RobotPeriodic() {
 }
 
 void Robot::DisabledInit() {
-  LEDHelper::GetInstance().SetDefaultCommand(LEDHelper::GetInstance().SetBreatheColour(frc::Color::kGhostWhite).IgnoringDisable(true));
+  LEDHelper::GetInstance().SetDefaultCommand(LEDHelper::GetInstance().SetFire().IgnoringDisable(true));
 }
 
 void Robot::DisabledPeriodic() {
@@ -50,16 +50,15 @@ void Robot::DisabledExit() {}
 void Robot::AutonomousInit() {
   m_autonomousCommand = m_container.GetAutonomousCommand();
 
-  if (m_autonomousCommand) 
-  {
+  if (m_autonomousCommand) {
     m_autonomousCommand->Schedule();
   }
 
-//Auto climber reset by bringing elevator to zero position then reset
+  // Auto climber reset by bringing elevator to zero position then reset
   SubElevator::GetInstance().ElevatorAutoReset();
 
   LEDHelper::GetInstance().SetDefaultCommand(LEDHelper::GetInstance().SetBreatheColour(frc::Color::kDarkGray));
-} 
+}
 
 void Robot::AutonomousPeriodic() {}
 

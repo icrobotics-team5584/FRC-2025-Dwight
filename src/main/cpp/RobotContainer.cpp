@@ -120,8 +120,6 @@ void RobotContainer::ConfigureBindings() {
   _driverController.LeftBumper().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Left));
   _driverController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
   _driverController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
-  // _driverController.RightTrigger().WhileTrue(LEDHelper::GetInstance().FlashColour(frc::Color::kGreen));
-  // _driverController.LeftTrigger().OnTrue(LEDHelper::GetInstance().SetScrollingRainbow());
 
   // Triggers
   SubDrivebase::GetInstance().CheckCoastButton().ToggleOnTrue(cmd::ToggleBrakeCoast());
