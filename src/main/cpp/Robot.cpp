@@ -38,7 +38,7 @@ void Robot::RobotPeriodic() {
 }
 
 void Robot::DisabledInit() {
-  LEDHelper::GetInstance().SetDefaultCommand(LEDHelper::GetInstance().SetFire().IgnoringDisable(true));
+  LEDHelper::GetInstance().SetDefaultCommand(LEDHelper::GetInstance().SetBreatheColour(frc::Color::kWhiteSmoke).IgnoringDisable(true));
 }
 
 void Robot::DisabledPeriodic() {

@@ -13,17 +13,16 @@ frc2::CommandPtr LEDHelper::SetSolidColour(frc::Color color) {
 
 frc2::CommandPtr LEDHelper::SetScrollingRainbow() {
     return Run([this] {
-        frc::LEDPattern m_rainbow = frc::LEDPattern::Rainbow(255, 128);
-        // frc::LEDPattern m_scrollingRainbow = m_rainbow.ScrollAtAbsoluteSpeed(units::velocity::meters_per_second_t{1}, kLedSpacing);
-        frc::LEDPattern m_scrollingRainbow = m_rainbow.ScrollAtRelativeSpeed(1_Hz);
-        m_scrollingRainbow.ApplyTo(_ledBuffer);
+        frc::LEDPattern _rainbow = frc::LEDPattern::Rainbow(255, 128);
+        frc::LEDPattern _scrollingRainbow = _rainbow.ScrollAtRelativeSpeed(1_Hz);
+        _scrollingRainbow.ApplyTo(_ledBuffer);
         _led.SetData(_ledBuffer);
     });
 }
 
-frc2::CommandPtr LEDHelper::SetContinuousGradient(frc::Color Color1, frc::Color Color2) {
-    return RunOnce([this, Color1, Color2] {
-        std::array<frc::Color, 2> colors{Color1, Color2};
+frc2::CommandPtr LEDHelper::SetContinuousGradient(frc::Color color1, frc::Color color2) {
+    return RunOnce([this, color1, color2] {
+        std::array<frc::Color, 2> colors{color1, color2};
         frc::LEDPattern gradient = frc::LEDPattern::Gradient(frc::LEDPattern::GradientType::kContinuous, colors);
 
         // Apply the LED pattern to the data buffer
@@ -64,11 +63,11 @@ frc2::CommandPtr LEDHelper::SetFire() {
     });
 }
 
-frc2::CommandPtr LEDHelper::SetFollowProgress(double Progress) {
-    return RunOnce([this, Progress] {
+frc2::CommandPtr LEDHelper::SetFollowProgress(double progress) {
+    return RunOnce([this, progress] {
         std::array<frc::Color, 2> colors{frc::Color::kWhite, frc::Color::kGreen};
         frc::LEDPattern base = frc::LEDPattern::Gradient(frc::LEDPattern::GradientType::kContinuous, colors);
-        frc::LEDPattern mask = frc::LEDPattern::ProgressMaskLayer([&]() { return Progress; });
+        frc::LEDPattern mask = frc::LEDPattern::ProgressMaskLayer([&]() { return progress; });
         
         frc::LEDPattern heightDisplay = base.Mask(mask);
 
