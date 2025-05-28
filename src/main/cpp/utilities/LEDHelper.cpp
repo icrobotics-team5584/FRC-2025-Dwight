@@ -5,8 +5,8 @@
 frc2::CommandPtr LEDHelper::SetSolidColour(frc::Color color) {
     return RunOnce([this, color] {
         frc::LEDPattern ledpattern = frc::LEDPattern::Solid(color);
-        ledpattern.ApplyTo(m_ledBuffer);
-        m_led.SetData(m_ledBuffer);
+        ledpattern.ApplyTo(_ledBuffer);
+        _led.SetData(_ledBuffer);
     }).AndThen(frc2::cmd::Idle());
 
 }
@@ -16,8 +16,8 @@ frc2::CommandPtr LEDHelper::SetScrollingRainbow() {
         frc::LEDPattern m_rainbow = frc::LEDPattern::Rainbow(255, 128);
         // frc::LEDPattern m_scrollingRainbow = m_rainbow.ScrollAtAbsoluteSpeed(units::velocity::meters_per_second_t{1}, kLedSpacing);
         frc::LEDPattern m_scrollingRainbow = m_rainbow.ScrollAtRelativeSpeed(1_Hz);
-        m_scrollingRainbow.ApplyTo(m_ledBuffer);
-        m_led.SetData(m_ledBuffer);
+        m_scrollingRainbow.ApplyTo(_ledBuffer);
+        _led.SetData(_ledBuffer);
     });
 }
 
@@ -27,8 +27,8 @@ frc2::CommandPtr LEDHelper::SetContinuousGradient(frc::Color Color1, frc::Color 
         frc::LEDPattern gradient = frc::LEDPattern::Gradient(frc::LEDPattern::GradientType::kContinuous, colors);
 
         // Apply the LED pattern to the data buffer
-        gradient.ApplyTo(m_ledBuffer);
-        m_led.SetData(m_ledBuffer);
+        gradient.ApplyTo(_ledBuffer);
+        _led.SetData(_ledBuffer);
     }).AndThen(frc2::cmd::Idle());
 }
 
@@ -59,8 +59,8 @@ frc2::CommandPtr LEDHelper::SetFire() {
         frc::LEDPattern heightDisplay = base.Mask(mask);
 
         // Apply the LED pattern to the data buffer
-        heightDisplay.ApplyTo(m_ledBuffer);
-        m_led.SetData(m_ledBuffer);
+        heightDisplay.ApplyTo(_ledBuffer);
+        _led.SetData(_ledBuffer);
     });
 }
 
@@ -73,8 +73,8 @@ frc2::CommandPtr LEDHelper::SetFollowProgress(double Progress) {
         frc::LEDPattern heightDisplay = base.Mask(mask);
 
         // Apply the LED pattern to the data buffer
-        heightDisplay.ApplyTo(m_ledBuffer);
-        m_led.SetData(m_ledBuffer);
+        heightDisplay.ApplyTo(_ledBuffer);
+        _led.SetData(_ledBuffer);
     });
     // this can only be used for 0-1 progress
 }
@@ -85,21 +85,21 @@ frc2::CommandPtr LEDHelper::SetBreatheColour(frc::Color color) {
         frc::LEDPattern pattern = base.Breathe(2_s);
 
         // Apply the LED pattern to the data buffer
-        pattern.ApplyTo(m_ledBuffer);
-        m_led.SetData(m_ledBuffer);
+        pattern.ApplyTo(_ledBuffer);
+        _led.SetData(_ledBuffer);
     });
 }
 
 frc2::CommandPtr LEDHelper::FlashColour(frc::Color color) {
     return RunOnce([this, color] {
         frc::LEDPattern ledpattern = frc::LEDPattern::Solid(color);
-        ledpattern.ApplyTo(m_ledBuffer);
-        m_led.SetData(m_ledBuffer);
+        ledpattern.ApplyTo(_ledBuffer);
+        _led.SetData(_ledBuffer);
     }).AndThen(frc2::cmd::Wait(200_ms));
 }
 
 void LEDHelper::Start() {
-    m_led.SetLength(kLength);
-    m_led.SetData(m_ledBuffer);
-    m_led.Start();
+    _led.SetLength(kLength);
+    _led.SetData(_ledBuffer);
+    _led.Start();
 }

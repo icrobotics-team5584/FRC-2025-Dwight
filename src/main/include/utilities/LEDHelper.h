@@ -6,7 +6,7 @@
 #include <units/length.h>
 #include <frc2/command/Commands.h>
 
-class LEDHelper : public frc2::SubsystemBase {  // made LEDHelper into a subsystem
+class LEDHelper : public frc2::SubsystemBase { 
 public:
   static LEDHelper& GetInstance() {static LEDHelper inst; return inst;}
 
@@ -28,9 +28,9 @@ private:
 
   // PWM port 9 as a dummy value
   // Must be a PWM header, not MXP or DIO
-  frc::AddressableLED m_led{9};
+  frc::AddressableLED _led{9};
   std::array<frc::AddressableLED::LEDData, kLength>
-      m_ledBuffer;  
+      _ledBuffer;  
 
 
 };
