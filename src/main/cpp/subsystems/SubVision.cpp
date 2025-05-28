@@ -11,6 +11,7 @@
 #include <frc/MathUtil.h>
 
 SubVision::SubVision() {
+  // Logger::Log("taglayoutrotation", _tagLayout.GetTagPose(18).value().Rotation().ToRotation2d());
   // Set up dev table
   _devTable.insert(0_m, 0);
   _devTable.insert(0.71_m, 0.002);

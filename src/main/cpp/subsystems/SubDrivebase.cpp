@@ -445,7 +445,7 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
 }
 
 units::turns_per_second_t SubDrivebase::CalcRotateSpeed(units::turn_t rotationError) {
-  auto omega = _teleopRotationController.Calculate(rotationError, 0_deg) * 1_rad_per_s;
+  auto omega = _teleopRotationController.Calculate(rotationError, 10_deg) * 1_rad_per_s;
   omega = units::math::min(omega, MAX_ANGULAR_VELOCITY);
   omega = units::math::max(omega, -MAX_ANGULAR_VELOCITY);
   return omega;

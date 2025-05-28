@@ -11,6 +11,7 @@
 #include "subsystems/SubEndEffector.h"
 #include "utilities/RobotLogs.h"
 #include "iostream"
+
 namespace cmd {
 using namespace frc2::cmd;
 /**
@@ -25,14 +26,16 @@ frc2::CommandPtr YAlignWithTarget(SubVision::Side side)
   static frc::Pose2d targetTagPose;
   return RunOnce([side] {
     int tagId = SubVision::GetInstance().GetClosestTag(SubDrivebase::GetInstance().GetPose());
-    frc::SmartDashboard::PutNumber("Cloest tag", tagId);
+    frc::SmartDashboard::PutNumber("Closest tag", tagId);
     frc::Pose2d tagPose = SubVision::GetInstance().GetAprilTagPose(tagId);
+    frc::SmartDashboard::PutNumber("ROTATIONTAGPOSE", tagPose.Rotation().Degrees().value());
     auto yOffset = (side == SubVision::Side::Left) ? 0.12_m : -0.2_m;//0.16_m : -0.16_m;
     targetTagPose = SubVision::GetInstance().CalculateRelativePose(tagPose, 0_m, yOffset);
     targetPose = SubVision::GetInstance().CalculateRelativePose(targetTagPose,0.6_m,0_m);
     targetTagPose = frc::Pose2d(targetTagPose.Translation(), targetTagPose.Rotation() + frc::Rotation2d(90_deg));
     targetPose = frc::Pose2d(targetPose.Translation(), targetPose.Rotation() + frc::Rotation2d(90_deg));
     SubDrivebase::GetInstance().DisplayPose("Vision 3d align pose", targetPose);
+    SubDrivebase::GetInstance().DisplayPose("Vision 3d align target pose", targetTagPose);
   }).AndThen(
   SubDrivebase::GetInstance()
       .Drive(
@@ -54,9 +57,9 @@ frc2::CommandPtr FrontApproachAlign (frc::Pose2d targetPose) {
     frc::SmartDashboard::PutNumber("Vision/3D align Z difference", RelativeDifference.Rotation().Degrees().value());
     frc::ChassisSpeeds speeds {0_mps, 0.5_mps, 0_tps};
     if (RotationDifference < -2_deg) {
-      speeds.omega = 3_deg_per_s;
+      speeds.omega = -RotationDifference.value()*0.5_deg_per_s;
     } else if (RotationDifference > 2_deg) {
-      speeds.omega = -3_deg_per_s;
+      speeds.omega = RotationDifference.value()*0.5_deg_per_s;
     }
     if (RelativeDifference.Y() < -0.01_m) {
       speeds.vx = -0.1_mps;
