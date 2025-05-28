@@ -112,10 +112,13 @@ void RobotContainer::ConfigureBindings() {
   // ));
   _driverController.A().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
-  _driverController.X().WhileTrue(SubDrivebase::GetInstance().GyroCoralLeftStationAlign(_driverController));
-  _driverController.B().WhileTrue(SubDrivebase::GetInstance().GyroCoralRightStationAlign(_driverController)); 
-  _driverController.RightBumper().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Right));
-  _driverController.LeftBumper().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Left));
+  
+  // _driverController.X().WhileTrue(SubDrivebase::GetInstance().GyroCoralLeftStationAlign(_driverController));
+  // _driverController.B().WhileTrue(SubDrivebase::GetInstance().GyroCoralRightStationAlign(_driverController)); 
+  // _driverController.RightBumper().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Right));
+  // _driverController.LeftBumper().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Left));
+  _driverController.X().WhileTrue(cmd::YAlignWithTarget(SubVision::Side::Left));
+  _driverController.B().WhileTrue(cmd::YAlignWithTarget(SubVision::Side::Right));
   _driverController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
   _driverController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
 
@@ -125,6 +128,7 @@ void RobotContainer::ConfigureBindings() {
       .OnTrue(SubElevator::GetInstance().CmdSetSource());
 
   // Operator
+  
   _operatorController.AxisGreaterThan(frc::XboxController::Axis::kLeftY, 0.2)
       .WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
 

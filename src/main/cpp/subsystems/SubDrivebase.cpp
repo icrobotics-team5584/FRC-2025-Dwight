@@ -414,7 +414,8 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   frc::Pose2d currentPosition = GetPose();
   double currentXMeters = currentPosition.X().value();
   double currentYMeters = currentPosition.Y().value();
-  units::turn_t currentRotation = currentPosition.Rotation().Radians();
+  // units::turn_t currentRotation = currentPosition.Rotation().Radians();
+  units::turn_t currentRotation = GetAllianceRelativeGyroAngle().Degrees();
 
   // Use PID controllers to calculate speeds
   auto xSpeed = _teleopTranslationController.Calculate(currentXMeters, targetXMeters) * 1_mps;
@@ -426,6 +427,11 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   xSpeed = units::math::max(xSpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
   ySpeed = units::math::min(ySpeed, MAX_DRIVE_TO_POSE_VELOCITY);
   ySpeed = units::math::max(ySpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
+
+  if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed) {
+    xSpeed *= -1;
+    ySpeed *= -1;
+  }
 
   frc::SmartDashboard::PutNumber("CalcDriveLogs/xSpeed", -xSpeed.value());
   frc::SmartDashboard::PutNumber("CalcDriveLogs/ySpeed", ySpeed.value());
@@ -439,7 +445,7 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
 }
 
 units::turns_per_second_t SubDrivebase::CalcRotateSpeed(units::turn_t rotationError) {
-  auto omega = _teleopRotationController.Calculate(rotationError, 0_deg) * 1_rad_per_s;
+  auto omega = _teleopRotationController.Calculate(rotationError, 10_deg) * 1_rad_per_s;
   omega = units::math::min(omega, MAX_ANGULAR_VELOCITY);
   omega = units::math::max(omega, -MAX_ANGULAR_VELOCITY);
   return omega;
@@ -460,7 +466,7 @@ bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
   frc::SmartDashboard::PutBoolean("Drivebase/IsAtPose",
                                   units::math::abs(rotError.Degrees()) < 1_deg && posError < 2_cm);
 
-  if (units::math::abs(rotError.Degrees()) < 1_deg && posError < 2_cm && velocity < 0.0001_mps) {
+  if (units::math::abs(rotError.Degrees()) < 3_deg && posError < 2_cm) {
     return true;
   } else {
     return false;
