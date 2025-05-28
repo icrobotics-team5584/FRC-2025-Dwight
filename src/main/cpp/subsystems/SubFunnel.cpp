@@ -14,12 +14,6 @@ SubFunnel::SubFunnel(){
 
 // This method will be called once per scheduler run
 void SubFunnel::Periodic() {
-    Logger::Log("Elevator/Motor1/Voltage", _funnelMotor.GetMotorVoltage().value());
-    Logger::Log("Elevator/Motor1/Current", _funnelMotor.GetOutputCurrent());
-    Logger::Log("Elevator/Motor1/Target", _funnelMotor.GetPositionTarget().value());
-    Logger::Log("Elevator/Motor1/Velocity", _funnelMotor.GetVelocity().value());
-    Logger::Log("Elevator/Motor1/Position", _funnelMotor.GetPosition().value());
-    Logger::Log("Elevator/Motor1/Temperature", _funnelMotor.GetMotorTemperature());
 }
 
 

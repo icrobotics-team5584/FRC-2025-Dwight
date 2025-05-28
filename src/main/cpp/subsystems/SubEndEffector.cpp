@@ -22,13 +22,6 @@ SubEndEffector::SubEndEffector() {
 void SubEndEffector::Periodic() {
     frc::SmartDashboard::PutBoolean("EndEffector/LinebreakHigher", SubEndEffector::GetInstance().CheckLineBreakHigher());
     frc::SmartDashboard::PutBoolean("EndEffector/LinebreakLower", SubEndEffector::GetInstance().CheckLineBreakLower());
-
-    Logger::Log("Elevator/Motor1/Voltage", _endEffectorMotor.GetMotorVoltage().value());
-    Logger::Log("Elevator/Motor1/Current", _endEffectorMotor.GetOutputCurrent());
-    Logger::Log("Elevator/Motor1/Target", _endEffectorMotor.GetPositionTarget().value());
-    Logger::Log("Elevator/Motor1/Velocity", _endEffectorMotor.GetVelocity().value());
-    Logger::Log("Elevator/Motor1/Position", _endEffectorMotor.GetPosition().value());
-    Logger::Log("Elevator/Motor1/Temperature", _endEffectorMotor.GetMotorTemperature());
 }
 
 frc2::CommandPtr SubEndEffector::FeedUp() {

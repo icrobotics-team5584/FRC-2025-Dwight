@@ -14,6 +14,7 @@
 #include <units/time.h>
 #include <units/current.h>
 #include <units/velocity.h>
+#include <units/temperature.h>
 #include <wpi/sendable/Sendable.h>
 #include <wpi/sendable/SendableBuilder.h>
 #include "utilities/ICSparkEncoder.h"
@@ -196,6 +197,15 @@ class ICSpark : public wpi::Sendable {
    */
   ControlType GetControlType() { return _controlType; };
 
+  /**
+   * Gets the output current.
+   */
+  units::ampere_t GetMotorOutputCurrent();
+
+  /**
+   * Gets motors temperature.
+   */
+  units::celsius_t GetTemperature();
   /**
    * Get the velocity of the motor.
    */
