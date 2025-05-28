@@ -129,13 +129,34 @@ frc::Pose2d SubVision::GetReefPose(Side side = Left, int pose = -1) {
   return targPose;
 }
 
-std::vector<frc::Pose2d> SubVision::GetReefPoses(void) {
-  std::vector<frc::Pose2d> poses;
+std::vector<std::pair<frc::Pose2d, frc::Pose2d>> SubVision::GetReefBluePoses(void) {
+  std::vector<std::pair<frc::Pose2d, frc::Pose2d>> poses;
   std::map<int, ReefPositions>::iterator i;
   for (i = tagToReefPositions.begin(); i != tagToReefPositions.end(); i++) {
+    int id = i->first;
     ReefPositions pose = i->second;
-    poses.push_back(frc::Pose2d(pose.leftX, pose.leftY, pose.angle));
-    poses.push_back(frc::Pose2d(pose.rightX, pose.rightY, pose.angle));
+    if (id > 11) { /* all red reef tags are >= 11 */
+      poses.push_back(std::pair<frc::Pose2d, frc::Pose2d>(
+        frc::Pose2d(pose.leftX, pose.leftY, pose.angle),
+        frc::Pose2d(pose.rightX, pose.rightY, pose.angle))
+      );
+    }
+  }
+  return poses;
+}
+
+std::vector<std::pair<frc::Pose2d, frc::Pose2d>> SubVision::GetReefRedPoses(void) {
+  std::vector<std::pair<frc::Pose2d, frc::Pose2d>> poses;
+  std::map<int, ReefPositions>::iterator i;
+  for (i = tagToReefPositions.begin(); i != tagToReefPositions.end(); i++) {
+    int id = i->first;
+    ReefPositions pose = i->second;
+    if (id <= 11) { /* all red reef tags are >= 11 */
+      poses.push_back(std::pair<frc::Pose2d, frc::Pose2d>(
+        frc::Pose2d(pose.leftX, pose.leftY, pose.angle),
+        frc::Pose2d(pose.rightX, pose.rightY, pose.angle))
+      );
+    }
   }
   return poses;
 }
