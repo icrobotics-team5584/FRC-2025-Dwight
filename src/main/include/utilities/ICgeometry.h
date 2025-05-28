@@ -7,4 +7,6 @@ namespace ICgeometry {
     frc::Pose2d xPoseFlip(frc::Pose2d pose);
     frc::Pose2d yPoseFlip(frc::Pose2d pose);
     frc::Pose2d xyPoseFlip(frc::Pose2d pose);
+
+    frc::Rotation2d PoseDirection(frc::Pose2d origin, frc::Pose2d destination);
 }

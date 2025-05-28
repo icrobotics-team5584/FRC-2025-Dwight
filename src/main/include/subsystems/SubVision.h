@@ -42,8 +42,8 @@ public:
   double GetLastReefTagArea();
   Side GetLastCameraUsed();
   frc::Pose2d GetReefPose(Side side, int pose);
-  std::vector<std::pair<frc::Pose2d, frc::Pose2d>> SubVision::GetReefBluePoses(void);
-  std::vector<std::pair<frc::Pose2d, frc::Pose2d>> SubVision::GetReefRedPoses(void);
+  std::vector<std::pair<frc::Pose2d, frc::Pose2d>> SubVision::GetBlueReefPoses(void);
+  std::vector<std::pair<frc::Pose2d, frc::Pose2d>> SubVision::GetRedReefPoses(void);
   units::degree_t GetReefAlignAngle(Side reefSide);
 
   std::map<Side, std::optional<photon::EstimatedRobotPose>> GetPose();
