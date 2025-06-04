@@ -445,7 +445,7 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
 }
 
 units::turns_per_second_t SubDrivebase::CalcRotateSpeed(units::turn_t rotationError) {
-  auto omega = _teleopRotationController.Calculate(rotationError, 10_deg) * 1_rad_per_s;
+  auto omega = _teleopRotationController.Calculate(rotationError, 0_deg) * 1_rad_per_s;
   omega = units::math::min(omega, MAX_ANGULAR_VELOCITY);
   omega = units::math::max(omega, -MAX_ANGULAR_VELOCITY);
   return omega;
@@ -453,14 +453,14 @@ units::turns_per_second_t SubDrivebase::CalcRotateSpeed(units::turn_t rotationEr
 
 bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
   auto currentPose = _poseEstimator.GetEstimatedPosition();
-  auto rotError = currentPose.Rotation() - pose.Rotation();
+  auto rotError = GetGyroAngle() - pose.Rotation();
   auto posError = currentPose.Translation().Distance(pose.Translation());
   auto velocity = GetVelocity();
   DisplayPose("current pose", currentPose);
   DisplayPose("target pose", pose);
 
   frc::SmartDashboard::PutNumber("Drivebase/rotError",
-                                 units::math::abs(rotError.Degrees()).value());
+                                 rotError.Degrees().value());
   frc::SmartDashboard::PutNumber("Drivebase/posError", posError.value());
 
   frc::SmartDashboard::PutBoolean("Drivebase/IsAtPose",

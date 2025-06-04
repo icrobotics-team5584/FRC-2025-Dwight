@@ -50,22 +50,22 @@ frc2::CommandPtr YAlignWithTarget(SubVision::Side side)
 frc2::CommandPtr FrontApproachAlign (frc::Pose2d targetPose) {
   return SubDrivebase::GetInstance().Drive([targetPose] {
     auto RelativeDifference = SubDrivebase::GetInstance().GetPose().RelativeTo(targetPose);
-    auto RotationDifference = SubDrivebase::GetInstance().GetPose().Rotation().Degrees() + 90_deg - targetPose.Rotation().Degrees();
+    auto RotationDifference = SubDrivebase::GetInstance().GetGyroAngle().Degrees() + 90_deg - targetPose.Rotation().Degrees();
     frc::SmartDashboard::PutNumber("Vision/3D align X difference", RelativeDifference.X().value());
     frc::SmartDashboard::PutNumber("Vision/3D align Y difference", RelativeDifference.Y().value());
     frc::SmartDashboard::PutNumber("Vision/3D align roation difference",RotationDifference.value());
     frc::SmartDashboard::PutNumber("Vision/3D align Z difference", RelativeDifference.Rotation().Degrees().value());
     frc::ChassisSpeeds speeds {0_mps, 0.5_mps, 0_tps};
-    if (RotationDifference < -2_deg) {
-      speeds.omega = -RotationDifference.value()*0.5_deg_per_s;
-    } else if (RotationDifference > 2_deg) {
-      speeds.omega = RotationDifference.value()*0.5_deg_per_s;
-    }
-    if (RelativeDifference.Y() < -0.01_m) {
-      speeds.vx = -0.1_mps;
-    } else if (RelativeDifference.Y() > 0.01_m) {
-      speeds.vx = 0.1_mps;
-    }
+    // if (RotationDifference < -2_deg) {
+    //   speeds.omega = -RotationDifference.value()*0.5_deg_per_s;
+    // } else if (RotationDifference > 2_deg) {
+    //   speeds.omega = RotationDifference.value()*0.5_deg_per_s;
+    // }
+    // if (RelativeDifference.Y() < -0.01_m) {
+    //   speeds.vx = -0.1_mps;
+    // } else if (RelativeDifference.Y() > 0.01_m) {
+    //   speeds.vx = 0.1_mps;
+    // }
     return speeds;
   }, false);
 }
