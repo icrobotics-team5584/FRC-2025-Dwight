@@ -15,7 +15,7 @@
 
 Robot::Robot() {
   frc::DataLogManager::Start();
-  LEDHelper::GetInstance().Start();
+  LEDHelper::GetInstance().Start(17);
   frc::SmartDashboard::PutData( &frc2::CommandScheduler::GetInstance() );
   frc::DriverStation::StartDataLog(frc::DataLogManager::GetLog());
   URCL::Start(std::map<int, std::string_view>{{canid::CLIMBER_MOTOR, "Climber"},
@@ -68,7 +68,6 @@ void Robot::TeleopInit() {
   if (m_autonomousCommand) {
     m_autonomousCommand->Cancel();
   }
-
   LEDHelper::GetInstance().SetDefaultCommand(LEDHelper::GetInstance().SetFire());
 }
 

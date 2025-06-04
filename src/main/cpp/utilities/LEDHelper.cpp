@@ -96,8 +96,9 @@ frc2::CommandPtr LEDHelper::FlashColour(frc::Color color) {
     }).AndThen(frc2::cmd::Wait(200_ms));
 }
 
-void LEDHelper::Start() {
-    _led.SetLength(kLength);
+void LEDHelper::Start(int length) {
+    _led.SetLength(length);
+    _ledBuffer.resize(length);
     _led.SetData(_ledBuffer);
     _led.Start();
 }
