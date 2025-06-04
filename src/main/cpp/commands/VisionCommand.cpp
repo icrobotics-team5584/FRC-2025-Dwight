@@ -44,7 +44,15 @@ frc2::CommandPtr YAlignWithTarget(SubVision::Side side)
           }, true)
       .Until([] {
         return SubDrivebase::GetInstance().IsAtPose(targetPose);
-      })).AndThen(FrontApproachAlign(targetTagPose));
+      })).AndThen(
+  SubDrivebase::GetInstance()
+      .Drive(
+          [side] {
+            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetTagPose) * 0.5;
+          }, true)
+      .Until([] {
+        return SubDrivebase::GetInstance().IsAtPose(targetTagPose);
+}));
 }
 
 frc2::CommandPtr FrontApproachAlign (frc::Pose2d targetPose) {
@@ -55,7 +63,8 @@ frc2::CommandPtr FrontApproachAlign (frc::Pose2d targetPose) {
     frc::SmartDashboard::PutNumber("Vision/3D align Y difference", RelativeDifference.Y().value());
     frc::SmartDashboard::PutNumber("Vision/3D align roation difference",RotationDifference.value());
     frc::SmartDashboard::PutNumber("Vision/3D align Z difference", RelativeDifference.Rotation().Degrees().value());
-    frc::ChassisSpeeds speeds {0_mps, 0.5_mps, 0_tps};
+    // frc::ChassisSpeeds speeds {0_mps, 0.5_mps, 0_tps};
+    frc::ChassisSpeeds speeds {0_mps, Logger::Tune("visionalignforwardspeed", 0.7)*1_mps, 0_tps};
     // if (RotationDifference < -2_deg) {
     //   speeds.omega = -RotationDifference.value()*0.5_deg_per_s;
     // } else if (RotationDifference > 2_deg) {
@@ -200,7 +209,7 @@ frc2::CommandPtr AutoShootIfAligned(SubVision::Side side) {
     WaitUntil([side] {
       units::degree_t goalAngle = SubVision::GetInstance().GetReefAlignAngle(side);
       units::degree_t tagAngle = SubVision::GetInstance().GetLastReefTagAngle();
-      double visionTolerance = Logger::Tune("AutoShoot/AutoShootVisionTolerance", 0.5);
+      double visionTolerance = Logger::Tune("AutoShoot/AutoShootVisionTolerance", 3.0);
       double drivebaseTolerance = Logger::Tune("AutoShoot/AutoShootDrivebaseTolerance", 0.01);
       Logger::Log("AutoShoot/errorangle", (goalAngle-tagAngle).value());
      
@@ -214,7 +223,7 @@ frc2::CommandPtr AutoShootIfAligned(SubVision::Side side) {
       }
 
       // height target 
-      if (SubElevator::GetInstance().GetTargetHeight() != SubElevator::_SOURCE_HEIGHT){
+      if (SubElevator::GetInstance().GetTargetHeight() != SubElevator::_SOURCE_HEIGHT && SubElevator::GetInstance().IsAtTarget()){
         isAtTargetHeight =  SubElevator::GetInstance().IsAtTarget();
       }
 
@@ -223,11 +232,14 @@ frc2::CommandPtr AutoShootIfAligned(SubVision::Side side) {
         isStill = true;
       }
       
-      if (isStill && isAtTargetHeight && inTagAngleRange) {
+      if (isAtTargetHeight) {  // && inTagAngleRange
         return true;
       }
       return false;
       }),
+    frc2::cmd::WaitUntil(
+      [] { return SubElevator::GetInstance().IsAtTarget(); }),
+    frc2::cmd::Wait(0.3_s),
     SubEndEffector::GetInstance().ScoreCoral()
   );
 }
