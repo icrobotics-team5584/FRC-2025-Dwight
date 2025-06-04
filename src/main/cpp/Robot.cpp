@@ -69,7 +69,7 @@ void Robot::TeleopInit() {
     m_autonomousCommand->Cancel();
   }
 
-  LEDHelper::GetInstance().SetDefaultCommand(LEDHelper::GetInstance().SetBreatheColour(frc::Color::kDarkOrange));
+  LEDHelper::GetInstance().SetDefaultCommand(LEDHelper::GetInstance().SetFire());
 }
 
 void Robot::TeleopPeriodic() {

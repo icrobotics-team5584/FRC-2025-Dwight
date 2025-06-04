@@ -1,4 +1,5 @@
 #include "utilities/LEDHelper.h"
+#include "utilities/RobotLogs.h"
 #include <frc/util/Color.h>
 #include <thread>
 
@@ -33,23 +34,21 @@ frc2::CommandPtr LEDHelper::SetContinuousGradient(frc::Color color1, frc::Color 
 
 frc2::CommandPtr LEDHelper::SetFire() {
     return Run([this] {
-        static bool goingUp = true;
         static double ledValue = 0.5;
 
-        if(ledValue > 0.98) {
-            goingUp = false;
-        }
+        double change = (rand() / (double)RAND_MAX) * 0.1;
+        // this generates a random number, scales it to [0,1] by dividing by the max random number,
+        // then scales it further to [0,0.1]. i.e. the # of LEDs lit will move up or down up to 10%.
 
-        if(ledValue < 0.5) {
-            goingUp = true;
-        }
+        double direction = (ledValue >= 0.98) ? -1 : //go DOWN if all LEDs are already lit
+                              (ledValue <= 0.5) ? 1 : //go UP if lower threshold (50%) of LEDs are lit
+                              (rand() % 2) * 2 - 1;  //otherwise randomly go UP or DOWN ([0 or 1] > [0 or 2] > [-1 or 1])
 
-        if(goingUp) {
-            ledValue += 0.1;
-        }
-        if(!goingUp) {
-            ledValue -= 0.1;
-        }
+        ledValue += (change * direction);
+
+        Logger::Log("LED value", ledValue);
+        Logger::Log("change", change);
+        Logger::Log("direction", direction);
 
         std::array<frc::Color, 2> colors{frc::Color::kDarkRed, frc::Color::kDarkOrange};
         frc::LEDPattern base = frc::LEDPattern::Gradient(frc::LEDPattern::GradientType::kDiscontinuous, colors);
