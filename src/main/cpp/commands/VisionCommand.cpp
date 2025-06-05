@@ -48,7 +48,7 @@ frc2::CommandPtr YAlignWithTarget(SubVision::Side side)
   SubDrivebase::GetInstance()
       .Drive(
           [side] {
-            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetTagPose) * 0.5;
+            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetTagPose) * 0.3;
           }, true)
       .Until([] {
         return SubDrivebase::GetInstance().IsAtPose(targetTagPose);
@@ -197,52 +197,83 @@ frc2::CommandPtr AlignToSource() {
       true);
 }
 
-frc2::CommandPtr AlignAndShoot(SubVision::Side side){
- return YAlignWithTarget(side).AlongWith(AutoShootIfAligned(side));
+frc2::CommandPtr AlignAndShoot(SubVision::Side side)
+{
+  static frc::Pose2d targetPose;
+  static frc::Pose2d targetTagPose;
+  return RunOnce([side] {
+    int tagId = SubVision::GetInstance().GetClosestTag(SubDrivebase::GetInstance().GetPose());
+    frc::SmartDashboard::PutNumber("Closest tag", tagId);
+    frc::Pose2d tagPose = SubVision::GetInstance().GetAprilTagPose(tagId);
+    frc::SmartDashboard::PutNumber("ROTATIONTAGPOSE", tagPose.Rotation().Degrees().value());
+    auto yOffset = (side == SubVision::Side::Left) ? 0.12_m : -0.2_m;//0.16_m : -0.16_m;
+    targetTagPose = SubVision::GetInstance().CalculateRelativePose(tagPose, 0_m, yOffset);
+    targetPose = SubVision::GetInstance().CalculateRelativePose(targetTagPose,0.6_m,0_m);
+    targetTagPose = frc::Pose2d(targetTagPose.Translation(), targetTagPose.Rotation() + frc::Rotation2d(90_deg));
+    targetPose = frc::Pose2d(targetPose.Translation(), targetPose.Rotation() + frc::Rotation2d(90_deg));
+    SubDrivebase::GetInstance().DisplayPose("Vision 3d align pose", targetPose);
+    SubDrivebase::GetInstance().DisplayPose("Vision 3d align target pose", targetTagPose);
+  }).AndThen(
+  SubDrivebase::GetInstance()
+      .Drive(
+          [side] {
+            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose) * 2.5;
+          }, true)
+      .Until([] {
+        return SubDrivebase::GetInstance().IsAtPose(targetPose);
+      })).AndThen(SubElevator::GetInstance().CmdSetElevatorToL(SubElevator::GetInstance().AutoScoreHeight)).AndThen(
+  SubDrivebase::GetInstance()
+      .Drive(
+          [side] {
+            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetTagPose) * 0.3;
+          }, true)
+      .Until([] {
+        return SubDrivebase::GetInstance().IsAtPose(targetTagPose);
+})).AndThen(SubEndEffector::GetInstance().ScoreCoral());
 }
 frc2::CommandPtr HopeAndShoot(SubVision::Side side) {
   return ForceAlignWithTarget(side).AlongWith(AutoShootIfKindaAligned(side));
 }
 
-frc2::CommandPtr AutoShootIfAligned(SubVision::Side side) {
-  return Sequence(
-    WaitUntil([side] {
-      units::degree_t goalAngle = SubVision::GetInstance().GetReefAlignAngle(side);
-      units::degree_t tagAngle = SubVision::GetInstance().GetLastReefTagAngle();
-      double visionTolerance = Logger::Tune("AutoShoot/AutoShootVisionTolerance", 3.0);
-      double drivebaseTolerance = Logger::Tune("AutoShoot/AutoShootDrivebaseTolerance", 0.01);
-      Logger::Log("AutoShoot/errorangle", (goalAngle-tagAngle).value());
+// frc2::CommandPtr AutoShootIfAligned(SubVision::Side side) {
+//   return Sequence(
+//     WaitUntil([side] {
+//       units::degree_t goalAngle = SubVision::GetInstance().GetReefAlignAngle(side);
+//       units::degree_t tagAngle = SubVision::GetInstance().GetLastReefTagAngle();
+//       double visionTolerance = Logger::Tune("AutoShoot/AutoShootVisionTolerance", 3.0);
+//       double drivebaseTolerance = Logger::Tune("AutoShoot/AutoShootDrivebaseTolerance", 0.01);
+//       Logger::Log("AutoShoot/errorangle", (goalAngle-tagAngle).value());
      
-      bool inTagAngleRange = false; 
-      bool isAtTargetHeight = false;
-      bool isStill = false;
+//       bool inTagAngleRange = false; 
+//       bool isAtTargetHeight = false;
+//       bool isStill = false;
 
-      // vision tag angles 
-      if (tagAngle < goalAngle + visionTolerance*1_deg && tagAngle > goalAngle - visionTolerance*1_deg) {
-        inTagAngleRange = true;
-      }
+//       // vision tag angles 
+//       if (tagAngle < goalAngle + visionTolerance*1_deg && tagAngle > goalAngle - visionTolerance*1_deg) {
+//         inTagAngleRange = true;
+//       }
 
-      // height target 
-      if (SubElevator::GetInstance().GetTargetHeight() != SubElevator::_SOURCE_HEIGHT && SubElevator::GetInstance().IsAtTarget()){
-        isAtTargetHeight =  SubElevator::GetInstance().IsAtTarget();
-      }
+//       // height target 
+//       if (SubElevator::GetInstance().GetTargetHeight() != SubElevator::_SOURCE_HEIGHT && SubElevator::GetInstance().IsAtTarget()){
+//         isAtTargetHeight =  SubElevator::GetInstance().IsAtTarget();
+//       }
 
-      // is still
-      if (SubDrivebase::GetInstance().GetVelocity() < drivebaseTolerance *1_mps) {
-        isStill = true;
-      }
+//       // is still
+//       if (SubDrivebase::GetInstance().GetVelocity() < drivebaseTolerance *1_mps) {
+//         isStill = true;
+//       }
       
-      if (isAtTargetHeight) {  // && inTagAngleRange
-        return true;
-      }
-      return false;
-      }),
-    frc2::cmd::WaitUntil(
-      [] { return SubElevator::GetInstance().IsAtTarget(); }),
-    frc2::cmd::Wait(0.3_s),
-    SubEndEffector::GetInstance().ScoreCoral()
-  );
-}
+//       if (isAtTargetHeight) {  // && inTagAngleRange
+//         return true;
+//       }
+//       return false;
+//       }),
+//     frc2::cmd::WaitUntil(
+//       [] { return SubElevator::GetInstance().IsAtTarget(); }),
+//     frc2::cmd::Wait(0.3_s),
+//     SubEndEffector::GetInstance().ScoreCoral()
+//   );
+// }
 
 frc2::CommandPtr AutoShootIfKindaAligned(SubVision::Side side) {
   return Sequence(

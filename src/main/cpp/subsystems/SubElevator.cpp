@@ -86,6 +86,37 @@ frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height) {
 
 }
 
+frc2::CommandPtr SubElevator::CmdSetElevatorToL(int level) {
+  if (level == 1) {return CmdElevatorToPosition(_L1_HEIGHT);}
+  if (level == 2) {return CmdElevatorToPosition(_L2_HEIGHT);}
+  if (level == 3) {return CmdElevatorToPosition(_L3_HEIGHT);}
+  if (level == 4) {return CmdElevatorToPosition(_L4_HEIGHT);}
+}
+
+frc2::CommandPtr SubElevator::CmdSetAutoL1() {
+  return RunOnce([this] {
+    AutoScoreHeight = 1;
+  });
+}
+
+frc2::CommandPtr SubElevator::CmdSetAutoL2() {
+  return RunOnce([this] {
+    AutoScoreHeight = 2;
+  });
+}
+
+frc2::CommandPtr SubElevator::CmdSetAutoL3() {
+  return RunOnce([this] {
+    AutoScoreHeight = 3;
+  });
+}
+
+frc2::CommandPtr SubElevator::CmdSetAutoL4() {
+  return RunOnce([this] {
+    AutoScoreHeight = 4;
+  });
+}
+
 frc2::CommandPtr SubElevator::CmdSetL1() {
   return CmdElevatorToPosition(_L1_HEIGHT);
 }
