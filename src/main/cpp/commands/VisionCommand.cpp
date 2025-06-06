@@ -229,7 +229,15 @@ frc2::CommandPtr AlignAndShoot(SubVision::Side side)
           }, true)
       .Until([] {
         return SubDrivebase::GetInstance().IsAtPose(targetTagPose);
-})).AndThen(SubEndEffector::GetInstance().ScoreCoral());
+})).AndThen(SubEndEffector::GetInstance().ScoreCoral()).AndThen(
+  SubDrivebase::GetInstance()
+      .Drive(
+          [side] {
+            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose) * 0.3;
+          }, true)
+      .Until([] {
+        return SubDrivebase::GetInstance().IsAtPose(targetPose);
+})).AndThen(SubElevator::GetInstance().CmdSetSource());
 }
 frc2::CommandPtr HopeAndShoot(SubVision::Side side) {
   return ForceAlignWithTarget(side).AlongWith(AutoShootIfKindaAligned(side));
