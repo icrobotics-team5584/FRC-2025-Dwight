@@ -326,6 +326,7 @@ void SubElevator::Periodic() {
   Logger::Log("Elevator/_targetheight", _targetHeight);
   Logger::Log("Elevator/M1Current", GetM1Current().value());
   Logger::Log("Elevator/_hasReset", _hasReset);
+  frc::SmartDashboard::PutNumber("Elevator/AutoScoreHeight", AutoScoreHeight);
 }
 
 void SubElevator::SimulationPeriodic() {
