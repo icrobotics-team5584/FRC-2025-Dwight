@@ -201,6 +201,7 @@ frc2::CommandPtr AlignAndShoot(SubVision::Side side)
 {
   static frc::Pose2d targetPose;
   static frc::Pose2d targetTagPose;
+  static frc::Pose2d awayPose;
   return RunOnce([side] {
     int tagId = SubVision::GetInstance().GetClosestTag(SubDrivebase::GetInstance().GetPose());
     frc::SmartDashboard::PutNumber("Closest tag", tagId);
@@ -209,19 +210,21 @@ frc2::CommandPtr AlignAndShoot(SubVision::Side side)
     auto yOffset = (side == SubVision::Side::Left) ? 0.12_m : -0.2_m;//0.16_m : -0.16_m;
     targetTagPose = SubVision::GetInstance().CalculateRelativePose(tagPose, 0_m, yOffset);
     targetPose = SubVision::GetInstance().CalculateRelativePose(targetTagPose,0.6_m,0_m);
+    targetTagPose = SubVision::GetInstance().CalculateRelativePose(targetTagPose,0.45_m,0_m);
     targetTagPose = frc::Pose2d(targetTagPose.Translation(), targetTagPose.Rotation() + frc::Rotation2d(90_deg));
     targetPose = frc::Pose2d(targetPose.Translation(), targetPose.Rotation() + frc::Rotation2d(90_deg));
+    awayPose = SubVision::GetInstance().CalculateRelativePose(targetPose,0.0_m,-0.2_m);
     SubDrivebase::GetInstance().DisplayPose("Vision 3d align pose", targetPose);
     SubDrivebase::GetInstance().DisplayPose("Vision 3d align target pose", targetTagPose);
   }).AndThen(
   SubDrivebase::GetInstance()
       .Drive(
           [side] {
-            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose) * 2.5;
+            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose) * 1.0;
           }, true)
       .Until([] {
         return SubDrivebase::GetInstance().IsAtPose(targetPose);
-      })).AndThen(SubElevator::GetInstance().CmdSetElevatorToL(SubElevator::GetInstance().AutoScoreHeight)).AndThen(
+      })).AndThen(SubElevator::GetInstance().CmdSetElevatorToL()).AndThen(
   SubDrivebase::GetInstance()
       .Drive(
           [side] {
@@ -229,14 +232,16 @@ frc2::CommandPtr AlignAndShoot(SubVision::Side side)
           }, true)
       .Until([] {
         return SubDrivebase::GetInstance().IsAtPose(targetTagPose);
-})).AndThen(SubEndEffector::GetInstance().ScoreCoral()).AndThen(
+})).AndThen(SubEndEffector::GetInstance().ScoreCoral())
+.Until([] {return !SubEndEffector::GetInstance().CheckLineBreakLower() && !SubEndEffector::GetInstance().CheckLineBreakHigher();})
+.AndThen(
   SubDrivebase::GetInstance()
       .Drive(
-          [side] {
-            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose) * 0.3;
+          [side] { 
+            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(awayPose) * 0.3;
           }, true)
       .Until([] {
-        return SubDrivebase::GetInstance().IsAtPose(targetPose);
+        return SubDrivebase::GetInstance().IsAtPose(awayPose);
 })).AndThen(SubElevator::GetInstance().CmdSetSource());
 }
 frc2::CommandPtr HopeAndShoot(SubVision::Side side) {
