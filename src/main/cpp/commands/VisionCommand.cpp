@@ -220,7 +220,7 @@ frc2::CommandPtr AlignAndShoot(SubVision::Side side)
   SubDrivebase::GetInstance()
       .Drive(
           [side] {
-            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose) * 1.0;
+            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose) * 2.0;
           }, true)
       .Until([] {
         return SubDrivebase::GetInstance().IsAtPose(targetPose);
@@ -238,7 +238,7 @@ frc2::CommandPtr AlignAndShoot(SubVision::Side side)
   SubDrivebase::GetInstance()
       .Drive(
           [side] { 
-            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(awayPose) * 0.3;
+            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(awayPose) * 0.7;
           }, true)
       .Until([] {
         return SubDrivebase::GetInstance().IsAtPose(awayPose);
