@@ -210,7 +210,7 @@ frc2::CommandPtr AlignAndShoot(SubVision::Side side)
     auto yOffset = (side == SubVision::Side::Left) ? 0.12_m : -0.2_m;//0.16_m : -0.16_m;
     targetTagPose = SubVision::GetInstance().CalculateRelativePose(tagPose, 0_m, yOffset);
     targetPose = SubVision::GetInstance().CalculateRelativePose(targetTagPose,0.6_m,0_m);
-    targetTagPose = SubVision::GetInstance().CalculateRelativePose(targetTagPose,0.45_m,0_m);
+    targetTagPose = SubVision::GetInstance().CalculateRelativePose(targetTagPose,0.47_m,0_m);
     targetTagPose = frc::Pose2d(targetTagPose.Translation(), targetTagPose.Rotation() + frc::Rotation2d(90_deg));
     targetPose = frc::Pose2d(targetPose.Translation(), targetPose.Rotation() + frc::Rotation2d(90_deg));
     awayPose = SubVision::GetInstance().CalculateRelativePose(targetPose,0.0_m,-0.2_m);
@@ -220,7 +220,7 @@ frc2::CommandPtr AlignAndShoot(SubVision::Side side)
   SubDrivebase::GetInstance()
       .Drive(
           [side] {
-            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose) * 3;
+            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose) * 3.0;
           }, true)
       .Until([] {
         return SubDrivebase::GetInstance().IsAtPose(targetPose);
@@ -228,7 +228,7 @@ frc2::CommandPtr AlignAndShoot(SubVision::Side side)
   SubDrivebase::GetInstance()
       .Drive(
           [side] {
-            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetTagPose) * 0.4;
+            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetTagPose) * 0.7;
           }, true)
       .Until([] {
         return SubDrivebase::GetInstance().IsAtPose(targetTagPose) && SubElevator::GetInstance().IsAtTarget();
@@ -238,7 +238,7 @@ frc2::CommandPtr AlignAndShoot(SubVision::Side side)
   SubDrivebase::GetInstance()
       .Drive(
           [side] { 
-            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(awayPose) * 0.8;
+            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(awayPose) * 1.3;
           }, true)
       .Until([] {
         return SubDrivebase::GetInstance().IsAtPose(awayPose);
