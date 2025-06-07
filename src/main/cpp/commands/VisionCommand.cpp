@@ -220,7 +220,7 @@ frc2::CommandPtr AlignAndShoot(SubVision::Side side)
   SubDrivebase::GetInstance()
       .Drive(
           [side] {
-            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose) * 2.0;
+            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose) * 3;
           }, true)
       .Until([] {
         return SubDrivebase::GetInstance().IsAtPose(targetPose);
@@ -228,17 +228,17 @@ frc2::CommandPtr AlignAndShoot(SubVision::Side side)
   SubDrivebase::GetInstance()
       .Drive(
           [side] {
-            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetTagPose) * 0.3;
+            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetTagPose) * 0.4;
           }, true)
       .Until([] {
-        return SubDrivebase::GetInstance().IsAtPose(targetTagPose);
+        return SubDrivebase::GetInstance().IsAtPose(targetTagPose) && SubElevator::GetInstance().IsAtTarget();
 })).AndThen(SubEndEffector::GetInstance().ScoreCoral())
 .Until([] {return !SubEndEffector::GetInstance().CheckLineBreakLower() && !SubEndEffector::GetInstance().CheckLineBreakHigher();})
 .AndThen(
   SubDrivebase::GetInstance()
       .Drive(
           [side] { 
-            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(awayPose) * 0.7;
+            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(awayPose) * 0.8;
           }, true)
       .Until([] {
         return SubDrivebase::GetInstance().IsAtPose(awayPose);
