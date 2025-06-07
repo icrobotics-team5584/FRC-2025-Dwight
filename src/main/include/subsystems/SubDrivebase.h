@@ -114,7 +114,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   const units::turn_t FRONT_RIGHT_MAG_OFFSET = //
       BotVars::Choose(-0.37451171875, -0.515380859375) * 1_tr;
   const units::turn_t FRONT_LEFT_MAG_OFFSET = //
-      BotVars::Choose(-0.94091796875, -0.172607421875) * 1_tr;
+      BotVars::Choose(-0.943848, -0.172607421875) * 1_tr;
   const units::turn_t BACK_RIGHT_MAG_OFFSET = //
       BotVars::Choose(-0.46435546875, -0.395263671875) * 1_tr;
   const units::turn_t BACK_LEFT_MAG_OFFSET =
@@ -135,9 +135,9 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc::SwerveDriveKinematics<4> _kinematics{_frontLeftLocation, _frontRightLocation,
                                             _backLeftLocation, _backRightLocation};
 
-  frc::PIDController _teleopTranslationController{1.7, 0.0, 0.0};
+  frc::PIDController _teleopTranslationController{5, 0.0, 0.0};
   frc::ProfiledPIDController<units::radian> _teleopRotationController{
-      3, 0, 0.2, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
+      3.0, 0, 0, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
   std::shared_ptr<pathplanner::PPHolonomicDriveController> _pathplannerController =
       std::make_shared<pathplanner::PPHolonomicDriveController>(
           // translation needs tuning and such

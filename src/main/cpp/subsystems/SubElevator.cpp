@@ -86,6 +86,40 @@ frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height) {
 
 }
 
+frc2::CommandPtr SubElevator::CmdSetElevatorToL() {
+  return frc2::cmd::Select<int, frc2::CommandPtr>(
+    [this]{return AutoScoreHeight;},
+    std::pair{1, CmdElevatorToPosition(_L1_HEIGHT)},
+    std::pair{2, CmdElevatorToPosition(_L2_HEIGHT)},
+    std::pair{3, CmdElevatorToPosition(_L3_HEIGHT)},
+    std::pair{4, CmdElevatorToPosition(_L4_HEIGHT)}
+  );
+}
+
+frc2::CommandPtr SubElevator::CmdSetAutoL1() {
+  return RunOnce([this] {
+    AutoScoreHeight = 1;
+  });
+}
+
+frc2::CommandPtr SubElevator::CmdSetAutoL2() {
+  return RunOnce([this] {
+    AutoScoreHeight = 2;
+  });
+}
+
+frc2::CommandPtr SubElevator::CmdSetAutoL3() {
+  return RunOnce([this] {
+    AutoScoreHeight = 3;
+  });
+}
+
+frc2::CommandPtr SubElevator::CmdSetAutoL4() {
+  return RunOnce([this] {
+    AutoScoreHeight = 4;
+  });
+}
+
 frc2::CommandPtr SubElevator::CmdSetL1() {
   return CmdElevatorToPosition(_L1_HEIGHT);
 }
@@ -286,6 +320,7 @@ void SubElevator::Periodic() {
   Logger::LogFalcon("Elevator/Motor2", _elevatorMotor2);
 
   Logger::Log("Elevator/_hasReset", _hasReset);
+  frc::SmartDashboard::PutNumber("Elevator/AutoScoreHeight", AutoScoreHeight);
 }
 
 void SubElevator::SimulationPeriodic() {

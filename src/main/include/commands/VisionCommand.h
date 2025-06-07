@@ -14,9 +14,10 @@ namespace cmd {
   /**
    * Command to align to Apriltag with y offset (to match left or right of reef)
    */
-  frc2::CommandPtr YAlignWithTarget(SubVision::Side side, frc2::CommandXboxController &controller);
+  frc2::CommandPtr YAlignWithTarget(SubVision::Side side);
+  frc2::CommandPtr FrontApproachAlign(frc::Pose2d targetPose);
   frc2::CommandPtr AddVisionMeasurement();
-  frc2::CommandPtr AlignToSource(frc2::CommandXboxController &controller);
+  frc2::CommandPtr AlignToSource();
   frc2::CommandPtr AutoShootIfAligned(SubVision::Side side);
   frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side);
   frc2::CommandPtr AlignAndShoot(SubVision::Side side);
