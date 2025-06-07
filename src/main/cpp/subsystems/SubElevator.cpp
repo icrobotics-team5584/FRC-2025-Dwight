@@ -87,12 +87,13 @@ frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height) {
 }
 
 frc2::CommandPtr SubElevator::CmdSetElevatorToL() {
-  int height = AutoScoreHeight;
-  Logger::Log("CmdSetElevatorAutoLevel", height*1.0);
-  if (height == 1) {return CmdElevatorToPosition(_L1_HEIGHT);}
-  else if (height == 2) {return CmdElevatorToPosition(_L2_HEIGHT);}
-  else if (height == 3) {return CmdElevatorToPosition(_L3_HEIGHT);}
-  else {return CmdElevatorToPosition(_L4_HEIGHT);}
+  return frc2::cmd::Select<int, frc2::CommandPtr>(
+    [this]{return AutoScoreHeight;},
+    std::pair{1, CmdElevatorToPosition(_L1_HEIGHT)},
+    std::pair{2, CmdElevatorToPosition(_L2_HEIGHT)},
+    std::pair{3, CmdElevatorToPosition(_L3_HEIGHT)},
+    std::pair{4, CmdElevatorToPosition(_L4_HEIGHT)}
+  );
 }
 
 frc2::CommandPtr SubElevator::CmdSetAutoL1() {
