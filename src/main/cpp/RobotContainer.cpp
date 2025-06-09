@@ -160,7 +160,7 @@ void RobotContainer::ConfigureBindings() {
 
   _operatorController.LeftTrigger().WhileTrue(cmd::RemoveAlgaeLow());
   _operatorController.RightTrigger().WhileTrue(cmd::RemoveAlgaeHigh());
-  _operatorController.RightBumper().WhileTrue(cmd::Outtake());
+  _operatorController.RightBumper().WhileTrue(cmd::IntakeFromSource());
   
   _operatorController.Start().WhileTrue(SubClimber::GetInstance().ClimberAutoReset());
   _operatorController.LeftBumper().OnTrue(cmd::StowClimber());
