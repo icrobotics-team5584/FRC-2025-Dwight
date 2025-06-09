@@ -13,6 +13,7 @@
 #include "utilities/RobotLogs.h"
 #include "RobotContainer.h"
 #include <frc/geometry/Translation2d.h>
+#include "utilities/LEDHelper.h"
 
 SubDrivebase::SubDrivebase() {
   frc::SmartDashboard::PutData("Drivebase/Teleop PID/Rotation Controller",
@@ -293,6 +294,16 @@ frc2::CommandPtr SubDrivebase::Drive(std::function<frc::ChassisSpeeds()> speeds,
       .FinallyDo([this] { Drive(0_mps, 0_mps, 0_deg_per_s, false); });
 }
 
+// frc2::CommandPtr SubDrivebase::DriveWithLEDs(std::function<frc::ChassisSpeeds()> speeds, bool fieldOriented, frc::Pose2d pose, frc::Color color) {
+//   return Run([this, speeds, fieldOriented, pose, color] {
+//            LEDHelper::GetInstance()
+//            .SetFollowProgress(1-_poseEstimator.GetEstimatedPosition().Translation().Distance(pose.Translation()).value(), color);
+//            auto speedVals = speeds();
+//            Drive(speedVals.vx, speedVals.vy, speedVals.omega, fieldOriented);
+//          })
+//       .FinallyDo([this] { Drive(0_mps, 0_mps, 0_deg_per_s, false); });
+// }
+
 void SubDrivebase::Drive(units::meters_per_second_t xSpeed, units::meters_per_second_t ySpeed,
                          units::turns_per_second_t rot, bool fieldRelative,
                          std::optional<std::array<units::newton_t, 4>> xForceFeedforwards,
@@ -455,13 +466,13 @@ bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
   auto currentPose = _poseEstimator.GetEstimatedPosition();
   auto rotError = GetGyroAngle() - pose.Rotation();
   auto posError = currentPose.Translation().Distance(pose.Translation());
-  auto velocity = GetVelocity();
   DisplayPose("current pose", currentPose);
   DisplayPose("target pose", pose);
 
   frc::SmartDashboard::PutNumber("Drivebase/rotError",
                                  rotError.Degrees().value());
-  frc::SmartDashboard::PutNumber("Drivebase/posError", posError.value());
+  frc::SmartDashboard::PutNumber("Drivebase/posError", 
+                                posError.value());
 
   frc::SmartDashboard::PutBoolean("Drivebase/IsAtPose",
                                   units::math::abs(rotError.Degrees()) < 1_deg && posError < 2_cm);
@@ -471,6 +482,13 @@ bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
   } else {
     return false;
   }
+}
+
+double SubDrivebase::TranslationPosError(frc::Pose2d pose) {
+  auto currentPose = _poseEstimator.GetEstimatedPosition();
+  auto posError = currentPose.Translation().Distance(pose.Translation());
+  Logger::Log("TranslationPosErrorGetter", 1-posError.value());
+  return 1-posError.value();
 }
 
 void SubDrivebase::ResetGyroHeading(units::degree_t startingAngle) {

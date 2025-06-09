@@ -169,7 +169,8 @@ void RobotContainer::ConfigureBindings() {
 
   _operatorController.LeftBumper().WhileTrue(cmd::IntakeFromSource());
 
-  SubEndEffector::GetInstance().CheckLineBreakTriggerLower().WhileTrue(LEDHelper::GetInstance().SetScrollingRainbow());
+  // SubEndEffector::GetInstance().CheckLineBreakTriggerLower().OnTrue(LEDHelper::GetInstance().SetDefaultCommand(LEDHelper::GetInstance().SetScrollingRainbow()));
+  // SubEndEffector::GetInstance().CheckLineBreakTriggerLower().OnFalse(Helper::GetInstance().SetScrollingRainbow());
 
   // Rumble controller when end effector line break triggers
   //  SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnFalse(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));

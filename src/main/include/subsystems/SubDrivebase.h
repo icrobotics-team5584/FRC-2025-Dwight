@@ -20,6 +20,7 @@
 #include "utilities/RobotLogs.h"
 #include <ctre/phoenix6/core/CorePigeon2.hpp>
 #include <ctre/phoenix6/Pigeon2.hpp>
+#include <frc/util/Color.h>
 
 class SubDrivebase : public frc2::SubsystemBase {
  public:
@@ -46,6 +47,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   void ConfigPigeon2();
 
   // Getters
+  double TranslationPosError(frc::Pose2d pose);
   bool IsAtPose(frc::Pose2d pose);
   frc2::Trigger CheckCoastButton();
   frc2::Trigger IsTipping();
@@ -71,6 +73,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc2::CommandPtr JoystickDriveSlow(frc2::CommandXboxController& controller);
   frc2::CommandPtr WheelCharecterisationCmd();
   frc2::CommandPtr Drive(std::function<frc::ChassisSpeeds()> speeds, bool fieldOriented);
+  frc2::CommandPtr DriveWithLEDs(std::function<frc::ChassisSpeeds()> speeds, bool fieldOriented, frc::Pose2d pose, frc::Color color);
   frc2::CommandPtr RobotCentricDrive(frc2::CommandXboxController& controller);
   void DriveToPose(frc::Pose2d targetPose);
   frc2::CommandPtr SyncSensorBut();

@@ -11,6 +11,8 @@
 #include "subsystems/SubEndEffector.h"
 #include "utilities/RobotLogs.h"
 #include "iostream"
+#include <frc/util/Color.h>
+#include "utilities/LEDHelper.h"
 
 namespace cmd {
 using namespace frc2::cmd;
@@ -125,6 +127,7 @@ frc2::CommandPtr AlignAndShoot(SubVision::Side side)
           [side] {
             return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose) * 3.0;
           }, true)
+          .AlongWith(LEDHelper::GetInstance().SetFollowProgress(SubDrivebase::GetInstance().TranslationPosError(targetPose), frc::Color::kAliceBlue))
       .Until([] {
         return SubDrivebase::GetInstance().IsAtPose(targetPose);
       })).AndThen(SubElevator::GetInstance().CmdSetElevatorToL()).AndThen(
@@ -133,6 +136,7 @@ frc2::CommandPtr AlignAndShoot(SubVision::Side side)
           [side] {
             return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetTagPose) * 0.7;
           }, true)
+          .AlongWith(LEDHelper::GetInstance().SetFollowProgress(SubDrivebase::GetInstance().TranslationPosError(targetPose), frc::Color::kGreen))
       .Until([] {
         return SubDrivebase::GetInstance().IsAtPose(targetTagPose) && SubElevator::GetInstance().IsAtTarget();
 })).AndThen(SubEndEffector::GetInstance().ScoreCoral())
@@ -143,6 +147,7 @@ frc2::CommandPtr AlignAndShoot(SubVision::Side side)
           [side] { 
             return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(awayPose) * 1.3;
           }, true)
+          .AlongWith(LEDHelper::GetInstance().SetFollowProgress(SubDrivebase::GetInstance().TranslationPosError(targetPose), frc::Color::kWhiteSmoke))
       .Until([] {
         return SubDrivebase::GetInstance().IsAtPose(awayPose);
 })).AndThen(SubElevator::GetInstance().CmdSetSource());

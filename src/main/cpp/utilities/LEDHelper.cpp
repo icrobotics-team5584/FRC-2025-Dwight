@@ -95,12 +95,16 @@ frc::Color LEDHelper::HeatColor(uint8_t heat) {
   }
 }
 
-frc2::CommandPtr LEDHelper::SetFollowProgress(double progress) {
-  return RunOnce([this, progress] {
-    std::array<frc::Color, 2> colors{frc::Color::kWhite, frc::Color::kGreen};
+frc2::CommandPtr LEDHelper::SetFollowProgress(double progress, frc::Color color) {
+  Logger::Log("SetFollowProgress/Progress", progress);
+  return RunOnce([this, progress, color] {
+    double progress1 = progress;
+    if(progress1 > 1) { progress1 = 1;}
+    else if(progress1 < 0) { progress1 = 0.1;}
     frc::LEDPattern base =
-        frc::LEDPattern::Gradient(frc::LEDPattern::GradientType::kContinuous, colors);
-    frc::LEDPattern mask = frc::LEDPattern::ProgressMaskLayer([&]() { return progress; });
+        frc::LEDPattern::Solid(color);
+    // frc::LEDPattern mask = frc::LEDPattern::ProgressMaskLayer([&]() { return progress; });
+    frc::LEDPattern mask = frc::LEDPattern::ProgressMaskLayer([&]() { return progress1; });
 
     frc::LEDPattern heightDisplay = base.Mask(mask);
 
