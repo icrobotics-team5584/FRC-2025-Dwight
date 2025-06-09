@@ -100,7 +100,6 @@ frc2::CommandPtr AddVisionMeasurement() {
       {&SubVision::GetInstance()}).IgnoringDisable(true);
 } 
 
-
 frc2::CommandPtr AlignAndShoot(SubVision::Side side)
 {
   static frc::Pose2d targetPose;

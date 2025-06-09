@@ -130,7 +130,6 @@ void RobotContainer::ConfigureBindings() {
       .OnTrue(SubElevator::GetInstance().CmdSetSource());
 
   // Operator
-  
   _operatorController.AxisGreaterThan(frc::XboxController::Axis::kLeftY, 0.2)
       .WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
 
