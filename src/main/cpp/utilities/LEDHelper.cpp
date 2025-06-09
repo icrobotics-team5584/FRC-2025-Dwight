@@ -64,9 +64,7 @@ frc2::CommandPtr LEDHelper::SetFire(int cooldownIntensity, int lastCellMinimumHe
            if (rand() % chanceOfSpark == 0) {  // chance of a spark starting. default is 1/8
              int y = rand() % (_length / 5);
              _heat[y] =
-                 std::min(255, _heat[y] + rand() % 60 +
-                                   80);  // new spark intensity is between 80 and 140 + current cell
-                                         // heat. this can be changed as necessary
+                 std::min(255, _heat[y] + rand() % 80 + 80);  // new spark intensity is between 80 and 140 + current cell heat. this can be changed as necessary
            }
 
            // Map heat to color
