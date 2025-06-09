@@ -17,11 +17,13 @@ public:
   frc2::CommandPtr SetContinuousGradient(frc::Color Color1, frc::Color Color2);
   frc2::CommandPtr SetBreatheColour(frc::Color color);
   frc2::CommandPtr SetFollowProgress(double Progress);
-  frc2::CommandPtr SetFire();
+  frc2::CommandPtr SetFire(int cooldownIntensity=25, int lastCellMinimumHeat=60, int chanceOfSpark=8, units::hertz_t animationFrequency=30_Hz);
+  frc::Color HeatColor(uint8_t temperature);
   frc2::CommandPtr FlashColour(frc::Color color);
 
 private:
   frc::AddressableLED _led{pwm::LED};
-  std::vector<frc::AddressableLED::LEDData> _ledBuffer;  
-
+  std::vector<frc::AddressableLED::LEDData> _ledBuffer;
+  int _length = 0;
+  std::vector<uint8_t> _heat;
 };
