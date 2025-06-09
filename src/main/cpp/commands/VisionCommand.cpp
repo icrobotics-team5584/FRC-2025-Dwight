@@ -147,8 +147,5 @@ frc2::CommandPtr AlignAndShoot(SubVision::Side side)
         return SubDrivebase::GetInstance().IsAtPose(awayPose);
 })).AndThen(SubElevator::GetInstance().CmdSetSource());
 }
-frc2::CommandPtr HopeAndShoot(SubVision::Side side) {
-  return ForceAlignWithTarget(side).AlongWith(AutoShootIfKindaAligned(side));
-}
 
 }  // namespace cmd
