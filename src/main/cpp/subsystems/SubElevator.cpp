@@ -88,7 +88,7 @@ frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height) {
 
 frc2::CommandPtr SubElevator::CmdSetElevatorToL() {
   return frc2::cmd::Select<int, frc2::CommandPtr>(
-    [this]{return AutoScoreHeight;},
+    [this]{return _autoScoreHeight;},
     std::pair{1, CmdElevatorToPosition(_L1_HEIGHT)},
     std::pair{2, CmdElevatorToPosition(_L2_HEIGHT)},
     std::pair{3, CmdElevatorToPosition(_L3_HEIGHT)},
@@ -98,25 +98,25 @@ frc2::CommandPtr SubElevator::CmdSetElevatorToL() {
 
 frc2::CommandPtr SubElevator::CmdSetAutoL1() {
   return RunOnce([this] {
-    AutoScoreHeight = 1;
+    _autoScoreHeight = 1;
   });
 }
 
 frc2::CommandPtr SubElevator::CmdSetAutoL2() {
   return RunOnce([this] {
-    AutoScoreHeight = 2;
+    _autoScoreHeight = 2;
   });
 }
 
 frc2::CommandPtr SubElevator::CmdSetAutoL3() {
   return RunOnce([this] {
-    AutoScoreHeight = 3;
+    _autoScoreHeight = 3;
   });
 }
 
 frc2::CommandPtr SubElevator::CmdSetAutoL4() {
   return RunOnce([this] {
-    AutoScoreHeight = 4;
+    _autoScoreHeight = 4;
   });
 }
 
@@ -329,7 +329,7 @@ void SubElevator::Periodic() {
   Logger::Log("Elevator/_targetheight", _targetHeight);
   Logger::Log("Elevator/M1Current", GetM1Current().value());
   Logger::Log("Elevator/_hasReset", _hasReset);
-  frc::SmartDashboard::PutNumber("Elevator/AutoScoreHeight", AutoScoreHeight);
+  frc::SmartDashboard::PutNumber("Elevator/AutoScoreHeight", _autoScoreHeight);
 }
 
 void SubElevator::SimulationPeriodic() {
