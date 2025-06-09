@@ -66,7 +66,7 @@ class SubElevator : public frc2::SubsystemBase {
   void Periodic() override;
   void SimulationPeriodic() override;
 
-  int AutoScoreHeight = 4;
+  int _autoScoreHeight = 4;
 
   units::meter_t _targetHeight = 0_m;
 
