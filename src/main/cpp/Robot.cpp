@@ -11,9 +11,11 @@
 #include "utilities/RobotLogs.h"
 #include "URCL.h"
 #include <frc/RobotController.h>
+#include "utilities/LEDHelper.h"
 
 Robot::Robot() {
   frc::DataLogManager::Start();
+  LEDHelper::GetInstance().Start(17);
   frc::SmartDashboard::PutData( &frc2::CommandScheduler::GetInstance() );
   frc::DriverStation::StartDataLog(frc::DataLogManager::GetLog());
   URCL::Start(std::map<int, std::string_view>{{canid::CLIMBER_MOTOR, "Climber"},
@@ -35,9 +37,13 @@ void Robot::RobotPeriodic() {
   // Logger::Log("Robot/CANTxFullCount", canStatus.txFullCount);
 }
 
-void Robot::DisabledInit() {}
+void Robot::DisabledInit() {
+  LEDHelper::GetInstance().SetDefaultCommand(LEDHelper::GetInstance().SetBreatheColour(frc::Color::kWhiteSmoke).IgnoringDisable(true));
+}
 
-void Robot::DisabledPeriodic() {}
+void Robot::DisabledPeriodic() {
+  
+}
 
 void Robot::DisabledExit() {}
 
@@ -48,9 +54,11 @@ void Robot::AutonomousInit() {
     m_autonomousCommand->Schedule();
   }
 
-//Auto climber reset by bringing elevator to zero position then reset
+  // Auto climber reset by bringing elevator to zero position then reset
   SubElevator::GetInstance().ElevatorAutoReset();
-} 
+
+  LEDHelper::GetInstance().SetDefaultCommand(LEDHelper::GetInstance().SetBreatheColour(frc::Color::kDarkGray));
+}
 
 void Robot::AutonomousPeriodic() {}
 
@@ -60,11 +68,14 @@ void Robot::TeleopInit() {
   if (m_autonomousCommand) {
     m_autonomousCommand->Cancel();
   }
+  LEDHelper::GetInstance().SetDefaultCommand(LEDHelper::GetInstance().SetFire());
 }
 
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic() {
+}
 
 void Robot::TeleopExit() {}
+
 
 void Robot::TestInit() {
   frc2::CommandScheduler::GetInstance().CancelAll();
