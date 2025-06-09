@@ -19,6 +19,7 @@
 #include "subsystems/SubElevator.h"
 #include "subsystems/SubEndEffector.h"
 #include "subsystems/SubFunnel.h"
+#include "utilities/LEDHelper.h"
 
 RobotContainer::RobotContainer() {
   wpi::WebServer::GetInstance().Start(5800, frc::filesystem::GetDeployDirectory());
@@ -43,6 +44,7 @@ RobotContainer::RobotContainer() {
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(cmd::TeleopDrive(_driverController));
   SubVision::GetInstance().SetDefaultCommand(cmd::AddVisionMeasurement());
+  
 
   // Trigger Bindings
   ConfigureBindings();
@@ -166,6 +168,8 @@ void RobotContainer::ConfigureBindings() {
 
 
   _operatorController.LeftBumper().WhileTrue(cmd::IntakeFromSource());
+
+  SubEndEffector::GetInstance().CheckLineBreakTriggerLower().WhileTrue(LEDHelper::GetInstance().SetScrollingRainbow());
 
   // Rumble controller when end effector line break triggers
   //  SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnFalse(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
