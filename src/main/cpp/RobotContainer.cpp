@@ -117,8 +117,8 @@ void RobotContainer::ConfigureBindings() {
   
   // _driverController.X().WhileTrue(SubDrivebase::GetInstance().GyroCoralLeftStationAlign(_driverController));
   // _driverController.B().WhileTrue(SubDrivebase::GetInstance().GyroCoralRightStationAlign(_driverController)); 
-  _driverController.RightBumper().WhileTrue(cmd::YAlignWithTarget(SubVision::Right));
-  _driverController.LeftBumper().WhileTrue(cmd::YAlignWithTarget(SubVision::Left));
+  _driverController.RightBumper().WhileTrue(SubDrivebase::GetInstance().GyroCoralLeftStationAlign(_driverController));
+  _driverController.LeftBumper().WhileTrue(SubDrivebase::GetInstance().GyroCoralRightStationAlign(_driverController)); 
   // _driverController.B().WhileTrue(cmd::YAlignWithTarget(SubVision::Side::Left));
   // _driverController.X().WhileTrue(cmd::YAlignWithTarget(SubVision::Side::Right));
   _driverController.B().WhileTrue(cmd::TeleAlignAndShoot(SubVision::Side::Right));
