@@ -474,11 +474,18 @@ bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
   }
 }
 
-double SubDrivebase::TranslationPosError(frc::Pose2d pose) {
+double SubDrivebase::TranslationPosError(frc::Pose2d pose, units::meter_t startingDistance) {
   auto currentPose = _poseEstimator.GetEstimatedPosition();
   auto posError = currentPose.Translation().Distance(pose.Translation());
   Logger::Log("TranslationPosErrorGetter", 1-posError.value());
-  return 1-posError.value();
+  return ((startingDistance-posError)/startingDistance).value();
+}
+
+double SubDrivebase::TranslationPosDistance(frc::Pose2d pose) {
+  auto currentPose = _poseEstimator.GetEstimatedPosition();
+  auto posError = currentPose.Translation().Distance(pose.Translation());
+  Logger::Log("TranslationPosErrorGetter", 1-posError.value());
+  return posError.value();
 }
 
 void SubDrivebase::ResetGyroHeading(units::degree_t startingAngle) {

@@ -47,7 +47,8 @@ class SubDrivebase : public frc2::SubsystemBase {
   void ConfigPigeon2();
 
   // Getters
-  double TranslationPosError(frc::Pose2d pose);
+  double TranslationPosError(frc::Pose2d pose, units::meter_t startingDistance);
+  double TranslationPosDistance(frc::Pose2d pose);
   bool IsAtPose(frc::Pose2d pose);
   frc2::Trigger CheckCoastButton();
   frc2::Trigger IsTipping();

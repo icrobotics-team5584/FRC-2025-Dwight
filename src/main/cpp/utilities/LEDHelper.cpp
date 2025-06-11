@@ -2,6 +2,7 @@
 #include "utilities/RobotLogs.h"
 #include <frc/util/Color.h>
 #include <thread>
+#include <functional>
 
 frc2::CommandPtr LEDHelper::SetSolidColour(frc::Color color) {
   return RunOnce([this, color] {
@@ -95,16 +96,14 @@ frc::Color LEDHelper::HeatColor(uint8_t heat) {
   }
 }
 
-frc2::CommandPtr LEDHelper::SetFollowProgress(double progress, frc::Color color) {
-  Logger::Log("SetFollowProgress/Progress", progress);
-  return RunOnce([this, progress, color] {
-    double progress1 = progress;
-    if(progress1 > 1) { progress1 = 1;}
-    else if(progress1 < 0) { progress1 = 0.1;}
+frc2::CommandPtr LEDHelper::SetFollowProgress(std::function<double()> progress, frc::Color color) {
+  return Run([this, progress, color] {
+  double progressValue = progress();
+  Logger::Log("SetFollowProgress/Progress", progressValue);
     frc::LEDPattern base =
         frc::LEDPattern::Solid(color);
     // frc::LEDPattern mask = frc::LEDPattern::ProgressMaskLayer([&]() { return progress; });
-    frc::LEDPattern mask = frc::LEDPattern::ProgressMaskLayer([&]() { return progress1; });
+    frc::LEDPattern mask = frc::LEDPattern::ProgressMaskLayer(progress);
 
     frc::LEDPattern heightDisplay = base.Mask(mask);
 
