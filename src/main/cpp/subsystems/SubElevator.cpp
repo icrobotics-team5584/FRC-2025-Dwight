@@ -14,6 +14,7 @@
 #include <frc/MathUtil.h>
 #include <utilities/RobotLogs.h>
 #include <ctre/phoenix6/configs/Configs.hpp>
+#include "commands/GamePieceCommands.h"
 
 using namespace ctre::phoenix6;
 
@@ -89,10 +90,10 @@ frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height) {
 frc2::CommandPtr SubElevator::CmdSetElevatorToL() {
   return frc2::cmd::Select<int, frc2::CommandPtr>(
     [this]{return _autoScoreHeight;},
-    std::pair{1, CmdElevatorToPosition(_L1_HEIGHT)},
-    std::pair{2, CmdElevatorToPosition(_L2_HEIGHT)},
-    std::pair{3, CmdElevatorToPosition(_L3_HEIGHT)},
-    std::pair{4, CmdElevatorToPosition(_L4_HEIGHT)}
+    std::pair{1, cmd::SetElevatorPosition(_L1_HEIGHT)},
+    std::pair{2, cmd::SetElevatorPosition(_L2_HEIGHT)},
+    std::pair{3, cmd::SetElevatorPosition(_L3_HEIGHT)},
+    std::pair{4, cmd::SetElevatorPosition(_L4_HEIGHT)}
   );
 }
 
