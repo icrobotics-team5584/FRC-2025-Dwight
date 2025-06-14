@@ -27,10 +27,15 @@ class SubElevator : public frc2::SubsystemBase {
   frc2::CommandPtr CmdSetL2();
   frc2::CommandPtr CmdSetL3();
   frc2::CommandPtr CmdSetL4();
+  frc2::CommandPtr CmdSetAutoL1();
+  frc2::CommandPtr CmdSetAutoL2();
+  frc2::CommandPtr CmdSetAutoL3();
+  frc2::CommandPtr CmdSetAutoL4();
   frc2::CommandPtr CmdSetClimb();
   frc2::CommandPtr CmdSetLatch();
   frc2::CommandPtr CmdSetClearHighAlgea();
   frc2::CommandPtr CmdSetClearLowAlgea();
+  frc2::CommandPtr CmdSetElevatorToL();
 
   frc2::CommandPtr ZeroElevator();
   frc2::CommandPtr ElevatorResetCheck();
@@ -61,6 +66,8 @@ class SubElevator : public frc2::SubsystemBase {
   void Periodic() override;
   void SimulationPeriodic() override;
 
+  int _autoScoreHeight = 4;
+
   units::meter_t _targetHeight = 0_m;
 
   // reset
@@ -68,7 +75,7 @@ class SubElevator : public frc2::SubsystemBase {
 
   //Elevator target heights
   static constexpr units::meter_t _L1_HEIGHT = 0.212_m;
-  static constexpr units::meter_t _L2_HEIGHT = 0.448_m;
+  static constexpr units::meter_t _L2_HEIGHT = 0.55_m;
   static constexpr units::meter_t _L3_HEIGHT = 0.839_m;
   static constexpr units::meter_t _L4_HEIGHT = 1.43_m;
   static constexpr units::meter_t _ALGAE_LOW_HEIGHT = 0.643_m;

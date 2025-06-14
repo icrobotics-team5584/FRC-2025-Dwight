@@ -14,6 +14,7 @@
 #include <frc/MathUtil.h>
 #include <utilities/RobotLogs.h>
 #include <ctre/phoenix6/configs/Configs.hpp>
+#include "commands/GamePieceCommands.h"
 
 using namespace ctre::phoenix6;
 
@@ -84,6 +85,40 @@ frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height) {
           controls::MotionMagicVoltage(RotationsFromHeight(height)).WithEnableFOC(true));
     }});
 
+}
+
+frc2::CommandPtr SubElevator::CmdSetElevatorToL() {
+  return frc2::cmd::Select<int, frc2::CommandPtr>(
+    [this]{return _autoScoreHeight;},
+    std::pair{1, cmd::SetElevatorPosition(_L1_HEIGHT)},
+    std::pair{2, cmd::SetElevatorPosition(_L2_HEIGHT)},
+    std::pair{3, cmd::SetElevatorPosition(_L3_HEIGHT)},
+    std::pair{4, cmd::SetElevatorPosition(_L4_HEIGHT)}
+  );
+}
+
+frc2::CommandPtr SubElevator::CmdSetAutoL1() {
+  return RunOnce([this] {
+    _autoScoreHeight = 1;
+  });
+}
+
+frc2::CommandPtr SubElevator::CmdSetAutoL2() {
+  return RunOnce([this] {
+    _autoScoreHeight = 2;
+  });
+}
+
+frc2::CommandPtr SubElevator::CmdSetAutoL3() {
+  return RunOnce([this] {
+    _autoScoreHeight = 3;
+  });
+}
+
+frc2::CommandPtr SubElevator::CmdSetAutoL4() {
+  return RunOnce([this] {
+    _autoScoreHeight = 4;
+  });
 }
 
 frc2::CommandPtr SubElevator::CmdSetL1() {
@@ -286,6 +321,7 @@ void SubElevator::Periodic() {
   Logger::LogFalcon("Elevator/Motor2", _elevatorMotor2);
 
   Logger::Log("Elevator/_hasReset", _hasReset);
+  frc::SmartDashboard::PutNumber("Elevator/AutoScoreHeight", _autoScoreHeight);
 }
 
 void SubElevator::SimulationPeriodic() {

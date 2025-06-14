@@ -9,7 +9,6 @@
 #include <frc2/command/button/CommandXboxController.h>
 #include "subsystems/SubVision.h"
 
-
 namespace cmd {
   /**
    * Command to align to Apriltag with y offset (to match left or right of reef)
@@ -22,4 +21,5 @@ namespace cmd {
   frc2::CommandPtr AlignAndShoot(SubVision::Side side);
   frc2::CommandPtr AutoShootIfKindaAligned(SubVision::Side side);
   frc2::CommandPtr HopeAndShoot(SubVision::Side side);
+  frc2::CommandPtr TeleAlignAndShoot(SubVision::Side side);
 }

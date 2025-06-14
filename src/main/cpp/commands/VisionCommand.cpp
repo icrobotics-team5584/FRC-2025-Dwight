@@ -11,6 +11,9 @@
 #include "subsystems/SubEndEffector.h"
 #include "utilities/RobotLogs.h"
 #include "iostream"
+#include <frc/util/Color.h>
+#include "utilities/LEDHelper.h"
+
 namespace cmd {
 using namespace frc2::cmd;
 /**
@@ -25,7 +28,7 @@ frc2::CommandPtr YAlignWithTarget(SubVision::Side side)
   return SubDrivebase::GetInstance()
       .Drive(
           [side] {
-            targetPose = SubVision::GetInstance().GetReefPose(side,-1);
+            targetPose = SubVision::GetInstance().GetReefPose(-1,side);
             frc::ChassisSpeeds speeds =
                 SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose);
 
@@ -72,7 +75,7 @@ frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
           Logger::Log("Vision/Target Pole", side == SubVision::Side::Left ? "Left":"Right");
           
           // rotation componet
-          frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(side,-1).Rotation();
+          frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(-1, side).Rotation();
           using ds = frc::DriverStation;
 
           units::angle::turn_t roterror = SubDrivebase::GetInstance().GetPose().Rotation().Degrees() - targetRotation.Degrees();
@@ -81,7 +84,7 @@ frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
           return frc::ChassisSpeeds{xVel, yVel, rotationSpeed};
           
         } else {
-          frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(side,-1).Rotation();
+          frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(-1, side).Rotation();
           using ds = frc::DriverStation;
           units::angle::turn_t roterror = SubDrivebase::GetInstance().GetAllianceRelativeGyroAngle().Degrees() - targetRotation.Degrees();
           auto rotationSpeed = SubDrivebase::GetInstance().CalcRotateSpeed(roterror) / 5;
@@ -241,5 +244,67 @@ frc2::CommandPtr AutoShootIfKindaAligned(SubVision::Side side) {
   );
 }
 
+frc2::CommandPtr TeleAlignAndShoot(SubVision::Side side) {
+  static frc::Pose2d targetPose;
+  static frc::Pose2d targetTagPose;
+  static frc::Pose2d awayPose;
+  static units::meter_t initialDistance = 0_m;
+  return RunOnce([side] {
+    // int tagId = SubVision::GetInstance().GetClosestTag(SubDrivebase::GetInstance().GetPose());
+    // frc::SmartDashboard::PutNumber("Closest tag", tagId);
+    // frc::Pose2d tagPose = SubVision::GetInstance().GetAprilTagPose(tagId);
+    // auto yOffset = (side == SubVision::Side::Left) ? 0.12_m : -0.2_m;//0.16_m : -0.16_m;
+    // targetTagPose = SubVision::GetInstance().CalculateRelativePose(tagPose, 0_m, yOffset);
+    targetTagPose = SubVision::GetInstance().GetReefPose(-1, side);
+    targetPose = SubVision::GetInstance().CalculateRelativePose(targetTagPose,0_m,-0.4_m);
+    targetTagPose = SubVision::GetInstance().CalculateRelativePose(targetTagPose,0_m,0_m);
+    // targetTagPose = frc::Pose2d(targetTagPose.Translation(), targetTagPose.Rotation());
+    // targetPose = frc::Pose2d(targetPose.Translation(), targetPose.Rotation());
+    awayPose = SubVision::GetInstance().CalculateRelativePose(targetPose,0.0_m,0_m);
+    SubDrivebase::GetInstance().DisplayPose("Vision 3d align pose", targetPose);
+    SubDrivebase::GetInstance().DisplayPose("Vision 3d align target pose", targetTagPose);
+  }).AndThen(
+    [] {initialDistance = SubDrivebase::GetInstance().TranslationPosDistance(targetPose)*1_m;}
+  ).AndThen(
+  SubDrivebase::GetInstance()
+      .Drive(
+          [side] {
+            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose) * 3.0;
+          }, true)
+          .AlongWith(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetPose, initialDistance);}, frc::Color::kAliceBlue))
+      .Until([] {
+        return SubDrivebase::GetInstance().IsAtPose(targetPose);
+      })).AndThen(SubElevator::GetInstance().CmdSetElevatorToL()).AndThen(
+    [] {initialDistance = SubDrivebase::GetInstance().TranslationPosDistance(targetTagPose)*1_m;}
+  ).AndThen(
+  SubDrivebase::GetInstance()
+      .Drive(
+          [side] {
+            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetTagPose) * 0.7;
+          }, true)
+          .AlongWith(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetTagPose, initialDistance);}, frc::Color::kGreen))
+      .Until([] {
+        return SubDrivebase::GetInstance().IsAtPose(targetTagPose) && SubElevator::GetInstance().IsAtTarget();
+})).AndThen(SubEndEffector::GetInstance().ScoreCoral())
+.Until([] {return !SubEndEffector::GetInstance().CheckLineBreakLower() && !SubEndEffector::GetInstance().CheckLineBreakHigher();})
+.AndThen(
+    [] {initialDistance = SubDrivebase::GetInstance().TranslationPosDistance(awayPose)*1_m;}
+  ).AndThen(
+  SubDrivebase::GetInstance()
+      .Drive(
+          [side] { 
+            return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(awayPose) * 1.3;
+          }, true)
+          .AlongWith(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(awayPose, initialDistance);}, frc::Color::kWhiteSmoke))
+      .Until([] {
+        return SubDrivebase::GetInstance().IsAtPose(awayPose);
+})).AndThen(SubElevator::GetInstance().CmdSetSource());
+}
 
 }  // namespace cmd
+
+
+
+
+
+

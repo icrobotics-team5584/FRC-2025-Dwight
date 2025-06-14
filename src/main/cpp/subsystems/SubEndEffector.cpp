@@ -40,6 +40,10 @@ frc2::CommandPtr SubEndEffector::FeedDownSLOW() {
     return StartEnd([this] {_endEffectorMotor.Set(-0.05);}, [this] {_endEffectorMotor.Set(0);});
 }
 
+frc2::CommandPtr SubEndEffector::SetFeedDownSlow() {
+    return RunOnce([this] {_endEffectorMotor.Set(-0.05);});
+}
+
 frc2::CommandPtr SubEndEffector::Shoot() {
     return StartEnd([this] {_endEffectorMotor.Set(-0.3);}, [this] {_endEffectorMotor.Set(0);});
 }
@@ -86,7 +90,7 @@ frc2::CommandPtr SubEndEffector::KeepCoralInEndEffector() {
   return Run([this] {
     if (CheckLineBreakHigher() && !CheckLineBreakLower()) {
         frc::SmartDashboard::PutString("EndEffector/Coral Position", "Too High");
-        _endEffectorMotor.Set(-0.3);
+        _endEffectorMotor.Set(-0.7);
     } else if (CheckLineBreakLower() && !CheckLineBreakHigher()) {
         frc::SmartDashboard::PutString("EndEffector/Coral Position", "Too Low");
         _endEffectorMotor.Set(0.3);

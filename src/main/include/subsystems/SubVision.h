@@ -38,16 +38,24 @@ public:
    */
   void UpdateVision();
 
+  bool HadReef();
+
   units::degree_t GetLastReefTagAngle();
   double GetLastReefTagArea();
   Side GetLastCameraUsed();
-  frc::Pose2d GetReefPose(Side side, int pose);
+  frc::Pose2d GetReefPose(int pose, Side side);
+  frc::Pose2d GetAprilTagPose(int id);
+  frc::Pose2d GetLastReefPose(Side side);
+  int GetLastReefId();
   units::degree_t GetReefAlignAngle(Side reefSide);
 
   std::map<Side, std::optional<photon::EstimatedRobotPose>> GetPose();
 
   frc::Pose2d GetSourcePose(int tagId);
 
+  frc::Pose2d CalculateRelativePose(frc::Pose2d pose, units::meter_t xTransform, units::meter_t yTransform);
+
+  int GetClosestTag(frc::Pose2d currentPose);
   double GetDev(photon::EstimatedRobotPose pose);
 
   bool IsEstimateUsable(photon::EstimatedRobotPose pose);
@@ -62,6 +70,7 @@ public:
   struct ReefObservation {
     photon::PhotonTrackedTarget reefTag;
     Side cameraSide;
+    units::time::second_t timestamp;
   };
   struct ReefObservation _lastReefObservation;
 
@@ -120,7 +129,7 @@ public:
 };
 
 std::map<int, ReefPositions> tagToReefPositions = {
-    {17, {60_deg-90_deg, 3.25_m, 2.98_m, 3.99_m, 2.84_m}},
+    {17, {60_deg-90_deg, 3.75_m, 2.98_m, 3.99_m, 2.84_m}},
     {18, {0_deg-90_deg, 3.22_m, 4.16_m, 3.22_m, 3.89_m}},
     {19, {300_deg-90_deg, 3.96_m, 5.19_m, 3.720_m, 5.050_m}},
     {20, {240_deg-90_deg, 5.220_m, 5.07_m, 5.0_m, 5.20_m}},
@@ -133,7 +142,6 @@ std::map<int, ReefPositions> tagToReefPositions = {
     {9, {300_deg-90_deg, 12.530_m, 5.190_m, 12.30_m, 5.05_m}},
     {10, {0_deg-90_deg, 11.79_m, 4.15_m, 11.79_m, 2.850_m}},
     {11, {60_deg-90_deg, 12.330_m, 2.970_m, 12.550_m, 2.850_m}}
-
 };
   //+9.4418
 
@@ -173,4 +181,6 @@ std::map<int, ReefPositions> tagToReefPositions = {
   std::optional<photon::EstimatedRobotPose> _rightEstPose;
 
   wpi::interpolating_map<units::meter_t, double> _devTable;
+
+
 };
