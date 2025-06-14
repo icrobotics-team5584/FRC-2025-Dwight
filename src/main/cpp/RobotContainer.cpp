@@ -43,6 +43,8 @@ RobotContainer::RobotContainer() {
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(cmd::TeleopDrive(_driverController));
   SubVision::GetInstance().SetDefaultCommand(cmd::AddVisionMeasurement());
+  SubEndEffector::GetInstance().SetDefaultCommand(SubEndEffector::GetInstance().KeepCoralInEndEffector()); 
+
   
 
   // Trigger Bindings
@@ -164,13 +166,13 @@ void RobotContainer::ConfigureBindings() {
 
   _operatorController.LeftBumper().WhileTrue(cmd::IntakeFromSource());
 
-  // SubEndEffector::GetInstance().CheckLineBreakTriggerLower().OnTrue(LEDHelper::GetInstance().LEDHelper::GetInstance().SetScrollingRainbow());
+  SubEndEffector::GetInstance().CheckLineBreakTriggerLower().WhileTrue(LEDHelper::GetInstance().LEDHelper::GetInstance().SetScrollingRainbow().IgnoringDisable(true));
   // SubEndEffector::GetInstance().CheckLineBreakTriggerLower().OnFalse(LEDHelper::GetInstance().SetScrollingRainbow());
 
   // Rumble controller when end effector line break triggers
   //  SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnFalse(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
-  SubEndEffector::GetInstance().CheckLineBreakTriggerLower().OnFalse(
-      ControllerRumbleLeft(_driverController).WithTimeout(0.1_s));
+  // SubEndEffector::GetInstance().CheckLineBreakTriggerLower().OnFalse(
+  //     ControllerRumbleLeft(_driverController).WithTimeout(0.1_s));
 }
 
 // Controller rumble functions

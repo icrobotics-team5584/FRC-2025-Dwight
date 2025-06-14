@@ -49,7 +49,13 @@ frc2::CommandPtr IntakeFromSource() {
       .AndThen(SubEndEffector::GetInstance().FeedDownSLOW()
       .AlongWith(SubFunnel::GetInstance().FeedDownFunnelSLOW())
       .Until(
-          [] { return SubEndEffector::GetInstance().CheckLineBreakLower(); }));
+          [] { return SubEndEffector::GetInstance().CheckLineBreakLower(); }))
+      .AndThen(SubEndEffector::GetInstance().FeedDown())
+      .Until(
+          [] { return SubEndEffector::GetInstance().CheckLineBreakLower(); })
+      .AndThen(SubEndEffector::GetInstance().SetFeedDownSlow())
+      .AlongWith(frc2::cmd::Wait(200_ms))
+      .AndThen(SubEndEffector::GetInstance().StopMotor());
 }
 
 frc2::CommandPtr SetElevatorPosition(units::meter_t height, bool force) {
