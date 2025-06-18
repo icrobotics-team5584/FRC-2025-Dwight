@@ -11,6 +11,7 @@
 #include <frc/MathUtil.h>
 
 SubVision::SubVision() {
+  // Logger::Log("taglayoutrotation", _tagLayout.GetTagPose(18).value().Rotation().ToRotation2d());
   // Set up dev table
   _devTable.insert(0_m, 0);
   _devTable.insert(0.71_m, 0.002);
@@ -70,6 +71,7 @@ void SubVision::UpdateVision() {
         if (targetArea > largestArea ) {
           _lastReefObservation.reefTag = target;
           _lastReefObservation.cameraSide = Side::Left;
+          _lastReefObservation.timestamp = _leftEstPose.value().timestamp;
 
           largestArea = targetArea;
         }
@@ -90,6 +92,8 @@ void SubVision::UpdateVision() {
         if (targetArea > largestArea) {
           _lastReefObservation.reefTag = target;
           _lastReefObservation.cameraSide = Side::Right;
+          _lastReefObservation.timestamp = _rightEstPose.value().timestamp;
+
           largestArea = targetArea;
         }
       }
@@ -100,6 +104,10 @@ void SubVision::UpdateVision() {
   frc::SmartDashboard::PutString("Vision/Right/targets", rightTargets);
 }
 
+bool SubVision::HadReef() {
+  return _lastReefObservation.timestamp != -1_s;
+}
+
 std::map<SubVision::Side, std::optional<photon::EstimatedRobotPose>> SubVision::GetPose() {
   return {{Left, _leftEstPose}, {Right, _rightEstPose}};
 }
@@ -108,15 +116,7 @@ frc::Pose2d SubVision::GetSourcePose(int tagId) {
   return tagToSourcePose[tagId];
 }
 
-/**
- * @brief Get the pose of the reef from the apriltag.
- *
- * @param side The side of the reef you want to get the pose of. 1 for the left side, 2 for the
- * right side.
- *
- * @returns The pose of the reef in the field coordinate system.
- */
-frc::Pose2d SubVision::GetReefPose(Side side = Left, int pose = -1) {
+frc::Pose2d SubVision::GetReefPose(int pose, Side side) {
   int reefTagID = (pose == -1)? _lastReefObservation.reefTag.GetFiducialId() : pose;
   frc::Pose2d targPose;
   if (side == Left) {
@@ -127,6 +127,14 @@ frc::Pose2d SubVision::GetReefPose(Side side = Left, int pose = -1) {
                 tagToReefPositions[reefTagID].angle};
   }
   return targPose;
+}
+
+frc::Pose2d SubVision::GetLastReefPose(Side side) {
+  return GetReefPose(_lastReefObservation.reefTag.GetFiducialId(),side);
+}
+
+int SubVision::GetLastReefId() {
+  return _lastReefObservation.reefTag.GetFiducialId();
 }
 
 units::degree_t SubVision::GetReefAlignAngle(Side reefSide) {
@@ -165,7 +173,7 @@ bool SubVision::CheckReef(const photon::PhotonTrackedTarget& reef) {
     return false;
   }
   units::degree_t errorAngle = SubDrivebase::GetInstance().GetAllianceRelativeGyroAngle().Degrees() -
-                               GetReefPose(Left,reef.GetFiducialId()).Rotation().Degrees();
+                               GetReefPose(reef.GetFiducialId(),Left).Rotation().Degrees();
 
   errorAngle = frc::InputModulus(errorAngle, -180_deg, 180_deg);
 
@@ -207,4 +215,58 @@ bool SubVision::IsEstimateUsable(photon::EstimatedRobotPose pose) {
 
 
   return ((distance < 0.7_m) || (tagCount > 1)) && hasMyTargets;
+}
+
+frc::Pose2d SubVision::CalculateRelativePose(frc::Pose2d pose, units::meter_t x, units::meter_t y) {
+  frc::Translation2d trans {x,y};
+  return frc::Pose2d{pose.Translation() + trans.RotateBy(pose.Rotation()), pose.Rotation()};
+}
+
+frc::Pose2d SubVision::GetAprilTagPose(int id) {
+  auto pose = _tagLayout.GetTagPose(id);
+  if (pose.has_value()) {
+    return pose.value().ToPose2d();
+  } else {
+    return SubDrivebase::GetInstance().GetPose();
+  }
+}
+
+int SubVision::GetClosestTag(frc::Pose2d currentPose){
+  // int _closestTagID;
+  // units::meter_t _closestTagInitX = (tagToReefPositions[17].leftX + tagToReefPositions[17].rightX)/2;
+  // units::meter_t _closestTagInitY = (tagToReefPositions[17].leftY + tagToReefPositions[17].rightY)/2;
+  // frc::Pose2d _closestTagPose = {_closestTagInitX, _closestTagInitY, tagToReefPositions[17].angle};
+
+  // for (auto tagToReefPosition : tagToReefPositions) {
+  //   //initialise a reef pose for the current iteration and a key for current iteration
+  //   ReefPositions tagToReefPose = tagToReefPosition.second;
+  //   int tagToReefKey = tagToReefPosition.first;
+
+  //   //generate tag pose that is the avg of both pole poses
+  //   units::meter_t tagPoseX = (tagToReefPose.leftX + tagToReefPose.rightX)/2;
+  //   units::meter_t tagPoseY = (tagToReefPose.leftY + tagToReefPose.rightY)/2;
+  //   frc::Pose2d tagPose{tagPoseX, tagPoseY, tagToReefPose.angle};
+
+  //   //check if tag pose x and y are less than the current closest tag pose
+  //   if (tagPose.X() < _closestTagPose.X() && tagPose.Y() < _closestTagPose.Y()){
+  //     _closestTagID = tagToReefKey;
+  //     _closestTagPose = tagPose;
+  //   }
+  // }
+
+  // return _closestTagID;
+
+  int closestReef = 0;
+  units::length::meter_t closestDistance;
+  auto reefList = (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) ? redReef : blueReef;
+  
+  for (int id : reefList) {
+    auto distance = currentPose.Translation().Distance(GetAprilTagPose(id).Translation());
+    if (closestReef == 0 || distance < closestDistance) {
+      closestDistance = distance;
+      closestReef = id;
+    }
+  }
+
+  return closestReef;
 }
