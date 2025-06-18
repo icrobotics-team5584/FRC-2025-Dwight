@@ -101,6 +101,9 @@ std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {
   if (chosen == "Default-Score1L4-H-Vision") {
     return defaultMiddleScoreRight;
   }
+  if (chosen == "Middle-Push-Score1L4-H-Vision") {
+    return pushAndScore;
+  }
   return moveForward;
 }
 
