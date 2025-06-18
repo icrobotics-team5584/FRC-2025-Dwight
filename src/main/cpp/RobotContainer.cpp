@@ -53,7 +53,7 @@ RobotContainer::RobotContainer() {
   _autoChooser.AddOption("Default-Right", "Right-Score3L4-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreLeft", "Default-Score1L4-G-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreRight", "Default-Score1L4-H-Vision");
-  _autoChooser.AddOption("MiddlePush-ScoreRightL4", "Middle-Push-Score1L4-H-Vision");
+  _autoChooser.AddOption("MiddlePush-ScoreRightL4", "MiddleStartPushToReefPoleH");
   
 
   // tuning autons
@@ -82,6 +82,8 @@ RobotContainer::RobotContainer() {
   defaultMiddleScoreLeft = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score1L4-G-Vision").ToPtr());
   defaultMiddleScoreRight = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score1L4-H-Vision").ToPtr());
   moveForward = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("MoveForward-4M-0.1ms").ToPtr());
+  middlePushScoreRightL4 = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Middle-Push-Score1L4-H-Vision").ToPtr());
+  
 }
 
 std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {
