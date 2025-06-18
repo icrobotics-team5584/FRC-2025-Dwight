@@ -35,7 +35,6 @@ class SubElevator : public frc2::SubsystemBase {
   frc2::CommandPtr CmdSetLatch();
   frc2::CommandPtr CmdSetClearHighAlgea();
   frc2::CommandPtr CmdSetClearLowAlgea();
-  frc2::CommandPtr CmdSetElevatorToL();
 
   frc2::CommandPtr ZeroElevator();
   frc2::CommandPtr ElevatorResetCheck();
@@ -52,6 +51,7 @@ class SubElevator : public frc2::SubsystemBase {
   units::turns_per_second_t RotationsFromMetersPerSecond(units::meters_per_second_t meterspersec);
   units::ampere_t GetM1Current();
   units::meter_t GetTargetHeight();
+  units::length::meter_t GetPresetHeight();
 
   bool IsAtTarget();
   bool IsAboveSourceHeight();
@@ -66,7 +66,7 @@ class SubElevator : public frc2::SubsystemBase {
   void Periodic() override;
   void SimulationPeriodic() override;
 
-  int _autoScoreHeight = 4;
+  units::length::meter_t _autoScoreHeight = 0_m;
 
   units::meter_t _targetHeight = 0_m;
 
