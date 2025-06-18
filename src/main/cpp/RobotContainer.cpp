@@ -84,6 +84,8 @@ RobotContainer::RobotContainer() {
   moveForward = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("MoveForward-4M-0.1ms").ToPtr());
   middlePushScoreRightL4 = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Middle-Push-Score1L4-H-Vision").ToPtr());
   
+  pushAndScore = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Middle-Push-Score1L4-H-Vision").ToPtr());
+
 }
 
 std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {
