@@ -51,7 +51,6 @@ frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
           
           // rotation componet
           frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(-1, side).Rotation();
-          using ds = frc::DriverStation;
 
           units::angle::turn_t roterror = SubDrivebase::GetInstance().GetPose().Rotation().Degrees() - targetRotation.Degrees();
           auto rotationSpeed = SubDrivebase::GetInstance().CalcRotateSpeed(roterror) / 5;
@@ -60,7 +59,6 @@ frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
           
         } else {
           frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(-1, side).Rotation();
-          using ds = frc::DriverStation;
           units::angle::turn_t roterror = SubDrivebase::GetInstance().GetAllianceRelativeGyroAngle().Degrees() - targetRotation.Degrees();
           auto rotationSpeed = SubDrivebase::GetInstance().CalcRotateSpeed(roterror) / 5;
           return frc::ChassisSpeeds{0_mps, 0.5_mps, rotationSpeed};
@@ -237,11 +235,8 @@ frc2::CommandPtr TeleAlignAndShoot(SubVision::Side side) {
   })
   // Drive to roughly half a meter away from pose
   .AndThen(
-    SubDrivebase::GetInstance().Drive( [side] {
-      return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetAwayPose) * 3.0;
-    }, true)
-    .AlongWith(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetAwayPose, initialDistance);}, frc::Color::kAliceBlue))
-    .Until([] { return SubDrivebase::GetInstance().IsAtPose(targetAwayPose); }))
+    SubDrivebase::GetInstance().DriveToPose(targetAwayPose, 3)
+    .AlongWith(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetAwayPose, initialDistance);}, frc::Color::kAliceBlue)))
   // Bring elevator up
   .AndThen(
     cmd::SetElevatorPosition(SubElevator::GetInstance().GetPresetHeight())
@@ -249,12 +244,8 @@ frc2::CommandPtr TeleAlignAndShoot(SubVision::Side side) {
     [] {initialDistance = SubDrivebase::GetInstance().TranslationPosDistance(targetTagPose)*1_m;})
   // Drive close to reef
   .AndThen(
-    SubDrivebase::GetInstance().Drive([side] {
-      return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetTagPose) * 0.7;
-    }, true)
-    .AlongWith(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetTagPose, initialDistance);}, frc::Color::kGreen))
-    .Until([] {
-      return SubDrivebase::GetInstance().IsAtPose(targetTagPose) && SubElevator::GetInstance().IsAtTarget();}))
+    SubDrivebase::GetInstance().DriveToPose(targetAwayPose, 0.7)
+    .AlongWith(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetTagPose, initialDistance);}, frc::Color::kGreen)))
   //Score coral
   .AndThen(SubEndEffector::GetInstance().ScoreCoral())
   .Until([] {return !SubEndEffector::GetInstance().CheckLineBreakLower() && !SubEndEffector::GetInstance().CheckLineBreakHigher();})
@@ -262,11 +253,8 @@ frc2::CommandPtr TeleAlignAndShoot(SubVision::Side side) {
   .AndThen(
     [] {initialDistance = SubDrivebase::GetInstance().TranslationPosDistance(targetAwayPose)*1_m;}
   ).AndThen(
-  SubDrivebase::GetInstance().Drive([side] { 
-    return SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetAwayPose) * 1.3;
-  }, true)
-  .AlongWith(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetAwayPose, initialDistance);}, frc::Color::kWhiteSmoke))
-  .Until([] { return SubDrivebase::GetInstance().IsAtPose(targetAwayPose);}))
+    SubDrivebase::GetInstance().DriveToPose(targetAwayPose, 1.3)
+    .AlongWith(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetAwayPose, initialDistance);}, frc::Color::kWhiteSmoke)))
   // Lower elevator
   .AndThen(SubElevator::GetInstance().CmdSetSource()));
 }
