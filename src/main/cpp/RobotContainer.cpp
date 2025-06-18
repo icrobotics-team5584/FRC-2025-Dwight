@@ -19,6 +19,7 @@
 #include "subsystems/SubElevator.h"
 #include "subsystems/SubEndEffector.h"
 #include "subsystems/SubFunnel.h"
+#include "utilities/LEDHelper.h"
 
 RobotContainer::RobotContainer() {
   wpi::WebServer::GetInstance().Start(5800, frc::filesystem::GetDeployDirectory());
@@ -28,6 +29,8 @@ RobotContainer::RobotContainer() {
   // registar named commands
   pathplanner::NamedCommands::registerCommand("ScoreLeft-WithVision", cmd::ScoreWithVision(SubVision::Side::Left));
   pathplanner::NamedCommands::registerCommand("ScoreRight-WithVision", cmd::ScoreWithVision(SubVision::Side::Right));
+  pathplanner::NamedCommands::registerCommand("ScoreLeft-WithPrescription", cmd::ScoreWithPrescription(SubVision::Side::Left));
+  pathplanner::NamedCommands::registerCommand("ScoringElevatorCleanUp", SubElevator::GetInstance().CmdSetSource());
   pathplanner::NamedCommands::registerCommand("ScoreLeft", cmd::Score(1));
   pathplanner::NamedCommands::registerCommand("ScoreRight", cmd::Score(2));
   pathplanner::NamedCommands::registerCommand("SetElevatorL4", SubElevator::GetInstance().CmdSetL4());
@@ -41,6 +44,7 @@ RobotContainer::RobotContainer() {
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(cmd::TeleopDrive(_driverController));
   SubVision::GetInstance().SetDefaultCommand(cmd::AddVisionMeasurement());
+  
 
   // Trigger Bindings
   ConfigureBindings();
@@ -141,6 +145,7 @@ void RobotContainer::ConfigureBindings() {
   (!_operatorController.Back() && _operatorController.A()).OnTrue(cmd::ClimbHalfwaySequence());  // Climb to halfway
   (_operatorController.Back() && _operatorController.A()).OnTrue(cmd::ClimbHalfwaySequence(true));  // Force climb halfway
 
+
   (!_operatorController.Back() && _operatorController.X()).OnTrue(cmd::SetElevatorL2());  // Set L2 normally
   (_operatorController.Back() && _operatorController.X()).OnTrue(cmd::SetElevatorL2(true));  // Force set L2
 
@@ -164,7 +169,12 @@ void RobotContainer::ConfigureBindings() {
   _operatorController.RightBumper().WhileTrue(cmd::Outtake());
   
   _operatorController.Start().WhileTrue(SubClimber::GetInstance().ClimberAutoReset());
-  _operatorController.LeftBumper().OnTrue(cmd::StowClimber());
+  _operatorController.RightStick().OnTrue(cmd::StowClimber());
+
+
+  _operatorController.LeftBumper().WhileTrue(cmd::IntakeFromSource());
+
+  SubEndEffector::GetInstance().CheckLineBreakTriggerLower().WhileTrue(LEDHelper::GetInstance().SetScrollingRainbow());
 
   // Rumble controller when end effector line break triggers
   //  SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnFalse(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));

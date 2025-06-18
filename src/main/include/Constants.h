@@ -37,6 +37,10 @@ namespace dio {
     constexpr int BRAKE_COAST_BUTTON = 4;
 }
 
+namespace pwm {
+    constexpr int LED = 9;
+}
+
 namespace math {
     constexpr double pi = 3.14159265358979323846;
 }

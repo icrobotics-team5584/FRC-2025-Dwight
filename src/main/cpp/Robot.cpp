@@ -10,9 +10,12 @@
 #include <frc2/command/CommandScheduler.h>
 #include "utilities/RobotLogs.h"
 #include "URCL.h"
+#include <frc/RobotController.h>
+#include "utilities/LEDHelper.h"
 
 Robot::Robot() {
   frc::DataLogManager::Start();
+  LEDHelper::GetInstance().Start(17);
   frc::SmartDashboard::PutData( &frc2::CommandScheduler::GetInstance() );
   frc::DriverStation::StartDataLog(frc::DataLogManager::GetLog());
   URCL::Start(std::map<int, std::string_view>{{canid::CLIMBER_MOTOR, "Climber"},
@@ -22,11 +25,25 @@ Robot::Robot() {
 
 void Robot::RobotPeriodic() {
   frc2::CommandScheduler::GetInstance().Run();
+  Logger::Log("Robot/RioBrownOut", frc::RobotController::IsBrownedOut());
+  Logger::Log("Robot/RioInputVoltage", frc::RobotController::GetInputVoltage());
+  Logger::Log("Robot/RioInputCurrent", frc::RobotController::GetInputCurrent());
+  Logger::Log("Robot/BatteryVoltage", frc::RobotController::GetBatteryVoltage());
+  Logger::Log("Robot/PDHInputVoltage", frc::RobotController::GetInputVoltage());
+  Logger::Log("Robot/PDHTotalCurrent", frc::RobotController::GetInputCurrent());
+  // frc::CANStatus canStatus = frc::RobotController::GetCANStatus();
+  // Logger::Log("Robot/CANBusUtilization", canStatus.percentBusUtilization);
+  // Logger::Log("Robot/CANBusOffCount", canStatus.busOffCount);
+  // Logger::Log("Robot/CANTxFullCount", canStatus.txFullCount);
 }
 
-void Robot::DisabledInit() {}
+void Robot::DisabledInit() {
+  LEDHelper::GetInstance().SetDefaultCommand(LEDHelper::GetInstance().SetBreatheColour(frc::Color::kWhiteSmoke).IgnoringDisable(true));
+}
 
-void Robot::DisabledPeriodic() {}
+void Robot::DisabledPeriodic() {
+  
+}
 
 void Robot::DisabledExit() {}
 
@@ -37,9 +54,11 @@ void Robot::AutonomousInit() {
     m_autonomousCommand->Schedule();
   }
 
-//Auto climber reset by bringing elevator to zero position then reset
+  // Auto climber reset by bringing elevator to zero position then reset
   SubElevator::GetInstance().ElevatorAutoReset();
-} 
+
+  LEDHelper::GetInstance().SetDefaultCommand(LEDHelper::GetInstance().SetBreatheColour(frc::Color::kDarkGray));
+}
 
 void Robot::AutonomousPeriodic() {}
 
@@ -49,11 +68,14 @@ void Robot::TeleopInit() {
   if (m_autonomousCommand) {
     m_autonomousCommand->Cancel();
   }
+  LEDHelper::GetInstance().SetDefaultCommand(LEDHelper::GetInstance().SetFire());
 }
 
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic() {
+}
 
 void Robot::TeleopExit() {}
+
 
 void Robot::TestInit() {
   frc2::CommandScheduler::GetInstance().CancelAll();

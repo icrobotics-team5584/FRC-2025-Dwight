@@ -163,6 +163,9 @@ frc2::CommandPtr AlignToSource() {
 frc2::CommandPtr AlignAndShoot(SubVision::Side side){
  return ForceAlignWithTarget(side).AlongWith(AutoShootIfAligned(side));
 }
+frc2::CommandPtr HopeAndShoot(SubVision::Side side) {
+  return ForceAlignWithTarget(side).AlongWith(AutoShootIfKindaAligned(side));
+}
 
 frc2::CommandPtr AutoShootIfAligned(SubVision::Side side) {
   return Sequence(
@@ -171,6 +174,43 @@ frc2::CommandPtr AutoShootIfAligned(SubVision::Side side) {
       units::degree_t tagAngle = SubVision::GetInstance().GetLastReefTagAngle();
       double visionTolerance = Logger::Tune("AutoShoot/AutoShootVisionTolerance", 0.5);
       double drivebaseTolerance = Logger::Tune("AutoShoot/AutoShootDrivebaseTolerance", 0.01);
+      Logger::Log("AutoShoot/errorangle", (goalAngle-tagAngle).value());
+     
+      bool inTagAngleRange = false; 
+      bool isAtTargetHeight = false;
+      bool isStill = false;
+
+      // vision tag angles 
+      if (tagAngle < goalAngle + visionTolerance*1_deg && tagAngle > goalAngle - visionTolerance*1_deg) {
+        inTagAngleRange = true;
+      }
+
+      // height target 
+      if (SubElevator::GetInstance().GetTargetHeight() != SubElevator::_SOURCE_HEIGHT){
+        isAtTargetHeight =  SubElevator::GetInstance().IsAtTarget();
+      }
+
+      // is still
+      if (SubDrivebase::GetInstance().GetVelocity() < drivebaseTolerance *1_mps) {
+        isStill = true;
+      }
+      
+      if (isStill && isAtTargetHeight && inTagAngleRange) {
+        return true;
+      }
+      return false;
+      }),
+    SubEndEffector::GetInstance().ScoreCoral()
+  );
+}
+
+frc2::CommandPtr AutoShootIfKindaAligned(SubVision::Side side) {
+  return Sequence(
+    WaitUntil([side] {
+      units::degree_t goalAngle = SubVision::GetInstance().GetReefAlignAngle(side);
+      units::degree_t tagAngle = SubVision::GetInstance().GetLastReefTagAngle();
+      double visionTolerance = Logger::Tune("AutoShoot/AutoShootVisionLooseTolerance", 1.0);
+      double drivebaseTolerance = Logger::Tune("AutoShoot/AutoShootDrivebaseLooseTolerance", 0.01);
       Logger::Log("AutoShoot/errorangle", (goalAngle-tagAngle).value());
      
       bool inTagAngleRange = false; 
