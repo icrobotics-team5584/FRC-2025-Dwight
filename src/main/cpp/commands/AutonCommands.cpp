@@ -30,31 +30,7 @@ frc2::CommandPtr AutonSubSystemsZeroSequence() {
                              SubClimber::GetInstance().ClimberAutoReset());
 }
 
-/* loops over a set of 6 constants for pathreef poses */
-frc2::CommandPtr GenerateTeleopPath() {
-    frc::Pose2d curpose = SubDrivebase::GetInstance().GetPose();
-    frc::Pose2d endpose;
-
-    /*
-    REFACTOR TO PULL THIS LOGIC INTO GetDriveToScorePath;
-    all logic about choosing paths should be in there
-    */
-    std::vector<frc::Pose2d> vec_poses;
-    std::vector<std::pair<frc::Pose2d, frc::Pose2d>> posevec = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed
-        ? SubVision::GetInstance().GetRedReefPoses()
-        : SubVision::GetInstance().GetBlueReefPoses();
-    std::vector<std::pair<frc::Pose2d, frc::Pose2d>>::iterator i;
-    for (i = posevec.begin(); i != posevec.end(); i++) {
-        vec_poses.push_back(i->first);
-        vec_poses.push_back(i->second);
-    }
-
-    endpose = SubVision::GetInstance().GetReefPose(SubVision::Side::Left, 20); //curpose.Nearest(std::span<frc::Pose2d>(vec_poses));
-    curpose = {curpose.X(), curpose.Y(), ICgeometry::PoseDirection(curpose, endpose)};
-    /*rotation is the direction of the path*/
-    // std::vector<frc::Pose2d> poses{curpose, endpose};
-    // std::vector<pathplanner::Waypoint> waypoints =
-    //     pathplanner::PathPlannerPath::waypointsFromPoses(poses);
+frc2::CommandPtr GenerateTeleopPath(frc::Pose2d startpose, frc::Pose2d endpose) {
     pathplanner::PathConstraints constraints(1.0_mps,          // max_speed
                                              1.0_mps_sq,       // max_accel
                                              360_deg_per_s,    // max_rotspeed
@@ -62,24 +38,18 @@ frc2::CommandPtr GenerateTeleopPath() {
     );
 
     pathplanner::Pathfinding::ensureInitialized();
-    pathplanner::Pathfinding::setStartPosition(curpose.Translation());
+    pathplanner::Pathfinding::setStartPosition(startpose.Translation());
 
 
-    Logger::Log("Auton/CurrentPose/x", curpose.Translation().X());
-    Logger::Log("Auton/CurrentPose/y", curpose.Translation().Y());
-    Logger::Log("Auton/CurrentPose/angle", curpose.Translation().Angle());
+    Logger::Log("Auton/CurrentPose/x", startpose.Translation().X());
+    Logger::Log("Auton/CurrentPose/y", startpose.Translation().Y());
+    Logger::Log("Auton/CurrentPose/angle", startpose.Translation().Angle());
 
     return pathplanner::AutoBuilder::pathfindToPose(
         endpose,
         constraints,
         0.0_mps
     );
-}
-
-frc2::CommandPtr GetDriveToScorePath() {
-  return frc2::cmd::DeferredProxy(
-    [] { return GenerateTeleopPath(); }
-  );
 }
 
 frc2::CommandPtr Score(int side) {
@@ -89,20 +59,11 @@ frc2::CommandPtr Score(int side) {
         .AndThen(SubElevator::GetInstance().CmdSetSource());
 }
 
-frc2::CommandPtr AutonBeginSourceIntake() {
-  return SubElevator::GetInstance()
-      .CmdSetSource()
-      .AndThen(frc2::cmd::WaitUntil([] { return SubElevator::GetInstance().IsAtTarget(); }))
-      .AndThen(SubFunnel::GetInstance().FeedDownFunnel())
-      .AlongWith(SubEndEffector::GetInstance().FeedDown())
-      .Until([] { return SubEndEffector::GetInstance().CheckLineBreakHigher(); });
-}
-
-frc2::CommandPtr AutonEndSourceIntake() {
-  return SubEndEffector::GetInstance()
-      .FeedDownSLOW()
-      .AlongWith(SubFunnel::GetInstance().FeedDownFunnelSLOW())
-      .Until([] { return SubEndEffector::GetInstance().CheckLineBreakLower(); });
+frc2::CommandPtr ScoreWithTeleop(SubVision::Side side, int pose) {
+  frc::Pose2d curpose = SubDrivebase::GetInstance().GetPose();
+  frc::Pose2d endpose = SubVision::GetInstance().GetReefPose(side, pose);
+  return GenerateTeleopPath(curpose, endpose)
+    .AndThen(Score(side));
 }
 
 // vision
@@ -128,5 +89,21 @@ frc2::CommandPtr ScoreWithVision(SubVision::Side side) {
       .AndThen(SubElevator::GetInstance().CmdSetSource())
       .AndThen(SubEndEffector::GetInstance().RemoveAlgae().Until(
           [] { return SubElevator::GetInstance().IsAtTarget(); }));
+}
+
+frc2::CommandPtr AutonBeginSourceIntake() {
+  return SubElevator::GetInstance()
+      .CmdSetSource()
+      .AndThen(frc2::cmd::WaitUntil([] { return SubElevator::GetInstance().IsAtTarget(); }))
+      .AndThen(SubFunnel::GetInstance().FeedDownFunnel())
+      .AlongWith(SubEndEffector::GetInstance().FeedDown())
+      .Until([] { return SubEndEffector::GetInstance().CheckLineBreakHigher(); });
+}
+
+frc2::CommandPtr AutonEndSourceIntake() {
+  return SubEndEffector::GetInstance()
+      .FeedDownSLOW()
+      .AlongWith(SubFunnel::GetInstance().FeedDownFunnelSLOW())
+      .Until([] { return SubEndEffector::GetInstance().CheckLineBreakLower(); });
 }
 }  // namespace cmd

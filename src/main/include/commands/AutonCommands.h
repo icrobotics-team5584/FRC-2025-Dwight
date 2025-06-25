@@ -15,10 +15,11 @@
 namespace cmd {
     frc2::CommandPtr AutonSubSystemsZeroSequence();
     
-    frc2::CommandPtr GenerateTeleopPath();
-    frc2::CommandPtr GetDriveToScorePath();
+    frc2::CommandPtr GenerateTeleopPath(frc::Pose2d startpose, frc::Pose2d endpose);
 
     frc2::CommandPtr ScoreWithVision(SubVision::Side side);
+
+    frc2::CommandPtr ScoreWithTeleop(SubVision::Side side, int pose);
     
     frc2::CommandPtr Score(int side);
     
