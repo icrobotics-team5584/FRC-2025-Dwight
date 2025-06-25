@@ -7,6 +7,7 @@
 #include <RobotContainer.h>
 
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
+#include <pathplanner/lib/pathfinding/Pathfinding.h>
 #include <pathplanner/lib/auto/NamedCommands.h>
 #include <pathplanner/lib/auto/AutoBuilder.h>
 
@@ -30,7 +31,7 @@ frc2::CommandPtr AutonSubSystemsZeroSequence() {
 }
 
 /* loops over a set of 6 constants for pathreef poses */
-std::shared_ptr<pathplanner::PathPlannerPath> GenerateTeleopPath() {
+frc2::CommandPtr GenerateTeleopPath() {
     frc::Pose2d curpose = SubDrivebase::GetInstance().GetPose();
     frc::Pose2d endpose;
 
@@ -48,32 +49,36 @@ std::shared_ptr<pathplanner::PathPlannerPath> GenerateTeleopPath() {
         vec_poses.push_back(i->second);
     }
 
-    endpose = curpose.Nearest(std::span<frc::Pose2d>(vec_poses));
+    endpose = SubVision::GetInstance().GetReefPose(SubVision::Side::Left, 20); //curpose.Nearest(std::span<frc::Pose2d>(vec_poses));
     curpose = {curpose.X(), curpose.Y(), ICgeometry::PoseDirection(curpose, endpose)};
     /*rotation is the direction of the path*/
-    std::vector<frc::Pose2d> poses{curpose, endpose};
-    std::vector<pathplanner::Waypoint> waypoints =
-        pathplanner::PathPlannerPath::waypointsFromPoses(poses);
+    // std::vector<frc::Pose2d> poses{curpose, endpose};
+    // std::vector<pathplanner::Waypoint> waypoints =
+    //     pathplanner::PathPlannerPath::waypointsFromPoses(poses);
     pathplanner::PathConstraints constraints(1.0_mps,          // max_speed
                                              1.0_mps_sq,       // max_accel
                                              360_deg_per_s,    // max_rotspeed
                                              360_deg_per_s_sq  // max_rotaccel
     );
-    pathplanner::PathPlannerPath path(
-        waypoints, constraints, std::nullopt,
-        pathplanner::GoalEndState(0.0_mps,
-        endpose.Rotation() /*.RotateBy(frc::Rotation2d(180_deg))*/));
+
+    pathplanner::Pathfinding::ensureInitialized();
+    pathplanner::Pathfinding::setStartPosition(curpose.Translation());
+
 
     Logger::Log("Auton/CurrentPose/x", curpose.Translation().X());
     Logger::Log("Auton/CurrentPose/y", curpose.Translation().Y());
     Logger::Log("Auton/CurrentPose/angle", curpose.Translation().Angle());
 
-    return std::make_shared<pathplanner::PathPlannerPath>(path);
+    return pathplanner::AutoBuilder::pathfindToPose(
+        endpose,
+        constraints,
+        0.0_mps
+    );
 }
 
 frc2::CommandPtr GetDriveToScorePath() {
   return frc2::cmd::DeferredProxy(
-    [] { return pathplanner::AutoBuilder::followPath(GenerateTeleopPath()); }
+    [] { return GenerateTeleopPath(); }
   );
 }
 
