@@ -51,13 +51,14 @@ RobotContainer::RobotContainer() {
   ConfigureBindings();
 
   // AutoChooser options
-  _autoChooser.SetDefaultOption("Default-Move-Forward-4m-0.1ms", "MoveForward-4M-0.1ms"); // safety option
+  _autoChooser.SetDefaultOption("Default-Left", "Default-Score3L4-Vision");
 
   // main autons
   _autoChooser.AddOption("Default-Left", "Default-Score3L4-Vision");
   _autoChooser.AddOption("Default-Right", "Right-Score3L4-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreLeft", "Default-Score1L4-G-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreRight", "Default-Score1L4-H-Vision");
+  _autoChooser.AddOption("Default-Move-Forward-4m-0.1ms", "MoveForward-4M-0.1ms");
 
   // tuning autons
   // _autoChooser.AddOption("L-Shape", "L-Shape");
@@ -102,7 +103,10 @@ std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {
   if (chosen == "Default-Score1L4-H-Vision") {
     return defaultMiddleScoreRight;
   }
-  return moveForward;
+  if (chosen == "MoveForward-4M-0.1ms") {
+    return moveForward;
+  }
+  return defaultLeft;
 }
 
 void RobotContainer::ConfigureBindings() {
