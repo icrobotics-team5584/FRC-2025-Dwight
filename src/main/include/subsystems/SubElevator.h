@@ -75,9 +75,9 @@ class SubElevator : public frc2::SubsystemBase {
 
   //Elevator target heights
   static constexpr units::meter_t _L1_HEIGHT = 0.212_m;
-  static constexpr units::meter_t _L2_HEIGHT = 0.55_m;
-  static constexpr units::meter_t _L3_HEIGHT = 0.839_m;
-  static constexpr units::meter_t _L4_HEIGHT = 1.43_m;
+  static constexpr units::meter_t _L2_HEIGHT = 0.443_m; //0.55
+  static constexpr units::meter_t _L3_HEIGHT = 0.816_m; //0.839
+  static constexpr units::meter_t _L4_HEIGHT = 1.412_m; //1.43
   static constexpr units::meter_t _ALGAE_LOW_HEIGHT = 0.643_m;
   static constexpr units::meter_t _ALGAE_HIGH_HEIGHT = 1.087_m;
   static constexpr units::meter_t _SOURCE_HEIGHT = 0.01_m;
