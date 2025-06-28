@@ -250,12 +250,12 @@ frc2::CommandPtr TeleAlignAndShoot(SubVision::Side side) {
   static frc::Pose2d awayPose;
   static units::meter_t initialDistance = 0_m;
   return RunOnce([side] {
-    // int tagId = SubVision::GetInstance().GetClosestTag(SubDrivebase::GetInstance().GetPose());
+    int tagId = SubVision::GetInstance().GetClosestTag(SubDrivebase::GetInstance().GetPose());
     // frc::SmartDashboard::PutNumber("Closest tag", tagId);
     // frc::Pose2d tagPose = SubVision::GetInstance().GetAprilTagPose(tagId);
     // auto yOffset = (side == SubVision::Side::Left) ? 0.12_m : -0.2_m;//0.16_m : -0.16_m;
     // targetTagPose = SubVision::GetInstance().CalculateRelativePose(tagPose, 0_m, yOffset);
-    targetTagPose = SubVision::GetInstance().GetReefPose(-1, side);
+    targetTagPose = SubVision::GetInstance().GetReefPose(tagId, side);
     targetPose = SubVision::GetInstance().CalculateRelativePose(targetTagPose,0_m,-0.4_m);
     targetTagPose = SubVision::GetInstance().CalculateRelativePose(targetTagPose,0_m,0_m);
     // targetTagPose = frc::Pose2d(targetTagPose.Translation(), targetTagPose.Rotation());
