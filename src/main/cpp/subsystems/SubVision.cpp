@@ -71,7 +71,7 @@ void SubVision::UpdateVision() {
         if (targetArea > largestArea ) {
           _lastReefObservation.reefTag = target;
           _lastReefObservation.cameraSide = Side::Left;
-          _lastReefObservation.timestamp = _leftEstPose.value().timestamp;
+          _lastReefObservation.timestamp = _leftEstPose.value().timestamp;  //CHECK ME
 
           largestArea = targetArea;
         }
@@ -258,7 +258,7 @@ int SubVision::GetClosestTag(frc::Pose2d currentPose){
 
   int closestReef = 0;
   units::length::meter_t closestDistance;
-  auto reefList = (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) ? redReef : blueReef;
+  auto reefList = (frc::DriverStation::GetAlliance().value_or(frc::DriverStation::kBlue) == frc::DriverStation::kRed) ? redReef : blueReef;
   
   for (int id : reefList) {
     auto distance = currentPose.Translation().Distance(GetAprilTagPose(id).Translation());
