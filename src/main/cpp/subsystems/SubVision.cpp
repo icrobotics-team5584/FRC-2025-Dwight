@@ -69,9 +69,12 @@ void SubVision::UpdateVision() {
         if (!CheckReef(target)) {continue;}
         double targetArea = target.GetArea();
         if (targetArea > largestArea ) {
-          _lastReefObservation.reefTag = target;
-          _lastReefObservation.cameraSide = Side::Left;
-          _lastReefObservation.timestamp = _leftEstPose.value().timestamp;  //CHECK ME
+
+          if(_leftEstPose.has_value()) {
+            _lastReefObservation.timestamp = _leftEstPose.value().timestamp;
+            _lastReefObservation.reefTag = target;
+            _lastReefObservation.cameraSide = Side::Left;
+          }
 
           largestArea = targetArea;
         }
@@ -90,10 +93,11 @@ void SubVision::UpdateVision() {
         if (!CheckReef(target)) {continue;}
         double targetArea = target.GetArea();
         if (targetArea > largestArea) {
-          _lastReefObservation.reefTag = target;
-          _lastReefObservation.cameraSide = Side::Right;
-          _lastReefObservation.timestamp = _rightEstPose.value().timestamp;
-
+          if(_rightEstPose.has_value()) {
+            _lastReefObservation.reefTag = target;
+            _lastReefObservation.cameraSide = Side::Right;
+            _lastReefObservation.timestamp = _rightEstPose.value().timestamp;          
+          }
           largestArea = targetArea;
         }
       }
