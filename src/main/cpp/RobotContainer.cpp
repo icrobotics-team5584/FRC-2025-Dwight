@@ -43,7 +43,7 @@ RobotContainer::RobotContainer() {
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(cmd::TeleopDrive(_driverController));
   SubVision::GetInstance().SetDefaultCommand(cmd::AddVisionMeasurement());
-  SubEndEffector::GetInstance().SetDefaultCommand(SubEndEffector::GetInstance().KeepCoralInEndEffector()); 
+  // SubEndEffector::GetInstance().SetDefaultCommand(SubEndEffector::GetInstance().KeepCoralInEndEffector()); 
 
   
 
@@ -168,7 +168,7 @@ void RobotContainer::ConfigureBindings() {
   _operatorController.RightStick().OnTrue(cmd::StowClimber());
 
 
-  _operatorController.LeftBumper().WhileTrue(cmd::IntakeFromSource());
+  _operatorController.LeftBumper().WhileTrue(cmd::AdjustCoral());
 
   SubEndEffector::GetInstance().CheckLineBreakTriggerLower().WhileTrue(LEDHelper::GetInstance().LEDHelper::GetInstance().SetScrollingRainbow().IgnoringDisable(true));
   // SubEndEffector::GetInstance().CheckLineBreakTriggerLower().OnFalse(LEDHelper::GetInstance().SetScrollingRainbow());
