@@ -38,6 +38,7 @@ class RobotContainer {
   std::shared_ptr<frc2::CommandPtr> defaultLeft;
   std::shared_ptr<frc2::CommandPtr> defaultLeft4;
   std::shared_ptr<frc2::CommandPtr> defaultRight;
+  std::shared_ptr<frc2::CommandPtr> defaultRight4;
   std::shared_ptr<frc2::CommandPtr> defaultMiddleScoreLeft;
   std::shared_ptr<frc2::CommandPtr> defaultMiddleScoreRight;
   std::shared_ptr<frc2::CommandPtr> moveForward;

@@ -15,13 +15,13 @@
  },
  "params":{
   "waypoints":[
-    {"x":{"exp":"LeftStart.x()", "val":7.18711519241333}, "y":{"exp":"LeftStart.y()", "val":5.5}, "heading":{"exp":"LeftStart.heading()", "val":1.57}, "intervals":27, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":{"exp":"5.6499104499816895 m", "val":5.6499104499816895}, "y":{"exp":"5.27112340927124 m", "val":5.27112340927124}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":46, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
+    {"x":{"exp":"LeftStart.x()", "val":7.18711519241333}, "y":{"exp":"LeftStart.y()", "val":5.5}, "heading":{"exp":"LeftStart.heading()", "val":1.57}, "intervals":74, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"5.6499104499816895 m", "val":5.6499104499816895}, "y":{"exp":"5.27112340927124 m", "val":5.27112340927124}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":50, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
     {"x":{"exp":"ReefPoleJ.x()", "val":5.0}, "y":{"exp":"ReefPoleJ.y()", "val":5.2}, "heading":{"exp":"ReefPoleJ.heading()", "val":2.62}, "intervals":20, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"last", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
-    {"from":"first", "to":"last", "data":{"type":"MaxVelocity", "props":{"max":{"exp":"TestingSpeed()", "val":3.0}}}, "enabled":true},
+    {"from":"first", "to":"last", "data":{"type":"MaxVelocity", "props":{"max":{"exp":"TestingSpeed()", "val":0.5}}}, "enabled":true},
     {"from":1, "to":2, "data":{"type":"MaxAcceleration", "props":{"max":{"exp":"TestingAccel()", "val":1.0}}}, "enabled":true}],
   "targetDt":{
    "exp":"0.05 s",
