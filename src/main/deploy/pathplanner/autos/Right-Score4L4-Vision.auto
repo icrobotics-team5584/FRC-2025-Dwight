@@ -1,0 +1,149 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "RightStartToReefPoleF.0"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonSubSystemsZeroSequence"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreLeft-WithVision"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ReefPoleFToRightSource.0"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "BeginSourceIntake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "RightSourceToReefPoleD.0"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "EndSourceIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreRight-WithVision"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ReefPoleDToRightSource.0"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "BeginSourceIntake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "RightSourceToReefPoleC.0"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "EndSourceIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreLeft-WithVision"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ReefPoleCToRightSource"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "BeginSourceIntake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "RightSourceToReefPoleE"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "EndSourceIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreLeft-WithVision"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": true
+}
