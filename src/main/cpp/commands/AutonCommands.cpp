@@ -40,7 +40,6 @@ frc2::CommandPtr GenerateTeleopPath(frc::Pose2d startpose, frc::Pose2d endpose) 
     pathplanner::Pathfinding::ensureInitialized();
     pathplanner::Pathfinding::setStartPosition(startpose.Translation());
 
-
     Logger::Log("Auton/CurrentPose/x", startpose.Translation().X());
     Logger::Log("Auton/CurrentPose/y", startpose.Translation().Y());
     Logger::Log("Auton/CurrentPose/angle", startpose.Translation().Angle());
@@ -63,10 +62,9 @@ frc2::CommandPtr ScoreWithTeleop(SubVision::Side side, int pose) {
   frc::Pose2d curpose = SubDrivebase::GetInstance().GetPose();
   frc::Pose2d endpose = SubVision::GetInstance().GetReefPose(side, pose);
   return GenerateTeleopPath(curpose, endpose)
-    .AndThen(Score(side));
+    .AndThen(ScoreWithVision(side));
 }
 
-// vision
 frc2::CommandPtr ScoreWithVision(SubVision::Side side) {
   static frc::Timer timer;
 

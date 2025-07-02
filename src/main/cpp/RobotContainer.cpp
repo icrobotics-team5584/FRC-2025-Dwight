@@ -49,6 +49,7 @@ RobotContainer::RobotContainer() {
   _autoChooser.SetDefaultOption("Default-Move-Forward-4m-0.1ms", "MoveForward-4M-0.1ms"); // safety option
   // main autons
   _autoChooser.AddOption("Default-Left", "Default-Score3L4-Vision");
+  _autoChooser.AddOption("Left-4L4", "Default-Score4L4-Vision");
   _autoChooser.AddOption("Default-Right", "Right-Score3L4-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreLeft", "Default-Score1L4-G-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreRight", "Default-Score1L4-H-Vision");
@@ -75,6 +76,7 @@ RobotContainer::RobotContainer() {
 
   // Load all auton paths
   defaultLeft = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score3L4-Vision").ToPtr());
+  defaultLeft4 = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score4L4-Vision").ToPtr());
   defaultRight = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Right-Score3L4-Vision").ToPtr());
   defaultMiddleScoreLeft = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score1L4-G-Vision").ToPtr());
   defaultMiddleScoreRight = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score1L4-H-Vision").ToPtr());
@@ -86,6 +88,9 @@ std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {
   auto chosen = _autoChooser.GetSelected();
   if (chosen == "Default-Score3L4-Vision") {
     return defaultLeft;
+  }
+  if (chosen == "Default-Score4L4-Vision") {
+    return defaultLeft4;
   }
   if (chosen == "Right-Score3L4-Vision") {
     return defaultRight;
@@ -117,6 +122,7 @@ void RobotContainer::ConfigureBindings() {
   _driverController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
   // SubDrivebase::GetInstance().GetPose() is a y
   _driverController.POVUp().OnTrue(cmd::ScoreWithTeleop(SubVision::Left, 20));
+  _driverController.POVDown().OnTrue(cmd::AutonSubSystemsZeroSequence());
 
   // Triggers
   SubDrivebase::GetInstance().CheckCoastButton().ToggleOnTrue(cmd::ToggleBrakeCoast());
