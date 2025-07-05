@@ -21,8 +21,8 @@
    "TestingSpeed":{
     "dimension":"LinVel",
     "var":{
-     "exp":"3 m / s",
-     "val":3.0
+     "exp":"0.5 m / s",
+     "val":0.5
     }
    }
   },
