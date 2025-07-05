@@ -99,6 +99,9 @@ frc2::CommandPtr SubElevator::CmdSetElevatorToL() {
 units::length::meter_t SubElevator::GetPresetHeight() {
   return _autoScoreHeight;
 }
+units::length::meter_t SubElevator::GetPresetHeight() {
+  return _autoScoreHeight;
+}
 
 frc2::CommandPtr SubElevator::CmdSetAutoL1() {
   return RunOnce([this] {
