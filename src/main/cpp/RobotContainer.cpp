@@ -57,7 +57,7 @@ RobotContainer::RobotContainer() {
 
   // main autons
   _autoChooser.AddOption("Default-Left", "Default-Score3L4-Vision");
-  _autoChooser.AddOption("4Coral-Left", "Left-Score4L4-3D-Vision");
+  _autoChooser.AddOption("4Coral-Left", "Left-Score4L4-3DVision");
   _autoChooser.AddOption("Default-Right", "Right-Score3L4-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreLeft", "Default-Score1L4-G-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreRight", "Default-Score1L4-H-Vision");
@@ -98,7 +98,7 @@ std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {
   if (chosen == "Default-Score3L4-Vision") {
     return defaultLeft;
   }
-  if (chosen == "Left-Score4L4-Vision") {
+  if (chosen == "Left-Score4L4-3DVision") {
     return Coral4Left;
   }
   if (chosen == "Right-Score3L4-Vision") {
