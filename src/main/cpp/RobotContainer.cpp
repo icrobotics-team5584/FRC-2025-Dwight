@@ -29,6 +29,8 @@ RobotContainer::RobotContainer() {
   // registar named commands
   pathplanner::NamedCommands::registerCommand("ScoreLeft-WithVision", cmd::ScoreWithVision(SubVision::Side::Left));
   pathplanner::NamedCommands::registerCommand("ScoreRight-WithVision", cmd::ScoreWithVision(SubVision::Side::Right));
+  pathplanner::NamedCommands::registerCommand("ScoreLeft-With3DVision", cmd::TeleAlignAndShoot(SubVision::Side::Left));
+  pathplanner::NamedCommands::registerCommand("ScoreRight-With3DVision", cmd::TeleAlignAndShoot(SubVision::Side::Right));
   pathplanner::NamedCommands::registerCommand("ScoreLeft-WithPrescription", cmd::ScoreWithPrescription(SubVision::Side::Left));
   pathplanner::NamedCommands::registerCommand("ScoringElevatorCleanUp", SubElevator::GetInstance().CmdSetSource());
   pathplanner::NamedCommands::registerCommand("ScoreLeft", cmd::Score(1));
@@ -55,6 +57,7 @@ RobotContainer::RobotContainer() {
 
   // main autons
   _autoChooser.AddOption("Default-Left", "Default-Score3L4-Vision");
+  _autoChooser.AddOption("4Coral-Left", "Left-Score4L4-3D-Vision");
   _autoChooser.AddOption("Default-Right", "Right-Score3L4-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreLeft", "Default-Score1L4-G-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreRight", "Default-Score1L4-H-Vision");
@@ -82,6 +85,7 @@ RobotContainer::RobotContainer() {
 
   // Load all auton paths
   defaultLeft = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score3L4-Vision").ToPtr());
+  Coral4Left = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score4L4-3DVision").ToPtr());
   defaultRight = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Right-Score3L4-Vision").ToPtr());
   defaultMiddleScoreLeft = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score1L4-G-Vision").ToPtr());
   defaultMiddleScoreRight = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score1L4-H-Vision").ToPtr());
@@ -93,6 +97,9 @@ std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {
   auto chosen = _autoChooser.GetSelected();
   if (chosen == "Default-Score3L4-Vision") {
     return defaultLeft;
+  }
+  if (chosen == "Left-Score4L4-Vision") {
+    return Coral4Left;
   }
   if (chosen == "Right-Score3L4-Vision") {
     return defaultRight;
