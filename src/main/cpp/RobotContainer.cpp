@@ -84,7 +84,7 @@ RobotContainer::RobotContainer() {
 
   // Load all auton paths
   defaultLeft = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score3L4-Vision").ToPtr());
-  Coral4Left = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score4L4-3DVision").ToPtr());
+  Coral4Left = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Left-Score4L4-3DVision").ToPtr());
   defaultRight = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Right-Score3L4-Vision").ToPtr());
   defaultMiddleScoreLeft = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score1L4-G-Vision").ToPtr());
   defaultMiddleScoreRight = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score1L4-H-Vision").ToPtr());
