@@ -26,7 +26,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ScoreLeft-WithVision"
+            "name": "ScoreLeft-With3DVision"
           }
         },
         {
@@ -89,7 +89,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ScoreRight-WithVision"
+            "name": "ScoreRight-With3DVision"
           }
         },
         {
@@ -132,7 +132,50 @@
         {
           "type": "named",
           "data": {
-            "name": "ScoreLeft-WithVision"
+            "name": "ScoreLeft-With3DVision"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoringElevatorCleanUp"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "poles_kl_as2LeftSource"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "BeginSourceIntake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LeftSource2poles_ij"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "EndSourceIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreRight-With3DVision"
           }
         },
         {
