@@ -75,7 +75,6 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc2::CommandPtr WheelCharecterisationCmd();
   frc2::CommandPtr Drive(std::function<frc::ChassisSpeeds()> speeds, bool fieldOriented);
   frc2::CommandPtr DriveToPose(frc::Pose2d pose, double speedScaling);
-  frc2::CommandPtr DriveWithLEDs(std::function<frc::ChassisSpeeds()> speeds, bool fieldOriented, frc::Pose2d pose, frc::Color color);
   frc2::CommandPtr RobotCentricDrive(frc2::CommandXboxController& controller);
   void DriveToPose(frc::Pose2d targetPose);
   frc2::CommandPtr SyncSensorBut();
