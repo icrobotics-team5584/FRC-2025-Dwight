@@ -420,7 +420,6 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   frc::Pose2d currentPosition = GetPose();
   double currentXMeters = currentPosition.X().value();
   double currentYMeters = currentPosition.Y().value();
-  // units::turn_t currentRotation = currentPosition.Rotation().Radians();
   units::turn_t currentRotation = GetAllianceRelativeGyroAngle().Degrees();
 
   // Use PID controllers to calculate speeds
