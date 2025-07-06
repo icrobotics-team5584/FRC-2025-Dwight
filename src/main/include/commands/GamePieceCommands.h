@@ -12,6 +12,7 @@ namespace cmd {
     frc2::CommandPtr IntakeFromSource();
     frc2::CommandPtr Outtake();
 
+    frc2::CommandPtr SetElevatorPosition(std::function<units::meter_t()> height, bool force=false);
     frc2::CommandPtr SetElevatorPosition(units::meter_t height, bool force=false);
     frc2::CommandPtr SetElevatorL1(bool force=false);
     frc2::CommandPtr SetElevatorL2(bool force=false);

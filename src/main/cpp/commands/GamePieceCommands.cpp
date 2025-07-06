@@ -58,6 +58,12 @@ frc2::CommandPtr IntakeFromSource() {
       .AndThen(SubEndEffector::GetInstance().StopMotor());
 }
 
+frc2::CommandPtr SetElevatorPosition(std::function<units::meter_t()> height, bool force) {
+  return SubElevator::GetInstance().CmdElevatorToPosition(height).OnlyIf([force] {
+    return (force || (SubEndEffector::GetInstance().IsCoralSecure() && !SubClimber::GetInstance().IsOut()));
+  });
+}
+
 frc2::CommandPtr SetElevatorPosition(units::meter_t height, bool force) {
   return SubElevator::GetInstance().CmdElevatorToPosition(height).OnlyIf([force] {
     return (force || (SubEndEffector::GetInstance().IsCoralSecure() && !SubClimber::GetInstance().IsOut()));
