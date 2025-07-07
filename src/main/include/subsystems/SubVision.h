@@ -44,7 +44,7 @@ public:
   double GetLastReefTagArea();
   Side GetLastCameraUsed();
   frc::Pose2d GetReefPose(int pose, Side side);
-  frc::Pose2d GetAprilTagPose(int id);
+  std::optional<frc::Pose2d> GetAprilTagPose(int id);
   frc::Pose2d GetLastReefPose(Side side);
   int GetLastReefId();
   units::degree_t GetReefAlignAngle(Side reefSide);
