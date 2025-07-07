@@ -64,6 +64,23 @@ frc2::CommandPtr SetElevatorPosition(std::function<units::meter_t()> height, boo
   });
 }
 
+frc2::CommandPtr AdjustCoral() {
+  return SubElevator::GetInstance()
+      .CmdSetSource()
+      .AndThen(frc2::cmd::WaitUntil([] { return SubElevator::GetInstance().IsAtTarget(); }))
+      .AndThen(SubFunnel::GetInstance().FeedDownFunnel())
+      .AlongWith(SubEndEffector::GetInstance().FeedDown())
+      .Until([] { return SubEndEffector::GetInstance().CheckLineBreakHigher(); })
+      .AndThen(SubEndEffector::GetInstance().FeedDownSLOW()
+      .AlongWith(SubFunnel::GetInstance().FeedDownFunnelSLOW())
+      .Until(
+          [] { return SubEndEffector::GetInstance().CheckLineBreakLower(); }))
+      .AndThen(SubEndEffector::GetInstance().FeedDown())
+      .Until(
+          [] { return SubEndEffector::GetInstance().CheckLineBreakLower(); })
+      .AndThen(SubEndEffector::GetInstance().StopMotor());
+}
+
 frc2::CommandPtr SetElevatorPosition(units::meter_t height, bool force) {
   return SubElevator::GetInstance().CmdElevatorToPosition(height).OnlyIf([force] {
     return (force || (SubEndEffector::GetInstance().IsCoralSecure() && !SubClimber::GetInstance().IsOut()));

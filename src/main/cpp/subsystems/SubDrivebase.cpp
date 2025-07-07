@@ -458,7 +458,7 @@ units::turns_per_second_t SubDrivebase::CalcRotateSpeed(units::turn_t rotationEr
 
 bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
   auto currentPose = _poseEstimator.GetEstimatedPosition();
-  auto rotError = GetGyroAngle() - pose.Rotation();
+  auto rotError = GetAllianceRelativeGyroAngle() - pose.Rotation();
   auto posError = currentPose.Translation().Distance(pose.Translation());
   DisplayPose("current pose", currentPose);
   DisplayPose("target pose", pose);

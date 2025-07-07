@@ -68,9 +68,12 @@ void SubVision::UpdateVision() {
         if (!CheckReef(target)) {continue;}
         double targetArea = target.GetArea();
         if (targetArea > largestArea ) {
-          _lastReefObservation.reefTag = target;
-          _lastReefObservation.cameraSide = Side::Left;
-          _lastReefObservation.timestamp = _leftEstPose.value().timestamp;
+
+          if(_leftEstPose.has_value()) {
+            _lastReefObservation.timestamp = _leftEstPose.value().timestamp;
+            _lastReefObservation.reefTag = target;
+            _lastReefObservation.cameraSide = Side::Left;
+          }
 
           largestArea = targetArea;
         }
@@ -89,10 +92,11 @@ void SubVision::UpdateVision() {
         if (!CheckReef(target)) {continue;}
         double targetArea = target.GetArea();
         if (targetArea > largestArea) {
-          _lastReefObservation.reefTag = target;
-          _lastReefObservation.cameraSide = Side::Right;
-          _lastReefObservation.timestamp = _rightEstPose.value().timestamp;
-
+          if(_rightEstPose.has_value()) {
+            _lastReefObservation.reefTag = target;
+            _lastReefObservation.cameraSide = Side::Right;
+            _lastReefObservation.timestamp = _rightEstPose.value().timestamp;          
+          }
           largestArea = targetArea;
         }
       }
@@ -233,7 +237,7 @@ std::optional<frc::Pose2d> SubVision::GetAprilTagPose(int id) {
 int SubVision::GetClosestTag(frc::Pose2d currentPose){
   int closestReef = 0;
   units::length::meter_t closestDistance;
-  auto reefList = (frc::DriverStation::GetAlliance() == frc::DriverStation::kRed) ? redReef : blueReef;
+  auto reefList = (frc::DriverStation::GetAlliance().value_or(frc::DriverStation::kBlue) == frc::DriverStation::kRed) ? redReef : blueReef;
   
   for (int id : reefList) {
     auto distance = currentPose.Translation().Distance(GetAprilTagPose(id).value().Translation());
