@@ -102,16 +102,13 @@ frc2::CommandPtr LEDHelper::SetFollowProgress(std::function<double()> progress, 
   Logger::Log("LEDHelper/SetFollowProgress/Progress", progressValue);
     frc::LEDPattern base =
         frc::LEDPattern::Solid(color);
-    // frc::LEDPattern mask = frc::LEDPattern::ProgressMaskLayer([&]() { return progress; });
     frc::LEDPattern mask = frc::LEDPattern::ProgressMaskLayer(progress);
 
     frc::LEDPattern heightDisplay = base.Mask(mask);
 
-    // Apply the LED pattern to the data buffer
     heightDisplay.ApplyTo(_ledBuffer);
     _led.SetData(_ledBuffer);
   });
-  // this can only be used for 0-1 progress
 }
 
 frc2::CommandPtr LEDHelper::SetBreatheColour(frc::Color color) {
