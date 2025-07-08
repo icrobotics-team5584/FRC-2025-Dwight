@@ -330,10 +330,10 @@ void SubDrivebase::Drive(units::meters_per_second_t xSpeed, units::meters_per_se
   _backRight.SetDesiredState(br, brXForce, brYForce);
 }
 
-frc2::CommandPtr SubDrivebase::DriveToPose(frc::Pose2d pose, double speedScaling = 1) {
-  return Drive(([this,pose,speedScaling]{ return CalcDriveToPoseSpeeds(pose) * speedScaling;}), true)
-  .Until([this,pose] {return IsAtPose(pose);});
-}
+frc2::CommandPtr SubDrivebase::DriveToPose(std::function<frc::Pose2d()> pose, double speedScaling = 1) {
+  return Drive(([this,pose,speedScaling]{ return CalcDriveToPoseSpeeds(pose()) * speedScaling;}), true)
+  .Until([this,pose] {return IsAtPose(pose());});
+} 
 
 frc::ChassisSpeeds SubDrivebase::GetRobotRelativeSpeeds() {
   auto fl = _frontLeft.GetState();

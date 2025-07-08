@@ -235,8 +235,8 @@ frc2::CommandPtr TeleAlignAndShoot(SubVision::Side side) {
   })
   // Drive to roughly half a meter away from pose
   .AndThen(
-    SubDrivebase::GetInstance().DriveToPose(targetAwayPose, 3)
-    .AlongWith(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetAwayPose, initialDistance);}, frc::Color::kAliceBlue)))
+    SubDrivebase::GetInstance().DriveToPose([](){return targetAwayPose;}, 3)
+    .DeadlineFor(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetAwayPose, initialDistance);}, frc::Color::kAliceBlue)))
   // Bring elevator up
   .AndThen(
     cmd::SetElevatorPosition([](){return SubElevator::GetInstance().GetPresetHeight();})
@@ -244,8 +244,8 @@ frc2::CommandPtr TeleAlignAndShoot(SubVision::Side side) {
     [] {initialDistance = SubDrivebase::GetInstance().TranslationPosDistance(targetTagPose)*1_m;})
   // Drive close to reef
   .AndThen(
-    SubDrivebase::GetInstance().DriveToPose(targetAwayPose, 0.7)
-    .AlongWith(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetTagPose, initialDistance);}, frc::Color::kGreen)))
+    SubDrivebase::GetInstance().DriveToPose([](){return targetTagPose;}, 0.7)
+    .DeadlineFor(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetTagPose, initialDistance);}, frc::Color::kGreen)))
   //Score coral
   .AndThen(SubEndEffector::GetInstance().ScoreCoral())
   .Until([] {return !SubEndEffector::GetInstance().CheckLineBreakLower() && !SubEndEffector::GetInstance().CheckLineBreakHigher();})
@@ -253,8 +253,8 @@ frc2::CommandPtr TeleAlignAndShoot(SubVision::Side side) {
   .AndThen(
     [] {initialDistance = SubDrivebase::GetInstance().TranslationPosDistance(targetAwayPose)*1_m;}
   ).AndThen(
-    SubDrivebase::GetInstance().DriveToPose(targetAwayPose, 1.3)
-    .AlongWith(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetAwayPose, initialDistance);}, frc::Color::kWhiteSmoke)))
+    SubDrivebase::GetInstance().DriveToPose([](){return targetAwayPose;}, 1.3)
+    .DeadlineFor(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetAwayPose, initialDistance);}, frc::Color::kWhiteSmoke)))
   // Lower elevator
   .AndThen(SubElevator::GetInstance().CmdSetSource()));
 }

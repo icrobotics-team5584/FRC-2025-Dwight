@@ -120,7 +120,7 @@ frc::Pose2d SubVision::GetSourcePose(int tagId) {
 }
 
 frc::Pose2d SubVision::GetReefPose(int pose, Side side) {
-  int reefTagID = (pose == -1)? _lastReefObservation.reefTag.GetFiducialId() : pose;
+  int reefTagID = pose;
   frc::Pose2d targPose;
   if (side == Left) {
     targPose = {tagToReefPositions[reefTagID].leftX, tagToReefPositions[reefTagID].leftY,
