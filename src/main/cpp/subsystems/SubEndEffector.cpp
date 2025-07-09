@@ -67,10 +67,12 @@ frc2::CommandPtr SubEndEffector::ScoreCoralSLOW() {
 }
 
 bool SubEndEffector::CheckLineBreakHigher() {
+    // return true;
     return !_endEffectorLineBreakHigher.Get();
 }
 
 bool SubEndEffector::CheckLineBreakLower() {
+    // return true;
     return !_endEffectorLineBreakLower.Get();
 }
 
@@ -88,16 +90,16 @@ frc2::Trigger SubEndEffector::CheckLineBreakTriggerLower() {
 
 frc2::CommandPtr SubEndEffector::KeepCoralInEndEffector() {
   return Run([this] {
-    if (CheckLineBreakHigher() && !CheckLineBreakLower()) {
-        frc::SmartDashboard::PutString("EndEffector/Coral Position", "Too High");
-        _endEffectorMotor.Set(-0.7);
-    } else if (CheckLineBreakLower() && !CheckLineBreakHigher()) {
-        frc::SmartDashboard::PutString("EndEffector/Coral Position", "Too Low");
-        _endEffectorMotor.Set(0.3);
-    } else {
-        frc::SmartDashboard::PutString("EndEffector/Coral Position", "Just Right");
-        _endEffectorMotor.Set(0);
-    }
+    // if (CheckLineBreakHigher() && !CheckLineBreakLower()) {
+    //     frc::SmartDashboard::PutString("EndEffector/Coral Position", "Too High");
+    //     _endEffectorMotor.Set(-0.7);
+    // } else if (CheckLineBreakLower() && !CheckLineBreakHigher()) {
+    //     frc::SmartDashboard::PutString("EndEffector/Coral Position", "Too Low");
+    //     _endEffectorMotor.Set(0.3);
+    // } else {
+    //     frc::SmartDashboard::PutString("EndEffector/Coral Position", "Just Right");
+    //     _endEffectorMotor.Set(0);
+    // }
   });
 }
 

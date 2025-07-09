@@ -53,7 +53,7 @@ frc2::CommandPtr IntakeFromSource() {
       .AndThen(SubEndEffector::GetInstance().FeedDown())
       .Until(
           [] { return SubEndEffector::GetInstance().CheckLineBreakLower(); })
-      .AndThen(SubEndEffector::GetInstance().SetFeedDownSlow().AlongWith(frc2::cmd::Wait(400_ms)))
+      .AndThen(SubEndEffector::GetInstance().SetFeedDownSlow().AlongWith(frc2::cmd::Wait(150_ms)))
       
       .AndThen(SubEndEffector::GetInstance().StopMotor());
 }
