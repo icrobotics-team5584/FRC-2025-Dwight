@@ -24,39 +24,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "BeginSourceIntake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "poles_ef2RightSource"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "EndSourceIntake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "RightSource2poles_cd"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "BeginSourceIntake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "poles_cd2RightSource"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "BeginSourceIntake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "poles_ef2RightSource"
+                }
+              }
+            ]
           }
         },
         {
@@ -72,15 +55,53 @@
           }
         },
         {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "BeginSourceIntake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "poles_cd2RightSource"
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "BeginSourceIntake"
+            "name": "EndSourceIntake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "poles_cd2RightSource"
+            "pathName": "RightSource2poles_cd"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "BeginSourceIntake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "poles_cd2RightSource"
+                }
+              }
+            ]
           }
         },
         {
