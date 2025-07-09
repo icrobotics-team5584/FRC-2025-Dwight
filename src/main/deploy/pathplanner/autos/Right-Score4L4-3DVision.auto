@@ -24,34 +24,9 @@
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "ScoreLeft-With3DVision"
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "poles_ef2RightSource"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "BeginSourceIntake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "EndSourceIntake"
+            "pathName": "poles_ef2RightSource"
           }
         },
         {
@@ -61,83 +36,9 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "ScoreRight-With3DVision"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "poles_cd2RightSource"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "BeginSourceIntake"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "RightSource2poles_cd"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "EndSourceIntake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ScoreLeft-With3DVision"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "poles_cd2RightSource"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "BeginSourceIntake"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "RightSource2poles_ef"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "EndSourceIntake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ScoreRight-With3DVision"
+            "pathName": "RightSource2poles_cd"
           }
         }
       ]
