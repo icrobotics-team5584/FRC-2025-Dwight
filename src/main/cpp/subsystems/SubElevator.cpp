@@ -97,27 +97,31 @@ frc2::CommandPtr SubElevator::CmdSetElevatorToL() {
   );
 }
 
+units::length::meter_t SubElevator::GetPresetHeight() {
+  return _autoScoreHeight;
+}
+
 frc2::CommandPtr SubElevator::CmdSetAutoL1() {
   return RunOnce([this] {
-    _autoScoreHeight = 1;
+    _autoScoreHeight = _L1_HEIGHT;
   });
 }
 
 frc2::CommandPtr SubElevator::CmdSetAutoL2() {
   return RunOnce([this] {
-    _autoScoreHeight = 2;
+    _autoScoreHeight = _L2_HEIGHT;
   });
 }
 
 frc2::CommandPtr SubElevator::CmdSetAutoL3() {
   return RunOnce([this] {
-    _autoScoreHeight = 3;
+    _autoScoreHeight = _L3_HEIGHT;
   });
 }
 
 frc2::CommandPtr SubElevator::CmdSetAutoL4() {
   return RunOnce([this] {
-    _autoScoreHeight = 4;
+    _autoScoreHeight = _L4_HEIGHT;
   });
 }
 
@@ -321,7 +325,7 @@ void SubElevator::Periodic() {
   Logger::LogFalcon("Elevator/Motor2", _elevatorMotor2);
 
   Logger::Log("Elevator/_hasReset", _hasReset);
-  frc::SmartDashboard::PutNumber("Elevator/AutoScoreHeight", _autoScoreHeight);
+  frc::SmartDashboard::PutNumber("Elevator/AutoScoreHeight", _autoScoreHeight.value());
 }
 
 void SubElevator::SimulationPeriodic() {
