@@ -39,6 +39,8 @@ RobotContainer::RobotContainer() {
   pathplanner::NamedCommands::registerCommand("BeginSourceIntake", cmd::AutonBeginSourceIntake());
   pathplanner::NamedCommands::registerCommand("EndSourceIntake", cmd::AutonEndSourceIntake());
 
+  pathplanner::NamedCommands::registerCommand("DEBUG_NOP", frc2::cmd::Print("NOP"));
+
   pathplanner::NamedCommands::registerCommand("IntakeSource", cmd::IntakeFromSource());
   pathplanner::NamedCommands::registerCommand("AutonSubSystemsZeroSequence", cmd::AutonSubSystemsZeroSequence());
   
