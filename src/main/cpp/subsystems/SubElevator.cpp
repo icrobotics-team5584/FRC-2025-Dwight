@@ -87,15 +87,15 @@ frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height) {
 
 }
 
-frc2::CommandPtr SubElevator::CmdSetElevatorToL() {
-  return frc2::cmd::Select<int, frc2::CommandPtr>(
-    [this]{return _autoScoreHeight;},
-    std::pair{1, cmd::SetElevatorPosition(_L1_HEIGHT, true)},
-    std::pair{2, cmd::SetElevatorPosition(_L2_HEIGHT, true)},
-    std::pair{3, cmd::SetElevatorPosition(_L3_HEIGHT, true)},
-    std::pair{4, cmd::SetElevatorPosition(_L4_HEIGHT, true)}
-  );
-}
+// frc2::CommandPtr SubElevator::CmdSetElevatorToL() {
+//   return frc2::cmd::Select<int, frc2::CommandPtr>(
+//     [this]{return _autoScoreHeight;},
+//     std::pair{1, cmd::SetElevatorPosition(_L1_HEIGHT, true)},
+//     std::pair{2, cmd::SetElevatorPosition(_L2_HEIGHT, true)},
+//     std::pair{3, cmd::SetElevatorPosition(_L3_HEIGHT, true)},
+//     std::pair{4, cmd::SetElevatorPosition(_L4_HEIGHT, true)}
+//   );
+// }
 
 units::length::meter_t SubElevator::GetPresetHeight() {
   return _autoScoreHeight;
