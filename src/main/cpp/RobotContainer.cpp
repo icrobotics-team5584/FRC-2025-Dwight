@@ -125,6 +125,7 @@ void RobotContainer::ConfigureBindings() {
   _driverController.B().WhileTrue(cmd::TeleAlignAndShoot(SubVision::Side::Right));
   _driverController.X().WhileTrue(cmd::TeleAlignAndShoot(SubVision::Side::Left));
   _driverController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
+  _driverController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
   _driverController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
 
   // Triggers
