@@ -86,6 +86,7 @@ RobotContainer::RobotContainer() {
   // Load all auton paths
   defaultLeft = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score3L4-Vision").ToPtr());
   Coral4Left = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Left-Score4L4-3DVision").ToPtr());
+  Coral4Right = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Right-Score4L4-3DVision").ToPtr());
   defaultRight = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Right-Score3L4-Vision").ToPtr());
   defaultMiddleScoreLeft = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score1L4-G-Vision").ToPtr());
   defaultMiddleScoreRight = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score1L4-H-Vision").ToPtr());
@@ -100,6 +101,9 @@ std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {
   }
   if (chosen == "Left-Score4L4-3DVision") {
     return Coral4Left;
+  }
+  if (chosen == "Right-Score4L4-3DVision") {
+    return Coral4Right;
   }
   if (chosen == "Right-Score3L4-Vision") {
     return defaultRight;
