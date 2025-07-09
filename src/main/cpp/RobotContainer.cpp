@@ -58,6 +58,7 @@ RobotContainer::RobotContainer() {
   // main autons
   _autoChooser.AddOption("Default-Left", "Default-Score3L4-Vision");
   _autoChooser.AddOption("4Coral-Left", "Left-Score4L4-3DVision");
+  _autoChooser.AddOption("4Coral-Right", "Right-Score4L4-3DVision");
   _autoChooser.AddOption("Default-Right", "Right-Score3L4-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreLeft", "Default-Score1L4-G-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreRight", "Default-Score1L4-H-Vision");
