@@ -14,6 +14,7 @@
 #include <frc/MathUtil.h>
 #include <utilities/RobotLogs.h>
 #include <ctre/phoenix6/configs/Configs.hpp>
+#include "commands/GamePieceCommands.h"
 
 using namespace ctre::phoenix6;
 
@@ -66,6 +67,25 @@ SubElevator::SubElevator() {
   _elevatorMotor1.GetClosedLoopReference().SetUpdateFrequency(100_Hz);
 }
 
+frc2::CommandPtr SubElevator::CmdElevatorToPosition(std::function<units::meter_t()> height) {
+  return RunOnce([this, height] {
+    _targetHeight = height();
+    if (height() < _MIN_HEIGHT) {
+      _elevatorMotor1.SetControl(
+          controls::MotionMagicVoltage(RotationsFromHeight(_MIN_HEIGHT)).WithEnableFOC(true));
+    }
+
+    if (height() > _L4_HEIGHT) {
+      _elevatorMotor1.SetControl(
+          controls::MotionMagicVoltage(RotationsFromHeight(_L4_HEIGHT)).WithEnableFOC(true));
+    }
+
+    else {
+      _elevatorMotor1.SetControl(
+          controls::MotionMagicVoltage(RotationsFromHeight(height())).WithEnableFOC(true));
+    }});
+}
+
 frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height) {
   return RunOnce([this, height] {
     _targetHeight = height;
@@ -84,6 +104,34 @@ frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height) {
           controls::MotionMagicVoltage(RotationsFromHeight(height)).WithEnableFOC(true));
     }});
 
+}
+
+units::length::meter_t SubElevator::GetPresetHeight() {
+  return _autoScoreHeight;
+}
+
+frc2::CommandPtr SubElevator::CmdSetAutoL1() {
+  return RunOnce([this] {
+    _autoScoreHeight = _L1_HEIGHT;
+  });
+}
+
+frc2::CommandPtr SubElevator::CmdSetAutoL2() {
+  return RunOnce([this] {
+    _autoScoreHeight = _L2_HEIGHT;
+  });
+}
+
+frc2::CommandPtr SubElevator::CmdSetAutoL3() {
+  return RunOnce([this] {
+    _autoScoreHeight = _L3_HEIGHT;
+  });
+}
+
+frc2::CommandPtr SubElevator::CmdSetAutoL4() {
+  return RunOnce([this] {
+    _autoScoreHeight = _L4_HEIGHT;
+  });
 }
 
 frc2::CommandPtr SubElevator::CmdSetL1() {
@@ -286,6 +334,7 @@ void SubElevator::Periodic() {
   Logger::LogFalcon("Elevator/Motor2", _elevatorMotor2);
 
   Logger::Log("Elevator/_hasReset", _hasReset);
+  frc::SmartDashboard::PutNumber("Elevator/AutoScoreHeight", _autoScoreHeight.value());
 }
 
 void SubElevator::SimulationPeriodic() {

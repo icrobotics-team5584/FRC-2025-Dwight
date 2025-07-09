@@ -13,6 +13,7 @@
 #include "utilities/RobotLogs.h"
 #include "RobotContainer.h"
 #include <frc/geometry/Translation2d.h>
+#include "utilities/LEDHelper.h"
 
 SubDrivebase::SubDrivebase() {
   frc::SmartDashboard::PutData("Drivebase/Teleop PID/Rotation Controller",
@@ -329,6 +330,11 @@ void SubDrivebase::Drive(units::meters_per_second_t xSpeed, units::meters_per_se
   _backRight.SetDesiredState(br, brXForce, brYForce);
 }
 
+frc2::CommandPtr SubDrivebase::DriveToPose(std::function<frc::Pose2d()> pose, double speedScaling = 1) {
+  return Drive(([this,pose,speedScaling]{ return CalcDriveToPoseSpeeds(pose()) * speedScaling;}), true)
+  .Until([this,pose] {return IsAtPose(pose());});
+} 
+
 frc::ChassisSpeeds SubDrivebase::GetRobotRelativeSpeeds() {
   auto fl = _frontLeft.GetState();
   auto fr = _frontRight.GetState();
@@ -414,7 +420,7 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   frc::Pose2d currentPosition = GetPose();
   double currentXMeters = currentPosition.X().value();
   double currentYMeters = currentPosition.Y().value();
-  units::turn_t currentRotation = currentPosition.Rotation().Radians();
+  units::turn_t currentRotation = GetAllianceRelativeGyroAngle().Degrees();
 
   // Use PID controllers to calculate speeds
   auto xSpeed = _teleopTranslationController.Calculate(currentXMeters, targetXMeters) * 1_mps;
@@ -426,6 +432,11 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   xSpeed = units::math::max(xSpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
   ySpeed = units::math::min(ySpeed, MAX_DRIVE_TO_POSE_VELOCITY);
   ySpeed = units::math::max(ySpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
+
+  if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed) {
+    xSpeed *= -1;
+    ySpeed *= -1;
+  }
 
   frc::SmartDashboard::PutNumber("CalcDriveLogs/xSpeed", -xSpeed.value());
   frc::SmartDashboard::PutNumber("CalcDriveLogs/ySpeed", ySpeed.value());
@@ -447,24 +458,38 @@ units::turns_per_second_t SubDrivebase::CalcRotateSpeed(units::turn_t rotationEr
 
 bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
   auto currentPose = _poseEstimator.GetEstimatedPosition();
-  auto rotError = currentPose.Rotation() - pose.Rotation();
+  auto rotError = GetAllianceRelativeGyroAngle() - pose.Rotation();
   auto posError = currentPose.Translation().Distance(pose.Translation());
-  auto velocity = GetVelocity();
   DisplayPose("current pose", currentPose);
   DisplayPose("target pose", pose);
 
   frc::SmartDashboard::PutNumber("Drivebase/rotError",
-                                 units::math::abs(rotError.Degrees()).value());
-  frc::SmartDashboard::PutNumber("Drivebase/posError", posError.value());
+                                 rotError.Degrees().value());
+  frc::SmartDashboard::PutNumber("Drivebase/posError", 
+                                posError.value());
 
   frc::SmartDashboard::PutBoolean("Drivebase/IsAtPose",
                                   units::math::abs(rotError.Degrees()) < 1_deg && posError < 2_cm);
 
-  if (units::math::abs(rotError.Degrees()) < 1_deg && posError < 2_cm && velocity < 0.0001_mps) {
+  if (units::math::abs(rotError.Degrees()) < 1_deg && posError < 2_cm) {
     return true;
   } else {
     return false;
   }
+}
+
+double SubDrivebase::TranslationPosError(frc::Pose2d pose, units::meter_t startingDistance) {
+  auto currentPose = _poseEstimator.GetEstimatedPosition();
+  auto posError = currentPose.Translation().Distance(pose.Translation());
+  Logger::Log("TranslationPosErrorGetter", 1-posError.value());
+  return ((startingDistance-posError)/startingDistance).value();
+}
+
+double SubDrivebase::TranslationPosDistance(frc::Pose2d pose) {
+  auto currentPose = _poseEstimator.GetEstimatedPosition();
+  auto posError = currentPose.Translation().Distance(pose.Translation());
+  Logger::Log("TranslationPosErrorGetter", 1-posError.value());
+  return posError.value();
 }
 
 void SubDrivebase::ResetGyroHeading(units::degree_t startingAngle) {

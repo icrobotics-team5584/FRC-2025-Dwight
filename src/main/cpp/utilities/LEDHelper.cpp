@@ -2,6 +2,7 @@
 #include "utilities/RobotLogs.h"
 #include <frc/util/Color.h>
 #include <thread>
+#include <functional>
 
 frc2::CommandPtr LEDHelper::SetSolidColour(frc::Color color) {
   return RunOnce([this, color] {
@@ -95,20 +96,19 @@ frc::Color LEDHelper::HeatColor(uint8_t heat) {
   }
 }
 
-frc2::CommandPtr LEDHelper::SetFollowProgress(double progress) {
-  return RunOnce([this, progress] {
-    std::array<frc::Color, 2> colors{frc::Color::kWhite, frc::Color::kGreen};
+frc2::CommandPtr LEDHelper::SetFollowProgress(std::function<double()> progress, frc::Color color) {
+  return Run([this, progress, color] {
+  double progressValue = progress();
+  Logger::Log("LEDHelper/SetFollowProgress/Progress", progressValue);
     frc::LEDPattern base =
-        frc::LEDPattern::Gradient(frc::LEDPattern::GradientType::kContinuous, colors);
-    frc::LEDPattern mask = frc::LEDPattern::ProgressMaskLayer([&]() { return progress; });
+        frc::LEDPattern::Solid(color);
+    frc::LEDPattern mask = frc::LEDPattern::ProgressMaskLayer(progress);
 
     frc::LEDPattern heightDisplay = base.Mask(mask);
 
-    // Apply the LED pattern to the data buffer
     heightDisplay.ApplyTo(_ledBuffer);
     _led.SetData(_ledBuffer);
   });
-  // this can only be used for 0-1 progress
 }
 
 frc2::CommandPtr LEDHelper::SetBreatheColour(frc::Color color) {

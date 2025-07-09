@@ -20,6 +20,7 @@
 #include "utilities/RobotLogs.h"
 #include <ctre/phoenix6/core/CorePigeon2.hpp>
 #include <ctre/phoenix6/Pigeon2.hpp>
+#include <frc/util/Color.h>
 
 class SubDrivebase : public frc2::SubsystemBase {
  public:
@@ -46,6 +47,8 @@ class SubDrivebase : public frc2::SubsystemBase {
   void ConfigPigeon2();
 
   // Getters
+  double TranslationPosError(frc::Pose2d pose, units::meter_t startingDistance);
+  double TranslationPosDistance(frc::Pose2d pose);
   bool IsAtPose(frc::Pose2d pose);
   frc2::Trigger CheckCoastButton();
   frc2::Trigger IsTipping();
@@ -71,6 +74,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc2::CommandPtr JoystickDriveSlow(frc2::CommandXboxController& controller);
   frc2::CommandPtr WheelCharecterisationCmd();
   frc2::CommandPtr Drive(std::function<frc::ChassisSpeeds()> speeds, bool fieldOriented);
+  frc2::CommandPtr DriveToPose(std::function<frc::Pose2d()> pose, double speedScaling);
   frc2::CommandPtr RobotCentricDrive(frc2::CommandXboxController& controller);
   void DriveToPose(frc::Pose2d targetPose);
   frc2::CommandPtr SyncSensorBut();
@@ -114,7 +118,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   const units::turn_t FRONT_RIGHT_MAG_OFFSET = //
       BotVars::Choose(-0.37451171875, -0.515380859375) * 1_tr;
   const units::turn_t FRONT_LEFT_MAG_OFFSET = //
-      BotVars::Choose(-0.94091796875, -0.172607421875) * 1_tr;
+      BotVars::Choose(-0.943848, -0.172607421875) * 1_tr;
   const units::turn_t BACK_RIGHT_MAG_OFFSET = //
       BotVars::Choose(-0.46435546875, -0.395263671875) * 1_tr;
   const units::turn_t BACK_LEFT_MAG_OFFSET =
@@ -135,9 +139,9 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc::SwerveDriveKinematics<4> _kinematics{_frontLeftLocation, _frontRightLocation,
                                             _backLeftLocation, _backRightLocation};
 
-  frc::PIDController _teleopTranslationController{1.7, 0.0, 0.0};
+  frc::PIDController _teleopTranslationController{7.0, 0.0, 0.0};
   frc::ProfiledPIDController<units::radian> _teleopRotationController{
-      3, 0, 0.2, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
+      3.0, 0, 0, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
   std::shared_ptr<pathplanner::PPHolonomicDriveController> _pathplannerController =
       std::make_shared<pathplanner::PPHolonomicDriveController>(
           // translation needs tuning and such
