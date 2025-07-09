@@ -1,0 +1,193 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "RightStart2poles_ef"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonSubSystemsZeroSequence"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreLeft-With3DVision"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "poles_ef_as2RightSource"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.4
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "ScoringElevatorCleanUp"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "BeginSourceIntake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "RightSource2poles_cd"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "EndSourceIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreRight-With3DVision"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoringElevatorCleanUp"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "poles_cd_as2RightSource"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "BeginSourceIntake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "RightSource2poles_cd"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "EndSourceIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreLeft-With3DVision"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoringElevatorCleanUp"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "poles_cd_as2RightSource"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "BeginSourceIntake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "RightSource2poles_ef"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "EndSourceIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreRight-With3DVision"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoringElevatorCleanUp"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": true
+}
