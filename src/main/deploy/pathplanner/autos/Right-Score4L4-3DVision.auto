@@ -30,13 +30,19 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "sequential",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "poles_ef_as2RightSource"
+                  "pathName": "poles_ef2RightSource"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "BeginSourceIntake"
                 }
               }
             ]
@@ -45,26 +51,13 @@
         {
           "type": "named",
           "data": {
-            "name": "BeginSourceIntake"
+            "name": "EndSourceIntake"
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "RightSource2poles_cd"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "EndSourceIntake"
-                }
-              }
-            ]
+            "pathName": "RightSource2poles_cd"
           }
         },
         {
@@ -76,7 +69,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "poles_cd_as2RightSource"
+            "pathName": "poles_cd2RightSource"
           }
         },
         {
@@ -113,7 +106,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "poles_cd_as2RightSource"
+            "pathName": "poles_cd2RightSource"
           }
         },
         {
