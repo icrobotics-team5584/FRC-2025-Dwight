@@ -239,7 +239,7 @@ frc2::CommandPtr TeleAlignAndShoot(SubVision::Side side) {
     .DeadlineFor(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetAwayPose, initialDistance);}, frc::Color::kAliceBlue)))
   // Bring elevator up
   .AndThen(
-    cmd::SetElevatorPosition([](){return SubElevator::GetInstance().GetPresetHeight();})
+    cmd::SetElevatorPosition([](){return SubElevator::GetInstance().GetPresetHeight();},true)
     .AndThen(
     [] {initialDistance = SubDrivebase::GetInstance().TranslationPosDistance(targetTagPose)*1_m;})
   // Drive close to reef
