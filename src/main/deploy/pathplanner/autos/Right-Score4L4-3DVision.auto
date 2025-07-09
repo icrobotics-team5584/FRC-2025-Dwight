@@ -24,6 +24,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "ScoreLeft-With3DVision"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -55,6 +61,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "ScoreLeft-With3DVision"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -86,6 +98,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "ScoreRight-With3DVision"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -114,6 +132,12 @@
           "type": "path",
           "data": {
             "pathName": "RightSource2poles_ef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreRight-With3DVision"
           }
         }
       ]
