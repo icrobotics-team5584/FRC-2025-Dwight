@@ -24,21 +24,75 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "BeginSourceIntake"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "poles_ef2RightSource"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "RightSource2poles_cd"
+            "name": "EndSourceIntake"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "RightSource2poles_cd"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "BeginSourceIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "poles_cd2RightSource"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "EndSourceIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RightSource2poles_cd"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "BeginSourceIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "poles_cd2RightSource"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "EndSourceIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RightSource2poles_ef"
           }
         }
       ]
