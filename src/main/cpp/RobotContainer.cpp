@@ -184,7 +184,8 @@ void RobotContainer::ConfigureBindings() {
 
   _operatorController.LeftBumper().WhileTrue(cmd::AdjustCoral());
 
-  SubEndEffector::GetInstance().CheckLineBreakTriggerLower().WhileTrue(LEDHelper::GetInstance().LEDHelper::GetInstance().SetScrollingRainbow().IgnoringDisable(true));
+  /*TEMP_FIX_DEBUG_FIX_FOR_LATER*/
+  //SubEndEffector::GetInstance().CheckLineBreakTriggerLower().WhileTrue(LEDHelper::GetInstance().LEDHelper::GetInstance().SetScrollingRainbow().IgnoringDisable(true));
 }
 
 // Controller rumble functions
