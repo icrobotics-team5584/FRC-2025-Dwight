@@ -37,15 +37,15 @@ namespace cmd {
     frc2::CommandPtr AutonBeginSourceIntake() {
         return SubElevator::GetInstance()
             .CmdSetSource()
-            .AndThen(frc2::cmd::WaitUntil([] { return SubElevator::GetInstance().IsAtTarget();}))
+            .AndThen(frc2::cmd::WaitUntil([] { return SubElevator::GetInstance().IsAtTarget();})) /*check if elevator is at target*/
             .AndThen(SubFunnel::GetInstance().FeedDownFunnel())
             .AlongWith(SubEndEffector::GetInstance().FeedDown())
             .Until([] { return SubEndEffector::GetInstance().CheckLineBreakHigher(); });
     }
     
     frc2::CommandPtr AutonEndSourceIntake() {
-        return SubEndEffector::GetInstance().FeedDownSLOW()
-            .AlongWith(SubFunnel::GetInstance().FeedDownFunnelSLOW())
+        return SubFunnel::GetInstance().FeedDownFunnelSLOW()
+            .AlongWith(SubEndEffector::GetInstance().FeedDown())
             .Until([] { return SubEndEffector::GetInstance().CheckLineBreakLower(); });
     }
 
