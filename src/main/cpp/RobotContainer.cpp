@@ -139,6 +139,7 @@ void RobotContainer::ConfigureBindings() {
   _driverController.B().WhileTrue(cmd::TeleAlignAndShoot(SubVision::Side::Right));
   _driverController.X().WhileTrue(cmd::TeleAlignAndShoot(SubVision::Side::Left));
   _driverController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
+  _driverController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
   _driverController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
 
   // Triggers
@@ -185,7 +186,7 @@ void RobotContainer::ConfigureBindings() {
   _operatorController.LeftBumper().WhileTrue(cmd::AdjustCoral());
 
   /*TEMP_FIX_DEBUG_FIX_FOR_LATER*/
-  //SubEndEffector::GetInstance().CheckLineBreakTriggerLower().WhileTrue(LEDHelper::GetInstance().LEDHelper::GetInstance().SetScrollingRainbow().IgnoringDisable(true));
+  // SubEndEffector::GetInstance().CheckLineBreakTriggerLower().WhileTrue(LEDHelper::GetInstance().SetScrollingRainbow().IgnoringDisable(true));
 }
 
 // Controller rumble functions
