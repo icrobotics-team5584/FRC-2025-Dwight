@@ -26,7 +26,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ScoreLeft-With3DVision"
+            "name": "ScoreRight-With3DVision"
           }
         },
         {
@@ -49,12 +49,6 @@
                 "type": "path",
                 "data": {
                   "pathName": "RightSource2poles_cd"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "EndSourceIntake"
                 }
               }
             ]
@@ -137,7 +131,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ScoreRight-With3DVision"
+            "name": "ScoreLeft-With3DVision"
           }
         }
       ]

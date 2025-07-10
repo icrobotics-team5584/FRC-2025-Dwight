@@ -55,7 +55,7 @@ RobotContainer::RobotContainer() {
   ConfigureBindings();
 
   // AutoChooser options
-  _autoChooser.SetDefaultOption("Default-Left", "Default-Score3L4-Vision");
+  _autoChooser.SetDefaultOption("4Coral-Right", "Right-Score4L4-3DVision");
 
   // main autons
   _autoChooser.AddOption("Default-Left", "Default-Score3L4-Vision");
