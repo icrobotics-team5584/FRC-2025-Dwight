@@ -34,28 +34,15 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "ReefPoleIToLeftSource.0"
+                  "name": "ScoringElevatorCleanUp"
                 }
               },
               {
-                "type": "sequential",
+                "type": "path",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.4
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "ScoringElevatorCleanUp"
-                      }
-                    }
-                  ]
+                  "pathName": "ReefPoleIToLeftSource.0"
                 }
               }
             ]
