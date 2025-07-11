@@ -78,11 +78,11 @@ namespace cmd {
             SubDrivebase::GetInstance().DisplayPose("Vision 3d align pose", targetAwayPose);
             SubDrivebase::GetInstance().DisplayPose("Vision 3d align target pose", targetTagPose);
         })
-        // Drive to roughly half a meter away from pose
-        .AndThen(
-            SubDrivebase::GetInstance().DriveToPose([](){return targetAwayPose;}, 3)
-            .DeadlineFor(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetAwayPose, initialDistance);}, frc::Color::kAliceBlue)))
-        // Bring elevator up
+        // // Drive to roughly half a meter away from pose
+        // .AndThen(
+        //     SubDrivebase::GetInstance().DriveToPose([](){return targetAwayPose;}, 3)
+        //     .DeadlineFor(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetAwayPose, initialDistance);}, frc::Color::kAliceBlue)))
+        // // Bring elevator up
         .AndThen(
             cmd::SetElevatorPosition([](){return SubElevator::GetInstance().GetPresetHeight();},true)
             .AndThen(
