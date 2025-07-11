@@ -56,14 +56,19 @@ namespace cmd {
 
         return SubElevator::GetInstance().CmdSetL4()//.OnlyIf([] { return !SubElevator::GetInstance().IsAtTarget(); })
             .AndThen(frc2::cmd::WaitUntil([]{ return SubElevator::GetInstance().IsAtTarget(); }))
-            .AndThen(cmd::AlignAndShoot(side).Until(
-                []{
-                    return !SubEndEffector::GetInstance().CheckLineBreakHigher() && 
-                           !SubEndEffector::GetInstance().CheckLineBreakLower();
+            .AndThen([]{timer.Restart();})
+            .AndThen(cmd::AlignAndShoot(side).Until([]{ 
+                bool has_coral = SubEndEffector::GetInstance().CheckLineBreakHigher();
+                if ( has_coral == false) {
+                    Logger::Log("EndEffector/ScoreWithVision/has coral", false);
+                    timer.Start();
+                } else {
+                    Logger::Log("EndEffector/ScoreWithVision/has coral", true);
+                    timer.Restart();
                 }
-            ));
+                Logger::Log("EndEffector/ScoreWithVision/time elapsed without coral", timer.Get());
+                return timer.HasElapsed(0.5_s); }));
     }
-
 
     frc2::CommandPtr ScoreWithPrescription(SubVision::Side side) {
         static frc::Timer timer;
