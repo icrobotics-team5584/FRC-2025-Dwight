@@ -20,4 +20,5 @@ namespace cmd {
     frc2::CommandPtr Score(int side);
     frc2::CommandPtr AutonBeginSourceIntake();
     frc2::CommandPtr AutonEndSourceIntake();
+    frc2::CommandPtr ScoreWith3DVision(SubVision::Side side);
 }

@@ -9,13 +9,15 @@
 #include <pathplanner/lib/auto/NamedCommands.h>
 
 #include "subsystems/SubEndEffector.h"
+#include "subsystems/SubDrivebase.h"
 #include "subsystems/SubElevator.h"
 #include "subsystems/SubFunnel.h"
 #include "subsystems/SubClimber.h"
 
-
 #include "commands/VisionCommand.h"
 #include "commands/GamePieceCommands.h"
+
+#include "utilities/LEDHelper.h"
 
 namespace cmd {
     frc2::CommandPtr AutonSubSystemsZeroSequence() {
@@ -65,6 +67,42 @@ namespace cmd {
                 Logger::Log("EndEffector/ScoreWithVision/time elapsed without coral", timer.Get());
                 return timer.HasElapsed(0.5_s); }));
     }
+
+    frc2::CommandPtr ScoreWith3DVision(SubVision::Side side) {
+        static frc::Pose2d targetAwayPose;
+        static frc::Pose2d targetTagPose;
+        static frc::Pose2d awayPose;
+        static units::meter_t initialDistance = 0_m;
+
+        //Prepare all positions
+        return frc2::cmd::RunOnce([side] {
+            int tagId = SubVision::GetInstance().GetClosestTag(SubDrivebase::GetInstance().GetPose());
+            targetTagPose = SubVision::GetInstance().GetReefPose(tagId, side);
+            targetAwayPose = SubVision::GetInstance().CalculateRelativePose(targetTagPose,0_m,-0.4_m);
+            initialDistance = SubDrivebase::GetInstance().TranslationPosDistance(targetAwayPose)*1_m;
+            frc::SmartDashboard::PutNumber("Closest tag", tagId);
+            SubDrivebase::GetInstance().DisplayPose("Vision 3d align pose", targetAwayPose);
+            SubDrivebase::GetInstance().DisplayPose("Vision 3d align target pose", targetTagPose);
+        })
+        // Drive to roughly half a meter away from pose
+        .AndThen(
+            SubDrivebase::GetInstance().DriveToPose([](){return targetAwayPose;}, 3)
+            .DeadlineFor(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetAwayPose, initialDistance);}, frc::Color::kAliceBlue)))
+        // Bring elevator up
+        .AndThen(
+            cmd::SetElevatorPosition([](){return SubElevator::GetInstance().GetPresetHeight();},true)
+            .AndThen(
+            [] {initialDistance = SubDrivebase::GetInstance().TranslationPosDistance(targetTagPose)*1_m;}) /*LED stuff*/
+        // Drive close to reef
+        .AndThen(
+            SubDrivebase::GetInstance().DriveToPose([](){return targetTagPose;}, 0.5)
+            .DeadlineFor(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetTagPose, initialDistance);}, frc::Color::kGreen)))
+        //Score coral
+        .AndThen(SubEndEffector::GetInstance().ScoreCoral().WithTimeout(0.4_s)));
+        // Lower elevator
+        //.AndThen(SubElevator::GetInstance().CmdSetSource()));
+    }
+
 
     frc2::CommandPtr ScoreWithPrescription(SubVision::Side side) {
         static frc::Timer timer;
