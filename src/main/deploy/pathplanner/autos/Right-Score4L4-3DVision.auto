@@ -32,7 +32,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "poles_ef2RightSource"
+            "pathName": "ReefPoleFToRightSource"
           }
         },
         {
@@ -63,7 +63,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "poles_cd2RightSource"
+            "pathName": "ReefPoleCToRightSource"
           }
         },
         {
@@ -94,7 +94,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "poles_cd2RightSource"
+            "pathName": "ReefPoleDToRightSource"
           }
         },
         {
