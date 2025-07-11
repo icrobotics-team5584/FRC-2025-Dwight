@@ -48,7 +48,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "RightSource2poles_cd"
+                  "pathName": "RightSource2poles_c"
                 }
               }
             ]
@@ -79,13 +79,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "RightSource2poles_cd"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "EndSourceIntake"
+                  "pathName": "RightSource2poles_d"
                 }
               }
             ]
@@ -117,12 +111,6 @@
                 "type": "path",
                 "data": {
                   "pathName": "RightSource2poles_ef"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "EndSourceIntake"
                 }
               }
             ]
