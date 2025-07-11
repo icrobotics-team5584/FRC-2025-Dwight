@@ -95,7 +95,7 @@ namespace cmd {
             [] {initialDistance = SubDrivebase::GetInstance().TranslationPosDistance(targetTagPose)*1_m;}) /*LED stuff*/
         // Drive close to reef
         .AndThen(
-            SubDrivebase::GetInstance().DriveToPose([](){return targetTagPose;}, 0.5)
+            SubDrivebase::GetInstance().DriveToPose([](){return targetTagPose;}, 0.5).WithDeadline(frc2::cmd::Wait(2.5_s))
             .DeadlineFor(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetTagPose, initialDistance);}, frc::Color::kGreen)))
         //Score coral
         .AndThen(SubEndEffector::GetInstance().ScoreCoral().WithTimeout(0.4_s)));
