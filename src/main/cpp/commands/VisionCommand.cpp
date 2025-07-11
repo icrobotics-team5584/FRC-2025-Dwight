@@ -35,7 +35,7 @@ frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
                 side);  // 16.45 for left reef face, 15.60_deg for front reef face (all left side so
                         // far) // 15.60,-20
           }
-          units::degree_t error = tagAngle - goalAngle;
+          units::degree_t error =  goalAngle - tagAngle;
           
           units::meters_per_second_t overallVelocity = std::clamp(0.16_mps * error.value(),-0.3_mps,0.3_mps);
           units::degree_t driveAngle = units::math::copysign(8_deg, error);
