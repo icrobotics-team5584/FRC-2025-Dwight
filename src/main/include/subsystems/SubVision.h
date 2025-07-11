@@ -145,7 +145,6 @@ std::map<int, ReefPositions> tagToReefPositions = {
     {11, {60_deg-90_deg, 12.330_m, 2.970_m, 12.550_m, 2.850_m}}
 };
   //+9.4418
-
   //Left camera config
   std::string _leftCamName = "ICR_OV2981_L (1)";
 
