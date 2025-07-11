@@ -37,7 +37,12 @@ namespace cmd {
     }
 
     frc2::CommandPtr AutonBeginSourceIntake() {
-        return IntakeFromSource();
+        return SubElevator::GetInstance()
+            .CmdSetSource()
+            .AndThen(frc2::cmd::WaitUntil([] { return SubElevator::GetInstance().IsAtTarget();}))
+            .AndThen(SubFunnel::GetInstance().FeedDownFunnel())
+            .AlongWith(SubEndEffector::GetInstance().FeedDown())
+            .Until([] { return SubEndEffector::GetInstance().CheckLineBreakHigher(); });
     }
     
     frc2::CommandPtr AutonEndSourceIntake() {
