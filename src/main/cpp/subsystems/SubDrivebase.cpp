@@ -262,6 +262,37 @@ frc2::CommandPtr SubDrivebase::GyroCoralLeftStationAlign(frc2::CommandXboxContro
   }, true);
 }
 
+frc2::CommandPtr SubDrivebase::GyroCoralStationAlign(frc2::CommandXboxController& controller) {
+  return Drive([this, &controller]{
+    units::angle::degree_t gyro_angle = frc::InputModulus(GetGyroAngle().Degrees(), -180_deg, 180_deg);
+    frc::ChassisSpeeds joystick_speeds = CalcJoystickSpeeds(controller);
+    auto currentPose = _poseEstimator.GetEstimatedPosition();
+    auto Yvalue = currentPose.Translation().Y();
+    auto alliance = frc::DriverStation::GetAlliance();
+    units::turns_per_second_t rotation_speeds = CalcRotateSpeed(gyro_angle);
+
+    if(Yvalue > 4_m) {
+      if (alliance == frc::DriverStation::kBlue) {
+        rotation_speeds = CalcRotateSpeed(144_deg + gyro_angle);
+      }
+      if (alliance == frc::DriverStation::kRed) {
+        rotation_speeds = CalcRotateSpeed(36_deg + gyro_angle);
+      }
+    }
+    if(Yvalue < 4_m) {
+      if (alliance == frc::DriverStation::kBlue) {
+        rotation_speeds = CalcRotateSpeed(36_deg + gyro_angle);
+      }
+      if (alliance == frc::DriverStation::kRed) {
+        rotation_speeds = CalcRotateSpeed(144_deg + gyro_angle);
+      }
+    }
+
+    return frc::ChassisSpeeds(joystick_speeds.vx, joystick_speeds.vy, rotation_speeds);
+
+  }, true);
+}
+
 frc2::CommandPtr SubDrivebase::JoystickDrive(frc2::CommandXboxController& controller) {
   return Drive([this, &controller] { return CalcJoystickSpeeds(controller); }, true);
 }

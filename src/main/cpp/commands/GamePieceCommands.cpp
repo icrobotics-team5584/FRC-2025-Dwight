@@ -64,6 +64,10 @@ frc2::CommandPtr SetElevatorPosition(std::function<units::meter_t()> height, boo
   });
 }
 
+frc2::CommandPtr SetElevatorPosition(int level) {
+  return SubElevator::GetInstance().CmdElevatorToPosition(level);
+}
+
 frc2::CommandPtr AdjustCoral() {
   return SubElevator::GetInstance()
       .CmdSetSource()

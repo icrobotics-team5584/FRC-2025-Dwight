@@ -260,6 +260,47 @@ frc2::CommandPtr TeleAlignAndShoot(SubVision::Side side) {
   .AndThen(SubElevator::GetInstance().CmdSetSource()));
 }
 
+frc2::CommandPtr TeleAlignAndShootAndElevator(SubVision::Side side, int level) {
+  static frc::Pose2d targetAwayPose;
+  static frc::Pose2d targetTagPose;
+  static frc::Pose2d awayPose;
+  static units::meter_t initialDistance = 0_m;
+
+  //Prepare all positions
+  return RunOnce([side] {
+    int tagId = SubVision::GetInstance().GetClosestTag(SubDrivebase::GetInstance().GetPose());
+    targetTagPose = SubVision::GetInstance().GetReefPose(tagId, side);
+    targetAwayPose = SubVision::GetInstance().CalculateRelativePose(targetTagPose,0_m,-0.4_m);
+    initialDistance = SubDrivebase::GetInstance().TranslationPosDistance(targetAwayPose)*1_m;
+    frc::SmartDashboard::PutNumber("Closest tag", tagId);
+    SubDrivebase::GetInstance().DisplayPose("Vision 3d align pose", targetAwayPose);
+    SubDrivebase::GetInstance().DisplayPose("Vision 3d align target pose", targetTagPose);
+  })
+  // Drive to roughly half a meter away from pose
+  .AndThen(
+    SubDrivebase::GetInstance().DriveToPose([](){return targetAwayPose;}, 3)
+    .DeadlineFor(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetAwayPose, initialDistance);}, frc::Color::kAliceBlue)))
+  // Bring elevator up
+  .AndThen(
+    cmd::SetElevatorPosition(level)
+    .AndThen(
+    [] {initialDistance = SubDrivebase::GetInstance().TranslationPosDistance(targetTagPose)*1_m;})
+  // Drive close to reef
+  .AndThen(
+    SubDrivebase::GetInstance().DriveToPose([](){return targetTagPose;}, 0.5)
+    .DeadlineFor(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetTagPose, initialDistance);}, frc::Color::kGreen)))
+  //Score coral
+  .AndThen(SubEndEffector::GetInstance().ScoreCoral().WithTimeout(0.4_s))
+  // Drive back to half meter away
+  .AndThen(
+    [] {initialDistance = SubDrivebase::GetInstance().TranslationPosDistance(targetAwayPose)*1_m;}
+  ).AndThen(
+    SubDrivebase::GetInstance().DriveToPose([](){return targetAwayPose;}, 1)
+    .DeadlineFor(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetAwayPose, initialDistance);}, frc::Color::kWhiteSmoke)))
+  // Lower elevator
+  .AndThen(SubElevator::GetInstance().CmdSetSource()));
+}
+
 }  // namespace cmd
 
 

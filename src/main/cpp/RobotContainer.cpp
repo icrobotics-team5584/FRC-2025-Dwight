@@ -110,68 +110,26 @@ std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {
 }
 
 void RobotContainer::ConfigureBindings() {
-  // Driver
+  (_driverController.RightBumper() && _driverController.Y()).WhileTrue(cmd::TeleAlignAndShootAndElevator(SubVision::Side::Right, 4));
+  (_driverController.RightBumper() && _driverController.X()).WhileTrue(cmd::TeleAlignAndShootAndElevator(SubVision::Side::Right, 3));
+  (_driverController.RightBumper() && _driverController.A()).WhileTrue(cmd::TeleAlignAndShootAndElevator(SubVision::Side::Right, 2));
 
-  //  _cameraStream = frc::CameraServer::StartAutomaticCapture("Camera Stream", 0); //Initialise camera object
-  // _driverController.A().ToggleOnTrue(frc2::cmd::StartEnd(
-  //   [this] { _cameraStream.SetPath("/dev/video1"); }, //Toggle to second camera (climb cam)
-  //   [this] { _cameraStream.SetPath("/dev/video0"); } //Toggle to first camera (drive cam)
-  // ));
-  _driverController.A().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
-  _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
-  
-  _driverController.RightBumper().WhileTrue(SubDrivebase::GetInstance().GyroCoralLeftStationAlign(_driverController));
-  _driverController.LeftBumper().WhileTrue(SubDrivebase::GetInstance().GyroCoralRightStationAlign(_driverController)); 
-  _driverController.B().WhileTrue(cmd::TeleAlignAndShoot(SubVision::Side::Right));
-  _driverController.X().WhileTrue(cmd::TeleAlignAndShoot(SubVision::Side::Left));
+  (_driverController.LeftBumper() && _driverController.Y()).WhileTrue(cmd::TeleAlignAndShootAndElevator(SubVision::Side::Left, 4));
+  (_driverController.LeftBumper() && _driverController.X()).WhileTrue(cmd::TeleAlignAndShootAndElevator(SubVision::Side::Left, 3));
+  (_driverController.LeftBumper() && _driverController.A()).WhileTrue(cmd::TeleAlignAndShootAndElevator(SubVision::Side::Left, 2));
+
+  (_driverController.LeftBumper() && _driverController.RightBumper()).WhileTrue(SubDrivebase::GetInstance().GyroCoralStationAlign(_driverController));
+  _driverController.Start().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
+
+  _driverController.B().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
+
   _driverController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
-  _driverController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
-  _driverController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
+  _driverController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().Shoot());
 
   // Triggers
   SubDrivebase::GetInstance().CheckCoastButton().ToggleOnTrue(cmd::ToggleBrakeCoast());
   (SubDrivebase::GetInstance().IsTipping() && !SubClimber::GetInstance().IsClimbing())
       .OnTrue(SubElevator::GetInstance().CmdSetSource());
-
-  // Operator
-  _operatorController.AxisGreaterThan(frc::XboxController::Axis::kLeftY, 0.2)
-      .WhileTrue(SubElevator::GetInstance().ManualElevatorMovementDOWN());
-
-  _operatorController.AxisLessThan(frc::XboxController::Axis::kLeftY, -0.2)
-      .WhileTrue(SubElevator::GetInstance().ManualElevatorMovementUP());
-
-  (!_operatorController.Back() && _operatorController.A()).OnTrue(cmd::ClimbHalfwaySequence());  // Climb to halfway
-  (_operatorController.Back() && _operatorController.A()).OnTrue(cmd::ClimbHalfwaySequence(true));  // Force climb halfway
-
-  (!_operatorController.Back() && _operatorController.X()).OnTrue(SubElevator::GetInstance().CmdSetAutoL2());  // Set AutoScore L2 normally
-  (_operatorController.Back() && _operatorController.X()).OnTrue(cmd::SetElevatorL2(true));  // Force set L2
-
-  (!_operatorController.Back() && _operatorController.B()).OnTrue(SubElevator::GetInstance().CmdSetAutoL3());  // Set AutoScore L3 normally
-  (_operatorController.Back() && _operatorController.B()).OnTrue(cmd::SetElevatorL3(true));  // Force set L3
-
-  (!_operatorController.Back() && _operatorController.Y()).OnTrue(SubElevator::GetInstance().CmdSetAutoL4());  // Set AutoScore L4 normally
-  (_operatorController.Back() && _operatorController.Y()).OnTrue(cmd::SetElevatorL4(true));  // Force set L4
-
-  _operatorController.POVLeft().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
-  _operatorController.POVRight().OnTrue(SubElevator::GetInstance().CmdSetSource());
-
-  (!_operatorController.Back() && _operatorController.POVUp()).OnTrue(cmd::ClimbUpSequence());
-  (_operatorController.Back() && _operatorController.POVUp()).OnTrue(cmd::ClimbUpSequence(true)); // Force elevator to move for climb
-  
-  (!_operatorController.Back() && _operatorController.POVDown()).OnTrue(cmd::ClimbDownSequence());
-  (_operatorController.Back() && _operatorController.POVDown()).OnTrue(cmd::ClimbDownSequence(true));
-
-  _operatorController.LeftTrigger().WhileTrue(cmd::RemoveAlgaeLow());
-  _operatorController.RightTrigger().WhileTrue(cmd::RemoveAlgaeHigh());
-  _operatorController.RightBumper().WhileTrue(cmd::Outtake());
-  
-  _operatorController.Start().WhileTrue(SubClimber::GetInstance().ClimberAutoReset());
-  _operatorController.RightStick().OnTrue(cmd::StowClimber());
-
-
-  _operatorController.LeftBumper().WhileTrue(cmd::AdjustCoral());
-
-  // SubEndEffector::GetInstance().CheckLineBreakTriggerLower().WhileTrue(LEDHelper::GetInstance().SetScrollingRainbow().IgnoringDisable(true));
 }
 
 // Controller rumble functions

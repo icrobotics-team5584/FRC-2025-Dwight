@@ -21,4 +21,5 @@ namespace cmd {
   frc2::CommandPtr AutoShootIfKindaAligned(SubVision::Side side);
   frc2::CommandPtr HopeAndShoot(SubVision::Side side);
   frc2::CommandPtr TeleAlignAndShoot(SubVision::Side side);
+  frc2::CommandPtr TeleAlignAndShootAndElevator(SubVision::Side side, int level);
 }

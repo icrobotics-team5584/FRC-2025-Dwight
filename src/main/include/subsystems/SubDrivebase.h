@@ -70,6 +70,7 @@ class SubDrivebase : public frc2::SubsystemBase {
   // Commands
   frc2::CommandPtr GyroCoralLeftStationAlign(frc2::CommandXboxController& controller);
   frc2::CommandPtr GyroCoralRightStationAlign(frc2::CommandXboxController& controller);
+  frc2::CommandPtr GyroCoralStationAlign(frc2::CommandXboxController& controller);
   frc2::CommandPtr JoystickDrive(frc2::CommandXboxController& controller);
   frc2::CommandPtr JoystickDriveSlow(frc2::CommandXboxController& controller);
   frc2::CommandPtr WheelCharecterisationCmd();

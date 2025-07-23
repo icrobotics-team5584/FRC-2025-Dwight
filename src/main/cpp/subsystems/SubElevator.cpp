@@ -106,6 +106,15 @@ frc2::CommandPtr SubElevator::CmdElevatorToPosition(units::meter_t height) {
 
 }
 
+frc2::CommandPtr SubElevator::CmdElevatorToPosition(int level) {
+  return RunOnce([this, level] {
+    if(level == 1) {CmdSetL1();};
+    if(level == 2) {CmdSetL2();};
+    if(level == 3) {CmdSetL3();};
+    if(level == 4) {CmdSetL4();};
+  });
+}
+
 units::length::meter_t SubElevator::GetPresetHeight() {
   return _autoScoreHeight;
 }
