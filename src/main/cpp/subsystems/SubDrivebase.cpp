@@ -86,6 +86,10 @@ SubDrivebase::SubDrivebase() {
 }
 
 void SubDrivebase::Periodic() {
+  frc::SmartDashboard::PutNumber("Drivebase/AccelerationX", _gyro.GetAccelerationX().GetValueAsDouble());
+  frc::SmartDashboard::PutNumber("Drivebase/AccelerationY", _gyro.GetAccelerationY().GetValueAsDouble());
+  frc::SmartDashboard::PutNumber("Drivebase/AccelerationZ", _gyro.GetAccelerationZ().GetValueAsDouble());
+
   auto loopStart = frc::GetTime();
   frc::SmartDashboard::PutNumber("Drivebase/GyroAngle/Roll", SubDrivebase::GetInstance().GetRoll().value());
   frc::SmartDashboard::PutNumber("Drivebase/GyroAngle/Pitch", SubDrivebase::GetInstance().GetPitch().value());
@@ -619,3 +623,4 @@ frc2::CommandPtr SubDrivebase::WheelCharecterisationCmd() {
         frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/BRdelta", BRdelta.value());
       });
 }
+
