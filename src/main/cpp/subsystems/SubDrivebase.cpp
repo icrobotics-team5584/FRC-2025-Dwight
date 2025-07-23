@@ -624,3 +624,16 @@ frc2::CommandPtr SubDrivebase::WheelCharecterisationCmd() {
       });
 }
 
+bool SubDrivebase::IsCollision() {
+  auto GsX = _gyro.GetAccelerationX().GetValueAsDouble();
+  auto GsY = _gyro.GetAccelerationY().GetValueAsDouble();
+  GsY = abs(GsY);
+  GsX = abs(GsX);
+  double Magnitude = sqrt(GsY*GsY+GsX*GsX);
+  return (Magnitude > 0.6);
+}
+
+frc2::Trigger SubDrivebase::IsCollisionTrigger() {
+  return frc2::Trigger {[this] {return this->IsCollision();}};
+}
+

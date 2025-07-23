@@ -82,7 +82,7 @@ class SubDrivebase : public frc2::SubsystemBase {
     return _sysIdRoutine.Dynamic(direction);
   }
   bool IsCollision ();
-  frc2::Trigger IsColliion();
+  frc2::Trigger IsCollisionTrigger();
 
   // Constants
   static constexpr units::meters_per_second_t MAX_VELOCITY = 5_mps;
