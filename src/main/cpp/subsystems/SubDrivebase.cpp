@@ -87,8 +87,8 @@ SubDrivebase::SubDrivebase() {
 
 void SubDrivebase::Periodic() {
   frc::SmartDashboard::PutNumber("Drivebase/AccelerationX", _gyro.GetAccelerationX().GetValueAsDouble());
-  frc::SmartDashboard::PutNumber("Drivebase/AccelerationY", _gyro.GetAccelerationY().GetValueAsDouble());
-  frc::SmartDashboard::PutNumber("Drivebase/AccelerationZ", _gyro.GetAccelerationZ().GetValueAsDouble());
+  frc::SmartDashboard::PutNumber("Drivebase/AccelerationY", _gyro.GetAccelerationY().GetValueAsDouble()); // smashed into reef with -1.2g and -0.4g 
+  frc::SmartDashboard::PutNumber("Drivebase/AccelerationZ", _gyro.GetAccelerationZ().GetValueAsDouble()); // normal driving goes up to around the same -1.0g
 
   auto loopStart = frc::GetTime();
   frc::SmartDashboard::PutNumber("Drivebase/GyroAngle/Roll", SubDrivebase::GetInstance().GetRoll().value());
