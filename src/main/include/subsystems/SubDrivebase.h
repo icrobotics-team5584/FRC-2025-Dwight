@@ -87,6 +87,8 @@ class SubDrivebase : public frc2::SubsystemBase {
   bool IsSlipping();
   frc2::Trigger IsSlippingTrigger();
 
+  int GetSlippingModule();
+
   // Constants
   static constexpr units::meters_per_second_t MAX_VELOCITY = 5_mps;
   static constexpr units::meters_per_second_t MAX_DRIVE_TO_POSE_VELOCITY = 1_mps;
