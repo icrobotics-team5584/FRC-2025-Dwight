@@ -81,8 +81,11 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc2::CommandPtr SysIdDynamic(frc2::sysid::Direction direction) {
     return _sysIdRoutine.Dynamic(direction);
   }
-  bool IsCollision ();
+  bool IsCollision();
   frc2::Trigger IsCollisionTrigger();
+
+  bool IsSlipping();
+  frc2::Trigger IsSlippingTrigger();
 
   // Constants
   static constexpr units::meters_per_second_t MAX_VELOCITY = 5_mps;
