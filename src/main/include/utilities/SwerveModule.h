@@ -47,6 +47,9 @@ class SwerveModule {
   frc::SwerveModuleState GetCANCoderState();
   units::radian_t GetDrivenRotations();
 
+  bool IsSlipping();
+  frc2::Trigger IsSlippingTrigger();
+
  private:
   std::unique_ptr<SwerveIO> _io;
 
