@@ -88,6 +88,8 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc2::Trigger IsSlippingTrigger();
 
   int GetSlippingModule();
+  units::meters_per_second_t GetModuleCombinedSpeed(std::string module);
+  units::meters_per_second_t GetModuleTranslationSpeed(std::string module);
 
   // Constants
   static constexpr units::meters_per_second_t MAX_VELOCITY = 5_mps;
