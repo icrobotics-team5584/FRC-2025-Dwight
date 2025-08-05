@@ -668,4 +668,6 @@ units::meters_per_second_t SubDrivebase::GetModuleTranslationSpeed(std::string m
     return _backRight.GetTranslationSpeed();
   }
   return 0_mps;
-}
+
+  auto [forward, sideways, angular] = _kinematics.ToChassisSpeeds(
+    frontLeftState, frontRightState, backLeftState, backRightState);
