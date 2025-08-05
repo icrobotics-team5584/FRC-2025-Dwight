@@ -638,36 +638,14 @@ frc2::Trigger SubDrivebase::IsCollisionTrigger() {
   return frc2::Trigger {[this] {return this->IsCollision();}};
 }
 
-units::meters_per_second_t SubDrivebase::GetModuleCombinedSpeed(std::string module) {
-  if (module == "fl") {
-    return _frontLeft.GetSpeed();
-  }
-  if (module == "fr") {
-    return _frontRight.GetSpeed();
-  }
-  if (module == "bl") {
-    return _backLeft.GetSpeed();
-  }
-  if (module == "br") {
-    return _backRight.GetSpeed();
-  }
-  return 0_mps;
-}
-
-units::meters_per_second_t SubDrivebase::GetModuleTranslationSpeed(std::string module) {
-  if (module == "fl") {
-    return _frontLeft.GetTranslationSpeed();
-  }
-  if (module == "fr") {
-    return _frontRight.GetTranslationSpeed();
-  }
-  if (module == "bl") {
-    return _backLeft.GetTranslationSpeed();
-  }
-  if (module == "br") {
-    return _backRight.GetTranslationSpeed();
-  }
-  return 0_mps;
-
-  auto [forward, sideways, angular] = _kinematics.ToChassisSpeeds(
+  auto [forward, sideways, omega] = _kinematics.ToChassisSpeeds(
     frontLeftState, frontRightState, backLeftState, backRightState);
+
+  units::degrees_per_second_squared_t SubDrivebase::GetRobotRotationFromStates() {
+
+  }
+
+  frc::SwerveModuleState SubDrivebase::GetModuleState(std::string module) {
+
+  }
+  

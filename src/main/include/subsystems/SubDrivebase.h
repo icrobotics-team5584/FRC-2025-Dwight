@@ -84,12 +84,8 @@ class SubDrivebase : public frc2::SubsystemBase {
   bool IsCollision();
   frc2::Trigger IsCollisionTrigger();
 
-  bool IsSlipping();
-  frc2::Trigger IsSlippingTrigger();
-
-  int GetSlippingModule();
-  units::meters_per_second_t GetModuleCombinedSpeed(std::string module);
-  units::meters_per_second_t GetModuleTranslationSpeed(std::string module);
+  units::degrees_per_second_squared_t GetRobotRotationFromStates();
+  frc::SwerveModuleState GetModuleState(std::string module);
 
   // Constants
   static constexpr units::meters_per_second_t MAX_VELOCITY = 5_mps;
