@@ -641,11 +641,11 @@ frc2::Trigger SubDrivebase::IsCollisionTrigger() {
   auto [forward, sideways, omega] = _kinematics.ToChassisSpeeds(
     frontLeftState, frontRightState, backLeftState, backRightState);
 
-  units::degrees_per_second_squared_t SubDrivebase::GetRobotRotationFromStates() {
+  units::degrees_per_second_squared_t SubDrivebase::GetRobotRotationFromStates
+  (frc::SwerveModuleState fl, frc::SwerveModuleState fr, frc::SwerveModuleState bl, frc::SwerveModuleState br) {
 
   }
 
   frc::SwerveModuleState SubDrivebase::GetModuleState(std::string module) {
 
   }
-  
