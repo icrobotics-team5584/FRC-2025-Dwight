@@ -649,6 +649,8 @@ units::radians_per_second_t SubDrivebase::GetRobotRotationFromStates
 
 std::string SubDrivebase::GetSlippingModule()
 {
+  double SlipSpeed = 0.5;
+
   auto flFull = _frontLeft.GetState();
   auto frFull = _frontRight.GetState();
   auto blFull = _backLeft.GetState();
@@ -659,7 +661,43 @@ std::string SubDrivebase::GetSlippingModule()
   auto states = _kinematics.ToSwerveModuleStates(speeds);
   auto [flRot, frRot, blRot, brRot] = states;
 
-  auto flTrans = flFull - flRot;
+  auto flTrans = 2*flFull.speed - flRot.speed;
+  auto frTrans = 2*frFull.speed - frRot.speed;
+  auto blTrans = 2*blFull.speed - blRot.speed;
+  auto brTrans = 2*brFull.speed - brRot.speed;
+
+  Logger::Log("Drivebase/SlippingModule/flTrans", flTrans);
+  Logger::Log("Drivebase/SlippingModule/frTrans", frTrans);
+  Logger::Log("Drivebase/SlippingModule/blTrans", blTrans);
+  Logger::Log("Drivebase/SlippingModule/brTrans", brTrans);
+
+  units::meters_per_second_t avgTrans = (flTrans + frTrans + blTrans + brTrans) / 4.0_mps;
+
+  double flDifference = abs(flTrans.value() - avgTrans.value());
+  double frDifference = abs(frTrans.value() - avgTrans.value());
+  double blDifference = abs(blTrans.value() - avgTrans.value());
+  double brDifference = abs(brTrans.value() - avgTrans.value());
+
+  Logger::Log("Drivebase/SlippingModule/flDifferenceFromAvg", flDifference);
+  Logger::Log("Drivebase/SlippingModule/frDifferenceFromAvg", frDifference);
+  Logger::Log("Drivebase/SlippingModule/blDifferenceFromAvg", blDifference);
+  Logger::Log("Drivebase/SlippingModule/brDifferenceFromAvg", brDifference);
+
+  double maxDifference = std::max({flDifference, frDifference, blDifference, brDifference});
+  if( maxDifference < SlipSpeed ) {
+    return "None";
+  }
+
+  if (maxDifference == flDifference) {
+    return "fl";
+  } else if (maxDifference == frDifference) {
+    return "fr";
+  } else if (maxDifference == blDifference) {
+    return "bl";
+  } else if (maxDifference == brDifference) {
+    return "br";
+  }
+
 }
 
   
