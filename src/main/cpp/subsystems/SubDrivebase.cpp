@@ -666,17 +666,17 @@ std::string SubDrivebase::GetSlippingModule()
   auto blTrans = 2*blFull.speed - blRot.speed;
   auto brTrans = 2*brFull.speed - brRot.speed;
 
-  Logger::Log("Drivebase/SlippingModule/flTrans", flTrans);
-  Logger::Log("Drivebase/SlippingModule/frTrans", frTrans);
-  Logger::Log("Drivebase/SlippingModule/blTrans", blTrans);
-  Logger::Log("Drivebase/SlippingModule/brTrans", brTrans);
+  Logger::Log("Drivebase/SlippingModule/flTrans", flTrans.value());
+  Logger::Log("Drivebase/SlippingModule/frTrans", frTrans.value());
+  Logger::Log("Drivebase/SlippingModule/blTrans", blTrans.value());
+  Logger::Log("Drivebase/SlippingModule/brTrans", brTrans.value());
 
-  units::meters_per_second_t avgTrans = (flTrans + frTrans + blTrans + brTrans) / 4.0_mps;
+  double avgTrans = (flTrans.value() + frTrans.value() + blTrans.value() + brTrans.value()) / 4.0;
 
-  double flDifference = abs(flTrans.value() - avgTrans.value());
-  double frDifference = abs(frTrans.value() - avgTrans.value());
-  double blDifference = abs(blTrans.value() - avgTrans.value());
-  double brDifference = abs(brTrans.value() - avgTrans.value());
+  double flDifference = abs(flTrans.value() - avgTrans);
+  double frDifference = abs(frTrans.value() - avgTrans);
+  double blDifference = abs(blTrans.value() - avgTrans);
+  double brDifference = abs(brTrans.value() - avgTrans);
 
   Logger::Log("Drivebase/SlippingModule/flDifferenceFromAvg", flDifference);
   Logger::Log("Drivebase/SlippingModule/frDifferenceFromAvg", frDifference);
@@ -697,7 +697,7 @@ std::string SubDrivebase::GetSlippingModule()
   } else if (maxDifference == brDifference) {
     return "br";
   }
-
+  return "Error"; //incase something goes wrong!!!
 }
 
   
