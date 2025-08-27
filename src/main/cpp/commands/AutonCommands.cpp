@@ -127,7 +127,7 @@ void CycleStoredPose(int offset) {
     spose.first += (offset-1)/2;
     spose.second = (spose.second == 0) ? 1 : 0; /* toggle between 0 & 1*/
   }
-
+  SubDrivebase::GetInstance().SetTeleopPathPose(spose.first, spose.second);
 }
 
 }  // namespace cmd
