@@ -393,6 +393,26 @@ frc::SwerveDriveKinematics<4> SubDrivebase::GetKinematics() {
   return _kinematics;
 }
 
+void SubDrivebase::SetTeleopPathPose(int apriltag, int side) {
+  /* !in blue || red reef*/
+  if (apriltag < 6) {
+    apriltag = 6;
+  } else if (apriltag > 11 && apriltag < 18) {
+    apriltag = 18;
+  } else if (apriltag > 22) {
+    apriltag = 6;
+  }
+  if (side != 0 || side != 1) {
+    side = 0;
+  }
+  _teleopPathPose.first = apriltag;
+  _teleopPathPose.second = side;
+}
+
+std::pair<int, int> SubDrivebase::GetTeleopPathPose() {
+  return _teleopPathPose;
+}
+
 // calculates the relative field location
 void SubDrivebase::UpdateOdometry() {
   auto fl = _frontLeft.GetPosition();

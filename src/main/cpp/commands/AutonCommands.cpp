@@ -65,6 +65,20 @@ frc2::CommandPtr ScoreWithTeleop(SubVision::Side side, int pose) {
     .AndThen(ScoreWithVision(side));
 }
 
+frc2::CommandPtr ScoreAtStoredPoseWithTeleop() {
+  frc::Pose2d curpose = SubDrivebase::GetInstance().GetPose();
+  std::pair<int, int> teleopPathPose = SubDrivebase::GetInstance().GetTeleopPathPose();
+  int pose = teleopPathPose.first;
+  SubVision::Side side; if (teleopPathPose.second == 0) { 
+    side = SubVision::Side::Left;
+  } else {
+    side = SubVision::Side::Right;
+  }
+  frc::Pose2d endpose = SubVision::GetInstance().GetReefPose(side, pose);
+  return GenerateTeleopPath(curpose, endpose)
+    .AndThen(ScoreWithVision(side));
+}
+
 frc2::CommandPtr ScoreWithVision(SubVision::Side side) {
   static frc::Timer timer;
 
