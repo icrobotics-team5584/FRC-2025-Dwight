@@ -118,4 +118,16 @@ frc2::CommandPtr AutonEndSourceIntake() {
       .AlongWith(SubFunnel::GetInstance().FeedDownFunnelSLOW())
       .Until([] { return SubEndEffector::GetInstance().CheckLineBreakLower(); });
 }
+
+void CycleStoredPose(int offset) {
+  std::pair<int, int> spose = SubDrivebase::GetInstance().GetTeleopPathPose();
+  if (offset % 2 == 0) {
+    spose.first += offset/2;
+  } else {
+    spose.first += (offset-1)/2;
+    spose.second = (spose.second == 0) ? 1 : 0; /* toggle between 0 & 1*/
+  }
+
+}
+
 }  // namespace cmd
