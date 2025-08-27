@@ -91,6 +91,7 @@ void SubDrivebase::Periodic() {
   frc::SmartDashboard::PutNumber("Drivebase/AccelerationY", _gyro.GetAccelerationY().GetValueAsDouble()); // smashed into reef with -1.2g and -0.4g 
   frc::SmartDashboard::PutNumber("Drivebase/AccelerationZ", _gyro.GetAccelerationZ().GetValueAsDouble()); // normal driving goes up to around the same -1.0g
   frc::SmartDashboard::PutNumber("Drivebase/IsCollision", SubDrivebase::GetInstance().IsCollision());
+  frc::SmartDashboard::PutString("Drivebase/SlippingModule", SubDrivebase::GetInstance().GetSlippingModule());
 
   auto loopStart = frc::GetTime();
   frc::SmartDashboard::PutNumber("Drivebase/GyroAngle/Roll", SubDrivebase::GetInstance().GetRoll().value());
@@ -674,22 +675,37 @@ units::radians_per_second_t SubDrivebase::GetRobotRotationFromStates
 
 std::string SubDrivebase::GetSlippingModule()
 {
-  double SlipSpeed = 0.5;
+  double SlipSpeed = 0.5; // in mps
 
   auto flFull = _frontLeft.GetState();
   auto frFull = _frontRight.GetState();
   auto blFull = _backLeft.GetState();
   auto brFull = _backRight.GetState();
 
+  frc::Translation2d flFullVector = frc::Translation2d(flFull.speed.value()*1_m, flFull.angle);
+  frc::Translation2d frFullVector = frc::Translation2d(frFull.speed.value()*1_m, frFull.angle);
+  frc::Translation2d blFullVector = frc::Translation2d(blFull.speed.value()*1_m, blFull.angle);
+  frc::Translation2d brFullVector = frc::Translation2d(brFull.speed.value()*1_m, brFull.angle);
+
   auto speeds = frc::ChassisSpeeds{0_mps, 0_mps, GetRobotRotationFromStates(
     flFull, frFull, blFull, brFull)};
   auto states = _kinematics.ToSwerveModuleStates(speeds);
   auto [flRot, frRot, blRot, brRot] = states;
 
-  auto flTrans = 2*flFull.speed - flRot.speed;
-  auto frTrans = 2*frFull.speed - frRot.speed;
-  auto blTrans = 2*blFull.speed - blRot.speed;
-  auto brTrans = 2*brFull.speed - brRot.speed;
+  frc::Translation2d flRotVector = frc::Translation2d(flRot.speed.value()*1_m, flRot.angle);
+  frc::Translation2d frRotVector = frc::Translation2d(frRot.speed.value()*1_m, frRot.angle);
+  frc::Translation2d blRotVector = frc::Translation2d(blRot.speed.value()*1_m, blRot.angle);
+  frc::Translation2d brRotVector = frc::Translation2d(brRot.speed.value()*1_m, brRot.angle);
+
+  auto flTransVector = flFullVector - flRotVector;
+  auto frTransVector = frFullVector - frRotVector;
+  auto blTransVector = blFullVector - blRotVector;
+  auto brTransVector = brFullVector - brRotVector;
+
+  auto flTrans = flTransVector.Norm();
+  auto frTrans = frTransVector.Norm();
+  auto blTrans = blTransVector.Norm();
+  auto brTrans = brTransVector.Norm();
 
   Logger::Log("Drivebase/SlippingModule/flTrans", flTrans.value());
   Logger::Log("Drivebase/SlippingModule/frTrans", frTrans.value());
