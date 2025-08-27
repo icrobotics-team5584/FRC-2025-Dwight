@@ -30,6 +30,7 @@ class SubEndEffector : public frc2::SubsystemBase {
   frc2::CommandPtr ScoreCoralSLOW();
   frc2::CommandPtr KeepCoralInEndEffector();
   frc2::CommandPtr RemoveAlgae();
+  frc2::CommandPtr SetFeedDownSlow();
   
   bool CheckLineBreakHigher();
   bool CheckLineBreakLower();

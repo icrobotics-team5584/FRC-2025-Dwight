@@ -24,6 +24,7 @@ void LogFalcon(std::string name, ctre::phoenix6::hardware::TalonFX& talonFX);
 
 void Log(std::string_view keyName, wpi::Sendable* data);
 void Log(std::string_view keyName, double value);
+void Log(std::string_view keyName, int value);
 void Log(std::string_view keyName, ctre::phoenix6::StatusSignal<double>& signal);
 void Log(std::string_view keyName, bool value);
 void Log(std::string_view keyName, std::string_view value);

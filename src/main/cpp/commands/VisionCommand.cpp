@@ -11,34 +11,12 @@
 #include "subsystems/SubEndEffector.h"
 #include "utilities/RobotLogs.h"
 #include "iostream"
+#include <frc/util/Color.h>
+#include "utilities/LEDHelper.h"
+#include "commands/GamePieceCommands.h"
+
 namespace cmd {
 using namespace frc2::cmd;
-/**
- * Command to align to Apriltag with y offset (to match left or right of reef)
- * @param side align to left: 1, align to right: 2
- * @return A command that will align to the tag when executed.* 3.500_m, 3.870
- */
-
-frc2::CommandPtr YAlignWithTarget(SubVision::Side side) 
-{
-  static frc::Pose2d targetPose;
-  return SubDrivebase::GetInstance()
-      .Drive(
-          [side] {
-            targetPose = SubVision::GetInstance().GetReefPose(side,-1);
-            frc::ChassisSpeeds speeds =
-                SubDrivebase::GetInstance().CalcDriveToPoseSpeeds(targetPose);
-
-            return speeds;
-          },
-          true)
-      .AlongWith(Run([]{ frc::SmartDashboard::PutNumber("Drivebase/targetpose", targetPose.X().value()); }))
-      .Until([] {
-        return SubDrivebase::GetInstance().IsAtPose(targetPose);
-      })
-      .AndThen(SubDrivebase::GetInstance().Drive(
-          [] { return frc::ChassisSpeeds{0_mps, 0.15_mps, 0_deg_per_s}; }, false));
-}
 
 frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
   // Strafe until the tag is at a known scoring angle, with a small velocity component towards the
@@ -72,8 +50,7 @@ frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
           Logger::Log("Vision/Target Pole", side == SubVision::Side::Left ? "Left":"Right");
           
           // rotation componet
-          frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(side,-1).Rotation();
-          using ds = frc::DriverStation;
+          frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(-1, side).Rotation();
 
           units::angle::turn_t roterror = SubDrivebase::GetInstance().GetPose().Rotation().Degrees() - targetRotation.Degrees();
           auto rotationSpeed = SubDrivebase::GetInstance().CalcRotateSpeed(roterror) / 5;
@@ -81,8 +58,7 @@ frc2::CommandPtr ForceAlignWithTarget(SubVision::Side side) {
           return frc::ChassisSpeeds{xVel, yVel, rotationSpeed};
           
         } else {
-          frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(side,-1).Rotation();
-          using ds = frc::DriverStation;
+          frc::Rotation2d targetRotation = SubVision::GetInstance().GetReefPose(-1, side).Rotation();
           units::angle::turn_t roterror = SubDrivebase::GetInstance().GetAllianceRelativeGyroAngle().Degrees() - targetRotation.Degrees();
           auto rotationSpeed = SubDrivebase::GetInstance().CalcRotateSpeed(roterror) / 5;
           return frc::ChassisSpeeds{0_mps, 0.5_mps, rotationSpeed};
@@ -172,8 +148,8 @@ frc2::CommandPtr AutoShootIfAligned(SubVision::Side side) {
     WaitUntil([side] {
       units::degree_t goalAngle = SubVision::GetInstance().GetReefAlignAngle(side);
       units::degree_t tagAngle = SubVision::GetInstance().GetLastReefTagAngle();
-      double visionTolerance = Logger::Tune("AutoShoot/AutoShootVisionTolerance", 0.5);
-      double drivebaseTolerance = Logger::Tune("AutoShoot/AutoShootDrivebaseTolerance", 0.01);
+      double visionTolerance = Logger::Tune("AutoShoot/AutoShootVisionTolerance", 4.0);
+      double drivebaseTolerance = Logger::Tune("AutoShoot/AutoShootDrivebaseTolerance", 0.2);
       Logger::Log("AutoShoot/errorangle", (goalAngle-tagAngle).value());
      
       bool inTagAngleRange = false; 
@@ -241,5 +217,51 @@ frc2::CommandPtr AutoShootIfKindaAligned(SubVision::Side side) {
   );
 }
 
+frc2::CommandPtr TeleAlignAndShoot(SubVision::Side side) {
+  static frc::Pose2d targetAwayPose;
+  static frc::Pose2d targetTagPose;
+  static frc::Pose2d awayPose;
+  static units::meter_t initialDistance = 0_m;
+
+  //Prepare all positions
+  return RunOnce([side] {
+    int tagId = SubVision::GetInstance().GetClosestTag(SubDrivebase::GetInstance().GetPose());
+    targetTagPose = SubVision::GetInstance().GetReefPose(tagId, side);
+    targetAwayPose = SubVision::GetInstance().CalculateRelativePose(targetTagPose,0_m,-0.4_m);
+    initialDistance = SubDrivebase::GetInstance().TranslationPosDistance(targetAwayPose)*1_m;
+    frc::SmartDashboard::PutNumber("Closest tag", tagId);
+    SubDrivebase::GetInstance().DisplayPose("Vision 3d align pose", targetAwayPose);
+    SubDrivebase::GetInstance().DisplayPose("Vision 3d align target pose", targetTagPose);
+  })
+  // Drive to roughly half a meter away from pose
+  .AndThen(
+    SubDrivebase::GetInstance().DriveToPose([](){return targetAwayPose;}, 3)
+    .DeadlineFor(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetAwayPose, initialDistance);}, frc::Color::kAliceBlue)))
+  // Bring elevator up
+  .AndThen(
+    cmd::SetElevatorPosition([](){return SubElevator::GetInstance().GetPresetHeight();},true)
+    .AndThen(
+    [] {initialDistance = SubDrivebase::GetInstance().TranslationPosDistance(targetTagPose)*1_m;})
+  // Drive close to reef
+  .AndThen(
+    SubDrivebase::GetInstance().DriveToPose([](){return targetTagPose;}, 0.5)
+    .DeadlineFor(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetTagPose, initialDistance);}, frc::Color::kGreen)))
+  //Score coral
+  .AndThen(SubEndEffector::GetInstance().ScoreCoral().WithTimeout(0.4_s))
+  // Drive back to half meter away
+  .AndThen(
+    [] {initialDistance = SubDrivebase::GetInstance().TranslationPosDistance(targetAwayPose)*1_m;}
+  ).AndThen(
+    SubDrivebase::GetInstance().DriveToPose([](){return targetAwayPose;}, 1)
+    .DeadlineFor(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetAwayPose, initialDistance);}, frc::Color::kWhiteSmoke)))
+  // Lower elevator
+  .AndThen(SubElevator::GetInstance().CmdSetSource()));
+}
 
 }  // namespace cmd
+
+
+
+
+
+
