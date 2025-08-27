@@ -407,6 +407,12 @@ void SubDrivebase::SetTeleopPathPose(int apriltag, int side) {
   }
   _teleopPathPose.first = apriltag;
   _teleopPathPose.second = side;
+  Logger::Log("Drivebase/TeleopStoredPathPose/apriltag", (double)_teleopPathPose.first);
+  if (_teleopPathPose.second == 0) {
+    Logger::Log("Drivebase/TeleopStoredPathPose/side", "left");
+  } else {
+    Logger::Log("Drivebase/TeleopStoredPathPose/side", "right");
+  }
 }
 
 std::pair<int, int> SubDrivebase::GetTeleopPathPose() {
