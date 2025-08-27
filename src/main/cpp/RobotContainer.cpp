@@ -125,7 +125,10 @@ void RobotContainer::ConfigureBindings() {
   _driverController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
   _driverController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
   // SubDrivebase::GetInstance().GetPose() is a y
-  _driverController.POVUp().OnTrue(cmd::ScoreWithTeleop(SubVision::Left, 20));
+  _driverController.POVUp().OnTrue(cmd::ScoreAtStoredPoseWithTeleop());
+  _driverController.POVLeft().OnTrue(frc2::cmd::Run([]{ return cmd::CycleStoredPose(1); }));
+  _driverController.POVLeft().OnTrue(frc2::cmd::Run([]{ return cmd::CycleStoredPose(-1); }));
+
   _driverController.POVDown().OnTrue(cmd::AutonSubSystemsZeroSequence());
 
   // Triggers

@@ -20,7 +20,7 @@ namespace cmd {
     frc2::CommandPtr ScoreWithVision(SubVision::Side side);
 
     frc2::CommandPtr ScoreWithTeleop(SubVision::Side side, int pose);
-    frc2::CommandPtr ScoreAtStoredPoseWithTeleop(SubVision::Side side, int pose);
+    frc2::CommandPtr ScoreAtStoredPoseWithTeleop();
     void CycleStoredPose(int offset);
     
     frc2::CommandPtr Score(int side);
