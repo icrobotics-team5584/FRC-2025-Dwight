@@ -14,6 +14,7 @@
 #include "RobotContainer.h"
 #include <frc/geometry/Translation2d.h>
 #include "utilities/LEDHelper.h"
+#include <map>
 
 SubDrivebase::SubDrivebase() {
   frc::SmartDashboard::PutData("Drivebase/Teleop PID/Rotation Controller",
@@ -91,7 +92,6 @@ void SubDrivebase::Periodic() {
   frc::SmartDashboard::PutNumber("Drivebase/AccelerationY", _gyro.GetAccelerationY().GetValueAsDouble()); // smashed into reef with -1.2g and -0.4g 
   frc::SmartDashboard::PutNumber("Drivebase/AccelerationZ", _gyro.GetAccelerationZ().GetValueAsDouble()); // normal driving goes up to around the same -1.0g
   frc::SmartDashboard::PutNumber("Drivebase/IsCollision", SubDrivebase::GetInstance().IsCollision());
-  frc::SmartDashboard::PutString("Drivebase/SlippingModule", SubDrivebase::GetInstance().GetSlippingModule());
 
   auto loopStart = frc::GetTime();
   frc::SmartDashboard::PutNumber("Drivebase/GyroAngle/Roll", SubDrivebase::GetInstance().GetRoll().value());
@@ -673,7 +673,7 @@ units::radians_per_second_t SubDrivebase::GetRobotRotationFromStates
   return omega;
 }
 
-std::string SubDrivebase::GetSlippingModule()
+std::vector<SubDrivebase::slippingModule> SubDrivebase::GetSlippingModule()
 {
   double SlipSpeed = 0.5; // in mps
 
@@ -714,31 +714,27 @@ std::string SubDrivebase::GetSlippingModule()
 
   double avgTrans = (flTrans.value() + frTrans.value() + blTrans.value() + brTrans.value()) / 4.0;
 
-  double flDifference = abs(flTrans.value() - avgTrans);
-  double frDifference = abs(frTrans.value() - avgTrans);
-  double blDifference = abs(blTrans.value() - avgTrans);
-  double brDifference = abs(brTrans.value() - avgTrans);
+  // double maxValue = std::max({flTrans, frTrans, blTrans, brTrans}).value();
+  double minValue = std::min({flTrans, frTrans, blTrans, brTrans}).value();
+  
+  std::map<slippingModule, units::meters_per_second_t> slippingMap = {
+    {FR, frTrans},
+    {FL, frTrans},
+    {BR, brTrans},
+    {BL, blTrans}
+  };
 
-  Logger::Log("Drivebase/SlippingModule/flDifferenceFromAvg", flDifference);
-  Logger::Log("Drivebase/SlippingModule/frDifferenceFromAvg", frDifference);
-  Logger::Log("Drivebase/SlippingModule/blDifferenceFromAvg", blDifference);
-  Logger::Log("Drivebase/SlippingModule/brDifferenceFromAvg", brDifference);
+  std::vector<slippingModule> slippingModules;
 
-  double maxDifference = std::max({flDifference, frDifference, blDifference, brDifference});
-  if( maxDifference < SlipSpeed ) {
-    return "None";
+  double _threshold = 0.5;
+
+  for (auto translation : slippingMap){
+    if ((translation.second - minValue) > _threshold){
+      slippingModules.push_back(translation.first);
+    };
   }
 
-  if (maxDifference == flDifference) {
-    return "fl";
-  } else if (maxDifference == frDifference) {
-    return "fr";
-  } else if (maxDifference == blDifference) {
-    return "bl";
-  } else if (maxDifference == brDifference) {
-    return "br";
-  }
-  return "Error"; //incase something goes wrong!!!
+  return slippingModules;
 }
 
   

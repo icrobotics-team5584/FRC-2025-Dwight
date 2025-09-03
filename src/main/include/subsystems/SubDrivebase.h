@@ -91,8 +91,6 @@ class SubDrivebase : public frc2::SubsystemBase {
   units::radians_per_second_t GetRobotRotationFromStates
   (frc::SwerveModuleState fl, frc::SwerveModuleState fr, frc::SwerveModuleState bl, frc::SwerveModuleState br);
 
-  std::string GetSlippingModule();
-
   // Constants
   static constexpr units::meters_per_second_t MAX_VELOCITY = 5_mps;
   static constexpr units::meters_per_second_t MAX_DRIVE_TO_POSE_VELOCITY = 1_mps;
@@ -184,6 +182,22 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc::SlewRateLimiter<units::scalar> _xStickLimiter{_tunedMaxJoystickAccel / 1_s};
   frc::SlewRateLimiter<units::scalar> _yStickLimiter{_tunedMaxJoystickAccel / 1_s};
   frc::SlewRateLimiter<units::scalar> _rotStickLimiter{_tunedMaxAngularJoystickAccel / 1_s};
+
+  //Slip detection
+
+  enum slippingModule {
+    BR,
+    BL,
+    FR,
+    FL
+  };
+
+  std::vector<slippingModule> GetSlippingModule();
+
+  bool FLSlipping = false;
+  bool FRSlipping = false;
+  bool BLSlipping = false;
+  bool BRSlipping = false;
 
   // Sysid
   frc2::sysid::SysIdRoutine _sysIdRoutine{
