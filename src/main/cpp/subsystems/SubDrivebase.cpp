@@ -88,6 +88,11 @@ SubDrivebase::SubDrivebase() {
 }
 
 void SubDrivebase::Periodic() {
+  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FLIsSlipping", FLSlipping);
+  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FRIsSlipping", FRSlipping);
+  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BLIsSlipping", BLSlipping);
+  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BRIsSlipping", BRSlipping);
+  
   frc::SmartDashboard::PutNumber("Drivebase/AccelerationX", _gyro.GetAccelerationX().GetValueAsDouble());
   frc::SmartDashboard::PutNumber("Drivebase/AccelerationY", _gyro.GetAccelerationY().GetValueAsDouble()); // smashed into reef with -1.2g and -0.4g 
   frc::SmartDashboard::PutNumber("Drivebase/AccelerationZ", _gyro.GetAccelerationZ().GetValueAsDouble()); // normal driving goes up to around the same -1.0g
@@ -675,7 +680,7 @@ units::radians_per_second_t SubDrivebase::GetRobotRotationFromStates
 
 std::vector<SubDrivebase::slippingModule> SubDrivebase::GetSlippingModule()
 {
-  double SlipSpeed = 0.5; // in mps
+  // double SlipSpeed = 0.5; // in mps
 
   auto flFull = _frontLeft.GetState();
   auto frFull = _frontRight.GetState();
@@ -702,20 +707,20 @@ std::vector<SubDrivebase::slippingModule> SubDrivebase::GetSlippingModule()
   auto blTransVector = blFullVector - blRotVector;
   auto brTransVector = brFullVector - brRotVector;
 
-  auto flTrans = flTransVector.Norm();
-  auto frTrans = frTransVector.Norm();
-  auto blTrans = blTransVector.Norm();
-  auto brTrans = brTransVector.Norm();
+  units::meters_per_second_t flTrans = flTransVector.Norm().value()*1_mps;
+  units::meters_per_second_t frTrans = frTransVector.Norm().value()*1_mps;
+  units::meters_per_second_t blTrans = blTransVector.Norm().value()*1_mps;
+  units::meters_per_second_t brTrans = brTransVector.Norm().value()*1_mps;
 
   Logger::Log("Drivebase/SlippingModule/flTrans", flTrans.value());
   Logger::Log("Drivebase/SlippingModule/frTrans", frTrans.value());
   Logger::Log("Drivebase/SlippingModule/blTrans", blTrans.value());
   Logger::Log("Drivebase/SlippingModule/brTrans", brTrans.value());
 
-  double avgTrans = (flTrans.value() + frTrans.value() + blTrans.value() + brTrans.value()) / 4.0;
+  // double avgTrans = (flTrans.value() + frTrans.value() + blTrans.value() + brTrans.value()) / 4.0;
 
   // double maxValue = std::max({flTrans, frTrans, blTrans, brTrans}).value();
-  double minValue = std::min({flTrans, frTrans, blTrans, brTrans}).value();
+  units::meters_per_second_t minValue = std::min({flTrans, frTrans, blTrans, brTrans});
   
   std::map<slippingModule, units::meters_per_second_t> slippingMap = {
     {FR, frTrans},
@@ -726,12 +731,44 @@ std::vector<SubDrivebase::slippingModule> SubDrivebase::GetSlippingModule()
 
   std::vector<slippingModule> slippingModules;
 
-  double _threshold = 0.5;
+  units::meters_per_second_t _threshold = 0.5_mps;
 
-  for (auto translation : slippingMap){
-    if ((translation.second - minValue) > _threshold){
-      slippingModules.push_back(translation.first);
-    };
+  for (auto translation : slippingMap) {
+      if ((translation.second - minValue) > _threshold) {
+          slippingModules.push_back(translation.first);
+
+          // Set the respective boolean to true
+          switch (translation.first) {
+              case FL:
+                  FLSlipping = true;
+                  break;
+              case FR:
+                  FRSlipping = true;
+                  break;
+              case BL:
+                  BLSlipping = true;
+                  break;
+              case BR:
+                  BRSlipping = true;
+                  break;
+          }
+      } else {
+          // Set the respective boolean to false
+          switch (translation.first) {
+              case FL:
+                  FLSlipping = false;
+                  break;
+              case FR:
+                  FRSlipping = false;
+                  break;
+              case BL:
+                  BLSlipping = false;
+                  break;
+              case BR:
+                  BRSlipping = false;
+                  break;
+          }
+      }
   }
 
   return slippingModules;
