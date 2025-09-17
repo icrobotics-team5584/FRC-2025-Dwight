@@ -5,6 +5,7 @@
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <frc/kinematics/SwerveDriveOdometry.h>
 #include <frc/estimator/SwerveDrivePoseEstimator.h>
+#include "utilities/ICSwerveDrivePoseEstimator.h"
 #include <frc/smartdashboard/Field2d.h>
 #include <frc/filter/SlewRateLimiter.h>
 #include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
@@ -155,7 +156,7 @@ class SubDrivebase : public frc2::SubsystemBase {
       );
 
   // Pose estimation
-  frc::SwerveDrivePoseEstimator<4> _poseEstimator{
+  ICSwerveDrivePoseEstimator<4> _poseEstimator{
       _kinematics,
       _gyro.GetRotation2d(),
       {frc::SwerveModulePosition{0_m, _frontLeft.GetAngle()},
