@@ -92,6 +92,7 @@ void SubDrivebase::Periodic() {
   frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FRIsSlipping", FRSlipping);
   frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BLIsSlipping", BLSlipping);
   frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BRIsSlipping", BRSlipping);
+  SubDrivebase::GetInstance().GetSlippingModule();
   
   frc::SmartDashboard::PutNumber("Drivebase/AccelerationX", _gyro.GetAccelerationX().GetValueAsDouble());
   frc::SmartDashboard::PutNumber("Drivebase/AccelerationY", _gyro.GetAccelerationY().GetValueAsDouble()); // smashed into reef with -1.2g and -0.4g 
@@ -719,7 +720,7 @@ std::vector<SubDrivebase::slippingModule> SubDrivebase::GetSlippingModule()
 
   // double avgTrans = (flTrans.value() + frTrans.value() + blTrans.value() + brTrans.value()) / 4.0;
 
-  // double maxValue = std::max({flTrans, frTrans, blTrans, brTrans}).value();
+  units::meters_per_second_t maxValue = std::max({flTrans, frTrans, blTrans, brTrans});
   units::meters_per_second_t minValue = std::min({flTrans, frTrans, blTrans, brTrans});
   
   std::map<slippingModule, units::meters_per_second_t> slippingMap = {
@@ -770,6 +771,8 @@ std::vector<SubDrivebase::slippingModule> SubDrivebase::GetSlippingModule()
           }
       }
   }
+
+  SlipRatio = maxValue/minValue;
 
   return slippingModules;
 }

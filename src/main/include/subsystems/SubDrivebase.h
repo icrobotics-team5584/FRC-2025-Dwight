@@ -162,7 +162,8 @@ class SubDrivebase : public frc2::SubsystemBase {
        frc::SwerveModulePosition{0_m, _frontRight.GetAngle()},
        frc::SwerveModulePosition{0_m, _backLeft.GetAngle()},
        frc::SwerveModulePosition{0_m, _backRight.GetAngle()}},
-      frc::Pose2d()};
+      frc::Pose2d(),
+      {0.1, 0.1, 0.1}, {0.9, 0.9, 0.9}};
 
   frc::Field2d _fieldDisplay;
 
@@ -198,6 +199,8 @@ class SubDrivebase : public frc2::SubsystemBase {
   bool FRSlipping = false;
   bool BLSlipping = false;
   bool BRSlipping = false;
+
+  double SlipRatio;
 
   // Sysid
   frc2::sysid::SysIdRoutine _sysIdRoutine{
