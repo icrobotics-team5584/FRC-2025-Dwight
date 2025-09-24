@@ -96,10 +96,6 @@ void NeoIO::ConfigDriveMotor() {
 
 }
 
-void ThreadOdometryMain() {
-  ; /* No Threading on Neo Motors */
-}
-
 frc::SwerveModulePosition NeoIO::GetPosition() {
   units::meter_t distance = _canDriveMotor.GetPosition().value() * WHEEL_CIRCUMFERENCE;
   return {distance, GetAngle()};

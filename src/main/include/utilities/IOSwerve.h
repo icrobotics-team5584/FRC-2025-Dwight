@@ -29,7 +29,6 @@ class SwerveIO {
     virtual void UpdateSim(units::second_t deltaTime) = 0;
     virtual void SetNeutralMode(bool brakeModeToggle) = 0;
     virtual void ConfigDriveMotor() = 0;
-    virtual void ThreadOdometryMain() = 0;
     virtual frc::SwerveModulePosition GetPosition() = 0;
     virtual frc::Rotation2d GetAngle() = 0;
     virtual units::meters_per_second_t GetSpeed() = 0;

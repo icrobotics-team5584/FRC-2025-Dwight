@@ -21,6 +21,7 @@
 #include <utilities/IOSwerve.h>
 #include <frc/system/plant/LinearSystemId.h>
 
+
 class SwerveModule {
  public:
   SwerveModule(int canDriveMotorID, int canTurnMotorID, int canTurnEncoderID, units::turn_t cancoderMagOffset); 
@@ -37,7 +38,6 @@ class SwerveModule {
   void SetBreakMode(bool enableBreakMode);
   void ConfigTurnMotor();
   void ConfigDriveMotor();
-  void ThreadOdometryMain();
   frc::SwerveModulePosition GetPosition();
   frc::Rotation2d GetAngle();
   frc::Rotation2d GetCanCoderAngle();

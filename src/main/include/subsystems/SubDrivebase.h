@@ -1,7 +1,6 @@
 #pragma once
 
 #include <frc2/command/SubsystemBase.h>
-#include <thread>
 #include <frc/geometry/Translation2d.h>
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <frc/kinematics/SwerveDriveOdometry.h>
@@ -126,8 +125,6 @@ class SubDrivebase : public frc2::SubsystemBase {
       BotVars::Choose(-0.353515625, -0.94921875) * 1_tr;
 
   frc::DigitalInput _toggleBrakeCoast{dio::BRAKE_COAST_BUTTON};
-
-  std::thread odometryThread;
 
   SwerveModule _frontLeft{canid::DRIVEBASE_FRONT_LEFT_DRIVE, canid::DRIVEBASE_FRONT_LEFT_TURN,
                           canid::DRIVEBASE_FRONT_LEFT_ENCODER, (FRONT_LEFT_MAG_OFFSET)};
