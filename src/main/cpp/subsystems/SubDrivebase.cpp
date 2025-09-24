@@ -84,6 +84,12 @@ SubDrivebase::SubDrivebase() {
 
       // Reference to this subsystem to set requirements
       this);
+
+  odometryThread = std::thread(SwerveModule::ThreadOdometryMain);
+  if (BotVars::GetRobot() != BotVars::COMP) {
+    /* Off-Season robot uses NEO motors, which we don't do multithreading with*/
+    odometryThread.join();
+  }
 }
 
 void SubDrivebase::Periodic() {
@@ -129,7 +135,10 @@ void SubDrivebase::Periodic() {
   _backLeft.SendSensorsToDash();
   _backRight.SendSensorsToDash();
 
-  UpdateOdometry();
+  /* Spud (Comp) uses threaded odometry */
+  if (BotVars::GetRobot() != BotVars::COMP) {
+    UpdateOdometry();
+  }
   frc::SmartDashboard::PutNumber("Drivebase/loop time (sec)", (frc::GetTime() - loopStart).value());
 }
 

@@ -16,6 +16,7 @@ class NeoIO : public SwerveIO{
     void UpdateSim(units::second_t deltaTime) override;
     void SetNeutralMode(bool brakeModeToggle) override;
     void ConfigDriveMotor() override;
+    void ThreadOdometryMain() override;
     frc::SwerveModulePosition GetPosition() override;
     frc::Rotation2d GetAngle() override;
     units::meters_per_second_t GetSpeed() override;

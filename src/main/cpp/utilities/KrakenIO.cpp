@@ -103,6 +103,9 @@ void KrakenIO::ConfigDriveMotor() {
     _canDriveMotor.GetConfigurator().Apply(_configDriveMotor);
 }
 
+void KrakenIO::ThreadOdometryMain() {
+}
+
 frc::SwerveModulePosition KrakenIO::GetPosition() {
     auto wheelRot = ctre::phoenix6::BaseStatusSignal::GetLatencyCompensatedValue(
         _canDriveMotor.GetPosition(), _canDriveMotor.GetVelocity());
