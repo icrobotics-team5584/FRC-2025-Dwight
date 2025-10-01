@@ -131,7 +131,7 @@ units::radian_t KrakenIO::GetDrivenRotations() {
     return _canDriveMotor.GetPosition().GetValue();
 }
 
-std::array<ctre::phoenix6::BaseStatusSignal, 4> KrakenIO::getSignals() {
+std::array<ctre::phoenix6::BaseStatusSignal, 4> KrakenIO::GetSignals() {
     return _allSignals;
 }
 

@@ -22,7 +22,7 @@ class NeoIO : public SwerveIO{
     units::volt_t GetDriveVoltage() override;
     frc::SwerveModuleState GetState() override;
     units::radian_t GetDrivenRotations() override;
-    std::array<ctre::phoenix6::BaseStatusSignal, 4> getSignals() override;
+    std::array<ctre::phoenix6::BaseStatusSignal, 4> GetSignals() override;
 
     const double TURNING_GEAR_RATIO = 150.0 / 7.0;
     const double DRIVE_GEAR_RATIO = 6.75; // L2 - Fast kit
