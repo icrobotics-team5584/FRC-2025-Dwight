@@ -26,6 +26,7 @@ SubElevator::SubElevator() {
   _motorConfig.Slot0.kV = _V;
   _motorConfig.Slot0.kA = _A;
   _motorConfig.Slot0.kG = _G;
+  _motorConfig.Slot0.kS = _S;
 
   // Voltage Configuration
   _motorConfig.Voltage.PeakForwardVoltage = 0_V;
@@ -53,11 +54,16 @@ SubElevator::SubElevator() {
   // Feedback Sensor Ratio
   _motorConfig.Feedback.SensorToMechanismRatio = _GEAR_RATIO;
 
-  // Motion Magic ConfigurationS
-  _motorConfig.MotionMagic.MotionMagicCruiseVelocity =
-      _CRUISE_VELOCITY.value() / _DRUM_CIRCUMFERENCE.value() * 1_tr / 1_s;  // Adjust
-  _motorConfig.MotionMagic.MotionMagicAcceleration =
-      _ACCELERATION.value() / _DRUM_CIRCUMFERENCE.value() * 1_tr / 1_s / 1_s;  // Adjust
+  // // Motion Magic Configurations
+  // _motorConfig.MotionMagic.MotionMagicCruiseVelocity =
+  //     _CRUISE_VELOCITY.value() / _DRUM_CIRCUMFERENCE.value() * 1_tr / 1_s;  // Adjust
+  // _motorConfig.MotionMagic.MotionMagicAcceleration =
+  //     _ACCELERATION.value() / _DRUM_CIRCUMFERENCE.value() * 1_tr / 1_s / 1_s;  // Adjust
+
+  // New Exponential motion profile configuration
+  _motorConfig.MotionMagic.MotionMagicExpo_kA = _A * 1_V / 1_tr_per_s_sq;
+  _motorConfig.MotionMagic.MotionMagicExpo_kV = _V * 1_V / 1_tps;
+  _motorConfig.MotionMagic.MotionMagicCruiseVelocity = 0_tps;
 
   _elevatorMotor1.GetConfigurator().Apply(_motorConfig);
   _elevatorMotor2.GetConfigurator().Apply(_motorConfig);
@@ -329,6 +335,10 @@ void SubElevator::SetBrakeMode(bool mode) {
 
 // This method will be called once per scheduler run
 void SubElevator::Periodic() {
+
+  Logger::Tune("Elevator/Exponential/kA", _A);
+  Logger::Tune("Elevator/Exponential/kV", _V);
+
   Logger::LogFalcon("Elevator/Motor1", _elevatorMotor1);
 
   Logger::LogFalcon("Elevator/Motor2", _elevatorMotor2);

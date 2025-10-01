@@ -67,6 +67,8 @@ class SubElevator : public frc2::SubsystemBase {
   void Periodic() override;
   void SimulationPeriodic() override;
 
+  void UpdateExponentialConstants();
+
   units::length::meter_t _autoScoreHeight = 1.412_m;
 
   units::meter_t _targetHeight = 0_m;
@@ -95,6 +97,7 @@ class SubElevator : public frc2::SubsystemBase {
   static constexpr double _I = 0;
   static constexpr double _D = 0.2;
 
+  static constexpr double _S = 0;
   static constexpr double _V = 0;
   static constexpr double _A = 0;
   static constexpr double _G = 0.15;  // 8.6704096794128409086;
