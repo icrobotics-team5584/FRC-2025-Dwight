@@ -35,4 +35,5 @@ class SwerveIO {
     virtual units::volt_t GetDriveVoltage() = 0;
     virtual frc::SwerveModuleState GetState() = 0;
     virtual units::radian_t GetDrivenRotations() = 0;
+    virtual std::array<ctre::phoenix6::BaseStatusSignal, 4> getSignals() = 0;
 };

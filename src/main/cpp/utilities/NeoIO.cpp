@@ -124,3 +124,7 @@ frc::SwerveModuleState NeoIO::GetState() {
 units::radian_t NeoIO::GetDrivenRotations() {
   return _canDriveMotor.GetPosition();
 }
+
+std::array<ctre::phoenix6::BaseStatusSignal, 4> getSignals() {
+  ;
+};
