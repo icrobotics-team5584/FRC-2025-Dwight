@@ -131,6 +131,10 @@ units::radian_t KrakenIO::GetDrivenRotations() {
     return _canDriveMotor.GetPosition().GetValue();
 }
 
+std::array<ctre::phoenix6::BaseStatusSignal, 4> KrakenIO::getSignals() {
+    return _allSignals;
+}
+
 void KrakenIO::UpdateSim(units::second_t deltaTime) {
     // Drive motor
     auto& driveState = _canDriveMotor.GetSimState();
