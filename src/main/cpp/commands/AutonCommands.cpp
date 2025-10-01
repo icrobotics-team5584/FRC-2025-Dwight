@@ -10,6 +10,7 @@
 #include <pathplanner/lib/pathfinding/Pathfinding.h>
 #include <pathplanner/lib/auto/NamedCommands.h>
 #include <pathplanner/lib/auto/AutoBuilder.h>
+#include <pathplanner/lib/pathfinding/Pathfinder.h>
 
 #include "subsystems/SubEndEffector.h"
 #include "subsystems/SubDrivebase.h"
@@ -24,6 +25,8 @@
 
 #include "utilities/ICgeometry.h"
 
+#include "utilities/LEDHelper.h"
+
 namespace cmd {
 frc2::CommandPtr AutonSubSystemsZeroSequence() {
   return frc2::cmd::Parallel(SubElevator::GetInstance().ElevatorAutoReset(),
@@ -31,9 +34,9 @@ frc2::CommandPtr AutonSubSystemsZeroSequence() {
 }
 
 frc2::CommandPtr GenerateTeleopPath(frc::Pose2d startpose, frc::Pose2d endpose) {
-    pathplanner::PathConstraints constraints(1.0_mps,          // max_speed
-                                             1.0_mps_sq,       // max_accel
-                                             360_deg_per_s,    // max_rotspeed
+    pathplanner::PathConstraints constraints(3.0_mps,          // max_speed
+                                             3.0_mps_sq,       // max_accel
+                                             290_deg_per_s,    // max_rotspeed
                                              360_deg_per_s_sq  // max_rotaccel
     );
 
@@ -62,7 +65,8 @@ frc2::CommandPtr ScoreWithTeleop(SubVision::Side side, int pose) {
   frc::Pose2d curpose = SubDrivebase::GetInstance().GetPose();
   frc::Pose2d endpose = SubVision::GetInstance().GetReefPose(pose, side);
   return GenerateTeleopPath(curpose, endpose)
-    .AndThen(ScoreWithVision(side));
+  .AndThen(LEDHelper::GetInstance().FlashColour(frc::Color::kOrange));
+    // .AndThen(ScoreWithVision(side));
 }
 
 frc2::CommandPtr ScoreAtStoredPoseWithTeleop() {
