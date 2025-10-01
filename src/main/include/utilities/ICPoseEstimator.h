@@ -42,6 +42,7 @@ namespace ic {
  * @tparam WheelSpeeds Wheel speeds type.
  * @tparam WheelPositions Wheel positions type.
  */
+
 template <typename WheelSpeeds, typename WheelPositions>
 class ICPoseEstimator {
  public:
@@ -84,8 +85,10 @@ class ICPoseEstimator {
    *     radians). Increase these numbers to trust the vision pose measurement
    *     less.
    */
+  wpi::array<double, 3> _pastVisionStdDevs{wpi::empty_array};
   void SetVisionMeasurementStdDevs(
       const wpi::array<double, 3>& visionMeasurementStdDevs) {
+    _pastVisionStdDevs = visionMeasurementStdDevs;
     wpi::array<double, 3> r{wpi::empty_array};
     for (size_t i = 0; i < 3; ++i) {
       r[i] = visionMeasurementStdDevs[i] * visionMeasurementStdDevs[i];
@@ -93,7 +96,8 @@ class ICPoseEstimator {
 
     // Solve for closed form Kalman gain for continuous Kalman filter with A = 0
     // and C = I. See wpimath/algorithms.md.
-    for (size_t row = 0; row < 3; ++row) {
+    for (size_t row = 
+    0; row < 3; ++row) {
       if (m_q[row] == 0.0) {
         m_visionK(row, row) = 0.0;
       } else {
@@ -102,6 +106,14 @@ class ICPoseEstimator {
       }
     }
   }
+  
+  void SetStateStdDevs(
+      const wpi::array<double, 3>& stateStdDevs) {
+    for (size_t i = 0; i < 3; ++i) {
+      m_q[i] = stateStdDevs[i] * stateStdDevs[i];
+    }
+    SetVisionMeasurementStdDevs(_pastVisionStdDevs);
+    }
 
   /**
    * Resets the robot's position on the field.

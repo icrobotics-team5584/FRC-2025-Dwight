@@ -771,9 +771,6 @@ std::vector<SubDrivebase::slippingModule> SubDrivebase::GetSlippingModule()
           }
       }
   }
-
-  SlipRatio = maxValue/minValue;
-
   return slippingModules;
 }
 

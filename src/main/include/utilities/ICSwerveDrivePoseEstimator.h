@@ -16,7 +16,6 @@
 #include "frc/kinematics/SwerveDriveOdometry.h"
 #include "units/time.h"
 
-
 /**
  * This class wraps Swerve Drive Odometry to fuse latency-compensated
  * vision measurements with swerve drive encoder distance measurements. It is
