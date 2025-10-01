@@ -19,6 +19,7 @@
 #include "subsystems/SubElevator.h"
 #include "subsystems/SubEndEffector.h"
 #include "subsystems/SubFunnel.h"
+#include "utilities/LEDHelper.h"
 
 RobotContainer::RobotContainer() {
   wpi::WebServer::GetInstance().Start(5800, frc::filesystem::GetDeployDirectory());
@@ -28,31 +29,37 @@ RobotContainer::RobotContainer() {
   // registar named commands
   pathplanner::NamedCommands::registerCommand("ScoreLeft-WithVision", cmd::ScoreWithVision(SubVision::Side::Left));
   pathplanner::NamedCommands::registerCommand("ScoreRight-WithVision", cmd::ScoreWithVision(SubVision::Side::Right));
+  pathplanner::NamedCommands::registerCommand("ScoreLeft-WithPrescription", cmd::ScoreWithPrescription(SubVision::Side::Left));
+  pathplanner::NamedCommands::registerCommand("ScoringElevatorCleanUp", SubElevator::GetInstance().CmdSetSource());
   pathplanner::NamedCommands::registerCommand("ScoreLeft", cmd::Score(1));
   pathplanner::NamedCommands::registerCommand("ScoreRight", cmd::Score(2));
   pathplanner::NamedCommands::registerCommand("SetElevatorL4", SubElevator::GetInstance().CmdSetL4());
   pathplanner::NamedCommands::registerCommand("BeginSourceIntake", cmd::AutonBeginSourceIntake());
   pathplanner::NamedCommands::registerCommand("EndSourceIntake", cmd::AutonEndSourceIntake());
-  
-  //.AndThen(cmd::ForceAlignWithTarget(1, _driverController).WithName("AutonAlignToSource"))
+
   pathplanner::NamedCommands::registerCommand("IntakeSource", cmd::IntakeFromSource());
   pathplanner::NamedCommands::registerCommand("AutonSubSystemsZeroSequence", cmd::AutonSubSystemsZeroSequence());
   
   // Default Commands
   SubDrivebase::GetInstance().SetDefaultCommand(cmd::TeleopDrive(_driverController));
   SubVision::GetInstance().SetDefaultCommand(cmd::AddVisionMeasurement());
+  // SubEndEffector::GetInstance().SetDefaultCommand(SubEndEffector::GetInstance().KeepCoralInEndEffector()); 
+
+  
 
   // Trigger Bindings
   ConfigureBindings();
 
   // AutoChooser options
-  _autoChooser.SetDefaultOption("Default-Move-Forward-4m-0.1ms", "MoveForward-4M-0.1ms"); // safety option
+  _autoChooser.SetDefaultOption("Default-Left", "Default-Score3L4-Vision");
+
   // main autons
   _autoChooser.AddOption("Default-Left", "Default-Score3L4-Vision");
   _autoChooser.AddOption("Left-4L4", "Default-Score4L4-Vision");
   _autoChooser.AddOption("Default-Right", "Right-Score3L4-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreLeft", "Default-Score1L4-G-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreRight", "Default-Score1L4-H-Vision");
+  _autoChooser.AddOption("Default-Move-Forward-4m-0.1ms", "MoveForward-4M-0.1ms");
 
   // tuning autons
   // _autoChooser.AddOption("L-Shape", "L-Shape");
@@ -105,7 +112,10 @@ std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {
   if (chosen == "Default-Score1L4-H-Vision") {
     return defaultMiddleScoreRight;
   }
-  return moveForward;
+  if (chosen == "MoveForward-4M-0.1ms") {
+    return moveForward;
+  }
+  return defaultLeft;
 }
 
 void RobotContainer::ConfigureBindings() {
@@ -118,11 +128,13 @@ void RobotContainer::ConfigureBindings() {
   // ));
   _driverController.A().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
-  _driverController.X().WhileTrue(SubDrivebase::GetInstance().GyroCoralLeftStationAlign(_driverController));
-  _driverController.B().WhileTrue(SubDrivebase::GetInstance().GyroCoralRightStationAlign(_driverController)); 
-  _driverController.RightBumper().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Right));
-  _driverController.LeftBumper().WhileTrue(cmd::ForceAlignWithTarget(SubVision::Left));
+  
+  _driverController.RightBumper().WhileTrue(SubDrivebase::GetInstance().GyroCoralLeftStationAlign(_driverController));
+  _driverController.LeftBumper().WhileTrue(SubDrivebase::GetInstance().GyroCoralRightStationAlign(_driverController)); 
+  _driverController.B().WhileTrue(cmd::TeleAlignAndShoot(SubVision::Side::Right));
+  _driverController.X().WhileTrue(cmd::TeleAlignAndShoot(SubVision::Side::Left));
   _driverController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
+  _driverController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
   _driverController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
   // SubDrivebase::GetInstance().GetPose() is a y
   _driverController.POVUp().OnTrue(cmd::ScoreAtStoredPoseWithTeleop());
@@ -146,13 +158,13 @@ void RobotContainer::ConfigureBindings() {
   (!_operatorController.Back() && _operatorController.A()).OnTrue(cmd::ClimbHalfwaySequence());  // Climb to halfway
   (_operatorController.Back() && _operatorController.A()).OnTrue(cmd::ClimbHalfwaySequence(true));  // Force climb halfway
 
-  (!_operatorController.Back() && _operatorController.X()).OnTrue(cmd::SetElevatorL2());  // Set L2 normally
+  (!_operatorController.Back() && _operatorController.X()).OnTrue(SubElevator::GetInstance().CmdSetAutoL2());  // Set AutoScore L2 normally
   (_operatorController.Back() && _operatorController.X()).OnTrue(cmd::SetElevatorL2(true));  // Force set L2
 
-  (!_operatorController.Back() && _operatorController.B()).OnTrue(cmd::SetElevatorL3());  // Set L3 normally
+  (!_operatorController.Back() && _operatorController.B()).OnTrue(SubElevator::GetInstance().CmdSetAutoL3());  // Set AutoScore L3 normally
   (_operatorController.Back() && _operatorController.B()).OnTrue(cmd::SetElevatorL3(true));  // Force set L3
 
-  (!_operatorController.Back() && _operatorController.Y()).OnTrue(cmd::SetElevatorL4());  // Set L4 normally
+  (!_operatorController.Back() && _operatorController.Y()).OnTrue(SubElevator::GetInstance().CmdSetAutoL4());  // Set AutoScore L4 normally
   (_operatorController.Back() && _operatorController.Y()).OnTrue(cmd::SetElevatorL4(true));  // Force set L4
 
   _operatorController.POVLeft().OnTrue(SubElevator::GetInstance().ElevatorAutoReset());
@@ -169,12 +181,12 @@ void RobotContainer::ConfigureBindings() {
   _operatorController.RightBumper().WhileTrue(cmd::Outtake());
   
   _operatorController.Start().WhileTrue(SubClimber::GetInstance().ClimberAutoReset());
-  _operatorController.LeftBumper().OnTrue(cmd::StowClimber());
+  _operatorController.RightStick().OnTrue(cmd::StowClimber());
 
-  // Rumble controller when end effector line break triggers
-  //  SubEndEffector::GetInstance().CheckLineBreakTriggerHigher().OnFalse(ControllerRumbleRight(_driverController).WithTimeout(0.1_s));
-  SubEndEffector::GetInstance().CheckLineBreakTriggerLower().OnFalse(
-      ControllerRumbleLeft(_driverController).WithTimeout(0.1_s));
+
+  _operatorController.LeftBumper().WhileTrue(cmd::AdjustCoral());
+
+  // SubEndEffector::GetInstance().CheckLineBreakTriggerLower().WhileTrue(LEDHelper::GetInstance().SetScrollingRainbow().IgnoringDisable(true));
 }
 
 // Controller rumble functions

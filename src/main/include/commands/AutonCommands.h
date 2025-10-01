@@ -23,6 +23,7 @@ namespace cmd {
     frc2::CommandPtr ScoreAtStoredPoseWithTeleop();
     void CycleStoredPose(int offset);
     
+    frc2::CommandPtr ScoreWithPrescription(SubVision::Side side);
     frc2::CommandPtr Score(int side);
     
     frc2::CommandPtr AutonBeginSourceIntake();

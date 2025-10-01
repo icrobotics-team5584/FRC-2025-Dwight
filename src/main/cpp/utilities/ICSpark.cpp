@@ -38,6 +38,8 @@ void ICSpark::InitSendable(wpi::SendableBuilder& builder) {
   builder.AddDoubleProperty("Gains/FF Rotational G Gain", [&] { return _feedforwardRotationalGravity.value(); },  [&](double rG) { SetFeedforwardRotationalGravity(rG*1_V); });
   builder.AddDoubleProperty("Motion Config/Max vel",      [&] { return _motionConstraints.maxVelocity.value(); },    [&](double vel) { SetMotionMaxVel(vel*1_tps); });
   builder.AddDoubleProperty("Motion Config/Max accel",    [&] { return _motionConstraints.maxAcceleration.value(); },[&](double accel) { SetMotionMaxAccel(accel*1_tr_per_s_sq); });
+  builder.AddDoubleProperty("OutputCurrent",              [&] { return GetMotorOutputCurrent().value(); },        nullptr);
+  builder.AddDoubleProperty("Temperature",                [&] { return GetTemperature().value(); },               nullptr);
   // clang-format on
 }
 
@@ -358,6 +360,14 @@ units::volt_t ICSpark::GetMotorVoltage() {
   } else {
     return _spark->GetAppliedOutput() * _spark->GetBusVoltage()*1_V;
   }
+}
+
+units::ampere_t ICSpark::GetMotorOutputCurrent() {
+  return _spark->GetOutputCurrent()*1_A;
+}
+
+units::celsius_t ICSpark::GetTemperature() {
+  return _spark->GetMotorTemperature() * 1_degC;
 }
 
 units::volt_t ICSpark::CalcSimVoltage() {

@@ -30,9 +30,35 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "ReefPoleFToRightSource.0"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "ReefPoleFToRightSource.0"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.4
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "ScoringElevatorCleanUp"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
         },
         {
@@ -64,6 +90,12 @@
           "type": "named",
           "data": {
             "name": "ScoreRight-WithVision"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoringElevatorCleanUp"
           }
         },
         {
@@ -101,6 +133,12 @@
           "type": "named",
           "data": {
             "name": "ScoreLeft-WithVision"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoringElevatorCleanUp"
           }
         }
       ]
