@@ -146,6 +146,6 @@ void SwerveModule::UpdateSim(units::second_t deltaTime) {
   _io->UpdateSim(deltaTime);
 }
 
-std::vector<ctre::phoenix6::BaseStatusSignal> SwerveModule::GetSignals() {
+std::vector<ctre::phoenix6::BaseStatusSignal*> SwerveModule::GetSignals() {
   return _io->GetSignals();
 };

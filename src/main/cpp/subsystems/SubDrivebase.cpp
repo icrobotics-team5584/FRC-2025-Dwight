@@ -416,8 +416,8 @@ void SubDrivebase::UpdateOdometry() {
 
 void SubDrivebase::OdometryThreadMain() {
   /* threadinit */
-  std::vector<ctre::phoenix6::BaseStatusSignal> allsignals;
-  std::vector<ctre::phoenix6::BaseStatusSignal> swervesignals[4] = {
+  std::vector<ctre::phoenix6::BaseStatusSignal*> allsignals;
+  std::vector<ctre::phoenix6::BaseStatusSignal*> swervesignals[4] = {
     _frontLeft.GetSignals(),
     _frontRight.GetSignals(),
     _backLeft.GetSignals(),
@@ -426,19 +426,42 @@ void SubDrivebase::OdometryThreadMain() {
   for (int i = 0; i < 4; i++) { /* appends swerve signals to allsignals */
     allsignals.insert(allsignals.end(), swervesignals[i].begin(), swervesignals[i].end());
   }
-  allsignals.push_back(_gyro.GetYaw());
-  allsignals.push_back(_gyro.GetAngularVelocityZWorld());
-  int sdaqs = 0;
-  int fdaqs = 0;
+  allsignals.push_back(&_gyro.GetYaw());
+  allsignals.push_back(&_gyro.GetAngularVelocityZWorld());
+  int succdaqs = 0;
+  int faildaqs = 0;
   
-  // private LinearFilter lowpass = LinearFilter.movingAverage(50);
+  frc::LinearFilter<double> lowpass = frc::LinearFilter<double>::MovingAverage(50);
   double lasttime = 0;
   double curtime = 0;
   double avglooptime = 0;
 
   /*threadrun*/
   for (int i = 0; i < allsignals.max_size(); i++) {
-    allsignals[i].SetUpdateFrequency(250_Hz);
+    allsignals[i]->SetUpdateFrequency(250_Hz);
+  }
+
+  while (true) {
+    ctre::phoenix::StatusCode status = ctre::phoenix6::BaseStatusSignal::WaitForAll(0.1_s, allsignals);
+    lasttime = curtime;
+    curtime = ctre::phoenix6::utils::GetCurrentTimeSeconds();
+    avglooptime = lowpass.Calculate(curtime - lasttime);
+
+    if (status.IsOK()) {
+      succdaqs++;
+    } else {
+      faildaqs++;
+    }
+
+  frc::SwerveModulePosition fl = _frontLeft.GetPosition();
+  frc::SwerveModulePosition fr = _frontRight.GetPosition();
+  frc::SwerveModulePosition bl = _backLeft.GetPosition();
+  frc::SwerveModulePosition br = _backRight.GetPosition();
+
+  units::angle::degree_t yawdeg = ctre::phoenix6::BaseStatusSignal::GetLatencyCompensatedValue(
+    _gyro.GetYaw(), 
+    _gyro.GetAngularVelocityZWorld());
+  _poseEstimator.Update(frc::Rotation2d(yawdeg), {fl, fr, bl, br});
   }
 }
 

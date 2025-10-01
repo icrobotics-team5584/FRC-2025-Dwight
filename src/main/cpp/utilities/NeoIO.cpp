@@ -125,6 +125,6 @@ units::radian_t NeoIO::GetDrivenRotations() {
   return _canDriveMotor.GetPosition();
 }
 
-std::vector<ctre::phoenix6::BaseStatusSignal> NeoIO::GetSignals() {
+std::vector<ctre::phoenix6::BaseStatusSignal*> NeoIO::GetSignals() {
   ;
 };
