@@ -13,6 +13,10 @@ KrakenIO::KrakenIO(int turnCanID, int driveCanID, int encoderCanID,
                    units::turn_t cancoderMagOffset) : _canTurnMotor(turnCanID),
                                                _canDriveMotor(driveCanID)
 {
+    _allSignals.push_back(_drivePositionSig);
+    _allSignals.push_back(_driveVelocitySig);
+    _allSignals.push_back(_steerPositionSig);
+    _allSignals.push_back(_steerVelocitySig);
 }
 
 void KrakenIO::ConfigTurnMotor() {
@@ -131,7 +135,7 @@ units::radian_t KrakenIO::GetDrivenRotations() {
     return _canDriveMotor.GetPosition().GetValue();
 }
 
-std::array<ctre::phoenix6::BaseStatusSignal, 4> KrakenIO::GetSignals() {
+std::vector<ctre::phoenix6::BaseStatusSignal> KrakenIO::GetSignals() {
     return _allSignals;
 }
 

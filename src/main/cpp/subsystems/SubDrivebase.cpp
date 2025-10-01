@@ -129,7 +129,10 @@ void SubDrivebase::Periodic() {
   _backLeft.SendSensorsToDash();
   _backRight.SendSensorsToDash();
 
-  UpdateOdometry();
+  /* Comp bot uses threaded odometry */
+  if (BotVars::GetRobot() != BotVars::COMP) {
+    UpdateOdometry();
+  }
   frc::SmartDashboard::PutNumber("Drivebase/loop time (sec)", (frc::GetTime() - loopStart).value());
 }
 
@@ -409,6 +412,34 @@ void SubDrivebase::UpdateOdometry() {
   }
 
   _fieldDisplay.SetRobotPose(_poseEstimator.GetEstimatedPosition());
+}
+
+void SubDrivebase::OdometryThreadMain() {
+  /* threadinit */
+  std::vector<ctre::phoenix6::BaseStatusSignal> allsignals;
+  std::vector<ctre::phoenix6::BaseStatusSignal> swervesignals[4] = {
+    _frontLeft.GetSignals(),
+    _frontRight.GetSignals(),
+    _backLeft.GetSignals(),
+    _backRight.GetSignals()
+  };
+  for (int i = 0; i < 4; i++) { /* appends swerve signals to allsignals */
+    allsignals.insert(allsignals.end(), swervesignals[i].begin(), swervesignals[i].end());
+  }
+  allsignals.push_back(_gyro.GetYaw());
+  allsignals.push_back(_gyro.GetAngularVelocityZWorld());
+  int sdaqs = 0;
+  int fdaqs = 0;
+  
+  // private LinearFilter lowpass = LinearFilter.movingAverage(50);
+  double lasttime = 0;
+  double curtime = 0;
+  double avglooptime = 0;
+
+  /*threadrun*/
+  for (int i = 0; i < allsignals.max_size(); i++) {
+    allsignals[i].SetUpdateFrequency(250_Hz);
+  }
 }
 
 frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {

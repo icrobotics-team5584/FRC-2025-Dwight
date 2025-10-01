@@ -46,6 +46,7 @@ class SwerveModule {
   frc::SwerveModuleState GetState();
   frc::SwerveModuleState GetCANCoderState();
   units::radian_t GetDrivenRotations();
+  std::vector<ctre::phoenix6::BaseStatusSignal> GetSignals();
 
  private:
   std::unique_ptr<SwerveIO> _io;
