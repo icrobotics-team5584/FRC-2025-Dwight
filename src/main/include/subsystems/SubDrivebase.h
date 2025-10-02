@@ -196,10 +196,10 @@ class SubDrivebase : public frc2::SubsystemBase {
 
   std::vector<slippingModule> GetSlippingModule();
 
-  bool FLSlipping = false;
-  bool FRSlipping = false;
-  bool BLSlipping = false;
-  bool BRSlipping = false;
+  bool _flSlipping = false;
+  bool _frSlipping = false;
+  bool _blSlipping = false;
+  bool _brSlipping = false;
 
   // Sysid
   frc2::sysid::SysIdRoutine _sysIdRoutine{
