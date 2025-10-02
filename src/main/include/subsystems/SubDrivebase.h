@@ -201,8 +201,6 @@ class SubDrivebase : public frc2::SubsystemBase {
   bool BLSlipping = false;
   bool BRSlipping = false;
 
-  double SlipRatio;
-
   // Sysid
   frc2::sysid::SysIdRoutine _sysIdRoutine{
       frc2::sysid::Config{std::nullopt, std::nullopt, std::nullopt, nullptr},
