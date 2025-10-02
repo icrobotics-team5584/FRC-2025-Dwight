@@ -681,48 +681,56 @@ units::radians_per_second_t SubDrivebase::GetRobotRotationFromStates
 }
 
 std::vector<SubDrivebase::slippingModule> SubDrivebase::GetSlippingModule() {
-
+  // Measuring current module states
   auto flFull = _frontLeft.GetState();
   auto frFull = _frontRight.GetState();
   auto blFull = _backLeft.GetState();
   auto brFull = _backRight.GetState();
 
+  // Converting module states from cartesian to vectors(polar)
   frc::Translation2d flFullVector = frc::Translation2d(flFull.speed.value() * 1_m, flFull.angle);
   frc::Translation2d frFullVector = frc::Translation2d(frFull.speed.value() * 1_m, frFull.angle);
   frc::Translation2d blFullVector = frc::Translation2d(blFull.speed.value() * 1_m, blFull.angle);
   frc::Translation2d brFullVector = frc::Translation2d(brFull.speed.value() * 1_m, brFull.angle);
 
+  // Calculate expected robot rotation with current module states (forward kinematics)
   auto speeds =
       frc::ChassisSpeeds{0_mps, 0_mps, GetRobotRotationFromStates(flFull, frFull, blFull, brFull)};
+
+  // Calculate module states to achieve the expected robot rotation (inverse kinematics)
   auto states = _kinematics.ToSwerveModuleStates(speeds);
   auto [flRot, frRot, blRot, brRot] = states;
 
+  // Converting "rotation" module states from cartesian to vectors(polar)
   frc::Translation2d flRotVector = frc::Translation2d(flRot.speed.value() * 1_m, flRot.angle);
   frc::Translation2d frRotVector = frc::Translation2d(frRot.speed.value() * 1_m, frRot.angle);
   frc::Translation2d blRotVector = frc::Translation2d(blRot.speed.value() * 1_m, blRot.angle);
   frc::Translation2d brRotVector = frc::Translation2d(brRot.speed.value() * 1_m, brRot.angle);
 
+  // Subtracting the "rotation" vectors from the "full" vectors to get the "translation" vectors
   auto flTransVector = flFullVector - flRotVector;
   auto frTransVector = frFullVector - frRotVector;
   auto blTransVector = blFullVector - blRotVector;
   auto brTransVector = brFullVector - brRotVector;
 
+  // Calculating the magnitude of the "translation" vectors to get the translational speed of each
+  // module
   units::meters_per_second_t flTrans = flTransVector.Norm().value() * 1_mps;
   units::meters_per_second_t frTrans = frTransVector.Norm().value() * 1_mps;
   units::meters_per_second_t blTrans = blTransVector.Norm().value() * 1_mps;
   units::meters_per_second_t brTrans = brTransVector.Norm().value() * 1_mps;
 
+  // Logging translational speeds
   Logger::Log("Drivebase/SlippingModule/flTrans", flTrans.value());
   Logger::Log("Drivebase/SlippingModule/frTrans", frTrans.value());
   Logger::Log("Drivebase/SlippingModule/blTrans", blTrans.value());
   Logger::Log("Drivebase/SlippingModule/brTrans", brTrans.value());
 
-  // double avgTrans = (flTrans.value() + frTrans.value() + blTrans.value() + brTrans.value())
-  // / 4.0;
-
+  // Finding max and min translational speeds
   units::meters_per_second_t maxValue = std::max({flTrans, frTrans, blTrans, brTrans});
   units::meters_per_second_t minValue = std::min({flTrans, frTrans, blTrans, brTrans});
 
+  // Making a map of slippingModule enum to speed
   std::map<slippingModule, units::meters_per_second_t> slippingMap = {
       {FR, frTrans}, {FL, frTrans}, {BR, brTrans}, {BL, blTrans}};
 
@@ -730,6 +738,8 @@ std::vector<SubDrivebase::slippingModule> SubDrivebase::GetSlippingModule() {
 
   units::meters_per_second_t _threshold = 0.5_mps;
 
+  // For each module, if its speed - the min speed is greater than the threshold, add it to the
+  // slippingModules vector
   for (auto translation : slippingMap) {
     if ((translation.second - minValue) > _threshold) {
       slippingModules.push_back(translation.first);
