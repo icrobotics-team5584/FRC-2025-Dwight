@@ -88,6 +88,8 @@ SubDrivebase::SubDrivebase() {
 }
 
 void SubDrivebase::Periodic() {
+  auto loopStart = frc::GetTime();
+  
   frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FLIsSlipping", FLSlipping);
   frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FRIsSlipping", FRSlipping);
   frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BLIsSlipping", BLSlipping);
@@ -99,7 +101,6 @@ void SubDrivebase::Periodic() {
   frc::SmartDashboard::PutNumber("Drivebase/AccelerationZ", _gyro.GetAccelerationZ().GetValueAsDouble()); // normal driving goes up to around the same -1.0g
   frc::SmartDashboard::PutNumber("Drivebase/IsCollision", SubDrivebase::GetInstance().IsCollision());
 
-  auto loopStart = frc::GetTime();
   frc::SmartDashboard::PutNumber("Drivebase/GyroAngle/Roll", SubDrivebase::GetInstance().GetRoll().value());
   frc::SmartDashboard::PutNumber("Drivebase/GyroAngle/Pitch", SubDrivebase::GetInstance().GetPitch().value());
   frc::SmartDashboard::PutBoolean("Drivebase/Check button", CheckCoastButton().Get());
