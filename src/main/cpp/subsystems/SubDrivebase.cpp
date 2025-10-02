@@ -89,7 +89,7 @@ SubDrivebase::SubDrivebase() {
 
 void SubDrivebase::Periodic() {
   auto loopStart = frc::GetTime();
-  
+
   frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FLIsSlipping", FLSlipping);
   frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FRIsSlipping", FRSlipping);
   frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BLIsSlipping", BLSlipping);
@@ -681,7 +681,6 @@ units::radians_per_second_t SubDrivebase::GetRobotRotationFromStates
 }
 
 std::vector<SubDrivebase::slippingModule> SubDrivebase::GetSlippingModule() {
-  // double SlipSpeed = 0.5; // in mps
 
   auto flFull = _frontLeft.GetState();
   auto frFull = _frontRight.GetState();
