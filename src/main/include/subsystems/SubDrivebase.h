@@ -67,6 +67,11 @@ class SubDrivebase : public frc2::SubsystemBase {
   units::meters_per_second_t GetVelocity();
   frc::SwerveDriveKinematics<4> GetKinematics();
   frc::ChassisSpeeds GetRobotRelativeSpeeds();
+  bool IsCollision();
+  frc2::Trigger IsCollisionTrigger();
+
+  units::radians_per_second_t GetRobotRotationFromStates
+  (frc::SwerveModuleState fl, frc::SwerveModuleState fr, frc::SwerveModuleState bl, frc::SwerveModuleState br);
 
   // Commands
   frc2::CommandPtr GyroCoralLeftStationAlign(frc2::CommandXboxController& controller);
@@ -86,11 +91,6 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc2::CommandPtr SysIdDynamic(frc2::sysid::Direction direction) {
     return _sysIdRoutine.Dynamic(direction);
   }
-  bool IsCollision();
-  frc2::Trigger IsCollisionTrigger();
-
-  units::radians_per_second_t GetRobotRotationFromStates
-  (frc::SwerveModuleState fl, frc::SwerveModuleState fr, frc::SwerveModuleState bl, frc::SwerveModuleState br);
 
   // Constants
   static constexpr units::meters_per_second_t MAX_VELOCITY = 5_mps;
