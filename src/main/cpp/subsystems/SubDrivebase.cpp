@@ -90,10 +90,10 @@ SubDrivebase::SubDrivebase() {
 void SubDrivebase::Periodic() {
   auto loopStart = frc::GetTime();
 
-  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FLIsSlipping", FLSlipping);
-  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FRIsSlipping", FRSlipping);
-  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BLIsSlipping", BLSlipping);
-  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BRIsSlipping", BRSlipping);
+  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FLIsSlipping", _flSlipping);
+  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FRIsSlipping", _frSlipping);
+  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BLIsSlipping", _blSlipping);
+  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BRIsSlipping", _brSlipping);
   SubDrivebase::GetInstance().GetSlippingModule();
   
   frc::SmartDashboard::PutNumber("Drivebase/AccelerationX", _gyro.GetAccelerationX().GetValueAsDouble());
@@ -747,32 +747,32 @@ std::vector<SubDrivebase::slippingModule> SubDrivebase::GetSlippingModule() {
       // Set the respective boolean to true
       switch (translation.first) {
         case FL:
-          FLSlipping = true;
+          _flSlipping = true;
           break;
         case FR:
-          FRSlipping = true;
+          _frSlipping = true;
           break;
         case BL:
-          BLSlipping = true;
+          _blSlipping = true;
           break;
         case BR:
-          BRSlipping = true;
+          _brSlipping = true;
           break;
       }
     } else {
       // Set the respective boolean to false
       switch (translation.first) {
         case FL:
-          FLSlipping = false;
+          _flSlipping = false;
           break;
         case FR:
-          FRSlipping = false;
+          _frSlipping = false;
           break;
         case BL:
-          BLSlipping = false;
+          _blSlipping = false;
           break;
         case BR:
-          BRSlipping = false;
+          _brSlipping = false;
           break;
       }
     }
