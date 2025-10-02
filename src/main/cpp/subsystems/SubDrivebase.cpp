@@ -94,7 +94,7 @@ void SubDrivebase::Periodic() {
   frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FRIsSlipping", _frSlipping);
   frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BLIsSlipping", _blSlipping);
   frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BRIsSlipping", _brSlipping);
-  SubDrivebase::GetInstance().GetSlippingModule();
+  SubDrivebase::GetInstance().LogWheelSlipping();
   
   frc::SmartDashboard::PutNumber("Drivebase/AccelerationX", _gyro.GetAccelerationX().GetValueAsDouble());
   frc::SmartDashboard::PutNumber("Drivebase/AccelerationY", _gyro.GetAccelerationY().GetValueAsDouble()); // smashed into wall with -1.2g and -0.4g of deceleration
@@ -680,7 +680,7 @@ units::radians_per_second_t SubDrivebase::GetRobotRotationFromStates
   return omega;
 }
 
-std::vector<SubDrivebase::slippingModule> SubDrivebase::GetSlippingModule() {
+void SubDrivebase::LogWheelSlipping() {
   // Measuring current module states
   auto flFull = _frontLeft.GetState();
   auto frFull = _frontRight.GetState();
@@ -734,15 +734,12 @@ std::vector<SubDrivebase::slippingModule> SubDrivebase::GetSlippingModule() {
   std::map<slippingModule, units::meters_per_second_t> slippingMap = {
       {FR, frTrans}, {FL, frTrans}, {BR, brTrans}, {BL, blTrans}};
 
-  std::vector<slippingModule> slippingModules;
-
   units::meters_per_second_t _threshold = 0.5_mps;
 
   // For each module, if its speed - the min speed is greater than the threshold, add it to the
   // slippingModules vector
   for (auto translation : slippingMap) {
     if ((translation.second - minValue) > _threshold) {
-      slippingModules.push_back(translation.first);
 
       // Set the respective boolean to true
       switch (translation.first) {
@@ -777,5 +774,4 @@ std::vector<SubDrivebase::slippingModule> SubDrivebase::GetSlippingModule() {
       }
     }
   }
-  return slippingModules;
 }

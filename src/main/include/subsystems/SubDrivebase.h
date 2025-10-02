@@ -67,11 +67,14 @@ class SubDrivebase : public frc2::SubsystemBase {
   units::meters_per_second_t GetVelocity();
   frc::SwerveDriveKinematics<4> GetKinematics();
   frc::ChassisSpeeds GetRobotRelativeSpeeds();
+
   bool IsCollision();
   frc2::Trigger IsCollisionTrigger();
 
   units::radians_per_second_t GetRobotRotationFromStates
   (frc::SwerveModuleState fl, frc::SwerveModuleState fr, frc::SwerveModuleState bl, frc::SwerveModuleState br);
+
+  void LogWheelSlipping();
 
   // Commands
   frc2::CommandPtr GyroCoralLeftStationAlign(frc2::CommandXboxController& controller);
@@ -193,8 +196,6 @@ class SubDrivebase : public frc2::SubsystemBase {
     FR,
     FL
   };
-
-  std::vector<slippingModule> GetSlippingModule();
 
   bool _flSlipping = false;
   bool _frSlipping = false;
