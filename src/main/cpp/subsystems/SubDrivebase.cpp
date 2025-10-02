@@ -679,8 +679,7 @@ units::radians_per_second_t SubDrivebase::GetRobotRotationFromStates
   return omega;
 }
 
-std::vector<SubDrivebase::slippingModule> SubDrivebase::GetSlippingModule()
-{
+std::vector<SubDrivebase::slippingModule> SubDrivebase::GetSlippingModule() {
   // double SlipSpeed = 0.5; // in mps
 
   auto flFull = _frontLeft.GetState();
@@ -688,90 +687,85 @@ std::vector<SubDrivebase::slippingModule> SubDrivebase::GetSlippingModule()
   auto blFull = _backLeft.GetState();
   auto brFull = _backRight.GetState();
 
-  frc::Translation2d flFullVector = frc::Translation2d(flFull.speed.value()*1_m, flFull.angle);
-  frc::Translation2d frFullVector = frc::Translation2d(frFull.speed.value()*1_m, frFull.angle);
-  frc::Translation2d blFullVector = frc::Translation2d(blFull.speed.value()*1_m, blFull.angle);
-  frc::Translation2d brFullVector = frc::Translation2d(brFull.speed.value()*1_m, brFull.angle);
+  frc::Translation2d flFullVector = frc::Translation2d(flFull.speed.value() * 1_m, flFull.angle);
+  frc::Translation2d frFullVector = frc::Translation2d(frFull.speed.value() * 1_m, frFull.angle);
+  frc::Translation2d blFullVector = frc::Translation2d(blFull.speed.value() * 1_m, blFull.angle);
+  frc::Translation2d brFullVector = frc::Translation2d(brFull.speed.value() * 1_m, brFull.angle);
 
-  auto speeds = frc::ChassisSpeeds{0_mps, 0_mps, GetRobotRotationFromStates(
-    flFull, frFull, blFull, brFull)};
+  auto speeds =
+      frc::ChassisSpeeds{0_mps, 0_mps, GetRobotRotationFromStates(flFull, frFull, blFull, brFull)};
   auto states = _kinematics.ToSwerveModuleStates(speeds);
   auto [flRot, frRot, blRot, brRot] = states;
 
-  frc::Translation2d flRotVector = frc::Translation2d(flRot.speed.value()*1_m, flRot.angle);
-  frc::Translation2d frRotVector = frc::Translation2d(frRot.speed.value()*1_m, frRot.angle);
-  frc::Translation2d blRotVector = frc::Translation2d(blRot.speed.value()*1_m, blRot.angle);
-  frc::Translation2d brRotVector = frc::Translation2d(brRot.speed.value()*1_m, brRot.angle);
+  frc::Translation2d flRotVector = frc::Translation2d(flRot.speed.value() * 1_m, flRot.angle);
+  frc::Translation2d frRotVector = frc::Translation2d(frRot.speed.value() * 1_m, frRot.angle);
+  frc::Translation2d blRotVector = frc::Translation2d(blRot.speed.value() * 1_m, blRot.angle);
+  frc::Translation2d brRotVector = frc::Translation2d(brRot.speed.value() * 1_m, brRot.angle);
 
   auto flTransVector = flFullVector - flRotVector;
   auto frTransVector = frFullVector - frRotVector;
   auto blTransVector = blFullVector - blRotVector;
   auto brTransVector = brFullVector - brRotVector;
 
-  units::meters_per_second_t flTrans = flTransVector.Norm().value()*1_mps;
-  units::meters_per_second_t frTrans = frTransVector.Norm().value()*1_mps;
-  units::meters_per_second_t blTrans = blTransVector.Norm().value()*1_mps;
-  units::meters_per_second_t brTrans = brTransVector.Norm().value()*1_mps;
+  units::meters_per_second_t flTrans = flTransVector.Norm().value() * 1_mps;
+  units::meters_per_second_t frTrans = frTransVector.Norm().value() * 1_mps;
+  units::meters_per_second_t blTrans = blTransVector.Norm().value() * 1_mps;
+  units::meters_per_second_t brTrans = brTransVector.Norm().value() * 1_mps;
 
   Logger::Log("Drivebase/SlippingModule/flTrans", flTrans.value());
   Logger::Log("Drivebase/SlippingModule/frTrans", frTrans.value());
   Logger::Log("Drivebase/SlippingModule/blTrans", blTrans.value());
   Logger::Log("Drivebase/SlippingModule/brTrans", brTrans.value());
 
-  // double avgTrans = (flTrans.value() + frTrans.value() + blTrans.value() + brTrans.value()) / 4.0;
+  // double avgTrans = (flTrans.value() + frTrans.value() + blTrans.value() + brTrans.value())
+  // / 4.0;
 
   units::meters_per_second_t maxValue = std::max({flTrans, frTrans, blTrans, brTrans});
   units::meters_per_second_t minValue = std::min({flTrans, frTrans, blTrans, brTrans});
-  
+
   std::map<slippingModule, units::meters_per_second_t> slippingMap = {
-    {FR, frTrans},
-    {FL, frTrans},
-    {BR, brTrans},
-    {BL, blTrans}
-  };
+      {FR, frTrans}, {FL, frTrans}, {BR, brTrans}, {BL, blTrans}};
 
   std::vector<slippingModule> slippingModules;
 
   units::meters_per_second_t _threshold = 0.5_mps;
 
   for (auto translation : slippingMap) {
-      if ((translation.second - minValue) > _threshold) {
-          slippingModules.push_back(translation.first);
+    if ((translation.second - minValue) > _threshold) {
+      slippingModules.push_back(translation.first);
 
-          // Set the respective boolean to true
-          switch (translation.first) {
-              case FL:
-                  FLSlipping = true;
-                  break;
-              case FR:
-                  FRSlipping = true;
-                  break;
-              case BL:
-                  BLSlipping = true;
-                  break;
-              case BR:
-                  BRSlipping = true;
-                  break;
-          }
-      } else {
-          // Set the respective boolean to false
-          switch (translation.first) {
-              case FL:
-                  FLSlipping = false;
-                  break;
-              case FR:
-                  FRSlipping = false;
-                  break;
-              case BL:
-                  BLSlipping = false;
-                  break;
-              case BR:
-                  BRSlipping = false;
-                  break;
-          }
+      // Set the respective boolean to true
+      switch (translation.first) {
+        case FL:
+          FLSlipping = true;
+          break;
+        case FR:
+          FRSlipping = true;
+          break;
+        case BL:
+          BLSlipping = true;
+          break;
+        case BR:
+          BRSlipping = true;
+          break;
       }
+    } else {
+      // Set the respective boolean to false
+      switch (translation.first) {
+        case FL:
+          FLSlipping = false;
+          break;
+        case FR:
+          FRSlipping = false;
+          break;
+        case BL:
+          BLSlipping = false;
+          break;
+        case BR:
+          BRSlipping = false;
+          break;
+      }
+    }
   }
   return slippingModules;
 }
-
-  
