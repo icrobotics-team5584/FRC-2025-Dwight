@@ -144,9 +144,9 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc::SwerveDriveKinematics<4> _kinematics{_frontLeftLocation, _frontRightLocation,
                                             _backLeftLocation, _backRightLocation};
 
-  frc::PIDController _teleopTranslationController{7.0, 0.0, 0.0};
+  frc::PIDController _teleopTranslationController{3.2, 0.0, 0.3};
   frc::ProfiledPIDController<units::radian> _teleopRotationController{
-      3.0, 0, 0, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
+      1.5, 0, 0, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
   std::shared_ptr<pathplanner::PPHolonomicDriveController> _pathplannerController =
       std::make_shared<pathplanner::PPHolonomicDriveController>(
           // translation needs tuning and such

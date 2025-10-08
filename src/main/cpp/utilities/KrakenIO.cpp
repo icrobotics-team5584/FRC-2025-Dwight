@@ -57,7 +57,7 @@ void KrakenIO::SetDesiredVelocity(units::meters_per_second_t velocity, units::ne
     // solve for voltage with 0 speed bc/ speed voltage clac is already handled
     units::volt_t torqueVoltageFF = _driveMotorModel.Voltage(torque, 0_tps);
 
-    torqueVoltageFF *= Logger::Tune("swerve/volatgeFF enabled", true);
+    torqueVoltageFF *= Logger::Tune("swerve/volatgeFF enabled", false); // NORMALY TRUE, UNDO ME BEFORE MERGE INTO MAIN
     _canDriveMotor.SetControl(ctre::phoenix6::controls::VelocityVoltage{(TurnsPerSec)}.WithEnableFOC(true).WithFeedForward(torqueVoltageFF));
 
     Logger::Log("swerve/drive " + std::to_string(_canDriveMotor.GetDeviceID()) + " torqueVoltage", torqueVoltageFF);
