@@ -187,15 +187,6 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc::SlewRateLimiter<units::scalar> _yStickLimiter{_tunedMaxJoystickAccel / 1_s};
   frc::SlewRateLimiter<units::scalar> _rotStickLimiter{_tunedMaxAngularJoystickAccel / 1_s};
 
-  //Slip detection
-
-  enum slippingModule {
-    BR,
-    BL,
-    FR,
-    FL
-  };
-
   // Sysid
   frc2::sysid::SysIdRoutine _sysIdRoutine{
       frc2::sysid::Config{std::nullopt, std::nullopt, std::nullopt, nullptr},
