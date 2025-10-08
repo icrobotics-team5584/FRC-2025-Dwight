@@ -84,6 +84,9 @@ SubDrivebase::SubDrivebase() {
 
       // Reference to this subsystem to set requirements
       this);
+  
+  _odometryThread = std::thread([this]{ OdometryThreadMain(); });
+  _odometryThread.detach();
 }
 
 void SubDrivebase::Periodic() {
@@ -437,8 +440,8 @@ void SubDrivebase::OdometryThreadMain() {
   double avglooptime = 0;
 
   /*threadrun*/
-  for (int i = 0; i < allsignals.max_size(); i++) {
-    allsignals[i]->SetUpdateFrequency(250_Hz);
+  for (auto& signal : allsignals) {
+    signal->SetUpdateFrequency(250_Hz);
   }
 
   while (true) {
