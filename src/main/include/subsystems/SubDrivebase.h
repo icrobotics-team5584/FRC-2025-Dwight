@@ -106,8 +106,7 @@ class SubDrivebase : public frc2::SubsystemBase {
              units::turns_per_second_t rot, bool fieldRelative,
              std::optional<std::array<units::newton_t, 4>> xForceFeedforwards = std::nullopt,
              std::optional<std::array<units::newton_t, 4>> yForceFeedforwards = std::nullopt);
-
-  void OdometryThreadMain();
+    void OdometryThreadMain();
 
   ctre::phoenix6::configs::Pigeon2Configuration _gyroConfig;
   ctre::phoenix6::hardware::Pigeon2 _gyro{canid::PIGEON_2};
@@ -129,7 +128,7 @@ class SubDrivebase : public frc2::SubsystemBase {
 
   frc::DigitalInput _toggleBrakeCoast{dio::BRAKE_COAST_BUTTON};
 
-  std::thread _odometryThread = std::thread(SubDrivebase::OdometryThreadMain);
+  std::thread _odometryThread;
 
   SwerveModule _frontLeft{canid::DRIVEBASE_FRONT_LEFT_DRIVE, canid::DRIVEBASE_FRONT_LEFT_TURN,
                           canid::DRIVEBASE_FRONT_LEFT_ENCODER, (FRONT_LEFT_MAG_OFFSET)};

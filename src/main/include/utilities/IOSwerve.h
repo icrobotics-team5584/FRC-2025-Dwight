@@ -4,6 +4,7 @@
 #include <frc/controller/PIDController.h>
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/controller/SimpleMotorFeedforward.h>
+#include <ctre/phoenix6/StatusSignal.hpp>
 #include <frc/kinematics/SwerveModuleState.h>
 #include <frc/geometry/Rotation2d.h>
 #include <frc/kinematics/SwerveModulePosition.h>

@@ -126,5 +126,5 @@ units::radian_t NeoIO::GetDrivenRotations() {
 }
 
 std::vector<ctre::phoenix6::BaseStatusSignal*> NeoIO::GetSignals() {
-  ;
+  return std::vector<ctre::phoenix6::BaseStatusSignal*>{};
 };
