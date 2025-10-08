@@ -89,11 +89,6 @@ SubDrivebase::SubDrivebase() {
 
 void SubDrivebase::Periodic() {
   auto loopStart = frc::GetTime();
-
-  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FLIsSlipping", _flSlipping);
-  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FRIsSlipping", _frSlipping);
-  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BLIsSlipping", _blSlipping);
-  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BRIsSlipping", _brSlipping);
   SubDrivebase::GetInstance().LogWheelSlipping();
   
   frc::SmartDashboard::PutNumber("Drivebase/AccelerationX", _gyro.GetAccelerationX().GetValueAsDouble());
@@ -728,13 +723,21 @@ void SubDrivebase::LogWheelSlipping() {
 
   // Finding max and min translational speeds
   units::meters_per_second_t maxValue = std::max({flTrans, frTrans, blTrans, brTrans});
+  Logger::Log("Drivebase/SlippingModule/MaxTrans", maxValue);
+
   units::meters_per_second_t minValue = std::min({flTrans, frTrans, blTrans, brTrans});
+    Logger::Log("Drivebase/SlippingModule/MinTrans", minValue);
+
+
+  // Log the max - min value (biggest difference between speeds)
+  units::meters_per_second_t difference = maxValue - minValue;
+  Logger::Log("Drivebase/SlippingModule/biggestTransSpeedDifference", difference);
 
   // Making a map of slippingModule enum to speed
   std::map<slippingModule, units::meters_per_second_t> slippingMap = {
       {FR, frTrans}, {FL, frTrans}, {BR, brTrans}, {BL, blTrans}};
 
-  units::meters_per_second_t _threshold = 0.5_mps;
+  units::meters_per_second_t _threshold = 1.8_mps;
 
   // For each module, if its speed - the min speed is greater than the threshold, add it to the
   // slippingModules vector
@@ -744,32 +747,32 @@ void SubDrivebase::LogWheelSlipping() {
       // Set the respective boolean to true
       switch (translation.first) {
         case FL:
-          _flSlipping = true;
+          frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FLIsSlipping", true);
           break;
         case FR:
-          _frSlipping = true;
+          frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FRIsSlipping", true);
           break;
         case BL:
-          _blSlipping = true;
+          frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BLIsSlipping", true);
           break;
         case BR:
-          _brSlipping = true;
+          frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BRIsSlipping", true);
           break;
       }
     } else {
       // Set the respective boolean to false
       switch (translation.first) {
         case FL:
-          _flSlipping = false;
+          frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FLIsSlipping", false);
           break;
         case FR:
-          _frSlipping = false;
+          frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FRIsSlipping", false);
           break;
         case BL:
-          _blSlipping = false;
+          frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BLIsSlipping", false);
           break;
         case BR:
-          _brSlipping = false;
+          frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BRIsSlipping", false);
           break;
       }
     }
