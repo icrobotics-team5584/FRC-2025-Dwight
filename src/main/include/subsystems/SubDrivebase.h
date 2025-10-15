@@ -26,6 +26,7 @@
 class SubDrivebase : public frc2::SubsystemBase {
  public:
   SubDrivebase();
+  ~SubDrivebase();
   static SubDrivebase& GetInstance() {
     static SubDrivebase inst;
     return inst;
@@ -129,6 +130,8 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc::DigitalInput _toggleBrakeCoast{dio::BRAKE_COAST_BUTTON};
 
   std::thread _odometryThread;
+  std::mutex _odometryThreadRunningMutex;
+  bool _odometryThreadRunning = false;
 
   SwerveModule _frontLeft{canid::DRIVEBASE_FRONT_LEFT_DRIVE, canid::DRIVEBASE_FRONT_LEFT_TURN,
                           canid::DRIVEBASE_FRONT_LEFT_ENCODER, (FRONT_LEFT_MAG_OFFSET)};

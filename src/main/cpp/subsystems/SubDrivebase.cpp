@@ -86,7 +86,14 @@ SubDrivebase::SubDrivebase() {
       this);
   
   _odometryThread = std::thread([this]{ OdometryThreadMain(); });
-  _odometryThread.detach();
+}
+
+SubDrivebase::~SubDrivebase() {
+  std::unique_lock running_lock{_odometryThreadRunningMutex, std::defer_lock};
+  running_lock.lock();
+  _odometryThreadRunning = false;
+  running_lock.unlock();
+  _odometryThread.join();
 }
 
 void SubDrivebase::Periodic() {
@@ -418,6 +425,12 @@ void SubDrivebase::UpdateOdometry() {
 }
 
 void SubDrivebase::OdometryThreadMain() {
+  bool running;
+  std::unique_lock running_lock{_odometryThreadRunningMutex, std::defer_lock};
+  running_lock.lock();
+  _odometryThreadRunning = true;
+  running = _odometryThreadRunning;
+  running_lock.unlock();
   /* threadinit */
   std::vector<ctre::phoenix6::BaseStatusSignal*> allsignals;
   std::vector<ctre::phoenix6::BaseStatusSignal*> swervesignals[4] = {
@@ -444,7 +457,12 @@ void SubDrivebase::OdometryThreadMain() {
     signal->SetUpdateFrequency(250_Hz);
   }
 
-  while (true) {
+  while (running) {
+    std::unique_lock running_lock{_odometryThreadRunningMutex, std::defer_lock};
+    running_lock.lock();
+    running = _odometryThreadRunning;
+    running_lock.unlock();
+
     ctre::phoenix::StatusCode status = ctre::phoenix6::BaseStatusSignal::WaitForAll(0.1_s, allsignals);
     lasttime = curtime;
     curtime = ctre::phoenix6::utils::GetCurrentTimeSeconds();
