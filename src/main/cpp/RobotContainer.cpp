@@ -60,6 +60,7 @@ RobotContainer::RobotContainer() {
   _autoChooser.AddOption("DefaultMiddle-ScoreLeft", "Default-Score1L4-G-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreRight", "Default-Score1L4-H-Vision");
   _autoChooser.AddOption("Default-Move-Forward-4m-0.1ms", "MoveForward-4M-0.1ms");
+  _autoChooser.AddOption("DriveTest", "Drive-Testing-Auto");
 
   // tuning autons
   // _autoChooser.AddOption("L-Shape", "L-Shape");
@@ -89,6 +90,7 @@ RobotContainer::RobotContainer() {
   defaultMiddleScoreLeft = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score1L4-G-Vision").ToPtr());
   defaultMiddleScoreRight = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score1L4-H-Vision").ToPtr());
   moveForward = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("MoveForward-4M-0.1ms").ToPtr());
+  driveTest = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Drive-Testing-Auto").ToPtr());
 }
 
 std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {
@@ -114,6 +116,9 @@ std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {
   }
   if (chosen == "MoveForward-4M-0.1ms") {
     return moveForward;
+  }
+  if (chosen == "Drive-Testing-Auto"){
+    return driveTest;
   }
   return defaultLeft;
 }
