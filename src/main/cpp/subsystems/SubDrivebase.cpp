@@ -84,9 +84,8 @@ SubDrivebase::SubDrivebase() {
 
       // Reference to this subsystem to set requirements
       this);
-  
-  _odometryThread = std::thread([this]{ OdometryThreadMain(); });
-  _odometryThread.detach();
+  std::thread _odometryThread = std::thread([this]{ OdometryThreadMain(); });
+  _odometryThread.detach(); 
 }
 
 void SubDrivebase::Periodic() {
@@ -419,6 +418,7 @@ void SubDrivebase::UpdateOdometry() {
 
 void SubDrivebase::OdometryThreadMain() {
   /* threadinit */
+      std::cout << "Odometry Thread is starting to run\n";
   std::vector<ctre::phoenix6::BaseStatusSignal*> allsignals;
   std::vector<ctre::phoenix6::BaseStatusSignal*> swervesignals[4] = {
     _frontLeft.GetSignals(),
@@ -443,8 +443,17 @@ void SubDrivebase::OdometryThreadMain() {
   for (auto& signal : allsignals) {
     signal->SetUpdateFrequency(250_Hz);
   }
-
   while (true) {
+    /* check if threading is enabled */
+    std::unique_lock lock(_threadingEnabledMutex, std::defer_lock);
+    lock.lock(); 
+    if (_threadingEnabled == false) {
+      std::cout << "_threadingEnabled is false!\n";
+      break;
+    }
+    lock.release();
+    std::cout << "Odometry Thread is currently running\n";
+
     ctre::phoenix::StatusCode status = ctre::phoenix6::BaseStatusSignal::WaitForAll(0.1_s, allsignals);
     lasttime = curtime;
     curtime = ctre::phoenix6::utils::GetCurrentTimeSeconds();
@@ -466,6 +475,23 @@ void SubDrivebase::OdometryThreadMain() {
     _gyro.GetAngularVelocityZWorld());
   _poseEstimator.Update(frc::Rotation2d(yawdeg), {fl, fr, bl, br});
   }
+
+  std::cout << "Odometry Thread is exiting\n";
+}
+
+void SubDrivebase::ToggleOdometryThread() {
+  std::unique_lock lock(_threadingEnabledMutex, std::defer_lock);
+    lock.lock();
+    if (_threadingEnabled == false) {
+      _threadingEnabled = true;
+      lock.release();
+
+      std::thread _odometryThread = std::thread([this]{ OdometryThreadMain(); });
+      _odometryThread.detach();
+    } else {
+      _threadingEnabled = false;
+      lock.release();
+    }
 }
 
 frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
