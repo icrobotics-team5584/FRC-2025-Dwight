@@ -568,7 +568,7 @@ units::degree_t SubDrivebase::GetRoll() {
   return (_gyro.GetRoll().GetValue());
 }
 
-frc2::CommandPtr SubDrivebase::WheelCharecterisationCmd() {
+frc2::CommandPtr SubDrivebase::CharacteriseWheels() {
   static units::radian_t prevGyroAngle = 0_rad;
   static units::radian_t gyroAccumulator = 0_rad;
   static units::radian_t FRinitialWheelDistance = 0_rad;
@@ -576,8 +576,10 @@ frc2::CommandPtr SubDrivebase::WheelCharecterisationCmd() {
   static units::radian_t BRinitialWheelDistance = 0_rad;
   static units::radian_t BLinitialWheelDistance = 0_rad;
 
+  static units::meter_t drivebaseRadius = _frontLeftLocation.Norm();
+
   return RunOnce([this] {
-           prevGyroAngle = 0_rad;
+           prevGyroAngle = GetGyroAngle().Radians();
            gyroAccumulator = 0_rad;
            FRinitialWheelDistance = _frontRight.GetDrivenRotations();
            FLinitialWheelDistance = _frontLeft.GetDrivenRotations();
@@ -585,7 +587,7 @@ frc2::CommandPtr SubDrivebase::WheelCharecterisationCmd() {
            BLinitialWheelDistance = _backLeft.GetDrivenRotations();
          })
       .AndThen(Drive([] { return frc::ChassisSpeeds{0_mps, 0_mps, -15_deg_per_s}; }, false))
-      .AlongWith(frc2::cmd::Run([this] {
+      .AlongWith(frc2::cmd::Wait(1_s).AndThen(frc2::cmd::Run([this] {
         // units::radian_t curGyroAngle = GetHeading().Radians(); using GetGyroAngle() instead
         units::radian_t curGyroAngle = GetGyroAngle().Radians();
         gyroAccumulator = gyroAccumulator + frc::AngleModulus((prevGyroAngle - curGyroAngle));
@@ -596,9 +598,6 @@ frc2::CommandPtr SubDrivebase::WheelCharecterisationCmd() {
                                        curGyroAngle.value());
         frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/GyroPrev",
                                        prevGyroAngle.value());
-      }))
-      .FinallyDo([this] {
-        units::meter_t drivebaseRadius = _frontLeftLocation.Norm();
 
         units::radian_t FRfinalWheelDistance = _frontRight.GetDrivenRotations();
         units::radian_t FLfinalWheelDistance = _frontLeft.GetDrivenRotations();
@@ -642,5 +641,5 @@ frc2::CommandPtr SubDrivebase::WheelCharecterisationCmd() {
         frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/FRdelta", FRdelta.value());
         frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/BLdelta", BLdelta.value());
         frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/BRdelta", BRdelta.value());
-      });
+      })));
 }

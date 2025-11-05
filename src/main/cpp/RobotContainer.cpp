@@ -171,6 +171,8 @@ void RobotContainer::ConfigureBindings() {
 
   _operatorController.LeftBumper().WhileTrue(cmd::AdjustCoral());
 
+  _tuningController.A().WhileTrue(SubDrivebase::GetInstance().CharacteriseWheels());
+
   // SubEndEffector::GetInstance().CheckLineBreakTriggerLower().WhileTrue(LEDHelper::GetInstance().SetScrollingRainbow().IgnoringDisable(true));
 }
 
