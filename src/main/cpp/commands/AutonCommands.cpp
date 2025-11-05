@@ -35,9 +35,9 @@ frc2::CommandPtr AutonSubSystemsZeroSequence() {
 
 frc2::CommandPtr GenerateTeleopPath(frc::Pose2d startpose, frc::Pose2d endpose) {
     pathplanner::PathConstraints constraints(6.0_mps,          // max_speed
-                                             6.0_mps_sq,       // max_accel
-                                             290_deg_per_s,    // max_rotspeed
-                                             360_deg_per_s_sq  // max_rotaccel
+                                             3.0_mps_sq,       // max_accel
+                                             360_deg_per_s,    // max_rotspeed
+                                             1080_deg_per_s_sq  // max_rotaccel
     );
 
     pathplanner::Pathfinding::ensureInitialized();
