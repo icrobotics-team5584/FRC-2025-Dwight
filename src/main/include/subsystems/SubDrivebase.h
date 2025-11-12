@@ -90,9 +90,8 @@ class SubDrivebase : public frc2::SubsystemBase {
 
   // Constants
   static constexpr units::meters_per_second_t MAX_VELOCITY = 5_mps;
-  static constexpr units::meters_per_second_t MAX_DRIVE_TO_POSE_VELOCITY = 1_mps;
-  static constexpr units::turns_per_second_t MAX_ANGULAR_VELOCITY =
-      290_deg_per_s;  // CHANGE TO 720\[]
+  static constexpr units::meters_per_second_t MAX_DRIVE_TO_POSE_VELOCITY = 5_mps;
+  static constexpr units::turns_per_second_t MAX_ANGULAR_VELOCITY = 300_deg_per_s;
 
   static constexpr units::turns_per_second_squared_t MAX_ANG_ACCEL{std::numbers::pi};
 
@@ -144,9 +143,9 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc::SwerveDriveKinematics<4> _kinematics{_frontLeftLocation, _frontRightLocation,
                                             _backLeftLocation, _backRightLocation};
 
-  frc::PIDController _teleopTranslationController{1.2, 0.0, 0.6};
+  frc::PIDController _teleopTranslationController{10, 0.0, 0};
   frc::ProfiledPIDController<units::radian> _teleopRotationController{
-      1.5, 0, 0, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
+      6, 0, 0, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
   std::shared_ptr<pathplanner::PPHolonomicDriveController> _pathplannerController =
       std::make_shared<pathplanner::PPHolonomicDriveController>(
           // translation needs tuning and such
