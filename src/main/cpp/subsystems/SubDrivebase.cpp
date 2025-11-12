@@ -421,18 +421,28 @@ void SubDrivebase::UpdateOdometry() {
 frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   // Find current and target values
   DisplayPose("WERTY/targetPose", targetPose);
-  double targetXMeters = targetPose.X().value();
-  double targetYMeters = targetPose.Y().value();
+  units::meter_t targetXMeters = targetPose.X();
+  units::meter_t targetYMeters = targetPose.Y();
   units::turn_t targetRotation = targetPose.Rotation().Radians();
   frc::Pose2d currentPosition = GetPose();
-  double currentXMeters = currentPosition.X().value();
-  double currentYMeters = currentPosition.Y().value();
+  units::meter_t currentXMeters = currentPosition.X();
+  units::meter_t currentYMeters = currentPosition.Y();
   units::turn_t currentRotation = GetAllianceRelativeGyroAngle().Degrees();
 
+  frc::Translation2d translationVector = frc::Translation2d(
+      targetXMeters - currentXMeters, targetYMeters - currentYMeters);
+  
+  translationVector = frc::Translation2d(translationVector.Norm(), translationVector.Angle());
+
+
   // Use PID controllers to calculate speeds
-  auto xSpeed = _teleopTranslationController.Calculate(currentXMeters, targetXMeters) * 1_mps;
-  auto ySpeed = _teleopTranslationController.Calculate(currentYMeters, targetYMeters) * 1_mps;
+  auto translationSpeed = _teleopTranslationController.Calculate(0, translationVector.Norm().value()) * 1_mps;
   auto rSpeed = CalcRotateSpeed(currentRotation - targetRotation);
+
+  //Convert Polar back into Cartesian X and Y
+  frc::Translation2d translationSpeedVector = frc::Translation2d(translationSpeed.value()*1_m, translationVector.Angle());
+  units::meters_per_second_t xSpeed = translationSpeedVector.X().value()*1_mps;
+  units::meters_per_second_t ySpeed = translationSpeedVector.Y().value()*1_mps;
 
   // Clamp to max velocity
   xSpeed = units::math::min(xSpeed, MAX_DRIVE_TO_POSE_VELOCITY);  // Max_Velocity
@@ -448,10 +458,10 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   frc::SmartDashboard::PutNumber("CalcDriveLogs/xSpeed", -xSpeed.value());
   frc::SmartDashboard::PutNumber("CalcDriveLogs/ySpeed", ySpeed.value());
   frc::SmartDashboard::PutNumber("CalcDriveLogs/rSpeed", rSpeed.value());
-  frc::SmartDashboard::PutNumber("CalcDriveLogs/targetXMeters", targetXMeters);
-  frc::SmartDashboard::PutNumber("CalcDriveLogs/targetYMeters", targetYMeters);
-  frc::SmartDashboard::PutNumber("CalcDriveLogs/currentXMeters", currentXMeters);
-  frc::SmartDashboard::PutNumber("CalcDriveLogs/currentYMeters", currentYMeters);
+  frc::SmartDashboard::PutNumber("CalcDriveLogs/targetXMeters", targetXMeters.value());
+  frc::SmartDashboard::PutNumber("CalcDriveLogs/targetYMeters", targetYMeters.value());
+  frc::SmartDashboard::PutNumber("CalcDriveLogs/currentXMeters", currentXMeters.value());
+  frc::SmartDashboard::PutNumber("CalcDriveLogs/currentYMeters", currentYMeters.value());
   frc::SmartDashboard::PutNumber("CalcDriveLogs/currentRotation", currentRotation.value());
   return frc::ChassisSpeeds{xSpeed, ySpeed, rSpeed};
 }
@@ -467,6 +477,7 @@ bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
   auto currentPose = _poseEstimator.GetEstimatedPosition();
   auto rotError = GetAllianceRelativeGyroAngle() - pose.Rotation();
   auto posError = currentPose.Translation().Distance(pose.Translation());
+  auto velocity = GetVelocity();
   DisplayPose("current pose", currentPose);
   DisplayPose("target pose", pose);
 
@@ -478,7 +489,9 @@ bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
   frc::SmartDashboard::PutBoolean("Drivebase/IsAtPose",
                                   units::math::abs(rotError.Degrees()) < 2_deg && posError < 2_cm);
 
-  if (units::math::abs(rotError.Degrees()) < 2_deg && posError < 2_cm) {
+  frc::SmartDashboard::PutNumber("Drivebase/IsAtPoseVel", velocity.value());
+
+  if (units::math::abs(rotError.Degrees()) < 2_deg && posError < 2_cm) { //&& velocity < 0.2_mps
     return true;
   } else {
     return false;
