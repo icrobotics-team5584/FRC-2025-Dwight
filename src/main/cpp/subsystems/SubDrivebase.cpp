@@ -444,6 +444,21 @@ void SubDrivebase::UpdateOdometry() {
 }
 
 frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
+  double maxP2pAccel = Logger::Tune("Drivebase/P2P/Accel Limit", MAX_P2P_ACCEL);
+  if (maxP2pAccel != _tunedMaxP2pAccel) {
+    _p2pXLimiter = frc::SlewRateLimiter<units::scalar>{maxP2pAccel / 1_s};
+    _p2pYLimiter = frc::SlewRateLimiter<units::scalar>{maxP2pAccel / 1_s};
+
+    _tunedMaxP2pAccel = maxP2pAccel;
+  }
+
+  double maxP2pAngAccel = Logger::Tune("Drivebase/P2P/Accel Ang Limit", MAX_P2P_ANGULAR_ACCEL);
+  if (maxP2pAngAccel != _tunedMaxAngularJoystickAccel) {
+    _p2pRLimiter = frc::SlewRateLimiter<units::scalar>{maxP2pAngAccel / 1_s};
+
+    _tunedMaxP2pAngAccel = maxP2pAngAccel;
+  }
+
   // Find current and target values
   DisplayPose("WERTY/targetPose", targetPose);
   units::meter_t targetXMeters = targetPose.X();
@@ -469,11 +484,18 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   units::meters_per_second_t xSpeed = translationSpeedVector.X().value()*1_mps;
   units::meters_per_second_t ySpeed = translationSpeedVector.Y().value()*1_mps;
 
+  // Apply Accel Limit
+  auto xCalcSpeed = _p2pXLimiter.Calculate(xSpeed.value()) * 1_mps;
+  auto yCalcSpeed = _p2pYLimiter.Calculate(ySpeed.value()) * 1_mps;
+  auto rCalcSpeed = _p2pRLimiter.Calculate(rSpeed.value()) * 1_tps;
+
+  rSpeed = rCalcSpeed;
+
   // Clamp to max velocity
-  xSpeed = units::math::min(xSpeed, MAX_DRIVE_TO_POSE_VELOCITY);  // Max_Velocity
-  xSpeed = units::math::max(xSpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
-  ySpeed = units::math::min(ySpeed, MAX_DRIVE_TO_POSE_VELOCITY);
-  ySpeed = units::math::max(ySpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
+  xSpeed = units::math::min(xCalcSpeed, MAX_DRIVE_TO_POSE_VELOCITY);  // Max_Velocity
+  xSpeed = units::math::max(xCalcSpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
+  ySpeed = units::math::min(yCalcSpeed, MAX_DRIVE_TO_POSE_VELOCITY);
+  ySpeed = units::math::max(yCalcSpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
 
   if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed) {
     xSpeed *= -1;

@@ -95,6 +95,9 @@ class SubDrivebase : public frc2::SubsystemBase {
 
   static constexpr units::turns_per_second_squared_t MAX_ANG_ACCEL{std::numbers::pi};
 
+  static constexpr double MAX_P2P_ACCEL = 5;
+  static constexpr double MAX_P2P_ANGULAR_ACCEL = 3;
+
   static constexpr double MAX_JOYSTICK_ACCEL = 5;
   static constexpr double MAX_ANGULAR_JOYSTICK_ACCEL = 3;
   static constexpr double JOYSTICK_DEADBAND = 0.08;
@@ -181,6 +184,12 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc::SlewRateLimiter<units::scalar> _xStickLimiter{_tunedMaxJoystickAccel / 1_s};
   frc::SlewRateLimiter<units::scalar> _yStickLimiter{_tunedMaxJoystickAccel / 1_s};
   frc::SlewRateLimiter<units::scalar> _rotStickLimiter{_tunedMaxAngularJoystickAccel / 1_s};
+
+  double _tunedMaxP2pAccel = MAX_P2P_ACCEL;
+  double _tunedMaxP2pAngAccel = MAX_P2P_ANGULAR_ACCEL;
+  frc::SlewRateLimiter<units::scalar> _p2pXLimiter{_tunedMaxP2pAccel / 1_s};
+  frc::SlewRateLimiter<units::scalar> _p2pYLimiter{_tunedMaxP2pAccel / 1_s};
+  frc::SlewRateLimiter<units::scalar> _p2pRLimiter{_tunedMaxP2pAngAccel / 1_s};
 
   // Sysid
   frc2::sysid::SysIdRoutine _sysIdRoutine{
