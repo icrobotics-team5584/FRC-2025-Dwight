@@ -45,6 +45,7 @@ class SubDrivebase : public frc2::SubsystemBase {
       std::function<units::turns_per_second_t()> rotationFeedbackSource);
   void ResetPathplannerRotationFeedbackSource();
   void ConfigPigeon2();
+  void LogWheelSlipping();
 
   // Getters
   double TranslationPosError(frc::Pose2d pose, units::meter_t startingDistance);
@@ -52,6 +53,8 @@ class SubDrivebase : public frc2::SubsystemBase {
   bool IsAtPose(frc::Pose2d pose);
   frc2::Trigger CheckCoastButton();
   frc2::Trigger IsTipping();
+  bool IsCollision();
+  frc2::Trigger IsCollisionTrigger();
   
   frc::ChassisSpeeds CalcDriveToPoseSpeeds(frc::Pose2d targetPose);
   frc::ChassisSpeeds CalcJoystickSpeeds(frc2::CommandXboxController& controller);
@@ -66,6 +69,8 @@ class SubDrivebase : public frc2::SubsystemBase {
   units::meters_per_second_t GetVelocity();
   frc::SwerveDriveKinematics<4> GetKinematics();
   frc::ChassisSpeeds GetRobotRelativeSpeeds();
+  units::radians_per_second_t GetRobotRotationFromStates
+  (frc::SwerveModuleState fl, frc::SwerveModuleState fr, frc::SwerveModuleState bl, frc::SwerveModuleState br);
 
   // Commands
   frc2::CommandPtr GyroCoralLeftStationAlign(frc2::CommandXboxController& controller);

@@ -88,6 +88,13 @@ SubDrivebase::SubDrivebase() {
 
 void SubDrivebase::Periodic() {
   auto loopStart = frc::GetTime();
+  SubDrivebase::GetInstance().LogWheelSlipping();
+  
+  frc::SmartDashboard::PutNumber("Drivebase/AccelerationX", _gyro.GetAccelerationX().GetValueAsDouble());
+  frc::SmartDashboard::PutNumber("Drivebase/AccelerationY", _gyro.GetAccelerationY().GetValueAsDouble()); // smashed into wall with -1.2g and -0.4g of deceleration
+  frc::SmartDashboard::PutNumber("Drivebase/AccelerationZ", _gyro.GetAccelerationZ().GetValueAsDouble()); // normal driving goes up to around the same -1.0g
+  frc::SmartDashboard::PutNumber("Drivebase/IsCollision", SubDrivebase::GetInstance().IsCollision());
+
   frc::SmartDashboard::PutNumber("Drivebase/GyroAngle/Roll", SubDrivebase::GetInstance().GetRoll().value());
   frc::SmartDashboard::PutNumber("Drivebase/GyroAngle/Pitch", SubDrivebase::GetInstance().GetPitch().value());
   frc::SmartDashboard::PutBoolean("Drivebase/Check button", CheckCoastButton().Get());
@@ -643,4 +650,92 @@ frc2::CommandPtr SubDrivebase::WheelCharecterisationCmd() {
         frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/BLdelta", BLdelta.value());
         frc::SmartDashboard::PutNumber("Drivebase/WheelCharacterisation/BRdelta", BRdelta.value());
       });
+}
+
+bool SubDrivebase::IsCollision() {
+  auto GsX = _gyro.GetAccelerationX().GetValueAsDouble();
+  auto GsY = _gyro.GetAccelerationY().GetValueAsDouble();
+  GsY = abs(GsY);
+  GsX = abs(GsX);
+  double magnitude = sqrt(GsY*GsY+GsX*GsX);
+  return (magnitude > 0.6);
+}
+
+frc2::Trigger SubDrivebase::IsCollisionTrigger() {
+  return frc2::Trigger {[this] {return this->IsCollision();}};
+}
+
+units::radians_per_second_t SubDrivebase::GetRobotRotationFromStates
+(frc::SwerveModuleState fl, frc::SwerveModuleState fr, frc::SwerveModuleState bl, frc::SwerveModuleState br) {
+  auto [forward, sideways, omega] = _kinematics.ToChassisSpeeds(
+  fl, fr, bl, br);
+  return omega;
+}
+
+void SubDrivebase::LogWheelSlipping() {
+  // Measuring current module states
+  auto flFull = _frontLeft.GetState();
+  auto frFull = _frontRight.GetState();
+  auto blFull = _backLeft.GetState();
+  auto brFull = _backRight.GetState();
+
+  // Converting module states from cartesian to vectors(polar)
+  frc::Translation2d flFullVector = frc::Translation2d(flFull.speed.value() * 1_m, flFull.angle);
+  frc::Translation2d frFullVector = frc::Translation2d(frFull.speed.value() * 1_m, frFull.angle);
+  frc::Translation2d blFullVector = frc::Translation2d(blFull.speed.value() * 1_m, blFull.angle);
+  frc::Translation2d brFullVector = frc::Translation2d(brFull.speed.value() * 1_m, brFull.angle);
+
+  // Calculate expected robot rotation with current module states (forward kinematics)
+  auto speeds =
+      frc::ChassisSpeeds{0_mps, 0_mps, GetRobotRotationFromStates(flFull, frFull, blFull, brFull)};
+
+  // Calculate module states to achieve the expected robot rotation (inverse kinematics)
+  auto states = _kinematics.ToSwerveModuleStates(speeds);
+  auto [flRot, frRot, blRot, brRot] = states;
+
+  // Converting "rotation" module states from cartesian to vectors(polar)
+  frc::Translation2d flRotVector = frc::Translation2d(flRot.speed.value() * 1_m, flRot.angle);
+  frc::Translation2d frRotVector = frc::Translation2d(frRot.speed.value() * 1_m, frRot.angle);
+  frc::Translation2d blRotVector = frc::Translation2d(blRot.speed.value() * 1_m, blRot.angle);
+  frc::Translation2d brRotVector = frc::Translation2d(brRot.speed.value() * 1_m, brRot.angle);
+
+  // Subtracting the "rotation" vectors from the "full" vectors to get the "translation" vectors
+  auto flTransVector = flFullVector - flRotVector;
+  auto frTransVector = frFullVector - frRotVector;
+  auto blTransVector = blFullVector - blRotVector;
+  auto brTransVector = brFullVector - brRotVector;
+
+  // Calculating the magnitude of the "translation" vectors to get the translational speed of each
+  // module
+  units::meters_per_second_t flTrans = flTransVector.Norm().value() * 1_mps;
+  units::meters_per_second_t frTrans = frTransVector.Norm().value() * 1_mps;
+  units::meters_per_second_t blTrans = blTransVector.Norm().value() * 1_mps;
+  units::meters_per_second_t brTrans = brTransVector.Norm().value() * 1_mps;
+
+  // Logging translational speeds
+  Logger::Log("Drivebase/SlippingModule/flTrans", flTrans.value());
+  Logger::Log("Drivebase/SlippingModule/frTrans", frTrans.value());
+  Logger::Log("Drivebase/SlippingModule/blTrans", blTrans.value());
+  Logger::Log("Drivebase/SlippingModule/brTrans", brTrans.value());
+
+  // Finding max and min translational speeds
+  units::meters_per_second_t maxValue = std::max({flTrans, frTrans, blTrans, brTrans});
+  Logger::Log("Drivebase/SlippingModule/MaxTrans", maxValue);
+
+  units::meters_per_second_t minValue = std::min({flTrans, frTrans, blTrans, brTrans});
+  Logger::Log("Drivebase/SlippingModule/MinTrans", minValue);
+
+
+  // Log the max - min value (biggest difference between speeds)
+  units::meters_per_second_t difference = maxValue - minValue;
+  Logger::Log("Drivebase/SlippingModule/biggestTransSpeedDifference", difference);
+
+  units::meters_per_second_t threshold = 1.8_mps;
+
+  // For each module, if its speed - the min speed is greater than the threshold, add it to the
+  // slippingModules vector
+  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FLIsSlipping", (flTrans - minValue) > threshold);
+  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FRIsSlipping", (frTrans - minValue) > threshold);
+  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BLIsSlipping", (blTrans - minValue) > threshold);
+  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BRIsSlipping", (brTrans - minValue) > threshold);
 }
