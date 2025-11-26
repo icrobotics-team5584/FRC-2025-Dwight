@@ -15,13 +15,13 @@
  },
  "params":{
   "waypoints":[
-    {"x":{"exp":"LeftSource.x()", "val":1.7335288524627686}, "y":{"exp":"LeftSource.y()", "val":7.376293182373047}, "heading":{"exp":"LeftSource.heading()", "val":-2.4655826445}, "intervals":38, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"LeftSource.x()", "val":1.7335288524627686}, "y":{"exp":"LeftSource.y()", "val":7.376293182373047}, "heading":{"exp":"LeftSource.heading()", "val":-2.4655826445}, "intervals":128, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"3.785536766052246 m", "val":3.785536766052246}, "y":{"exp":"5.387646675109863 m", "val":5.387646675109863}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":34, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
     {"x":{"exp":"ReefPoleK.x()", "val":3.96}, "y":{"exp":"ReefPoleK.y()", "val":5.19}, "heading":{"exp":"ReefPoleK.heading()", "val":3.665191429188092}, "intervals":39, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"last", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
-    {"from":"first", "to":"last", "data":{"type":"MaxVelocity", "props":{"max":{"exp":"TestingSpeed()", "val":3.0}}}, "enabled":true},
+    {"from":"first", "to":"last", "data":{"type":"MaxVelocity", "props":{"max":{"exp":"TestingSpeed()", "val":0.5}}}, "enabled":true},
     {"from":1, "to":2, "data":{"type":"MaxAcceleration", "props":{"max":{"exp":"TestingAccel()", "val":1.0}}}, "enabled":true}],
   "targetDt":{
    "exp":"0.05 s",

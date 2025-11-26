@@ -13,6 +13,7 @@
 #include "utilities/RobotLogs.h"
 #include "RobotContainer.h"
 #include <frc/geometry/Translation2d.h>
+#include <frc2/command/button/RobotModeTriggers.h>
 #include "utilities/LEDHelper.h"
 
 SubDrivebase::SubDrivebase() {
@@ -74,8 +75,13 @@ SubDrivebase::SubDrivebase() {
       []() {
         auto alliance = frc::DriverStation::GetAlliance();
         if (alliance) {
-          Logger::Log("Drivebase/Pathplanner flipped to alliance", alliance.value());
-          return alliance.value() == frc::DriverStation::Alliance::kRed;
+          if (frc2::RobotModeTriggers::Teleop().Get()) {
+            Logger::Log("Drivebase/Pathplanner flipped to alliance", "In teleop, not fliping");
+            return false;
+          } else {
+            Logger::Log("Drivebase/Pathplanner flipped to alliance", alliance.value());
+            return alliance.value() == frc::DriverStation::Alliance::kRed;
+          }
         }
         Logger::Log("Drivebase/Pathplanner flipped to alliance",
                     "Failed to detect alliance, assuming blue");
@@ -398,6 +404,32 @@ units::meters_per_second_t SubDrivebase::GetVelocity() {
 
 frc::SwerveDriveKinematics<4> SubDrivebase::GetKinematics() {
   return _kinematics;
+}
+
+void SubDrivebase::SetTeleopPathPose(int apriltag, int side) {
+  /* !in blue || red reef*/
+  if (apriltag < 6) {
+    apriltag = 6;
+  } else if (apriltag > 11 && apriltag < 18) {
+    apriltag = 18;
+  } else if (apriltag > 22) {
+    apriltag = 6;
+  }
+  if (side != 0 || side != 1) {
+    side = 0;
+  }
+  _teleopPathPose.first = apriltag;
+  _teleopPathPose.second = side;
+  Logger::Log("Drivebase/TeleopStoredPathPose/apriltag", (double)_teleopPathPose.first);
+  if (_teleopPathPose.second == 0) {
+    Logger::Log("Drivebase/TeleopStoredPathPose/side", "left");
+  } else {
+    Logger::Log("Drivebase/TeleopStoredPathPose/side", "right");
+  }
+}
+
+std::pair<int, int> SubDrivebase::GetTeleopPathPose() {
+  return _teleopPathPose;
 }
 
 // calculates the relative field location

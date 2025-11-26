@@ -3,26 +3,26 @@
  "version":1,
  "snapshot":{
   "waypoints":[
-    {"x":5.22, "y":5.07, "heading":2.6179938779914944, "intervals":16, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":3.970388412475586, "y":5.763010501861572, "heading":2.6179938779914944, "intervals":30, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":2.0660457611083984, "y":6.936302185058594, "heading":-2.4655826445, "intervals":10, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":5.22, "y":5.07, "heading":2.6179938779914944, "intervals":59, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":3.970388412475586, "y":5.763010501861572, "heading":2.6179938779914944, "intervals":100, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":2.0660457611083984, "y":6.936302185058594, "heading":-2.4655826445, "intervals":24, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":1.7335288524627686, "y":7.376293182373047, "heading":-2.4655826445, "intervals":41, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"last", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
-    {"from":"first", "to":"last", "data":{"type":"MaxVelocity", "props":{"max":3.0}}, "enabled":true}],
+    {"from":"first", "to":"last", "data":{"type":"MaxVelocity", "props":{"max":0.5}}, "enabled":true}],
   "targetDt":0.05
  },
  "params":{
   "waypoints":[
-    {"x":{"exp":"ReefPoleI.x()", "val":5.22}, "y":{"exp":"ReefPoleI.y()", "val":5.07}, "heading":{"exp":"ReefPoleI.heading()", "val":2.6179938779914944}, "intervals":16, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":{"exp":"3.970388412475586 m", "val":3.970388412475586}, "y":{"exp":"5.763010501861572 m", "val":5.763010501861572}, "heading":{"exp":"ReefPoleI.heading()", "val":2.6179938779914944}, "intervals":30, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":{"exp":"2.0660457611083984 m", "val":2.0660457611083984}, "y":{"exp":"6.936302185058594 m", "val":6.936302185058594}, "heading":{"exp":"LeftSource.heading()", "val":-2.4655826445}, "intervals":10, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"ReefPoleI.x()", "val":5.22}, "y":{"exp":"ReefPoleI.y()", "val":5.07}, "heading":{"exp":"ReefPoleI.heading()", "val":2.6179938779914944}, "intervals":59, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"3.970388412475586 m", "val":3.970388412475586}, "y":{"exp":"5.763010501861572 m", "val":5.763010501861572}, "heading":{"exp":"ReefPoleI.heading()", "val":2.6179938779914944}, "intervals":100, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"2.0660457611083984 m", "val":2.0660457611083984}, "y":{"exp":"6.936302185058594 m", "val":6.936302185058594}, "heading":{"exp":"LeftSource.heading()", "val":-2.4655826445}, "intervals":24, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"LeftSource.x()", "val":1.7335288524627686}, "y":{"exp":"LeftSource.y()", "val":7.376293182373047}, "heading":{"exp":"LeftSource.heading()", "val":-2.4655826445}, "intervals":41, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"last", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
-    {"from":"first", "to":"last", "data":{"type":"MaxVelocity", "props":{"max":{"exp":"TestingSpeed()", "val":3.0}}}, "enabled":true}],
+    {"from":"first", "to":"last", "data":{"type":"MaxVelocity", "props":{"max":{"exp":"TestingSpeed()", "val":0.5}}}, "enabled":true}],
   "targetDt":{
    "exp":"0.05 s",
    "val":0.05

@@ -33,6 +33,8 @@ class SubDrivebase : public frc2::SubsystemBase {
   void SimulationPeriodic() override;
 
   // Instantaneous functions
+  void SetTeleopPathPose(int apriltag, int side);
+  std::pair<int, int> GetTeleopPathPose();
   void AddVisionMeasurement(frc::Pose2d pose, units::second_t timeStamp, wpi::array<double,3> dev);
   void ResetGyroHeading(units::degree_t startingAngle = 0_deg);
   void DisplayTrajectory(std::string name, frc::Trajectory trajectory);
@@ -139,19 +141,22 @@ class SubDrivebase : public frc2::SubsystemBase {
                          canid::DRIVEBASE_BACK_LEFT_ENCODER, (BACK_LEFT_MAG_OFFSET)};
   SwerveModule _backRight{canid::DRIVEBASE_BACK_RIGHT_DRIVE, canid::DRIVEBASE_BACK_RIGHT_TURN,
                           canid::DRIVEBASE_BACK_RIGHT_ENCODER, (BACK_RIGHT_MAG_OFFSET)};
+  /* TeleopPathPose */
+  std::pair<int, int> _teleopPathPose = std::pair<int, int>(0, 0);
+  /* ^^^ Should be a SubvisionSide wait til refactor*/
 
   // Control objects
   frc::SwerveDriveKinematics<4> _kinematics{_frontLeftLocation, _frontRightLocation,
                                             _backLeftLocation, _backRightLocation};
 
-  frc::PIDController _teleopTranslationController{7.0, 0.0, 0.0};
+  frc::PIDController _teleopTranslationController{1.2, 0.0, 0.6};
   frc::ProfiledPIDController<units::radian> _teleopRotationController{
-      3.0, 0, 0, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
+      1.5, 0, 0, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
   std::shared_ptr<pathplanner::PPHolonomicDriveController> _pathplannerController =
       std::make_shared<pathplanner::PPHolonomicDriveController>(
           // translation needs tuning and such
-          pathplanner::PIDConstants{3.2, 0.0, 0.3},  // Translation PID constants
-          pathplanner::PIDConstants{1.5, 0.0, 0.0}   // Rotation PID constants (1.0, 0.0, 0.0-karken)
+          pathplanner::PIDConstants{5.0, 0.0, 0.0},  // Translation PID constants {3.2, 0.0, 0.3}
+          pathplanner::PIDConstants{10.0, 0.0, 0.0}   // Rotation PID constants (1.0, 0.0, 0.0-karken)
       );
 
   // Pose estimation

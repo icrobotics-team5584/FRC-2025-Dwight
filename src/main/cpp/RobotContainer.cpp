@@ -55,10 +55,12 @@ RobotContainer::RobotContainer() {
 
   // main autons
   _autoChooser.AddOption("Default-Left", "Default-Score3L4-Vision");
+  _autoChooser.AddOption("Left-4L4", "Default-Score4L4-Vision");
   _autoChooser.AddOption("Default-Right", "Right-Score3L4-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreLeft", "Default-Score1L4-G-Vision");
   _autoChooser.AddOption("DefaultMiddle-ScoreRight", "Default-Score1L4-H-Vision");
   _autoChooser.AddOption("Default-Move-Forward-4m-0.1ms", "MoveForward-4M-0.1ms");
+  _autoChooser.AddOption("DriveTest", "Drive-Testing-Auto");
 
   // tuning autons
   // _autoChooser.AddOption("L-Shape", "L-Shape");
@@ -82,10 +84,13 @@ RobotContainer::RobotContainer() {
 
   // Load all auton paths
   defaultLeft = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score3L4-Vision").ToPtr());
+  defaultLeft4 = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score4L4-Vision").ToPtr());
   defaultRight = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Right-Score3L4-Vision").ToPtr());
+  defaultRight4 = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Right-Score4L4-Vision").ToPtr());
   defaultMiddleScoreLeft = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score1L4-G-Vision").ToPtr());
   defaultMiddleScoreRight = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Default-Score1L4-H-Vision").ToPtr());
   moveForward = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("MoveForward-4M-0.1ms").ToPtr());
+  driveTest = std::make_shared<frc2::CommandPtr>(pathplanner::PathPlannerAuto("Drive-Testing-Auto").ToPtr());
 }
 
 std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {
@@ -94,8 +99,14 @@ std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {
   if (chosen == "Default-Score3L4-Vision") {
     return defaultLeft;
   }
+  if (chosen == "Default-Score4L4-Vision") {
+    return defaultLeft4;
+  }
   if (chosen == "Right-Score3L4-Vision") {
     return defaultRight;
+  }
+  if (chosen == "Right-Score4L4-Vision") {
+    return defaultRight4;
   }
   if (chosen == "Default-Score1L4-G-Vision") {
     return defaultMiddleScoreLeft;
@@ -105,6 +116,9 @@ std::shared_ptr<frc2::CommandPtr> RobotContainer::GetAutonomousCommand() {
   }
   if (chosen == "MoveForward-4M-0.1ms") {
     return moveForward;
+  }
+  if (chosen == "Drive-Testing-Auto"){
+    return driveTest;
   }
   return defaultLeft;
 }
@@ -119,14 +133,19 @@ void RobotContainer::ConfigureBindings() {
   // ));
   _driverController.A().OnTrue(SubDrivebase::GetInstance().SyncSensorBut());
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
-  
-  _driverController.RightBumper().WhileTrue(SubDrivebase::GetInstance().GyroCoralLeftStationAlign(_driverController));
-  _driverController.LeftBumper().WhileTrue(SubDrivebase::GetInstance().GyroCoralRightStationAlign(_driverController)); 
-  _driverController.B().WhileTrue(cmd::TeleAlignAndShoot(SubVision::Side::Right));
-  _driverController.X().WhileTrue(cmd::TeleAlignAndShoot(SubVision::Side::Left));
+  _driverController.X().WhileTrue(SubDrivebase::GetInstance().GyroCoralLeftStationAlign(_driverController));
+  _driverController.B().WhileTrue(SubDrivebase::GetInstance().GyroCoralRightStationAlign(_driverController)); 
+  _driverController.RightBumper().WhileTrue(cmd::TeleAlignAndShoot(SubVision::Right));
+  _driverController.LeftBumper().WhileTrue(cmd::ScoreWithTeleop(SubVision::Right, 18)); // Score right side L1
   _driverController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
   _driverController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
   _driverController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());
+  // SubDrivebase::GetInstance().GetPose() is a y
+  _driverController.POVUp().OnTrue(cmd::ScoreAtStoredPoseWithTeleop());
+  _driverController.POVLeft().OnTrue(frc2::cmd::Run([]{ return cmd::CycleStoredPose(1); }));
+  _driverController.POVLeft().OnTrue(frc2::cmd::Run([]{ return cmd::CycleStoredPose(-1); }));
+
+  _driverController.POVDown().OnTrue(cmd::AutonSubSystemsZeroSequence());
 
   // Triggers
   SubDrivebase::GetInstance().CheckCoastButton().ToggleOnTrue(cmd::ToggleBrakeCoast());

@@ -235,7 +235,7 @@ frc2::CommandPtr TeleAlignAndShoot(SubVision::Side side) {
   })
   // Drive to roughly half a meter away from pose
   .AndThen(
-    SubDrivebase::GetInstance().DriveToPose([](){return targetAwayPose;}, 3)
+    SubDrivebase::GetInstance().DriveToPose([](){return targetAwayPose;}, 1)
     .DeadlineFor(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetAwayPose, initialDistance);}, frc::Color::kAliceBlue)))
   // Bring elevator up
   .AndThen(
@@ -244,7 +244,7 @@ frc2::CommandPtr TeleAlignAndShoot(SubVision::Side side) {
     [] {initialDistance = SubDrivebase::GetInstance().TranslationPosDistance(targetTagPose)*1_m;})
   // Drive close to reef
   .AndThen(
-    SubDrivebase::GetInstance().DriveToPose([](){return targetTagPose;}, 0.5)
+    SubDrivebase::GetInstance().DriveToPose([](){return targetTagPose;}, 1)
     .DeadlineFor(LEDHelper::GetInstance().SetFollowProgress([] {return SubDrivebase::GetInstance().TranslationPosError(targetTagPose, initialDistance);}, frc::Color::kGreen)))
   //Score coral
   .AndThen(SubEndEffector::GetInstance().ScoreCoral().WithTimeout(0.4_s))

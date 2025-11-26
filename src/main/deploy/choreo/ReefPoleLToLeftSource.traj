@@ -12,9 +12,7 @@
   "targetDt":0.05
  },
  "params":{
-  "waypoints":[
-    {"x":{"exp":"ReefPoleL.x()", "val":3.72}, "y":{"exp":"ReefPoleL.y()", "val":5.05}, "heading":{"exp":"ReefPoleL.heading()", "val":3.665191429188092}, "intervals":30, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":true},
-    {"x":{"exp":"LeftSource.x()", "val":1.7335288524627686}, "y":{"exp":"LeftSource.y()", "val":7.376293182373047}, "heading":{"exp":"LeftSource.heading()", "val":-2.4655826445}, "intervals":41, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
+  "waypoints":[],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"last", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},

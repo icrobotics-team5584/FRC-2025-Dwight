@@ -3,24 +3,24 @@
  "version":1,
  "snapshot":{
   "waypoints":[
-    {"x":5.0, "y":5.2, "heading":2.62, "intervals":41, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":2.2615907192230225, "y":6.808200359344482, "heading":0.0, "intervals":24, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
+    {"x":5.0, "y":5.2, "heading":2.62, "intervals":142, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":2.2615907192230225, "y":6.808200359344482, "heading":0.0, "intervals":45, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
     {"x":1.7335288524627686, "y":7.376293182373047, "heading":-2.4655826445, "intervals":41, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"last", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
-    {"from":"first", "to":"last", "data":{"type":"MaxVelocity", "props":{"max":3.0}}, "enabled":true}],
+    {"from":"first", "to":"last", "data":{"type":"MaxVelocity", "props":{"max":0.5}}, "enabled":true}],
   "targetDt":0.05
  },
  "params":{
   "waypoints":[
-    {"x":{"exp":"ReefPoleJ.x()", "val":5.0}, "y":{"exp":"ReefPoleJ.y()", "val":5.2}, "heading":{"exp":"ReefPoleJ.heading()", "val":2.62}, "intervals":41, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":{"exp":"2.2615907192230225 m", "val":2.2615907192230225}, "y":{"exp":"6.808200359344482 m", "val":6.808200359344482}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":24, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
+    {"x":{"exp":"ReefPoleJ.x()", "val":5.0}, "y":{"exp":"ReefPoleJ.y()", "val":5.2}, "heading":{"exp":"ReefPoleJ.heading()", "val":2.62}, "intervals":142, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"2.2615907192230225 m", "val":2.2615907192230225}, "y":{"exp":"6.808200359344482 m", "val":6.808200359344482}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":45, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
     {"x":{"exp":"LeftSource.x()", "val":1.7335288524627686}, "y":{"exp":"LeftSource.y()", "val":7.376293182373047}, "heading":{"exp":"LeftSource.heading()", "val":-2.4655826445}, "intervals":41, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"last", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
-    {"from":"first", "to":"last", "data":{"type":"MaxVelocity", "props":{"max":{"exp":"TestingSpeed()", "val":3.0}}}, "enabled":true}],
+    {"from":"first", "to":"last", "data":{"type":"MaxVelocity", "props":{"max":{"exp":"TestingSpeed()", "val":0.5}}}, "enabled":true}],
   "targetDt":{
    "exp":"0.05 s",
    "val":0.05
