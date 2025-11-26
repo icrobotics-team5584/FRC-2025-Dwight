@@ -14,7 +14,6 @@
 #include "RobotContainer.h"
 #include <frc/geometry/Translation2d.h>
 #include "utilities/LEDHelper.h"
-#include <map>
 
 SubDrivebase::SubDrivebase() {
   frc::SmartDashboard::PutData("Drivebase/Teleop PID/Rotation Controller",
@@ -658,15 +657,13 @@ bool SubDrivebase::IsCollision() {
   auto GsY = _gyro.GetAccelerationY().GetValueAsDouble();
   GsY = abs(GsY);
   GsX = abs(GsX);
-  double Magnitude = sqrt(GsY*GsY+GsX*GsX);
-  return (Magnitude > 0.6);
+  double magnitude = sqrt(GsY*GsY+GsX*GsX);
+  return (magnitude > 0.6);
 }
 
 frc2::Trigger SubDrivebase::IsCollisionTrigger() {
   return frc2::Trigger {[this] {return this->IsCollision();}};
 }
-
-
 
 units::radians_per_second_t SubDrivebase::GetRobotRotationFromStates
 (frc::SwerveModuleState fl, frc::SwerveModuleState fr, frc::SwerveModuleState bl, frc::SwerveModuleState br) {
@@ -726,19 +723,19 @@ void SubDrivebase::LogWheelSlipping() {
   Logger::Log("Drivebase/SlippingModule/MaxTrans", maxValue);
 
   units::meters_per_second_t minValue = std::min({flTrans, frTrans, blTrans, brTrans});
-    Logger::Log("Drivebase/SlippingModule/MinTrans", minValue);
+  Logger::Log("Drivebase/SlippingModule/MinTrans", minValue);
 
 
   // Log the max - min value (biggest difference between speeds)
   units::meters_per_second_t difference = maxValue - minValue;
   Logger::Log("Drivebase/SlippingModule/biggestTransSpeedDifference", difference);
 
-  units::meters_per_second_t _threshold = 1.8_mps;
+  units::meters_per_second_t threshold = 1.8_mps;
 
   // For each module, if its speed - the min speed is greater than the threshold, add it to the
   // slippingModules vector
-  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FLIsSlipping", (flTrans - minValue) > _threshold);
-  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FRIsSlipping", (frTrans - minValue) > _threshold);
-  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BLIsSlipping", (blTrans - minValue) > _threshold);
-  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BRIsSlipping", (brTrans - minValue) > _threshold);
+  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FLIsSlipping", (flTrans - minValue) > threshold);
+  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/FRIsSlipping", (frTrans - minValue) > threshold);
+  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BLIsSlipping", (blTrans - minValue) > threshold);
+  frc::SmartDashboard::PutBoolean("Drivebase/SlipDetection/BRIsSlipping", (brTrans - minValue) > threshold);
 }
