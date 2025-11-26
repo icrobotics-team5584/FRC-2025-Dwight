@@ -135,8 +135,8 @@ void RobotContainer::ConfigureBindings() {
   _driverController.Y().OnTrue(SubDrivebase::GetInstance().ResetGyroCmd());
   _driverController.X().WhileTrue(SubDrivebase::GetInstance().GyroCoralLeftStationAlign(_driverController));
   _driverController.B().WhileTrue(SubDrivebase::GetInstance().GyroCoralRightStationAlign(_driverController)); 
-  _driverController.RightBumper().WhileTrue(SubDrivebase::GetInstance().DriveToPose([] {return frc::Pose2d{3.00_m, 4.025_m, -90_deg};}, 1.0)); // Drive to coral right station
-  _driverController.LeftBumper().WhileTrue(SubDrivebase::GetInstance().DriveToPose([] {return frc::Pose2d{3.00_m, 4.025_m, -90_deg};}, 1.0)); // Score right side L1
+  _driverController.RightBumper().WhileTrue(SubDrivebase::GetInstance().DriveToPose([] {return frc::Pose2d{2.00_m, 4.025_m, -90_deg};}, 1.0)); // Drive to coral right station
+  _driverController.LeftBumper().WhileTrue(SubDrivebase::GetInstance().DriveToPose([] {return frc::Pose2d{2.00_m, 4.025_m, -90_deg};}, 1.0)); // Score right side L1
   _driverController.LeftTrigger().WhileTrue(cmd::IntakeFromSource());
   _driverController.LeftTrigger().OnFalse(SubEndEffector::GetInstance().StopMotor());
   _driverController.RightTrigger().WhileTrue(SubEndEffector::GetInstance().ScoreCoral());

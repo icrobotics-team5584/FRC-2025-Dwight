@@ -95,8 +95,8 @@ class SubDrivebase : public frc2::SubsystemBase {
 
   static constexpr units::turns_per_second_squared_t MAX_ANG_ACCEL{std::numbers::pi};
 
-  static constexpr double MAX_P2P_ACCEL = 5;
-  static constexpr double MAX_P2P_ANGULAR_ACCEL = 3;
+  static constexpr double MAX_P2P_ACCEL = 3;
+  static constexpr double MAX_P2P_ANGULAR_ACCEL = 9;
 
   static constexpr double MAX_JOYSTICK_ACCEL = 5;
   static constexpr double MAX_ANGULAR_JOYSTICK_ACCEL = 3;
