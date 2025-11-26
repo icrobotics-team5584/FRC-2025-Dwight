@@ -472,6 +472,11 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   ySpeed = units::math::min(yCalcSpeed, MAX_DRIVE_TO_POSE_VELOCITY);
   ySpeed = units::math::max(yCalcSpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
 
+  // xSpeed = units::math::min(xSpeed, MAX_DRIVE_TO_POSE_VELOCITY);  // Max_Velocity
+  // xSpeed = units::math::max(xSpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
+  // ySpeed = units::math::min(ySpeed, MAX_DRIVE_TO_POSE_VELOCITY);
+  // ySpeed = units::math::max(ySpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
+
   if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed) {
     xSpeed *= -1;
     ySpeed *= -1;
