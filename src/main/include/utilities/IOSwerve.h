@@ -4,6 +4,7 @@
 #include <frc/controller/PIDController.h>
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/controller/SimpleMotorFeedforward.h>
+#include <ctre/phoenix6/StatusSignal.hpp>
 #include <frc/kinematics/SwerveModuleState.h>
 #include <frc/geometry/Rotation2d.h>
 #include <frc/kinematics/SwerveModulePosition.h>
@@ -35,4 +36,5 @@ class SwerveIO {
     virtual units::volt_t GetDriveVoltage() = 0;
     virtual frc::SwerveModuleState GetState() = 0;
     virtual units::radian_t GetDrivenRotations() = 0;
+    virtual std::vector<ctre::phoenix6::BaseStatusSignal*> GetSignals() = 0;
 };

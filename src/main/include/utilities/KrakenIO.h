@@ -33,6 +33,7 @@ class KrakenIO : public SwerveIO {
     units::volt_t GetDriveVoltage() override;
     frc::SwerveModuleState GetState() override;
     units::radian_t GetDrivenRotations() override;
+    std::vector<ctre::phoenix6::BaseStatusSignal*> GetSignals();
 
     const double TURNING_GEAR_RATIO = 150.0 / 7.0;
     const double DRIVE_GEAR_RATIO = 6.75;  // L2 - Fast kit
@@ -51,7 +52,6 @@ class KrakenIO : public SwerveIO {
     const double DRIVE_A = 0.079385;  // Units is V/1m/s^2 0.34324; left
 
   private:
-
     ctre::phoenix6::hardware::TalonFX _canTurnMotor;
     ctre::phoenix6::configs::TalonFXConfiguration _configTurnMotor{};
 
@@ -62,6 +62,12 @@ class KrakenIO : public SwerveIO {
         frc::DCMotor::KrakenX60FOC().WithReduction(DRIVE_GEAR_RATIO);
     frc::DCMotor _turnMotorModel =
         frc::DCMotor::Falcon500().WithReduction(TURNING_GEAR_RATIO);
+    
+    ctre::phoenix6::StatusSignal<units::angle::turn_t> _drivePositionSig = _canDriveMotor.GetPosition();
+    ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> _driveVelocitySig = _canDriveMotor.GetVelocity();
+    ctre::phoenix6::StatusSignal<units::angle::turn_t> _steerPositionSig = _canTurnMotor.GetPosition();
+    ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> _steerVelocitySig = _canTurnMotor.GetVelocity();
+    std::vector<ctre::phoenix6::BaseStatusSignal*> _allSignals;
 
     frc::sim::DCMotorSim _turnMotorSim{
         frc::LinearSystemId::DCMotorSystem(frc::DCMotor::Falcon500(), 0.000000001_kg_sq_m,

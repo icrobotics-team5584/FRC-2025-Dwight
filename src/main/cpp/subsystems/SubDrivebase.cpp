@@ -84,6 +84,16 @@ SubDrivebase::SubDrivebase() {
 
       // Reference to this subsystem to set requirements
       this);
+  
+  _odometryThread = std::thread([this]{ OdometryThreadMain(); });
+}
+
+SubDrivebase::~SubDrivebase() {
+  std::unique_lock running_lock{_odometryThreadRunningMutex, std::defer_lock};
+  running_lock.lock();
+  _odometryThreadRunning = false;
+  running_lock.unlock();
+  _odometryThread.join();
 }
 
 void SubDrivebase::Periodic() {
@@ -136,7 +146,10 @@ void SubDrivebase::Periodic() {
   _backLeft.SendSensorsToDash();
   _backRight.SendSensorsToDash();
 
-  UpdateOdometry();
+  /* Comp bot uses threaded odometry */
+  if (BotVars::GetRobot() != BotVars::COMP) {
+    UpdateOdometry();
+  }
   frc::SmartDashboard::PutNumber("Drivebase/loop time (sec)", (frc::GetTime() - loopStart).value());
 }
 
@@ -416,6 +429,68 @@ void SubDrivebase::UpdateOdometry() {
   }
 
   _fieldDisplay.SetRobotPose(_poseEstimator.GetEstimatedPosition());
+}
+
+void SubDrivebase::OdometryThreadMain() {
+  bool running;
+  std::unique_lock running_lock{_odometryThreadRunningMutex, std::defer_lock};
+  running_lock.lock();
+  _odometryThreadRunning = true;
+  running = _odometryThreadRunning;
+  running_lock.unlock();
+  /* threadinit */
+  std::vector<ctre::phoenix6::BaseStatusSignal*> allsignals;
+  std::vector<ctre::phoenix6::BaseStatusSignal*> swervesignals[4] = {
+    _frontLeft.GetSignals(),
+    _frontRight.GetSignals(),
+    _backLeft.GetSignals(),
+    _backRight.GetSignals()
+  };
+  for (int i = 0; i < 4; i++) { /* appends swerve signals to allsignals */
+    allsignals.insert(allsignals.end(), swervesignals[i].begin(), swervesignals[i].end());
+  }
+  allsignals.push_back(&_gyro.GetYaw());
+  allsignals.push_back(&_gyro.GetAngularVelocityZWorld());
+  int succdaqs = 0;
+  int faildaqs = 0;
+  
+  frc::LinearFilter<double> lowpass = frc::LinearFilter<double>::MovingAverage(50);
+  double lasttime = 0;
+  double curtime = 0;
+  double avglooptime = 0;
+
+  /*threadrun*/
+  for (auto& signal : allsignals) {
+    signal->SetUpdateFrequency(250_Hz);
+  }
+
+  while (running) {
+    std::unique_lock running_lock{_odometryThreadRunningMutex, std::defer_lock};
+    running_lock.lock();
+    running = _odometryThreadRunning;
+    running_lock.unlock();
+
+    ctre::phoenix::StatusCode status = ctre::phoenix6::BaseStatusSignal::WaitForAll(0.1_s, allsignals);
+    lasttime = curtime;
+    curtime = ctre::phoenix6::utils::GetCurrentTimeSeconds();
+    avglooptime = lowpass.Calculate(curtime - lasttime);
+
+    if (status.IsOK()) {
+      succdaqs++;
+    } else {
+      faildaqs++;
+    }
+
+  frc::SwerveModulePosition fl = _frontLeft.GetPosition();
+  frc::SwerveModulePosition fr = _frontRight.GetPosition();
+  frc::SwerveModulePosition bl = _backLeft.GetPosition();
+  frc::SwerveModulePosition br = _backRight.GetPosition();
+
+  units::angle::degree_t yawdeg = ctre::phoenix6::BaseStatusSignal::GetLatencyCompensatedValue(
+    _gyro.GetYaw(), 
+    _gyro.GetAngularVelocityZWorld());
+  _poseEstimator.Update(frc::Rotation2d(yawdeg), {fl, fr, bl, br});
+  }
 }
 
 frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {

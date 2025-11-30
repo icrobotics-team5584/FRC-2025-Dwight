@@ -9,6 +9,7 @@
 #include <frc/filter/SlewRateLimiter.h>
 #include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
 #include <numbers>
+#include <thread>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/Commands.h>
 #include "Constants.h"
@@ -25,6 +26,7 @@
 class SubDrivebase : public frc2::SubsystemBase {
  public:
   SubDrivebase();
+  ~SubDrivebase();
   static SubDrivebase& GetInstance() {
     static SubDrivebase inst;
     return inst;
@@ -110,6 +112,7 @@ class SubDrivebase : public frc2::SubsystemBase {
              units::turns_per_second_t rot, bool fieldRelative,
              std::optional<std::array<units::newton_t, 4>> xForceFeedforwards = std::nullopt,
              std::optional<std::array<units::newton_t, 4>> yForceFeedforwards = std::nullopt);
+    void OdometryThreadMain();
 
   ctre::phoenix6::configs::Pigeon2Configuration _gyroConfig;
   ctre::phoenix6::hardware::Pigeon2 _gyro{canid::PIGEON_2};
@@ -130,6 +133,10 @@ class SubDrivebase : public frc2::SubsystemBase {
       BotVars::Choose(-0.353515625, -0.94921875) * 1_tr;
 
   frc::DigitalInput _toggleBrakeCoast{dio::BRAKE_COAST_BUTTON};
+
+  std::thread _odometryThread;
+  std::mutex _odometryThreadRunningMutex;
+  bool _odometryThreadRunning = false;
 
   SwerveModule _frontLeft{canid::DRIVEBASE_FRONT_LEFT_DRIVE, canid::DRIVEBASE_FRONT_LEFT_TURN,
                           canid::DRIVEBASE_FRONT_LEFT_ENCODER, (FRONT_LEFT_MAG_OFFSET)};
