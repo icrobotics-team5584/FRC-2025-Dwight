@@ -217,7 +217,7 @@ bool SubVision::IsEstimateUsable(photon::EstimatedRobotPose pose) {
   distance /= pose.targetsUsed.size();
 
 
-  return ((distance < 0.7_m) || (tagCount > 1)) && hasMyTargets;
+  return ((distance < 1_m) || (tagCount > 1)) && hasMyTargets; //CHANGE BACK??
 }
 
 frc::Pose2d SubVision::CalculateRelativePose(frc::Pose2d pose, units::meter_t x, units::meter_t y) {

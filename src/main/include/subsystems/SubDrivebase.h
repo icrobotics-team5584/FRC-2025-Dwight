@@ -93,11 +93,13 @@ class SubDrivebase : public frc2::SubsystemBase {
 
   // Constants
   static constexpr units::meters_per_second_t MAX_VELOCITY = 5_mps;
-  static constexpr units::meters_per_second_t MAX_DRIVE_TO_POSE_VELOCITY = 1_mps;
-  static constexpr units::turns_per_second_t MAX_ANGULAR_VELOCITY =
-      290_deg_per_s;  // CHANGE TO 720\[]
+  static constexpr units::meters_per_second_t MAX_DRIVE_TO_POSE_VELOCITY = 5_mps;
+  static constexpr units::turns_per_second_t MAX_ANGULAR_VELOCITY = 300_deg_per_s;
 
   static constexpr units::turns_per_second_squared_t MAX_ANG_ACCEL{std::numbers::pi};
+
+  static constexpr double MAX_P2P_ACCEL = 3;
+  static constexpr double MAX_P2P_ANGULAR_ACCEL = 9;
 
   static constexpr double MAX_JOYSTICK_ACCEL = 5;
   static constexpr double MAX_ANGULAR_JOYSTICK_ACCEL = 3;
@@ -144,9 +146,9 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc::SwerveDriveKinematics<4> _kinematics{_frontLeftLocation, _frontRightLocation,
                                             _backLeftLocation, _backRightLocation};
 
-  frc::PIDController _teleopTranslationController{7.0, 0.0, 0.0};
+  frc::PIDController _teleopTranslationController{1.5, 0.0, 0};
   frc::ProfiledPIDController<units::radian> _teleopRotationController{
-      3.0, 0, 0, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
+      4, 0, 0, {MAX_ANGULAR_VELOCITY, MAX_ANG_ACCEL}};
   std::shared_ptr<pathplanner::PPHolonomicDriveController> _pathplannerController =
       std::make_shared<pathplanner::PPHolonomicDriveController>(
           // translation needs tuning and such
@@ -182,6 +184,12 @@ class SubDrivebase : public frc2::SubsystemBase {
   frc::SlewRateLimiter<units::scalar> _xStickLimiter{_tunedMaxJoystickAccel / 1_s};
   frc::SlewRateLimiter<units::scalar> _yStickLimiter{_tunedMaxJoystickAccel / 1_s};
   frc::SlewRateLimiter<units::scalar> _rotStickLimiter{_tunedMaxAngularJoystickAccel / 1_s};
+
+  double _tunedMaxP2pAccel = MAX_P2P_ACCEL;
+  double _tunedMaxP2pAngAccel = MAX_P2P_ANGULAR_ACCEL;
+  frc::SlewRateLimiter<units::scalar> _p2pXLimiter{_tunedMaxP2pAccel / 1_s};
+  frc::SlewRateLimiter<units::scalar> _p2pYLimiter{_tunedMaxP2pAccel / 1_s};
+  frc::SlewRateLimiter<units::scalar> _p2pRLimiter{_tunedMaxP2pAngAccel / 1_s};
 
   // Sysid
   frc2::sysid::SysIdRoutine _sysIdRoutine{
