@@ -428,7 +428,7 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   }
 
   double maxP2pAngAccel = Logger::Tune("Drivebase/P2P/Accel Ang Limit", MAX_P2P_ANGULAR_ACCEL);
-  if (maxP2pAngAccel != _tunedMaxAngularJoystickAccel) {
+  if (maxP2pAngAccel != _tunedMaxP2pAngAccel) {
     _p2pRLimiter = frc::SlewRateLimiter<units::scalar>{maxP2pAngAccel / 1_s};
 
     _tunedMaxP2pAngAccel = maxP2pAngAccel;
