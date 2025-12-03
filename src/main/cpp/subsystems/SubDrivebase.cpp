@@ -477,14 +477,14 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
     ySpeed *= -1;
   }
 
-  frc::SmartDashboard::PutNumber("CalcDriveLogs/xSpeed", -xSpeed.value());
-  frc::SmartDashboard::PutNumber("CalcDriveLogs/ySpeed", ySpeed.value());
-  frc::SmartDashboard::PutNumber("CalcDriveLogs/rSpeed", rSpeed.value());
-  frc::SmartDashboard::PutNumber("CalcDriveLogs/targetXMeters", targetXMeters.value());
-  frc::SmartDashboard::PutNumber("CalcDriveLogs/targetYMeters", targetYMeters.value());
-  frc::SmartDashboard::PutNumber("CalcDriveLogs/currentXMeters", currentXMeters.value());
-  frc::SmartDashboard::PutNumber("CalcDriveLogs/currentYMeters", currentYMeters.value());
-  frc::SmartDashboard::PutNumber("CalcDriveLogs/currentRotation", currentRotation.value());
+  Logger::Log("CalcDriveLogs/xSpeed", -xSpeed);
+  Logger::Log("CalcDriveLogs/ySpeed", ySpeed);
+  Logger::Log("CalcDriveLogs/rSpeed", rSpeed);
+  Logger::Log("CalcDriveLogs/targetYMeters", targetYMeters);
+  Logger::Log("CalcDriveLogs/targetXMeters", targetXMeters);
+  Logger::Log("CalcDriveLogs/currentXMeters", currentXMeters);
+  Logger::Log("CalcDriveLogs/currentYMeters", currentYMeters);
+  Logger::Log("CalcDriveLogs/currentRotation", currentRotation);
   return frc::ChassisSpeeds{xSpeed, ySpeed, rSpeed};
 }
 
