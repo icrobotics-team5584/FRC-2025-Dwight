@@ -472,11 +472,6 @@ frc::ChassisSpeeds SubDrivebase::CalcDriveToPoseSpeeds(frc::Pose2d targetPose) {
   ySpeed = units::math::min(yCalcSpeed, MAX_DRIVE_TO_POSE_VELOCITY);
   ySpeed = units::math::max(yCalcSpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
 
-  // xSpeed = units::math::min(xSpeed, MAX_DRIVE_TO_POSE_VELOCITY);  // Max_Velocity
-  // xSpeed = units::math::max(xSpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
-  // ySpeed = units::math::min(ySpeed, MAX_DRIVE_TO_POSE_VELOCITY);
-  // ySpeed = units::math::max(ySpeed, -MAX_DRIVE_TO_POSE_VELOCITY);
-
   if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed) {
     xSpeed *= -1;
     ySpeed *= -1;
@@ -504,7 +499,6 @@ bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
   auto currentPose = _poseEstimator.GetEstimatedPosition();
   auto rotError = GetAllianceRelativeGyroAngle() - pose.Rotation();
   auto posError = currentPose.Translation().Distance(pose.Translation());
-  auto velocity = GetVelocity();
   DisplayPose("current pose", currentPose);
   DisplayPose("target pose", pose);
 
@@ -516,9 +510,7 @@ bool SubDrivebase::IsAtPose(frc::Pose2d pose) {
   frc::SmartDashboard::PutBoolean("Drivebase/IsAtPose",
                                   units::math::abs(rotError.Degrees()) < 2_deg && posError < 2_cm);
 
-  frc::SmartDashboard::PutNumber("Drivebase/IsAtPoseVel", velocity.value());
-
-  if (units::math::abs(rotError.Degrees()) < 2_deg && posError < 2_cm) { //&& velocity < 0.2_mps
+  if (units::math::abs(rotError.Degrees()) < 2_deg && posError < 2_cm) { 
     return true;
   } else {
     return false;
